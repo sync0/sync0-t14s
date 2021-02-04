@@ -1,0 +1,838 @@
+* Faces & Text
+
+    Adjust font size according to screen resolution (when I use dual monitor setup)
+#+BEGIN_SRC emacs-lisp
+  (if (> (display-pixel-width) 2000)
+      ;; external monitor font size
+      (progn (set-face-attribute 'default nil 
+                            :family "Inconsolata"
+                            :height 150)
+        (setq line-spacing 0))
+    ;; laptop font size
+    (progn (set-face-attribute 'default nil 
+                          :family "Inconsolata"
+                          :height 180)
+      (setq line-spacing 1.5)))
+
+  ;;   (defun sync0-buffer-face-mode-fixed ()
+  ;;     "Set font to a variable width (proportional) fonts in current buffer"
+  ;; (if (> (display-pixel-width) 2000)
+  ;;     ;; external monitor font size
+  ;;     (progn 
+  ;;         (setq buffer-face-mode-face '(:family "Inconsolata" :height 150))
+  ;;         (setq line-spacing 0))
+  ;;   ;; laptop font size
+  ;;   (progn 
+  ;;       (setq buffer-face-mode-face '(:family "Inconsolata" :height 155))
+  ;;     (setq line-spacing 0.5)))
+  ;;     (buffer-face-mode))
+ #+END_SRC
+
+  Configure variable-width faces.
+  #+BEGIN_SRC emacs-lisp
+    (defun sync0-buffer-face-mode-variable ()
+      "Set font to a variable width (proportional) fonts in current buffer"
+      (if (> (display-pixel-width) 2000)
+          ;; external monitor font size
+        (progn
+          (setq buffer-face-mode-face '(:family "Minion Pro" :height 140))
+      (setq line-spacing 0.25))
+        ;; laptop font size
+        (progn
+        (setq buffer-face-mode-face '(:family "Minion Pro" :height 200))
+      (setq line-spacing 0.2)))
+      (buffer-face-mode))
+ #+END_SRC
+
+    Configure default font faces for Info, ERC, and Org
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'erc-mode-hook 'sync0-buffer-face-mode-variable)
+  (add-hook 'Info-mode-hook 'sync0-buffer-face-mode-variable)
+  (add-hook 'text-mode-hook 'sync0-buffer-face-mode-variable)
+ #+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  ;; End sentences with a single espace.
+  (setq-default sentence-end-double-space nil
+                header-line-format " "
+                ;; Use spaces instead of tabs
+                indent-tabs-mode nil              
+                ;; disable bidirectional text for tiny performance boost
+                bidi-display-reordering nil 
+                ;; Never truncate lines
+                truncate-lines t
+                truncate-partial-width-windows t
+                ;; Help with displaying fonts
+                inhibit-compacting-font-caches t)
+ #+END_SRC
+
+* auto-fill
+
+ #+BEGIN_SRC emacs-lisp
+   (use-package auto-fill
+     :straight nil
+     :hook 
+     (text-mode . turn-on-auto-fill)
+     (mu4e-compose-mode . turn-off-auto-fill)
+     (mu4e-view-mode . turn-off-auto-fill)
+     :preface
+     ;; Configure exceptions for auto-fill mode. 
+     (defun sync0-nobreak-p ()
+       (and (looking-at "+[[:alnum:]]")
+            (looking-back "^\\\[A-z]+{.+" (line-beginning-position))))
+     ;; Define column width for auto-fill mode. 
+     :custom
+     (fill-column 60)
+     :config
+     ;; Respect de la typographie française par auto-fill mode.
+     ;; (setq fill-nobreak-predicate '(fill-french-nobreak-p))
+     ;; Set hook for exceptions to auto-fill-mode.
+     (add-hook 'fill-nobreak-predicate #'sync0-nobreak-p))
+  #+END_SRC
+
+* no-break-fade
+#+BEGIN_SRC emacs-lisp
+  (use-package nobreak-fade 
+  :straight nil
+  :after auto-fill 
+  :defer t
+  :load-path "~/.emacs.d/sync0/nobreak-fade.el" 
+    ;; :command nobreak-fade
+    :config
+    (autoload 'nobreak-fade-single-letter-p "nobreak-fade")
+    ;; (add-hook 'tex-mode-hook 'nobreak-fade)
+    (add-hook 'fill-nobreak-predicate 'nobreak-fade-single-letter-p))
+#+END_SRC
+
+* visual-line
+#+BEGIN_SRC emacs-lisp
+  (use-package visual-line
+    :straight nil
+    :defer t
+    :commands visual-line-mode
+    :hook 
+    ;; (mu4e-compose-mode . visual-line-mode)
+    (mu4e-view-mode . visual-line-mode) 
+    (mu4e-compose-mode . visual-line-mode))
+#+END_SRC
+
+* visual-fill-column
+#+BEGIN_SRC emacs-lisp
+  (use-package visual-fill-column
+    :straight nil
+    :commands visual-fill-column-mode
+    :hook 
+    (mu4e-view-mode . visual-fill-column-mode)
+    (mu4e-compose-mode . visual-fill-column-mode)
+    ;; (add-hook 'mu4e-view-mode-hook 'mu4e-view-fill-long-lines)
+    :config (setq visual-fill-column-width 60))
+#+END_SRC
+
+* rainbow-delimiters
+#+BEGIN_SRC emacs-lisp
+  (use-package rainbow-delimiters
+    :straight (rainbow-delimiters :type git :host github :repo "Fanael/rainbow-delimiters") 
+    :hook 
+    ((text-mode . rainbow-delimiters-mode)
+     (prog-mode . rainbow-delimiters-mode))
+    :custom
+    (rainbow-delimiters-max-face-count 3))
+  #+END_SRC 
+
+* paren
+Configure matching delimiters. Necessary to deal with elisp
+parenthesis.
+
+ #+BEGIN_SRC emacs-lisp
+(use-package paren
+ :straight nil
+:after evil
+:custom
+   (show-paren-delay 0.1)
+         (show-paren-highlight-openparen t)
+         ;; don't blink--too distracting
+         (blink-matching-paren nil)
+         (show-paren-when-point-inside-paren t)
+:config
+   (show-paren-mode 1))
+  #+END_SRC
+
+* smartparens 
+   Auto-close delimiters and blocks as you type
+
+#+BEGIN_SRC emacs-lisp
+(use-package smartparens
+    :straight (smartparens :type git :host github :repo "Fuco1/smartparens") 
+    :after evil
+    :hook 
+    ((emacs-startup . smartparens-global-mode)
+      (emacs-startup . show-smartparens-global-mode)
+     ;; Disable smartparens in evil-mode's replace state; they conflict.
+     (evil-replace-state-entry-hook . turn-off-smartparens-mode)
+     (evil-replace-state-exit-hook  . turn-on-smartparens-mode))
+    :custom
+    (sp-autowrap-region nil) ; let evil-surround handle this
+    (sp-highlight-pair-overlay nil)
+    (sp-cancel-autoskip-on-backward-movement nil)
+    (sp-show-pair-delay 0)
+    (sp-max-pair-length 3)
+    :config
+    (require 'smartparens-config)
+    (require 'smartparens-latex)
+
+
+(defhydra sync0-hydra-smart-parens (:hint nil)
+    "
+Sexps functions (_q_uit)
+^Nav^            ^Barf/Slurp^                 ^Depth^
+^---^------------^----------^-----------------^-----^-----------------
+_f_: forward     _→_:          slurp forward   _R_: splice
+_b_: backward    _←_:          barf forward    _r_: raise
+_u_: backward ↑  _C-<right>_:  slurp backward  _↑_: raise backward
+_d_: forward ↓   _C-<left>_:   barf backward   _↓_: raise forward
+_p_: backward ↓
+_n_: forward ↑
+
+^Kill^           ^Misc^                       ^Wrap^
+^----^-----------^----^-----------------------^----^------------------
+_w_: copy        _j_: join                    _(_: wrap with ( )
+_k_: kill        _s_: split                   _{_: wrap with { }
+^^               _t_: transpose               _'_: wrap with ' '
+^^               _c_: convolute               _\"_: wrap with \" \"
+^^               _i_: indent defun"
+
+    ("q" nil)
+    ;; Wrapping
+    ("(" (lambda (_) (interactive "P") (sp-wrap-with-pair "(")))
+    ("{" (lambda (_) (interactive "P") (sp-wrap-with-pair "{")))
+    ("'" (lambda (_) (interactive "P") (sp-wrap-with-pair "'")))
+    ("\"" (lambda (_) (interactive "P") (sp-wrap-with-pair "\"")))
+    ;; Navigation
+    ("f" sp-forward-sexp )
+    ("b" sp-backward-sexp)
+    ("u" sp-backward-up-sexp)
+    ("d" sp-down-sexp)
+    ("p" sp-backward-down-sexp)
+    ("n" sp-up-sexp)
+    ;; Kill/copy
+    ("w" sp-copy-sexp)
+    ("k" sp-kill-sexp)
+    ;; Misc
+    ("t" sp-transpose-sexp)
+    ("j" sp-join-sexp)
+    ("s" sp-split-sexp)
+    ("c" sp-convolute-sexp)
+    ("i" sp-indent-defun)
+    ;; Depth changing
+    ("R" sp-splice-sexp)
+    ("r" sp-splice-sexp-killing-around)
+    ("<up>" sp-splice-sexp-killing-backward)
+    ("<down>" sp-splice-sexp-killing-forward)
+    ;; Barfing/slurping
+    ("<right>" sp-forward-slurp-sexp)
+    ("<left>" sp-forward-barf-sexp)
+    ("C-<left>" sp-backward-barf-sexp)
+    ("C-<right>" sp-backward-slurp-sexp))
+
+(evil-leader/set-key
+  "S" 'sync0-hydra-smart-parens/body))
+
+#+END_SRC 
+
+* abbrev
+
+#+BEGIN_SRC emacs-lisp
+  (use-package abbrev
+    :straight nil
+    :custom
+    ;; Tell Emacs where to read abbrevs.  
+    (abbrev-file-name "~/.emacs.d/abbrev_defs")
+    ;; Save abbrevs when files are saved.
+    (save-abbrevs t)
+    ;; Don't notify when abbrevs are saved.
+    (save-abbrevs 'silently)
+    ;; Accept ' as a word constituent. 
+    (dabbrev-abbrev-char-regexp  "\\sw")
+    :config 
+    ;; Avoid errors when reading abbrev_defs.
+    (if (file-exists-p abbrev-file-name)
+        (quietly-read-abbrev-file))
+
+    ;; Avoid expansion character insertion. 
+    ;; Use this function on a per-abbrev basis.
+    ;; This is the "hook" function
+    (defun dont-insert-expansion-char ()  t) 
+    ;; The hook should have a "no-self-insert" property set 
+    (put 'dont-insert-expansion-char 'no-self-insert t) 
+
+    ;; Initialize abbrev-mode by default. 
+    (setq-default abbrev-mode t)
+
+    ;; Add abbrevs manually.
+    (defun sync0-define-local-abbrev (name expansion)
+      "Defines a new abbrev for current local abbrev table."
+      (interactive "sEnter abbrev:\nsEnter expansion:")
+      (when (and name expansion (not (equal name expansion)))
+        (define-abbrev local-abbrev-table name expansion)
+        (message "\"%s\" now expands to \"%s\" %sally"
+                 name expansion "loc")))
+
+    ;; Auto-update abbrev table on save.
+    (add-hook 'after-save-hook (lambda ()
+                                 (when (equal buffer-file-name "~/.emacs.d/abbrev_defs")
+                                   (read-abbrev-file)))))
+  #+END_SRC 
+
+* company-mode
+
+#+BEGIN_SRC emacs-lisp
+(use-package company
+;;        :straight (company :type git :host github :repo "company-mode/company-mode") 
+        :hook
+        (after-init . global-company-mode)
+        :custom
+                (company-idle-delay 0.1)
+                (company-minimum-prefix-length 2)
+                (company-tooltip-limit 5)
+                (company-tooltip-align-annotations t)
+                (company-require-match 'never)
+                (company-global-modes '(not erc-mode message-mode help-mode gud-mode))
+                (company-frontends '(company-pseudo-tooltip-frontend 
+                            company-echo-metadata-frontend))  
+                (company-backends '(company-capf))
+                (company-auto-complete nil)
+    :config
+;; Disable company-mode in bibtex-mode (clashes with yasnippets)
+ (add-hook 'bibtex-mode-hook (company-mode -1))
+
+    (defvar +company-backend-alist
+      '((text-mode company-capf  company-yasnippet company-org-roam)
+      ;; '((text-mode company-capf  company-yasnippet company-ispell company-org-roam)
+      ;; '((text-mode company-capf company-dabbrev company-yasnippet company-ispell company-org-roam)
+      ;;(text-mode company-capf company-yasnippet company-ispell company-bibtex)
+        (prog-mode company-elisp company-capf company-yasnippet)
+        (conf-mode company-capf company-dabbrev-code company-yasnippet))
+      "An alist matching modes to company backends. The backends for any mode is
+    built from this.")
+
+    (defun +company--backends ()
+      (let (backends)
+        (let ((mode major-mode)
+              (modes (list major-mode)))
+          (while (setq mode (get mode 'derived-mode-parent))
+            (push mode modes))
+          (dolist (mode modes)
+            (dolist (backend (append (cdr (assq mode +company-backend-alist))
+                                     (default-value 'company-backends)))
+              (push backend backends)))
+          (delete-dups
+           (append (cl-loop for (mode . backends) in +company-backend-alist
+                            if (or (eq major-mode mode)  ; major modes
+                                   (and (boundp mode)
+                                        (symbol-value mode))) ; minor modes
+                            append backends)
+                   (nreverse backends))))))
+
+    (defun doom-temp-buffer-p (buf)
+      "Returns non-nil if BUF is temporary."
+      (equal (substring (buffer-name buf) 0 1) " "))
+
+    (defun +company-init-backends-h ()
+      "Set `company-backends' for the current buffer."
+      (or (memq major-mode '(fundamental-mode special-mode))
+          buffer-read-only
+          (doom-temp-buffer-p (or (buffer-base-buffer) (current-buffer)))
+          (setq-local company-backends (+company--backends))))
+
+    (put '+company-init-backends-h 'permanent-local-hook t)
+
+    (add-hook 'after-change-major-mode-hook #'+company-init-backends-h 'append)
+
+    (defun sync0-config-prose-completion ()
+      "Make auto-complete less agressive in this buffer."
+      (setq-local company-minimum-prefix-length 4))
+
+    (add-hook 'text-mode-hook #'sync0-config-prose-completion))
+#+END_SRC 
+
+* company-bibtex
+ #+BEGIN_SRC emacs-lisp
+  (use-package company-bibtex
+:straight (company-bibtex :type git :host github :repo "gbgar/company-bibtex") 
+:disabled t
+:custom
+(company-bibtex-key-regex "[[:alnum:]+_]*")
+(company-bibtex-bibliography '("~/Dropbox/notes/bibliography.bib")))
+ #+END_SRC 
+
+* company-box
+#+BEGIN_SRC emacs-lisp
+  (use-package company-box
+    :straight (company-box :type git :host github :repo "sebastiencs/company-box") 
+    :hook (company-mode . company-box-mode)
+    :config
+    (setq company-box-show-single-candidate t
+          company-box-backends-colors nil
+          company-box-max-candidates 10
+          company-box-icons-alist 'company-box-icons-all-the-icons
+          company-box-icons-all-the-icons
+          (let ((all-the-icons-scale-factor 0.8))
+            `((Unknown       . ,(all-the-icons-material "find_in_page"             :face 'all-the-icons-purple))
+              (Text          . ,(all-the-icons-material "text_fields"              :face 'all-the-icons-green))
+              (Method        . ,(all-the-icons-material "functions"                :face 'all-the-icons-red))
+              (Function      . ,(all-the-icons-material "functions"                :face 'all-the-icons-red))
+              (Constructor   . ,(all-the-icons-material "functions"                :face 'all-the-icons-red))
+              (Field         . ,(all-the-icons-material "functions"                :face 'all-the-icons-red))
+              (Variable      . ,(all-the-icons-material "adjust"                   :face 'all-the-icons-blue))
+              (Class         . ,(all-the-icons-material "class"                    :face 'all-the-icons-red))
+              (Interface     . ,(all-the-icons-material "settings_input_component" :face 'all-the-icons-red))
+              (Module        . ,(all-the-icons-material "view_module"              :face 'all-the-icons-red))
+              (Property      . ,(all-the-icons-material "settings"                 :face 'all-the-icons-red))
+              (Unit          . ,(all-the-icons-material "straighten"               :face 'all-the-icons-red))
+              (Value         . ,(all-the-icons-material "filter_1"                 :face 'all-the-icons-red))
+              (Enum          . ,(all-the-icons-material "plus_one"                 :face 'all-the-icons-red))
+              (Keyword       . ,(all-the-icons-material "filter_center_focus"      :face 'all-the-icons-red))
+              (Snippet       . ,(all-the-icons-material "short_text"               :face 'all-the-icons-red))
+              (Color         . ,(all-the-icons-material "color_lens"               :face 'all-the-icons-red))
+              (File          . ,(all-the-icons-material "insert_drive_file"        :face 'all-the-icons-red))
+              (Reference     . ,(all-the-icons-material "collections_bookmark"     :face 'all-the-icons-red))
+              (Folder        . ,(all-the-icons-material "folder"                   :face 'all-the-icons-red))
+              (EnumMember    . ,(all-the-icons-material "people"                   :face 'all-the-icons-red))
+              (Constant      . ,(all-the-icons-material "pause_circle_filled"      :face 'all-the-icons-red))
+              (Struct        . ,(all-the-icons-material "streetview"               :face 'all-the-icons-red))
+              (Event         . ,(all-the-icons-material "event"                    :face 'all-the-icons-red))
+              (Operator      . ,(all-the-icons-material "control_point"            :face 'all-the-icons-red))
+              (TypeParameter . ,(all-the-icons-material "class"                    :face 'all-the-icons-red))
+              (Template      . ,(all-the-icons-material "short_text"               :face 'all-the-icons-green))
+              (ElispFunction . ,(all-the-icons-material "functions"                :face 'all-the-icons-red))
+              (ElispVariable . ,(all-the-icons-material "check_circle"             :face 'all-the-icons-blue))
+              (ElispFeature  . ,(all-the-icons-material "stars"                    :face 'all-the-icons-orange))
+              (ElispFace     . ,(all-the-icons-material "format_paint"            :face 'all-the-icons-pink))))))
+#+END_SRC 
+
+  (add-to-list 'company-box-frame-parameters '(tab-bar-lines . 0))
+
+* ispell 
+#+BEGIN_SRC emacs-lisp
+  (use-package ispell
+     :hook (text-mode . ispell-minor-mode)
+    :custom
+    ;; Save a new word to personal dictionary without asking
+    (ispell-silently-savep t)
+    ;; Set up hunspell dictionaries
+    (ispell-hunspell-dict-paths-alist
+     '(("en_US-large" "/usr/share/hunspell/en_US-large.aff")
+       ("de_DE" "/usr/share/hunspell/de_DE.aff")
+       ;; ("it_IT" "/usr/share/hunspell/it_IT.aff")
+       ("es" "/usr/share/hunspell/es.aff")
+       ("pt_BR" "/usr/share/hunspell/pt_BR.aff")
+       ("fr_FR" "/usr/share/hunspell/fr_FR.aff")))
+    :config 
+    ;; if hunspell does NOT exist, use aspell
+    (cond ((executable-find "hunspell")
+           (setq ispell-program-name "hunspell")
+           ;;(setq ispell-local-dictionary "en_US")
+           (setq ispell-local-dictionary-alist '(("en_US-large" "[[:alpha:]]" "[^[:alpha:]]" "['’-]" t ("-d" "en_US-large" ) nil utf-8)
+                                                 ("de_DE" "[[:alpha:]ÄÖÜéäöüß]" "[^[:alpha:]ÄÖÜéäöüß]" "['’-]" t ("-d" "de_DE") nil utf-8)
+                                                 ("es" "[[:alpha:]ÁÉÍÓÚÄËÏÖÜÑáéíóúäëïöüñ]" "[^[:alpha:]ÁÉÍÓÚÄËÏÖÜÑáéíóúäëïöüñ]" "['’-]" t ("-d" "es") nil utf-8)
+                                                 ("pt_BR" "[[:alpha:]a-zàáâãçéêíóôõúüA-ZÀÁÂÃÇÉÊÍÓÔÕÚÜ]" "[^[:alpha:]a-zàáâãçéêíóôõúüA-ZÀÁÂÃÇÉÊÍÓÔÕÚÜ]" "['-]" t  ("-d" "pt_BR") nil utf-8)
+                                                 ;; ("it_IT" "[[:alpha:]AEÉIOUàèéìòù]" "[^[:alpha:]AEÉIOUàèéìòù]" "['’-]" t ("-d" "it_IT") "~tex" nil utf-8)
+                                                 ("fr_FR" "[[:alpha:]ÀÂÇÈÉÊËÎÏÔÙÛÜàâçèéêëîïôùûü]" "[^[:alpha:]ÀÂÇÈÉÊËÎÏÔÙÛÜàâçèéêëîïôùûü]" "[’'-]" t ("-d" "fr_FR")  nil utf-8))))
+
+          ((executable-find "aspell")
+           (setq ispell-program-name "aspell")
+           ;; Please note ispell-extra-args contains ACTUAL parameters passed to aspell
+           (setq ispell-extra-args '("--sug-mode=ultra"))))
+
+    ;; This functions was borrowed from Artur Malabarba. See his discussion
+    ;; here:
+    ;; http://endlessparentheses.com/ispell-and-abbrev-the-perfect-auto-correct.html
+
+    ;; Ignore sections of files for spellcheck
+    (add-to-list 'ispell-skip-region-alist '(":\\(PROPERTIES\\|LOGBOOK\\):" . ":END:"))
+    (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_SRC" . "#\\+END_SRC"))
+    (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_EXAMPLE" . "#\\+END_EXEMPLE"))
+    (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_equation" . "#\\+END_equation"))
+    (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_labeling" . "#\\+END_labeling"))
+    (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_equation*" . "#\\+END_equation*"))
+    (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_align" . "#\\+END_align"))
+    (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_align*" . "#\\+END_align*"))
+    (add-to-list 'ispell-skip-region-alist '(org-property-drawer-re))
+    (add-to-list 'ispell-skip-region-alist '("\\$" . "\\$")))
+#+END_SRC 
+
+* flyspell
+ #+BEGIN_SRC emacs-lisp
+   (use-package flyspell 
+     :diminish flyspell-mode
+     :hook (text-mode . flyspell-mode)
+     :custom
+     (ispell-parser 'tex)
+     (flyspell-issue-message-flag nil))
+ #+END_SRC 
+
+* guess-language
+Emacs minor mode that detects the language you're typing in.
+Automatically switches spell checker. Supports multiple languages
+per document.
+
+#+BEGIN_SRC emacs-lisp
+      (use-package guess-language
+        :straight (guess-language :type git :host github :repo "tmalsburg/guess-language.el") 
+        :after ispell 
+        :hook (text-mode . guess-language-mode)
+        :init
+        (set-input-method nil)
+
+        (defvar sync0-language-active 'english
+          "Currently active natural language")
+
+        :custom
+        (guess-language-languages '(en fr es de pt))
+        (guess-language-min-paragraph-length 30)
+        (guess-language-langcodes
+         '((en . ("en_US-large" "english"))
+           ;; (it . ("it_IT" "italian"))
+           (pt . ("pt_BR" "portuguese"))
+           (de . ("de_DE" "german"))
+           (fr . ("fr_FR" "french"))
+           (es . ("es" "spanish"))))
+
+        :config 
+        (defun sync0-language-change (lang beginning end)
+          "Set of functions to run after a different language is detected."
+          (unless (string-equal guess-language-current-language lang)
+            (cond 
+             ((string-equal lang "es")
+              (progn
+                (setq sync0-language-active "spanish")
+                (setq local-abbrev-table spanish-mode-abbrev-table)
+                (set-input-method "spanish-prefix")
+                (ispell-change-dictionary "es")))
+             ((string-equal lang "de")
+              (progn
+                (setq sync0-language-active "german")
+                (setq local-abbrev-table german-mode-abbrev-table)
+                (set-input-method "german-prefix")
+                (ispell-change-dictionary "de_DE")))
+             ((string-equal lang "pt")
+              (progn
+                (setq sync0-language-active "portuguese")
+                (setq local-abbrev-table portuguese-mode-abbrev-table)
+                (set-input-method "portuguese-prefix")
+                (ispell-change-dictionary "pt_BR")))
+             ((string-equal lang "fr")
+              (progn
+                (setq sync0-language-active "french")
+                (setq local-abbrev-table french-mode-abbrev-table)
+                (set-input-method "french-prefix")
+                (ispell-change-dictionary "fr_FR")))
+             ((string-equal lang "en")
+              (progn
+                (setq sync0-language-active "english")
+                (setq local-abbrev-table english-mode-abbrev-table)
+                (set-input-method nil)
+                (ispell-change-dictionary "en_US-large"))))))
+
+    (defvar sync0-change-language-actions-alist
+      '((?1 "en" (lambda ()
+                (progn
+                  (setq  guess-language-current-language 'en)
+                  (setq sync0-language-active "english")
+                  (setq local-abbrev-table english-mode-abbrev-table)
+                  (set-input-method nil)
+                  (ispell-change-dictionary "en_US-large"))))
+        (?2 "es" (lambda ()
+              (progn
+                (setq  guess-language-current-language 'es)
+                (setq sync0-language-active "spanish")
+                (setq local-abbrev-table spanish-mode-abbrev-table)
+                (set-input-method "spanish-prefix")
+                (ispell-change-dictionary "es"))))
+        (?3 "pt" (lambda ()
+              (progn
+                (setq  guess-language-current-language 'pt)
+                (setq sync0-language-active "portuguese")
+                (setq local-abbrev-table portuguese-mode-abbrev-table)
+                (set-input-method "portuguese-prefix")
+                (ispell-change-dictionary "pt_BR"))))
+        (?4 "fr" (lambda ()
+              (progn
+                  (setq  guess-language-current-language 'fr)
+                (setq sync0-language-active "french")
+                (setq local-abbrev-table french-mode-abbrev-table)
+                (set-input-method "french-prefix")
+                (ispell-change-dictionary "fr_FR"))))
+        (?5 "de" (lambda ()
+              (progn
+                  (message "Deutsch ist die aktuelle Sprache")
+                  (setq  guess-language-current-language 'de)
+                (setq sync0-language-active "german")
+                (setq local-abbrev-table german-mode-abbrev-table)
+                (set-input-method "german-prefix")
+                (ispell-change-dictionary "de_DE")))))
+      "List that associates number letters to descriptions and actions.")
+
+    (defun sync0-change-current-language ()
+      "Lets the user choose the animal and takes the corresponding action.
+    Returns whatever the action returns."
+      (interactive)
+      (let ((choice
+             (read-char-choice
+              (mapconcat
+               (lambda (item) (format "[%c] %s" (car item) (cadr item)))
+               sync0-change-language-actions-alist " ")
+                      (mapcar #'car sync0-change-language-actions-alist))))
+        (funcall (nth 2 (assoc choice sync0-change-language-actions-alist)))))
+
+      (defun sync0-ispell-get-word ()
+        (car-safe (save-excursion (ispell-get-word nil))))
+
+      (defun sync0-ispell-word-then-abbrev ()
+        "Call `ispell-word', then create an abbrev for it.
+      With prefix P, create local abbrev. Otherwise it will
+      be global.
+      If there's nothing wrong with the word at point, keep
+      looking for a typo until the beginning of buffer. You can
+      skip typos you don't want to fix with `SPC', and you can
+      abort completely with `C-g'."
+        (interactive)
+        (let (bef aft)
+          (save-excursion
+            (while (if (setq bef (sync0-ispell-get-word))
+                       ;; Word was corrected or used quit.
+                       (if (ispell-word nil 'quiet)
+                           nil ; End the loop.
+                         ;; Also end if we reach `bob'.
+                         (not (bobp)))
+                     ;; If there's no word at point, keep looking
+                     ;; until `bob'.
+                     (not (bobp)))
+              (backward-word)
+              (backward-char))
+            (setq aft (sync0-ispell-get-word)))
+          (if (and aft bef (not (equal aft bef)))
+              (let ((aft (downcase aft))
+                    (bef (downcase bef)))
+    ;; (unless
+    ;;  (save-excursion
+    ;;   (with-temp-buffer
+    ;;    (insert-file-contents company-ispell-dictionary)
+    ;;    (goto-char (point-min))
+    ;;    (re-search-forward (concat "^" aft) nil t 1)))
+    ;;    (write-region (concat aft "\n") nil company-ispell-dictionary 'append))
+                (define-abbrev local-abbrev-table bef aft)
+                (message "\"%s\" now expands to \"%s\" %sally"
+                         bef aft "loc"))
+            (user-error "No typo at or before point"))))
+
+        (defun sync0-lookup-word (word)
+          "Search an online dictionary for the word at point according
+            to the active language minor mode."
+          (interactive (list (save-excursion (car (ispell-get-word nil)))))
+          (cond  ((string-equal guess-language-current-language "en") 
+                  (browse-url (format "https://www.merriam-webster.com/dictionary/%s" word)))
+                 ((string-equal guess-language-current-language "de") 
+                  (browse-url (format "https://www.duden.de/rechtschreibung/%s" word)))
+                 ((string-equal guess-language-current-language "pt") 
+                  (browse-url (format "https://www.dicio.com.br/%s" word)))
+                 ((string-equal guess-language-current-language "fr") 
+                  (browse-url (format "https://dictionnaire.lerobert.com/definition/%s#definitions" word)))
+                 ((string-equal guess-language-current-language "es") 
+                  (browse-url (format "https://dle.rae.es/?w=%s" word)))
+                 (t "No language minor mode specified")))
+
+        (defun sync0-lookup-conjugation (word)
+          "Search an online dictionary for the word at point according
+            to the active language minor mode."
+          (interactive (list (save-excursion (car (ispell-get-word nil)))))
+          (cond  ((string-equal guess-language-current-language "en") 
+                  (browse-url (format "https://www.merriam-webster.com/dictionary/%s" word)))
+                 ((string-equal guess-language-current-language "de") 
+                  (browse-url (format "https://www.verbformen.de/konjugation/?w=%s" word)))
+                 ((string-equal guess-language-current-language "pt") 
+                  (browse-url (format "https://www.conjugacao.com.br/verbo-%s/" word)))
+                 ((string-equal guess-language-current-language "fr") 
+                  (browse-url (format "http://la-conjugaison.nouvelobs.com/du/verbe/%s.php" word)))
+                 ((string-equal guess-language-current-language "es") 
+                  (browse-url (format "http://conjugador.reverso.net/conjugacion-espanol-verbo-%s.html" word)))
+                 (t "No language minor mode specified")))
+
+        (defun sync0-lookup-thesaurus (word)
+          "Search an online dictionary for the word at point according
+            to the active language minor mode."
+          (interactive (list (save-excursion (car (ispell-get-word nil)))))
+          (cond  ((string-equal guess-language-current-language "en") 
+                  (browse-url (format "https://www.merriam-webster.com/thesaurus/%s" word)))
+                 ((string-equal guess-language-current-language "fr") 
+                  (browse-url (format "https://dictionnaire.lerobert.com/definition/%s#synonymes" word)))
+                 ((string-equal guess-language-current-language "de") 
+                  (browse-url (format "https://www.duden.de/rechtschreibung/%s#synonyme" word)))
+                 ((string-equal guess-language-current-language "pt") 
+                  (browse-url (format "https://www.dicio.com.br/%s" word)))
+                 ((string-equal guess-language-current-language "es") 
+                  (browse-url (format "http://conjugador.reverso.net/conjugacion-espanol-verbo-%s.html" word)))
+                 (t "No language minor mode specified")))
+
+  (defun sync0-guess-language-set-parts-of-speech ()
+  "Choose parts of speech according to active language"
+  (let* ((parts-list (list ()))
+         (lang (prin1-to-string guess-language-current-language)))
+    (cond ((string-equal lang "es")
+           (progn
+           (setq parts-list sync0-spanish-parts-speech)
+            (ivy-completing-read "Elija uno: " parts-list)))
+          ((string-equal lang "pt")
+           (progn
+           (setq parts-list sync0-portuguese-parts-speech)
+            (ivy-completing-read "Escolha um: " parts-list)))
+           ((string-equal lang "fr")
+           (progn
+            (setq parts-list sync0-french-parts-speech)
+            (ivy-completing-read "Choississez un : " parts-list)))
+           ((string-equal lang "en")
+           (progn
+            (setq parts-list sync0-english-parts-speech)
+             (ivy-completing-read "Choose one: " parts-list)))
+                 (t "No language minor mode specified"))))
+
+        (defhydra sync0-hydra-language-functions (:color amaranth :hint nil :exit t)
+          "
+     ^Language functions^
+     ^^^------------------------
+     Show _d_efinition
+     Show _c_onjugation
+     Show in _t_hesaurus
+
+     _q_uit
+        "
+          ;; Quickly work with bookmarks
+          ("d" sync0-lookup-word)
+          ("c" sync0-lookup-conjugation)
+          ("t" sync0-lookup-thesaurus)
+          ("q"  nil :color blue))
+
+(evil-leader/set-key
+  "l" 'sync0-hydra-language-functions/body)
+
+        (add-hook 'guess-language-after-detection-functions #'sync0-language-change)
+
+        :bind (("M-#" . sync0-lookup-word)
+               ("M-i" . sync0-ispell-word-then-abbrev)
+               ("C-d" . sync0-hydra-language-functions/body)
+               ("M-$" . sync0-lookup-conjugation)))
+#+END_SRC 
+
+* 取 festival
+This package simply reads aloud text selections. If this functionality
+seems trivial, as an academic writer, it has proven quite useful. Use
+it to improve the /feel/ (cadence and rhythm) of your writing. 
+
+Caveat: Getting this package to work was a PITA; on top of the
+installation, you must rummage the internet for the voices. The
+default voices are just not usable. As an Arch Linux user, I found
+some quality voices in the AUR repositories.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package festival 
+    :straight nil
+    :disabled t
+    :defer t
+    :load-path "~/.emacs.d/sync0/" 
+    :commands say-minor-mode
+    :config
+    (autoload 'say-minor-mode "festival" "Menu for using Festival." t)
+    ;; (say-minor-mode t)
+
+    (defun sync0-festival-el () 
+      (interactive)
+      (festival-send-command '(voice_el_diphone)))
+
+    (defun sync0-festival-english-male () 
+      (interactive)
+      (festival-send-command '(voice_nitech_us_awb_arctic_hts)))
+
+    (defun sync0-festival-english-female () 
+      (interactive)
+      (festival-send-command '(voice_nitech_us_slt_arctic_hts)))
+
+    :bind (:map evil-visual-state-map 
+          ("s" . festival-say-region)))
+  #+END_SRC 
+
+* yasnippets
+#+BEGIN_SRC emacs-lisp
+    (use-package yasnippet 
+      :straight (yasnippet :type git :host github :repo "joaotavora/yasnippet") 
+      :config
+      (require 'sync0-yasnippet-bibtex)
+
+  ;; Fix conflict with Yasnippets
+  ;; See https://emacs.stackexchange.com/questions/29758/yasnippets-and-org-mode-yas-next-field-or-maybe-expand-does-not-expand
+  (defun yas-org-very-safe-expand ()
+    (let ((yas-fallback-behavior 'return-nil)) (yas-expand)))
+
+  (add-hook 'org-mode-hook
+        (lambda ()
+          (add-to-list 'org-tab-first-hook 'yas-org-very-safe-expand)
+          (define-key yas-keymap [tab] 'yas-next-field)))
+
+      :hook 
+      ((text-mode . yas-minor-mode)
+       (prog-mode . yas-minor-mode)
+       (mu4e-mode . yas-minor-mode)
+       (bibtex-mode . yas-minor-mode)))
+  #+END_SRC
+
+* 取 focus-mode
+  Focus provides focus-mode that dims the text of surrounding sections.
+  This mode is perfect for proofreading. Thus, don't abuse it when
+  writing drafts.  
+
+  The amount of dimness can be customized by setting the focus-dimness
+  variable, where a positive integer indicates a more dim color (i.e.
+  more blended with the background color of your theme), and a negative
+  integer indicates a less dim color.
+
+  #+BEGIN_SRC emacs-lisp
+  (use-package focus
+    :straight (focus :type git :host github :repo "larstvei/Focus") 
+    :commands focus-mode)
+  #+END_SRC 
+
+* 取 olivetti
+  Center text. It is unusable in split screen setups. 
+  #+BEGIN_SRC emacs-lisp
+
+    (use-package olivetti
+      :straight (olivetti :type git :host github :repo "rnkn/olivetti") 
+      :disabled 
+      :config
+  (defun sync0-text-mode-olivetti ()
+   (progn
+    (olivetti-set-width 60)
+   (olivetti-mode 1)))
+
+  (defun sync0-prog-mode-olivetti ()
+   (progn
+    (olivetti-set-width 80)
+   (olivetti-mode 1)))
+      :hook 
+      ((text-mode . sync0-text-mode-olivetti)
+       (prog-mode . sync0-prog-mode-olivetti)))
+
+  #+END_SRC 
+  
+* follow-mode 
+This mode allows the continuation of text in other buffers.
+It is useful, specially in smaller displays, when editing
+long texts to take advantage of screen real state to the
+maximum.
+
+#+BEGIN_SRC emacs-lisp
+(use-package follow-mode
+ :straight nil
+ :after org
+ :custom (follow-auto t)
+ :bind ("C-c f" . follow-delete-other-windows-and-split))
+  #+END_SRC 

@@ -1,0 +1,437 @@
+#+TITLE: Plaidoyer pour une histoire sociale des idées politiques
+#+AUTHOR: Frédérique Matonti
+#+CREATED: 2020/05
+#+DATE: 2021/01/26
+#+ROAM_KEY: cite:matonti2012
+#+ROAM_TAGS: historiography intellectual_history annotations matonti2012
+#+INTERLEAVE_DOCUMENT: /home/sync0/Documents/pdfs/Matonti_2012_Plaidoyer pour une histoire sociale des idées politiques.pdf
+
+Dans cet article Matonti décrit les apports de l’École de
+Cambridge, et surtout de Quentin Skinner, à l'étude des idées
+politiques. Ensuite, elle présente quelques travaux d'autres
+chercheurs pour suggérer une méthodologie qui puisse, à la
+différence de la méthode de Cambridge, prendre en compte les
+événements de l'histoire sociale et les structures sociales de la
+sociologie.
+
+Quoiqu'elle soit l’appellation choisie---« histoire sociale
+des idées politiques » ou « histoire culturelle du sociale
+»---Matonti pense que cet approche contribue à renouveler
+quelques questions en science politique parce qu'il se
+démarque des cours traditionnels qui présentent les
+l'histoire des idées (en droit, en science politique, en
+philosophie, etc.) sous la forme des questions pérennes.
+
+* 完 Introduction 
+- [[file:~/Dropbox/org/20210111135842.org][Comment dépasser le textisme de l'École de Cambridge]]
+- [[file:~/Dropbox/org/20210111135433.org][La conception des idées politiques dans matonti2012]]
+
+* 完 Une question de politiste
+
+- [[file:~/Dropbox/org/20210114021948.org][Les debats entre Lucien Febvre et Roger Chartier]]
+
+* 完 Skinner et la critique des «mythologies»
+** 20201217193824
+Matonti reconnaît la pertinences des apports de l'École de
+Cambridge---spécifiquement, de Quentin Skinner. Par exemple, elle
+mentionne les travaux de Skinner sur l'oublie de l'«idée
+républicaine de la liberté» en faveur des idées libérales de la
+liberté, telles que celles de Hobbes et de Isaiah Berlin.
+
+#+ATTR_LATEX: :options [{\cite[88]{matonti2012}}]
+#+BEGIN_displayquote
+Contre une histoire des idées téléologique menant à cette
+hégémonie, il s'agit donc de «retourner au point historique où
+cette façon de concevoir la politique fut d'abord mise en place et
+développée» \ldots 
+#+END_displayquote
+
+** 20200809193926
+En tant qu'historien des idées économiques, la citation antérieur
+de Matonti sert comme antidote à la croyance, malheureusement
+encore dominante parmi les économistes, que les idées auxquelles
+il vaut la peine de s'intéresser sont exclusivement celles
+d'aujourd'hui car elles sont censées d'être les vainqueurs dans un
+processus qui ressemble la sélection naturelle.
+
+** 20201217193949
+Ce qui est important de l’approche historiographique que Matonti
+développe dans cet article est sa conception des réseaux qui vont
+autour de la réception d'un ouvrage/idée. Ceux-ci sont nécessaires
+pour expliquer les circonstances qui résultent dans la
+prédominance d'une idée sur une autre à un «point historique»
+donné.[fn:1]
+
+#+ATTR_LATEX: :options [{\cite[88]{matonti2012}}]
+#+BEGIN_displayquote
+Ce faisant, Skinner s'oppose à ce qu'il appelle l'orthodoxie des
+années 1960 pour laquelle la seule recherche digne de ce nom
+portait sur « un canon de textes prétendument classiques»,
+considéré comme « [posant] une série de questions éternelles qui
+définissent la pensée politique elle-même».
+#+END_displayquote
+
+Dans la citation ultérieur Matonti décrit l'historiographie contre
+laquelle Skinner construit ses doctrines.
+
+** 20201217194005
+Matonti explique que la cible des critiques de Skinner est un
+certain nombre de mythologies :
+
+#+ATTR_LATEX: :options [:]{} 
+#+BEGIN_labeling
+\item[Mythologie des doctrines] C’est la projection des idées du
+présent dans le passé, par exemple, lorsque l'on cherche des
+«précurseurs». « /Tel auteur a anticipé tel doctrine./ »
+\item[Mythologie des extrapolations] C’est l'extrapolation des
+problèmes du présent aux auteurs du passé. « /Qu'est-ce que Hegel
+aurait pensée de l'internet ?/ »
+\item[Mythologie des anticipations] « /Montesquieu anticipa l'État
+providence./ »
+\item[Mythologie de la cohérence] C’est la quête de la cohérence
+dans la pensée d'un auteur, tout en passant sous silence des pans
+entier de son œuvre censés être incohérents ou maladroits.
+\item[Mythologie de la prolepse] C’est la substitution d'un sens
+rétrospectif à ce qui est signifié par l'auteur. « /Platon est un
+totalitaire./ »
+#+END_labeling
+
+** 20201217194015
+#+ATTR_LATEX: :options [{\cite[89]{matonti2012}}]
+#+BEGIN_displayquote
+En retournant aux «points historiques » où une théorie s'est
+imposée contre une autre, il est tout d'abord conduit à ne plus
+s'intéresser uniquement aux textes philosophiques canoniques qui
+ne sont plus qu'un élément parmi d'autres d'un discours politique
+plus vaste et changeant avec les circonstances---circonstances non
+pas historiques, mais linguistiques ou encore discursives, nous
+allons y revenir.
+#+END_displayquote
+
+Dans la citation ultérieur, Matonti loue l'approche de Skinner car
+il permet de se débarrasser du /textisme/ Whig, qui ne
+s'intéresserait qu'aux Grandes Livres et aux « prétendus»
+dialogues entre eux. Cet axe interprétatif permit à Skinner de
+s'intéresser à des supports très divers pour faire émerger un
+«contexte discursif» : pièces de théâtre, poésie, traités,
+caricatures, libelles, etc.
+
+** 20201217194553
+Par ailleurs, dans cette partie de l'article Matonti esquisse sa
+critique de Skinner : Elle pense que les « points historiques »
+doivent être expliquée en tenant en compte le contexte social et
+le contexte de la réception d'une œuvre. C'est-à-dire, le «succès»
+d'une idée ou d'un texte ne peut pas être expliqué juste en se
+rapportant au contexte discursif---ce que Skinner appelle, en
+suivant J. L. Austin et Searle, la «force illocutoire des
+textes» : la force/capacité d'une idée au-delà de son contenu
+prépositionnel de changer le monde .
+
+* 完 Intention, force illocutionnaire et analyse de contenu
+Pour Skinner, il faut d'abord considérer la «force
+illocutionnaire» d'un texte, c'est-à-dire l'intention de son
+auteur. Par intention Skinner n'entend pas l'intention qui précède
+l'action, laquelle est inconnaissable, mais « ce qu'il a voulu
+dire /en disant/ ce qu'il a dit ». Matonti mentionne que « cette
+attention aux conditions discursives amène à souligner ce que sa
+réception masque un peu», mais le signification de ce dernier
+énoncé m'échappe.
+
+#+ATTR_LATEX: :options {2020/06/17}
+#+BEGIN_note
+Réviser les textes de Skinner, Spitz et de Gautier que Matonti
+mentionne dans la note de bas de page 29.
+#+END_note
+
+Matonti mentionne que Skinner put mettre au jour l'évolution dans
+la pensée de Hobbes car il «aborde la théorie politique de Hobbes
+[\ldots] dans sa dimension politique très concrète d'intervention
+polémique dans les conflits idéologiques de son temps ». Ainsi,
+Skinner restitue-t-il les argumentaires (oubliés) auxquels répond
+Hobbes dans chacun de ses livres. 
+
+#+ATTR_LATEX: :options {2020/06/17}
+#+BEGIN_note
+Une chose pareille pourrait être faite pour Louis Blanc,
+c'est-à-dire, on peut restituer les débats concrets auxquelles il
+répond. Un premier exemple serait cite:marco_mihaylova2016, mais
+il ne raconte que ce qui s'est passé et il ne rentre pas
+profondément dans les argumentaires ni dans l'histoire des
+polémiques.
+#+END_note
+
+C'est cette attention à la «force illocutionnaire»---c'est-à-dire,
+à l'intention ainsi définie : ``in doing x, the author intends
+\ldots''---qui permet de mener à bien une analyse de contenu.
+
+Ensuite, Matonti mentionne les travaux de l'historien de l'art
+Michaël Baxandall, lequel suppose qu'il « existe une affinité
+entre certaines formes picturales et certaines formes de pensée »,
+pour rendre plus concret le concept de « contexte discursif».
+Spécifiquement, Baxandall considère que les tableaux sont des
+*objets intentionnels*, mais lorsqu'il recourt aux intentions pour
+expliquer un tableau, il ne se réfère pas aux états psychologiques
+du peintre. Plutôt, il pense que l'intention est un *attribut du
+tableau*. Pour Baxandall le tableau est une suite de moments
+intentionnels, ou une suite de prises des décisions visant à
+résoudre différents problèmes.
+
+#+ATTR_LATEX: :options [{\cite[91]{matonti2012}}]
+#+BEGIN_displayquote
+Tandis que l'intention ainsi définie est comparable au « /in x-ing/
+», les conditions d'apparition (genres picturaux et savoir-faire)
+le sont au contexte discursif, l'ensemble permettant de faire
+sentir ce que l'on gagne à la fois en renonçant au mentalisme et
+en se demandant quelles sont les options discursives, théoriques
+et/ou esthétiques possibles dans une configuration
+historico-politique donnée.
+#+END_displayquote
+
+#+ATTR_LATEX: :options {2020/08/09}
+#+BEGIN_note
+Ce que j'en comprends c’est que pour faire une interprétation d'un
+acte concret (et, peut-être, davantage lorsqu'il s'agit d'un acte
+révolutionnaire), il faut se demander pourquoi un auteur a fait
+«x» et non «y».
+#+END_note
+
+Dans cette citation, Matonti explique la position de Baxandall,
+pour lequel le recours aux intentions se réfère à la compréhension
+des *conditions d'apparition* des tableaux---les genres picturaux,
+les savoir-faire, et d'autres choses incorporés dans le tableau.
+Ensuite, Matonti donne un exemple de la méthode de Baxandall, en
+présentant le commentaire de cet auteur du tableau /Une dame qui
+prend du thé/ de Chardin. Même si les peintures ne sont pas de
+«formes conceptuelles exactes», elles ne sont pas non plus de
+pensées qualité inférieure à celles de la philosophie ou la
+science : Les peintres ne sont pas coupées de l'appareil
+conceptuel de leur époque.
+
+Après, Matonti mentionne la tentative de Baxandall de rapprocher
+le contenu de ce tableau avec les idées de Newton et de Locke sur
+la perception, la couleur, et l'optique. 
+
+#+ATTR_LATEX: :options [{\cite[93]{matonti2012}}]
+#+BEGIN_displayquote
+Chardin aurait donc peint l'«histoire d'une expérience
+perceptive». Et c'est en cela qu'/Une dame qui prend du thé/ est un
+tableau «lockien», sans qu'il y ait une «relation directe» entre
+le tableau et l'œuvre, mais au sens où  ils  s'inscrivent l'un et
+l'autre dans « un (même) ensemble d'idées». 
+#+END_displayquote
+
+* 完 Du « point historique » au moment critique 
+Malgré l'importance des apport de l'approche de Skinner à
+l'analyse des idées politiques, Matonti pense qu'il est limité à
+cause de son rapport à la philosophie analytique et de son
+désintérêt aux *facteurs sociaux*. En prenant comme exemple les
+travaux de Skinner sur Hobbes, Matonti critique l'absence de
+références aux « bouleversements des *rapports* entre les *diverses
+fractions de l'aristocratie* » dans l'explication du triomphe de la
+théorie de la liberté de Hobbes dans l’Angleterre du \sie{17}
+siècle. En fait, Skinner préfère de l'expliquer en se référant à
+la force illocutionnaire des textes et à leur évocation dans des
+commentaires ultérieurs.
+
+Pour remédier aux limites de cet approche, Matonti cite quelques
+travaux qui pourrait donner des pistes. Premièrement, elle cite
+ceux en /Science and Technology Studies/ de Dominique Lecourt sur
+les « fausses sciences».
+
+#+ATTR_LATEX: :options {2020/08/09}
+#+BEGIN_note
+Probablement, Matonti choisit cet exemple car, dans le cas du
+lyssenkisme, le contexte politique a fortement déterminé le succès
+d'une théorie dans le champs scientifique et d'un groupe de
+scientifiques qui se ralliait autour d'elle.
+#+END_note
+
+#+ATTR_LATEX: :options [{\cite[95]{matonti2012}}]
+#+BEGIN_displayquote
+En effet, il s’avère nécessaire de prendre en compte le temps,
+l'événement et surtout le rapport entre crises politiques et
+productions d'idées politiques.
+#+END_displayquote
+
+Au rebours des approches méthodologiques qui supposent que les
+idées font ou précédent l'/événement/, Matonti discute les travaux
+de *Timothy Tacket*. Cet auteur pense que la radicalisation de la
+Révolution Française ne peut pas s'expliquer par les idées des
+Lumières car ceux-ci étaient à la fois mal connus et vaguement
+soutenus par les écrivains de l'Ancien Régime. Dans ce sens,
+l'objectif de Tacket dans son étude est d'identifier la série
+d'événements qui, en radicalisant les députés suite à leur arrivée
+à Versailles, résulta dans l'autoproclamation de l'«Assemblée
+nationale». Quant à son livre /Le roi s'enfuit/, Tacket s'y
+intéresse plutôt aux gouvernés qu'aux gouvernants, en étudiant
+comment les idées politiques furent réappropriées par des citoyens
+ordinaires après la fuite de Louis XVI. Ainsi l'auteur essaie-t-il
+d'expliquer l’appropriation des idéaux républicains par un peuple
+encore étroitement attaché au roi et à la monarchie.
+
+Ensuite, Matonti mentionne le livre /La sociologie des crises
+politiques/ de Michel Dobry pour aider à penser comment les «
+échanges de coups» dans l'/événement/ contribuent à jouer contre les
+/causes/, les /déterminants/, et les /pré-conditions/.
+
+De ces différents travaux, Matonti conclue que en mobilisant les
+approches de Tackett, de Dobry et de *Bourdieu* (spécifiquement, ses
+analyses dans /Homo Academicus/), il devient possible d'étudier les
+*configurations* dans les « *champs* » qui conduisent à
+reproblématiser les discours anciens, devenant ainsi matrices de
+production ou de réarrangements d'idées politiques.
+
+#+ATTR_LATEX: :options [{\cite[98]{matonti2012}}]
+#+BEGIN_displayquote
+On peut de la même manière raisonner en reprenant la définition,
+par Alban Bensa et Éric Fassin, de l'événement comme une «rupture
+d'intelligibilité». En effet, par sa «puissance séparatrice» (par
+exemple, l'arrivé du capitaine Cook à Hawaï), un événement
+«rééchelonne la temporalité» et bouleverse les rapports à la
+mémoire, aux possibles, parfois jusqu'à instaurer un nouveau
+calendrier (l’avènement du Christ).
+#+END_displayquote
+
+#+ATTR_LATEX: :options {2020/08/09}
+#+BEGIN_note
+Je ne comprends pas ce que Matonti veut dire par là, mais celle-ci
+me semble une citation importante. J'en retiens qu'il faut tenir
+en compte qu'il existe des événements qui créent des ruptures dans
+le sens ou ils marquent un avant et un après dans les cadres
+d'intelligibilité des générations futurs---compte tenu que, le plus
+souvent, l'expérience des ceux qui y sont «présents» et leurs
+souvenirs de l'événement contraste avec l'expérience des
+commentaires. En revanche, c’est souvent le prestige des derniers
+à l'intérieur d'un champ, et la position de ce champ dans un bloc
+de pouvoir (pourrait-on dire le champ du pouvoir ?). 
+#+END_note
+
+Ensuite, Matonti donne un exemple de l'importance du Mai 68, en
+tant qu'/événement/, pour le développement de la pensée féministe de
+la seconde vague. Par exemple, elle cite le cas de Christine
+Delphy, un penseur féministe qui s'est nourrie de quelques
+pratiques militantes au sein des différents groupes de gauche à
+cette époque. Néanmoins, Matonti cautionne contre l'articulation
+mécanique entre idées politiques et événements : les idées ne
+causent pas l’événement, ni l'événement cause les idées.
+
+#+ATTR_LATEX: :options {filer} {verb}
+#+BEGIN_definition
+Transformer en fil (une matière textile).
+
+[Littéraire] /Filer une métaphore/, la développer longuement.
+\tcblower
+Filer de la laine.
+#+END_definition
+
+* 完 L'impératif sociologique 
+Compte tenu du grand nombre de personnes (et de professions)
+qu'aujourd’hui contribue à la production des idées, Matonti
+souligne l'importance de «faire une sociologie fine» des groupes
+sociaux qui les produisent : On ne peut plus se limiter aux
+clercs, philosophes et écrivains. Contre l'idée hayekienne d'une
+césure entre les «vrais» producteurs d'idées et les «second-hand
+dealers in ideas», Matonti, en citant Skinner, s'oppose à la
+césure entre producteurs et diffuseurs d'idées.footcite:hayek1949
+
+Ensuite, Matonti esquisse une possible histoire sociale du
+structuralisme. Pour rendre compte de la réception des bouquins et
+de la transformation des idées, il faudrait s'intéresser aux pères
+fondateurs (Lévi-Strauss, Lacan, Jakobson) et à ceux qui sont pris
+comme leurs successeurs, de même qu'aux éditeurs, éditorialistes
+et chroniqueurs. Matonti cite comme exemple de ce principe le rôle
+des «médiateurs» dans la réception française du livre /Théorie de
+la littérature/ (1965).
+
+#+ATTR_LATEX: :options [{\cite[100]{matonti2012}}]
+#+BEGIN_displayquote
+\ldots l'abondante réception critique de /Théorie de la littérature/
+(1965) permet de montrer la circulation d'un support à l'autre et
+la manière dont se construit collectivement [\ldots] une théorie,
+politique, ou non. Cet ouvrage paru au Seuil en 1966 rassemble
+pour la première fois des écrits des formalistes russes et les
+présente comme l'une des sources principales de la linguistique
+structurale. C'est, entre autres, François Wahl, éditeur au Seuil,
+qui rend compte du texte dans le premier numéro de /La Quinzaine
+littératie/ et Gérard Genette, par ailleurs, collaborateur de
+/Critique/, qui le chronique dans /Le Nouvel Observateur./
+#+END_displayquote
+
+Par conséquent, Matonti remarque l'importance d'une *sociologie de
+la réception*, laquelle serait attentive aux intellectuels, revues,
+journalistes, éditeurs, émissions de télévision, etc., pour écrire
+une histoire de idées politiques. Pour donner quelques pistes du
+contenu de cette sociologie à venir, Matonti fournit deux exemples
+de cette «sociologie des producteurs et des intermédiaires» : La
+première est la démarche de Max Weber dans son livre /La sociologie
+du droit/, dans lequel il explique le contenu et les différentes
+formes de droit en analysant les enchevêtrements entre la
+religion, l'économie, les formes de domination et le rôle des
+professionnels du droit. Comme seconde piste, elle cite les
+analyses de Bourdieu dans /Les règles de l'art/ et dans /L'ontologie
+politique de Martin Heidegger/. Dans ces œuvres, Bourdieu raisonne
+en termes de champs et d'autonomie des champs pour expliquer les
+prises de positions d'un producteur d'idées comme le résultat
+d'une configuration intellectualo-politique (et non pas «le simple
+effet des positions sociales»). C'est intéressant que Matonti
+remarque que cette sociologie est destinée à être la cible des
+critiques de ceux qui n'admettent qu'une analyse interniste de
+l'œuvre.
+
+* 見 Conclusion : Une « création » collective 
+
+En conclusion, Matonti prône la prise au sérieux des chaînes des
+producteur et des intermédiaires dans la construction des idées
+politiques. Matonti cite le livre /Les mondes de l'art/ de Howard
+Becker pour comparer, avec toutes les implications
+méthodologiques, les productions artistiques aux production
+discursives. La raison de cette comparaison est que Matonti voit
+une possibilité d'appliquer à l'étude des idées politiques
+quelques idées développés dans les analyses des ouvres d'art. Par
+exemple, de même que, d'après l'idée d'Atoine Hennion, la
+partition est une représentation imparfaite d'une composition, les
+idées politiques sont aussi toujours imparfaitement matérialisées
+sous formes d'objets tels que les livres, les programmes
+politiques, les symboles, les architectures civiques, etc.
+
+Par ailleurs, la tâche d'une histoire sociale des idées politiques
+serait de prendre en compte tous ceux qui contribuent à la
+production d'une idée politique, allant de l'auteur au militant et
+du texte philosophique aux chansons, films et revues. La
+justification de ce démarche est que l'œuvre porte toujours des
+*traces de cette coopération*.
+
+
+#+ATTR_LATEX: :options [{\cite[102]{matonti2012}}]
+#+BEGIN_displayquote
+C'est aussi ce qui permet de comprendre comment une théorie
+s'infléchit au fur et à mesure de sa réception et de son adoption
+par des groupes de plus en plus nombreux et de plus en plus
+éloignés du monde académique ou, plus généralement, de plus en
+plus à distance du groupe des pairs de ceux qui l'ont produite.
+#+END_displayquote
+
+En citant l'idée de Becker selon laquelle l'œuvre a des
+*conventions communes* et des *contraintes institutionnelles*, Matonti
+remarque qu'il faut en trouver l'équivalent pour les idées
+politiques. Finalement, Matonti fait une remarque sur l'histoire
+du structuralisme et le regroupement à cette époque de quelques
+pratiques discursives telles que le féminisme, le gauchisme et le
+textualisme, en mentionnant une reformulation des identités et une
+crise, mais je ne comprends pas la signification de cette
+remarque.
+
+#+ATTR_LATEX: :options {2020/08/12}
+#+BEGIN_question
+Comment puis-je interpréter mon propre projet de recherche en
+termes de contraintes et de conventions ?
+#+END_question
+
+\printbibliography[title=Bibliographie]
+
+* Footnotes
+
+[fn:1] Par «point historique», Skinner se réfère au moment où une
+théorie réussie à s'imposer sur une autre.
+
+

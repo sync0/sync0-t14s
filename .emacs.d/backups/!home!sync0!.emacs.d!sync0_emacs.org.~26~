@@ -1,0 +1,939 @@
+#+TITLE: Emacs Settings
+#+AUTHOR: sync0
+#+EMAIL: cantorlunae@gmail.com
+# Necessary to export code from Emacs org mode to elisp. 
+#+PROPERTY: header-args :tangle yes
+
+
+* Introduction 
+This is my Emacs configuration file. As the sloppy code herein
+attests, I am not a proficient programmer. I use Emacs primarily
+for taking notes and writing academic articles, so these settings
+reflect that usage.  
+
+The functions prefixed by ~sync0~ are not necessarily my creations;
+this is just the placeholder I use to distinguish them from Emacs
+and other packages' native functions. I would like to credit the
+authors of all borrowed functions, but I don't do this
+consistently because writing such precise documention is too time
+consuming.
+
+Since I am such a lousy programmer, many parts of this
+configuration have been borrowed from more proficient programmers.
+Although I am trying hard to tidy up the documentation for this
+file, my limited programming literacy prevents me from better
+explaining the functioning of borrowed code sections. Therefore,
+in certain packages that I rarely use, there are vast passages of
+orphan and undocumented code. Furthermore, since writing
+documentation is so time consuming, I don't update it frequently.
+
+Should you have any suggestions for improving the code, I would
+greatly appreciate if you sent me an email.
+
+** 無 For Tyros
+Emacs is too complex; accept that you will never learn /all/ of it.
+
+I suggest you learn enough Emacs for your daily needs, and then
+begin from there. I have been using Emacs for years, and I still
+learn something new whenever I take the time to check what other
+users are doing with their setup. Once, it even happened that I
+asked an Emacs related question on a forum, and a twenty-plus-year
+Emacs veteran was surprised to see my discussion of a useful, but
+little known function that he had never heard of. As you could
+glance from the introduction to this file, I am not a programmer,
+and my coding skills are very limited. As an academic historian,
+my needs differ from those of most Emacs users, and this very
+specific usage reflects on my configuration. Briefly, my advice to
+you, oh tyro, is: Learn the Emacs you need, learn from those
+better than you, and remember that each user's configuration is
+very personal and reflects their specific needs.
+
+One thing I could never like about vanilla Emacs is its lack of
+usability. Some users might disagree, but I believe that if it
+wasn't for its extensibility, Emacs would be inferior to the
+competition. As a treat to tyros, I have tried to highlight those
+packages that I consider an absolute must: Without these, Emacs
+would drive me crazy.
+
+In my honest opinion, no matter what you do with Emacs, you should
+have the following installed:
+
+- ~org~ (the reason I started using Emacs).
+- ~evil~ (yes! Vim keybindings are way better)
+- ~doom-themes~ (vanilla Emacs is just too ugly.)
+- ~doom-modeline~ (looks good with doom-themes)
+- ~counsel~ (improved versions of useful commands)
+- ~ivy~ (completion frontend. Alternatively, you could use ~helm~)
+- ~hydra~ (the only sane method for dealing with keybindings in Emacs.)
+- ~saveplace~ (good luck finding your way around files otherwise)
+- ~smooth-scrolling~ (yeah; default scrolling is /that/ bad.)
+- ~rainbow-delimiters~ (good luck editing those pesky parentheses otherwise)
+- ~smartparens~ (same as above)
+- ~pdf-tools~ (not a must, but comes in handy sometimes)
+- ~google-this~ (not a must, but since everyone uses google these days,
+  why not?)
+ 
+** Organization
+I configure Emacs with a single file: ~init.org~. This is the file
+you are reading. The only thing not included in this file are
+snippets, Github packages, and the like. Those you have to find
+yourself, but, where possible, I have tried to provide links.
+
+Although there are more learned discussions about the organization
+of the Emacs configuration, let me summarize them by saying that
+to the best of my knowledge, there are roughly two ways to go
+about this: You either have myriad ~foo.el~ files with different
+parts of your configuration that you then call upon when necessary
+(i.e., ~(require 'foo)~), or you have one massive ~org-mode~ file with
+src blocks that are then extracted (i.e., ~(org-babel-tangle-file)~)
+into a massive ~foo.el~ file.
+
+I won't get into the advantages and disadvantages of these two
+approaches, but, at this point, I will only mention that the
+former approach was the dominant until after the development of
+~org-mode~ by Carsten Dominik in 2003.
+
+Since org-mode is the single reason I decided to embark into
+Emacs, I naturally embraced the latter approach. Nonetheless, as
+my configuration grew bigger, my elisp skills stagnated, and my
+laptop grew older, I decided to tweak that approach to combine the
+best of both worlds. My approach to organizing Emacs is a middle
+path that attempts to combine the benefits of the two.
+
+Essentially:
+- ~snippets~
+- ~sync0~
+- ~sync0_git~
+  
+** Tips
+Before presenting the code, I have compiled a few tips that you
+might find useful for setting up Emacs:
+
+ - In Org mode, ~<s + tab~ creates a code block. To make it
+   executable, add the words ~emacs-lisp~ to the first line, right
+   after ~#+BEGIN_SRC~.
+ - The location for hunspell dictionaries should be in
+   /usr/share/hunspell. Otherwise, an error arises that I have
+   been unable to solve, even when declaring the path.
+  
+* Initialization 
+
+These settings are necessary to load Emacs packages and the rest
+of my configuration, so they must be placed in the beginning of
+this file.
+
+** Package manager (straight.el)
+These settings configure the Emacs package manager and the package
+repositories.
+
+#+BEGIN_SRC emacs-lisp
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 5))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+
+(straight-use-package 'use-package)
+
+  (setq straight-use-package-by-default t)
+#+END_SRC
+
+** use-package
+[[https://github.com/jwiegley][jwiegley's]] ~use-package~ macro simplifies package configuration in
+the ~.emacs~ startup file for faster startup and easier
+organization. Since I use a single org-mode file for configuring
+Emacs, ~use-package~ provides a nice way to keep everything
+organized.
+
+The alternative way to organize your Emacs configuration is by
+having separate ~whatever-package.el~ files, and calling them when
+needed. Although many seasoned users continue organizing their
+configurations this way, I find it too cumbersome to be worth the
+trouble. The only reason I can think for keeping to the old way is
+if you want to have your configuration rely on the least number of
+external dependencies or if your single configuration file cannot
+be handled by your current machine.
+
+Remember that the ~:disabled~ keyword only disables the use-package
+configuration. If you want to prevent a package from loading, it
+is necessary to add it, as in ~(unwanted-package nil)~, to the list
+~package-load-list~. See above for the code.
+
+   #+BEGIN_SRC emacs-lisp
+    (eval-when-compile
+      ;; Activate "use-package". 
+      (require 'use-package))
+    ;; Necessary to shorten mode line package names with ":diminish".
+   ;; (require 'diminish)               
+    ;; Necessary to allow use-package to bind keys through ":bind" keyword.
+    (require 'bind-key)
+
+    (setq use-package-verbose t)
+   #+END_SRC
+
+ Setting the following variable is necessary to avoid a strange
+ error downloading packages from the gnu archive. After this bug
+ is solved, setting this explicitly might be unnecessary.
+
+See https://www.reddit.com/r/emacs/comments/cdei4p/failed_to_download_gnu_archive_bad_request/
+   #+BEGIN_SRC emacs-lisp
+   (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
+   #+END_SRC
+
+** Tangling
+This code sets up tangling to byte-compile the /init.org/ file
+automatically on save. Byte compiling this file speeds up Emacs on
+startup. Likewise, when byte-compiling, Emacs displays whether
+there are any errors or warnings, which simplifies debugging.
+
+# Verify that current buffer is visiting my Emacs configuration
+# file.
+
+There is an issue with recent versions of use-package that
+are unable to load correctly when the file is byte-compiled.
+For this reason, I was forced to avoir byte-compiling my
+~init.el~ file. 
+
+#+BEGIN_SRC emacs-lisp
+  (with-eval-after-load 'org
+  (defun sync0-export-tangle ()
+    "Shortcut for exporting and tangling the current org-mode buffer."
+    (when (equal (buffer-file-name)
+                 (expand-file-name 
+                  (concat user-emacs-directory "sync0_emacs.org")))
+      (let*  ((contents (progn (org-org-export-as-org)
+                               (with-current-buffer "*Org ORG Export*"
+                                 (buffer-string))))
+              (exported-file (make-temp-file "to-tangle-" nil ".org" contents))
+              (tangled-file (car (org-babel-tangle-file exported-file))))
+                 (with-temp-buffer 
+                   (insert-file-contents tangled-file)
+                   (write-file "init.el")))))
+
+    (add-hook 'after-save-hook 'sync0-export-tangle))
+
+  ;; (with-eval-after-load 'org
+  ;; (defun sync0-export-tangle ()
+  ;;   "Shortcut for exporting and tangling the current org-mode buffer."
+  ;;   (when (equal (buffer-file-name)
+  ;;                (expand-file-name 
+  ;;                 (concat user-emacs-directory "sync0_emacs.org")))
+  ;;     (let*  ((contents (progn (org-org-export-as-org)
+  ;;                              (with-current-buffer "*Org ORG Export*"
+  ;;                                (buffer-string))))
+  ;;             (exported-file (make-temp-file "to-tangle-" nil ".org" contents))
+  ;;             (tangled-file (car (org-babel-tangle-file exported-file))))
+  ;;                (with-temp-buffer 
+  ;;                  (insert-file-contents tangled-file)
+  ;;                  (write-file "init.el")
+  ;;                (byte-compile-file "init.el")))))
+
+  ;;   (add-hook 'after-save-hook 'sync0-export-tangle))
+#+END_SRC
+
+* Configuration
+The following settings are my Emacs configuration.
+
+First, add to ~load-path~ the folder that houses my configuration. 
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'load-path (concat user-emacs-directory "sync0/"))
+#+END_SRC
+
+** Sane defaults
+
+   Define user information.
+ #+BEGIN_SRC emacs-lisp
+    (setq user-full-name "Carlos Alberto Rivera Carreño"
+ ;; Define my Dropbox location
+          sync0-dropbox-directory "~/Dropbox/"
+          user-mail-address "carc.sync0@gmail.com")
+ #+END_SRC
+
+ Configure bookmarks.  
+ #+BEGIN_SRC emacs-lisp
+ ;; Bookmarks directory
+ (setq bookmark-default-file (concat user-emacs-directory "bookmarks")
+       bookmark-save-flag 1)
+ #+END_SRC
+
+Configure autosave.
+ #+BEGIN_SRC emacs-lisp
+ (setq auto-save-interval 100
+       auto-save-timeout 60)
+ #+END_SRC
+
+   Configure CUSTOM
+ #+BEGIN_SRC emacs-lisp
+ (use-package custom
+   :straight nil
+   :custom
+   ;; Allow automatic theme changing 
+   (custom--inhibit-theme-enable nil)
+   ;; (custom-enabled-themes  (quote (doom-flatwhite)))
+   :config
+   ;; Set CUSTOM directory.
+   (setq custom-file (expand-file-name "custom_settings.el" user-emacs-directory))
+   ;; Default settings for all themes.
+  (custom-theme-set-faces 'user
+                          `(org-default ((t (:family "Minion Pro" :weight normal :height 1.0))))
+                          `(org-link ((t (:inherit org-default :underline t))))
+                          `(org-ref-cite-face ((t (:inherit org-link)))) 
+                          `(org-footnote ((t (:family "Minion Pro" :height 0.8 :weight normal))))
+                          `(org-document-info ((t (:family "Myriad Pro" :height 1.1))))
+                          `(org-document-title ((t (:inherit org-document-info))))
+                          `(org-level-1 ((t (:family "Myriad Pro" :height 1.2 :weight bold))))
+                          `(org-level-2 ((t (:family "Myriad Pro" :height 1.1 :weight normal))))
+                          `(org-level-3 ((t (:family "Myriad Pro" :height 1.0 :weight semi-bold)))) 
+                          `(org-level-4 ((t (:family "Myriad Pro" :height 1.0 :weight normal)))) 
+                          `(org-level-5 ((t (:family "Myriad Pro" :height 0.9 :weight semi-bold)))) 
+                          `(org-level-6 ((t (:family "Myriad Pro" :height 0.9 :weight normal)))) 
+                          `(org-meta-line ((t (:family "Inconsolata" :height 0.95 :slant normal :inherit fixed-pitch)))) 
+                          `(org-document-info-keyword ((t (:inherit org-meta-line))))
+                          `(org-special-keywords ((t (:inherit org-meta-line))))
+                          `(org-drawer ((t (:inherit org-meta-line)))) 
+                          `(org-property-value ((t (:inherit org-meta-line)))) 
+                          `(org-ellipsis ((t (:family "Fira Code" :underline nil :box nil)))) 
+                          ;; `(org-hide ((t (:family "Symbola" :weight bold)))) 
+                          ;; `(org-indent ((t (:inherit org-hide)))) 
+                          `(org-date ((t (:family "Inconsolata" :height 0.95))))
+                          `(org-agenda-date ((t (:family "Minion Pro" :weight normal :height 1.5))))
+                          `(org-agenda-date-weekend ((t (:inherit org-agenda-date))))
+                          `(org-agenda-date-today ((t (:family "Minion Pro" :weight normal :height 1.5 :slant italic))))
+                          `(org-agenda-structure ((t (:family "Minion Pro" :weight normal :height 2.0))))
+                          `(org-scheduled ((t (:weight normal :slant normal))))
+                          `(org-scheduled-today ((t (:family "Inconsolata" :weight normal :slant normal))))
+                          `(org-scheduled-previously ((t (:family "Inconsolata" :weight normal :slant normal))))
+                          `(org-upcoming-deadline ((t (:inherit org-scheduled-previously))))
+                          `(org-agenda-diary ((t (:family "Inconsolata" :inherit fixed-pitch))))
+                          `(org-agenda-done ((t (:strke-through t :inherit fixed-pitch))))
+                          `(org-table ((t (:family "Inconsolata" :height 0.95 :inherit fixed-pitch))))
+                          `(org-block ((t (:family "Inconsolata" :height 0.95 :inherit fixed-pitch :background nil))))
+                           `(org-block-begin-line ((t (:inherit org-block :weight bold))))
+                           `(org-block-end-line ((t (:inherit org-block :weight bold))))
+                          ;; `(org-column ((t (:family "Inconsolata"))))
+                          ;; `(org-code ((t (:family "Inconsolata" :height 0.75  :inherit fixed-pitch))))
+                          `(org-tag ((t (:family "Inconsolata" :height 0.75))))))
+
+ #+END_SRC
+
+Eliminate Emacs' yes-no inconsistency. 
+
+ #+BEGIN_SRC emacs-lisp
+ (fset 'yes-or-no-p 'y-or-n-p)
+ #+END_SRC
+
+Configure the default encoding system.
+
+ #+BEGIN_SRC emacs-lisp
+ (prefer-coding-system 'utf-8)
+ (set-language-environment 'utf-8)
+ (set-default-coding-systems 'utf-8)
+ (set-terminal-coding-system 'utf-8)
+ (set-keyboard-coding-system 'utf-8)
+ (set-selection-coding-system 'utf-8)
+ (setq default-file-name-coding-system 'utf-8)
+ (setq locale-coding-system 'utf-8)
+ (if (boundp buffer-file-coding-system)
+     (setq buffer-file-coding-system 'utf-8)
+   (setq default-buffer-file-coding-system 'utf-8))
+
+ ;; Treat clipboard input as UTF-8 string first; compound text next, etc.
+ (when (display-graphic-p)
+   (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))
+ #+END_SRC
+
+Configure backups.
+ #+BEGIN_SRC emacs-lisp
+ ;; Store all autosave files in the tmp directory.
+ (setq auto-save-file-name-transforms `((".*" ,temporary-file-directory t))
+       ;; Store all backups in the "backups" directory.
+       backup-directory-alist '(("." . "~/.emacs.d/backups"))
+       backup-by-copying t
+       delete-old-versions t
+       kept-new-versions 5
+       kept-old-versions 0
+       ;; Use versioned backups.
+       version-control t
+       ;; Don't create lockfiles.
+       create-lockfiles nil) 
+ #+END_SRC
+
+Define system locale.
+#+BEGIN_SRC emacs-lisp
+(setq system-time-locale "EN_US.UTF-8")
+#+END_SRC
+
+Other settings.
+    #+BEGIN_SRC emacs-lisp
+    ;; Improve slow down due to undo
+    (setq-default undo-limit 100000
+                  ;; Split verticly by default
+                  ;; split-width-threshold 0         
+                  split-width-threshold (- (window-width) 10)
+                  ;; Split verticly by default
+                  split-height-threshold nil        
+                  ;; hide cursors in other windows
+                  cursor-in-non-selected-windows nil  
+                  ;; Don't resize frames implicitly.
+                  frame-inhibit-implied-resize t
+                  highlight-nonselected-windows nil
+                  ;; Don't show the "Welcome to GNU Emacs ..." at startup
+                  inhibit-startup-screen t
+                  ;; Stop asking whether themes are safe
+                  custom-safe-themes t
+                  ;; Loop animated images such as gif files. 
+                  image-animate-loop nil)
+    #+END_SRC
+
+Prevent more than two windows open in vertical split. 
+ #+BEGIN_SRC emacs-lisp
+  (defun sync0-count-visible-buffers (&optional frame)
+   "Count how many buffers are currently being shown. Defaults to selected frame."
+   (length (mapcar #'window-buffer (window-list frame))))
+
+ (defun sync0-prevent-split-over-two-windows (window &optional horizontal)
+   (if (and horizontal (> (sync0-count-visible-buffers) 1))
+       nil
+     t))
+
+ (advice-add 'window-splittable-p :before-while #'sync0-prevent-split-over-two-windows)
+ #+END_SRC
+
+Taken from:
+https://stackoverflow.com/questions/23207958/how-to-prevent-emacs-dired-from-splitting-frame-into-more-than-two-windows
+
+
+** Keybindings 
+#+BEGIN_SRC emacs-lisp
+;; Font size change
+(define-key global-map (kbd "C-=") 'text-scale-increase)
+(define-key global-map (kbd "C--") 'text-scale-decrease)
+;; Cycle through buffers
+(global-set-key (kbd "<C-tab>") 'bury-buffer)
+;; EVIL friendly keybindings for next-buffer
+(global-set-key (kbd "M-h") 'next-buffer)
+;; Quickly save
+(global-set-key (kbd "M-w") 'save-buffer)
+;; EVIL friendly keybindings for previous-buffer
+(global-set-key (kbd "M-l") 'previous-buffer)
+#+END_SRC
+
+** Definitions
+#+BEGIN_SRC emacs-lisp
+(setq sync0-zettelkasten-directory (concat (getenv "HOME") "/Dropbox/org/")
+sync0-zettelkasten-directory-sans (concat (getenv "HOME") "/Dropbox/org")
+sync0-zettelkasten-directory-references (concat (getenv "HOME") "/Dropbox/org/references/")
+sync0-pdfs-folder (concat (getenv "HOME") "/Documents/pdfs/")
+sync0-current-year (format-time-string "%Y")
+sync0-current-month (format-time-string "%B")
+sync0-current-month-downcase (downcase (format-time-string "%B"))
+sync0-current-day (format-time-string "%d")
+sync0-english-parts-speech '("noun" "intransitive verb" "transitive verb" "verb" "conjunction" "adjective" "adverb")
+sync0-french-parts-speech '("nom féminin" "nom masculin" "verbe intransitif" "verbe transitif" "verbe" "conjonction" "adjectif" "adverbe")
+sync0-portuguese-parts-speech '("sustantivo femenino" "sustantivo masculino" "verbo intransitivo" "verbo transitivo" "verbo" "conjunção" "adjetivo" "advérbio")
+          sync0-spanish-parts-speech '("sustantivo femenino" "sustantivo masculino" "verbo intransitivo" "verbo transitivo" "verbo" "conjunción" "adjectivo" "adverbio")
+          sync0-zettelkasten-annotations-author  "John Doe"
+          sync0-zettelkasten-annotations-key  "doe"
+           sync0-zettelkasten-annotations-roam-key "cite:doe1991")
+#+END_SRC
+ 
+** Functions
+#+BEGIN_SRC emacs-lisp
+(defun sync0-log-today-timestamp () 
+  "Insert today's date in the YYYY/MM/DD format"
+    (insert (format-time-string "%A, %Y/%m/%d")))
+
+  (defun insert-current-day () 
+    (insert (format-time-string "%d")))
+
+  (defun insert-current-month () 
+    (insert (format-time-string "%B")))
+
+  (defun sync0-insert-today-timestamp () 
+    "Insert today's date in the YYYY/MM/DD format"
+    (insert (format-time-string "%Y/%m/%d")))
+
+  (defun sync0-org-insert-today-timestamp () 
+    "Insert today's date in the YYYY/MM/DD format"
+    (insert (format-time-string "<%Y-%m-%d>")))
+
+  (defun sync0-update-timestamp ()
+    "Update current #+DATE timestamp"
+    (interactive)
+    (save-excursion
+      (goto-char (point-min))
+      (let ((regex "[0-9][0-9][0-9][0-9]\/[0-9][0-9]\/[0-9][0-9]")
+            (date (shell-command-to-string "echo -n $(date +'%Y/%m/%d')")))
+         (when (search-forward "#+DATE:" nil nil 1)
+           (if (progn (forward-char 1)(looking-at regex))
+               (replace-match date)
+             (sync0-insert-today-timestamp)))
+        (when (search-forward "Last modified: &" nil nil 1)
+          (if (progn (forward-char 1)(looking-at regex))
+              (replace-match date)
+            (sync0-insert-today-timestamp))))))
+
+  (add-hook 'before-save-hook (lambda ()
+                                (when (and (eq major-mode 'org-mode)
+                                           (or (equal default-directory (concat (getenv "HOME") "/Dropbox/org/"))
+                                               (equal default-directory (concat (getenv "HOME") "/Dropbox/org/projects/"))
+                                               (equal default-directory (concat (getenv "HOME") "/Dropbox/org/inbox/"))
+                                               (equal default-directory (concat (getenv "HOME") "/Dropbox/org/references/"))
+                                               (equal default-directory (concat (getenv "HOME") "/Dropbox/annotations/"))))
+                                  (sync0-update-timestamp))))
+
+  (defun sync0-zettelkasten-annotations-update-author ()
+    "Save current #+AUTHOR for use later on."
+    (interactive)
+ (when (equal default-directory sync0-zettelkasten-directory-references)
+    (save-excursion
+      (goto-char (point-min))
+         (when (re-search-forward "^#\\+AUTHOR: \\([[:print:]]+\\)$" nil t 1)
+             (setq sync0-zettelkasten-annotations-author (match-string-no-properties 1))))))
+
+  (defun sync0-zettelkasten-annotations-update-roam-key ()
+    "Save current #+ROAM_KEY for use later on."
+    (interactive)
+ (when (equal default-directory sync0-zettelkasten-directory-references)
+    (save-excursion
+      (goto-char (point-min))
+         (when (re-search-forward "^#\\+ROAM_KEY: cite:\\([[:print:]]+\\)$" nil t 1)
+           (progn
+             (setq sync0-zettelkasten-annotations-key (match-string-no-properties 1))
+             (setq sync0-zettelkasten-annotations-roam-key (concat "cite:" sync0-zettelkasten-annotations-key)))))))
+
+(add-hook 'find-file-hook 'sync0-zettelkasten-annotations-update-author)
+(add-hook 'find-file-hook 'sync0-zettelkasten-annotations-update-roam-key)
+(add-hook 'buffer-list-update-hook 'sync0-zettelkasten-annotations-update-author)
+(add-hook 'buffer-list-update-hook 'sync0-zettelkasten-annotations-update-roam-key)
+
+#+END_SRC
+
+Useful function to use with org-roam
+ #+BEGIN_SRC emacs-lisp
+ (defun sync0-show-file-path ()
+   "Show the full path file name in the minibuffer."
+   (interactive)
+   (kill-new (buffer-file-name)))
+
+ ;; https://emacs.stackexchange.com/questions/36850/copy-to-kill-ring-selected-file-names-full-path
+ (defun sync0-dired-copy-path-at-point ()
+     (interactive)
+     (dired-copy-filename-as-kill 0))
+ #+END_SRC
+
+ Another one to copy file name to clipboard:
+https://emacsredux.com/blog/2013/03/27/copy-filename-to-the-clipboard/
+
+#+BEGIN_SRC emacs-lisp
+(defun sync0-copy-file-name-to-clipboard ()
+  "Copy the current buffer file name to the clipboard."
+  (interactive)
+  (let ((filename (if (equal major-mode 'dired-mode)
+                      default-directory
+                    (buffer-file-name))))
+    (when filename
+      (kill-new filename)
+      (message "Copied buffer file name '%s' to the clipboard." filename))))
+#+END_SRC
+
+Moving around windows. 
+
+ #+BEGIN_SRC emacs-lisp
+     (defun sync0-split-and-follow-horizontally ()
+       (interactive)
+ (progn
+       (split-window-below)
+       (balance-windows)
+                 (setq truncate-lines t)
+                 (setq truncate-partial-width-windows t)
+ ;; (sync0-restore-margins)
+       (other-window 1)))
+
+     (defun sync0-split-and-follow-vertically ()
+       (interactive)
+ (progn
+       (split-window-right)
+       (balance-windows)
+                 (setq truncate-lines t)
+                 (setq truncate-partial-width-windows t)
+ ;; (sync0-restore-margins)
+       (other-window 1)))
+ #+END_SRC
+
+This is a collection of functions that become problematic when
+loaded after packages are declared.
+
+#+BEGIN_SRC emacs-lisp
+(setq smart-quote-regexp-replacements
+      '(("\\(\\w\\)- " . "\\1")
+        ("\\(\\w\\)\\(  [-—] \\|—\\)" . "\\1---")))
+
+;; Replace smart quotes with straight quotes so that spell check can recognize
+;; words with contractions like “don’t” and “can’t.” For when I paste text in
+;; that I’ve copied from the web.
+(defun replace-smart-quotes-regexp (beg end)
+  "Replace 'smart quotes' in buffer or region with ascii quotes."
+  (interactive "r")
+  (mapcar
+   (lambda (r)
+     (save-excursion
+       (replace-regexp (car r) (cdr r) nil beg (min end (point-max)))))
+   smart-quote-regexp-replacements))
+
+(defun replace-smart-quotes (beg end)
+  "Replace 'smart quotes' in buffer or region with ascii quotes."
+  (interactive "r")
+  ;;(while (search-forward-regexp "- " nil to)
+  ;; (replace-match "") nil t)
+  ;; add alpha. And replace the alpha.
+
+  (replace-smart-quotes-regexp beg end)
+  (format-replace-strings '(
+                            ("\x201C" . "``")
+                            ("“" . "``")
+                            ("\x201D" . "''")
+                            ("”" . "''")
+                            ("\x2018" . "`")
+                            ("\x2019" . "'")
+                            ("’" . "'")
+                            ;;("''" . "\"")
+                            ;;("​" . "")
+                            ;;("…" . "...")
+                            ("…" . "\\ldots")
+                            ("..." . "\\ldots")
+                            ;;("• " . "- ")
+                            ;;(" " . "")
+                            ("  " . " "))
+                          nil   beg (min end (point-max))))
+#+END_SRC
+
+** Fundamental Packages
+*** hydra
+#+BEGIN_SRC emacs-lisp
+(use-package hydra
+  :straight (hydra :type git :host github :repo "abo-abo/hydra"))
+#+END_SRC
+
+*** which-key
+#+BEGIN_SRC emacs-lisp
+  (use-package which-key
+  :straight (which-key :type git :host github :repo "justbur/emacs-which-key")
+    :custom
+(which-key-popup-type 'side-window)
+(which-key-side-window-location 'bottom)
+(which-key-side-window-max-width 0.33)
+(which-key-side-window-max-height 0.25)
+;; (which-key-idle-delay 10000)
+;; (which-key-idle-secondary-delay 0.05)
+    :config
+      (which-key-mode))
+#+END_SRC
+
+*** ivy 
+    #+BEGIN_SRC emacs-lisp
+    (use-package ivy
+      :hook 
+      (after-init . ivy-mode)
+      :custom
+      (ivy-use-virtual-buffers t)
+      (ivy-count-format "(%d/%d) "))
+    #+END_SRC
+
+*** evil-leader
+  #+BEGIN_SRC emacs-lisp
+      (use-package evil-leader
+          :straight (evil-leader :type git :host github :repo "cofi/evil-leader") 
+          :hook (after-init . global-evil-leader-mode)
+
+         :config
+           (evil-leader/set-leader "<SPC>")
+
+  (require 'ivy)
+  (require 'counsel)
+  (require 'org-capture)
+
+  (evil-leader/set-key
+    "1" 'delete-other-windows
+    "2" 'sync0-split-and-follow-horizontally
+    "3" 'sync0-split-and-follow-vertically
+    "m" 'bookmark-set
+    "j" 'counsel-bookmark
+    "w" 'save-buffer
+    "b" 'ivy-switch-buffer
+    "r" 'counsel-recentf
+    "y" 'counsel-yank-pop
+    "f" 'counsel-find-file
+    "x" 'counsel-M-x
+    "o" 'other-window
+    "p" 'previous-buffer
+    "n" 'next-buffer
+    "k" 'kill-buffer))
+  #+END_SRC
+
+*** evil
+     #+BEGIN_SRC emacs-lisp
+     (use-package evil  
+       ;; :straight (evil :type git :host github :repo "emacs-evil/evil") 
+       :hook (after-init . evil-mode)
+       :custom
+       ;; Make horizontal movement cross lines                                    
+       (evil-cross-lines t)
+       ;; turn off auto-indent 
+       (evil-auto-indent nil)
+       :bind (("M-H" . next-buffer)
+              ("M-L" . previous-buffer)
+              (:map evil-normal-state-map
+                    :map minibuffer-local-map
+                    ("ESC" . minibuffer-keyboard-quit)
+                    :map minibuffer-local-ns-map
+                    ("ESC" . minibuffer-keyboard-quit)
+                    :map minibuffer-local-completion-map
+                    ("ESC" . minibuffer-keyboard-quit)
+                    :map minibuffer-local-must-match-map
+                    ("ESC" . minibuffer-keyboard-quit)
+                    :map minibuffer-local-isearch-map
+                    ("ESC" . minibuffer-keyboard-quit)))
+
+       :config 
+       (defun sync0-insert-line-below ()
+         "Insert an empty line below the current line."
+         (interactive)
+         (save-excursion
+           (end-of-line)
+           ;; To insert the line above
+           ;; (end-of-line 0)
+           (open-line 1)))
+
+       ;; insert whitespace
+       (defun sync0-insert-whitespace ()
+         " Add a whitespace"
+         (interactive)
+         (insert " "))
+
+       (defun sync0-delete-text-block ()
+         "Delete selection or current or next text block and also copy to `kill-ring'.
+          URL `http://ergoemacs.org/emacs/emacs_delete_block.html'
+          Version 2016-08-13"
+         (interactive)
+         (if (use-region-p)
+             (kill-region (region-beginning) (region-end))
+           (progn
+             (beginning-of-line)
+             (if (search-forward-regexp "[[:graph:]]" (line-end-position) 'NOERROR )
+                 (sync0-delete-current-text-block)
+               (when (search-forward-regexp "[[:graph:]]" )
+                 (sync0-delete-current-text-block))))))
+
+       ;; Turn on evil mode when enabled.
+       (evil-mode 1)
+       ;; Turn on evil-escape mode when enabled.
+       (evil-escape-mode 1)
+
+       ;; Change global key bindings
+       (unbind-key "C-m" evil-normal-state-map)
+       (unbind-key "M-." evil-normal-state-map)
+       (unbind-key "C-d" evil-motion-state-map)
+
+       (evil-define-key 'normal global-map
+          "U" 'undo-tree-redo
+         "s" 'fill-paragraph
+         "S" 'sync0-insert-line-below
+         "M" 'bookmark-set
+         "zc" 'transpose-chars
+         "zb" 'sync0-delete-text-block
+         "zl" 'transpose-lines
+         "zw" 'transpose-words
+         "zp" 'transpose-paragraphs
+        ;; (kbd "SPC") 'sync0-insert-whitespace
+         "zs" 'transpose-sentences)
+
+      (evil-leader/set-key
+          "<SPC>" 'sync0-insert-whitespace
+          "<ESC>" 'keyboard-quit )
+
+       ;; Improve EVIL behavior with visual lines (visual-line-mode).
+       (define-key evil-normal-state-map (kbd "<remap> <evil-next-line>") 'evil-next-visual-line)
+       (define-key evil-normal-state-map (kbd "<remap> <evil-previous-line>") 'evil-previous-visual-line)
+       (define-key evil-motion-state-map (kbd "<remap> <evil-next-line>") 'evil-next-visual-line)
+       (define-key evil-motion-state-map (kbd "<remap> <evil-previous-line>") 'evil-previous-visual-line))
+     #+END_SRC
+
+**** evil-escape
+  #+BEGIN_SRC emacs-lisp
+  (use-package evil-escape 
+    :straight (evil-escape :type git :host github :repo "syl20bnr/evil-escape") 
+    :after evil
+    ;; :commands evil-escape-mode
+    :custom
+    (evil-escape-excluded-states '(normal visual multiedit emacs motion))
+    ;;(evil-escape-excluded-major-modes '(neotree-mode))
+    (evil-escape-key-sequence "fd")
+    (evil-escape-unordered-key-sequence t)
+    (evil-escape-delay 0.25)
+    :config
+    ;; no `evil-escape' in minibuffer
+    (push #'minibufferp evil-escape-inhibit-functions)
+    :bind (:map evil-insert-state-map
+                ("C-g"  . evil-escape)
+                :map evil-replace-state-map
+                ("C-g"  . evil-escape)
+                :map evil-visual-state-map
+                ("C-g"  . evil-escape)
+                :map evil-operator-state-map
+                ("C-g"  . evil-escape)))
+  #+END_SRC
+
+**** 取 evil-multiedit
+  #+BEGIN_SRC emacs-lisp
+  (use-package evil-multiedit 
+    :straight (evil-multiedit :type git :host github :repo "hlissner/evil-multiedit") 
+    :disabled t
+    :defer t
+    :commands 
+    (evil-multiedit-and-next evil-multiedit-match-and-next evil-multiedit-toggle-marker-here)
+    :after evil
+    :bind (:map evil-visual-state-map
+                ;; Highlights all matches of the selection in the buffer.
+                ("R" . evil-multiedit-match-all)
+                ;; Match selected region.
+                ("M-d" . evil-multiedit-and-next)
+                ("M-D" . evil-multiedit-and-prev)
+                ;; Restore the last group of multiedit regions.
+                ("C-M-D"  . evil-multiedit-restore)
+                :map evil-normal-state-map
+                ;; Match the word under cursor (i.e. make it an edit region). Consecutive presses will
+                ;; incrementally add the next unmatched match.
+                ("M-d"  . evil-multiedit-match-and-next)
+                :map evil-insert-state-map
+                ;; Insert marker at point
+                ("M-d"  . evil-multiedit-toggle-marker-here)
+                :map evil-normal-state-map
+                ;; Same as M-d but in reverse.
+                ("M-D"  . evil-multiedit-match-and-prev)
+                ;; OPTIONAL: If you prefer to grab symbols rather than words, use
+                ;; `evil-multiedit-match-symbol-and-next` (or prev).
+                ;; RET will toggle the region under the cursor
+                :map evil-multiedit-state-map
+                ("RET"  . evil-multiedit-toggle-or-restrict-region)
+                ;; ...and in visual mode, RET will disable all fields outside the selected region
+                ("RET"  . evil-multiedit-toggle-or-restrict-region)
+                ;; For moving between edit regions
+                ("C-n"  . evil-multiedit-next)
+                ("C-p"  . evil-multiedit-prev)
+                ("C-n"  . evil-multiedit-next)
+                ("C-p"  . evil-multiedit-prev)))
+  #+END_SRC
+
+*** simple-secrets
+ The long lost Emacs string manipulation library. This is required for
+ ~simple-secrets~ to work. 
+
+ #+BEGIN_SRC emacs-lisp
+ (use-package s)
+ #+END_SRC
+
+  The ~simple-secrets~ package contains a set of functions to manage
+  passwords. After defining ~secret-password-file~, you can draw
+  information from this file, without revealing the encrypted
+  contents. For example, in this file, whenever I use ~(secret-lookup
+  [secret_name])~, I am drawing information from my encrypted secrets
+  file (i.e., ~sync0_secrets.gpg~) that I don't want to reveal.
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package simple-secrets
+  :straight nil
+      :load-path "~/.emacs.d/sync0/" 
+      :after s
+      :config 
+      (setq secret-password-file "~/.emacs.d/sync0_secrets.gpg")
+       (secret-load-keys))
+  #+END_SRC
+
+*** epa-file
+  #+BEGIN_SRC emacs-lisp
+  (use-package epa-file
+    :straight nil
+    :load-path "~/.emacs.d/sync0/" 
+    :custom
+    (epa-file-encrypt-to '("carc.sync0@gmail.com"))
+    (epa-file-select-keys 'silent)
+    :config (epa-file-enable))
+  #+END_SRC
+
+*** recentf
+  A packate that displays a list of recent files. 
+  #+BEGIN_SRC emacs-lisp
+    (use-package recentf
+  :straight nil
+      :custom
+      (recentf-max-saved-items 100)
+      (recentf-max-menu-items 10)
+      :config 
+      (recentf-mode +1)
+      (require 'dired-x)
+      :bind (:map recentf-dialog-mode-map
+                  ("j"  . next-line)
+                  ("k"  . previous-line)))
+  #+END_SRC
+
+*** saveplace
+  This is Emacs' default minor mode to save your location in visited
+  files. With ~saveplace~ enabled, when you open a file, the point goes to
+  its last location. 
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package saveplace
+  :straight nil
+      :preface
+      (defun sync0-save-place-reposition ()
+        "Force windows to recenter current line (with saved position)."
+        (run-with-timer 0 nil
+                        (lambda (buf)
+                          (when (buffer-live-p buf)
+                            (dolist (win (get-buffer-window-list buf nil t))
+                              (with-selected-window win (recenter)))))
+                        (current-buffer)))
+      ;; Start save-place-mode.
+      :init (save-place-mode)
+      :hook (find-file . sync0-save-place-reposition))
+  #+END_SRC
+
+** Include the rest 
+The power of this configuration is that it provides modularity,
+but not too much that it becomes unwieldy. The following
+~#+INCLUDE:~ statements reflect the my everyday usage of Emacs for
+composing academic documents.
+The power of this configuration is that it provides modularity,
+but not too much that it becomes unwieldy. The following
+~#+INCLUDE:~ statements reflect the my everyday usage of Emacs for
+composing academic documents.
+
+All packages that I don't know where to put are laid here. 
+#+INCLUDE: "~/.emacs.d/sync0/sync0-other-packages.org" 
+
+Since org-mode is my most used package, I dedicated a
+configuration file just for itself.
+#+INCLUDE: "~/.emacs.d/sync0/sync0-org.org" 
+
+Most settings related to Emacs eye candy are here. 
+#+INCLUDE: "~/.emacs.d/sync0/sync0-theme.org" 
+
+Settings related to text editing and natural language processing
+are here.
+#+INCLUDE: "~/.emacs.d/sync0/sync0-text-editing.org" 
+
+Since I use latex to compose documents I also dedicated an entire
+file to LaTeX and related settings.  
+#+INCLUDE: "~/.emacs.d/sync0/sync0-latex.org" 
+
+#+BEGIN_SRC emacs-lisp
+(org-reload)
+#+END_SRC 

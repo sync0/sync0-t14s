@@ -1,0 +1,23 @@
+#+TITLE: Tuesday, 02 February 2021
+#+CREATED: 2021/02/02
+#+DATE: 2021/02/02
+#+ROAM_TAGS: journal 2021 february
+
+Après avoir passé toute la semaine passée en configurant cet
+ordinateur (mon nouveau T14s), il ne me reste qu'à
+configurer mu4e et la terminale (probablement zsh pour
+avoir la possibilité d'utiliser les fonctions avancées de
+cette shell ; après tout, même si je et l'utilise pas en ce
+moment, zsh devient chaque jour de plus en plus la shell de
+préférence pour les prgroammeurs.). À cet égard, je me
+demande s'il même vaut la peine de tenter de configurer
+mu4e : parfois j'en vois ses possibilités, mais au même
+temps, pour plusieurs raisonnes, je le trouve difficile à
+utiliser. Peut-être, ce que l'on peut faire est de tenter
+d'établir une routine de travail sur le Zettelkasten et,
+après qu'elle soit établit, on peut considérer la
+possibilité d'y intégrer mu4e à nouveau, en se basant sur
+les configurations pour ce logiciel de DOOM-EMACS. 
+
+Aujourd'hui, j'ai fini de configurer Zsh. En outre, j'espère
+avoir fini de configurer les 

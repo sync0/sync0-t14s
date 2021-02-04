@@ -1,0 +1,1 @@
+/home/sync0/.emacs.d/straight/repos/emacs-solaire-mode/solaire-mode.el

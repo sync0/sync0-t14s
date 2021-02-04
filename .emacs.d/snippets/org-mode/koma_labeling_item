@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: koma_labeling_item 
+# key: item
+# --
+\item[${1:Category}] *$2*. $0

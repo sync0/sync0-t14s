@@ -1,0 +1,45 @@
+alias ls='ls --color=auto --group-directories-first'
+
+# PS1='\$ \[\e[4m\]\W\[\e[m\] \[\e[1;31m\]必緩\[\e[m\] '
+
+# alias cp="cp -i"                          # confirm before overwriting something
+alias df='df -h'                          # human-readable sizes
+alias free='free -m'                      # show sizes in MB
+#alias np='nano -w PKGBUILD'
+alias more=less
+
+# user defined aliases
+alias list_drives="lsblk -p"
+alias unmount="umount"
+alias du="du -h"
+# alias fat32="sudo mkfs.vfat"
+alias pacin="sudo pacman -Sy" 
+alias pacup="sudo pacman -Syu" 
+alias pacout="sudo pacman -Syu --noconfirm && shutdown +1" 
+alias pacaup="yay -Syu" 
+# alias paclean="sudo pacman -Rsn $(pacman -Qdtq)"
+alias zshrc="emacs ~/.zshrc && source ~/.zshrc"
+alias aliases="emacs ~/.oh-my-zsh/custom/sync0_aliases.zsh"
+alias conf_initcpio="sudo emacs /etc/mkinitcpio.conf"
+alias initrams="sudo mkinitcpio -p linux-lts"
+alias grub="sudo emacs /etc/default/grub"
+alias grubup="sudo grub-mkconfig -o /boot/grub/grub.cfg"
+# alias xorgconf="sudo emacs /etc/X11/xorg.conf.d/00-keyboard.conf"
+# alias xorgkeys="cat /usr/share/X11/xkb/rules/base.lst"
+alias less="less -M"
+alias off="shutdown now"
+alias rmhidden="rm -i .[^.]*"
+alias grep="grep -i -n --color=always"
+# alias useful="emacs $HOME/Dropbox/org/useful.org"
+alias conf_tlp="sudo emacs /etc/default/tlp"
+alias hibernate="systemctl hibernate"
+alias lowercase="perl-rename 'y/A-Z/a-z/'"
+# alias r_install="R CMD INSTALL -l $R_LIBS_USER"
+# alias backsys="sudo rsync -aAX --delete --exclude={"/dev/*","/proc/*","/home/*""/sys/*","/tmp/*","/run/*","/mnt/*","/media/*","/lost+found"} --info=progress2 / /run/media/sync0/backup/backups/system"
+# alias backbox="sudo rsync -a --delete --info=progress2 /home/$USER/Dropbox /run/media/sync0/backup/backups"
+# alias restoreme="rsync -aAX --exclude={"/dev/*","/proc/*","/sys/*","/tmp/*","/run/*","/mnt/*","/media/*","/lost+found"} --info=progress2 /run/media/sync0/mjro_backup/ /"
+alias pdf_compress="sudo gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/ebook -dNOPAUSE -dQUIET -dBATCH -dDetectDuplicateImages -dCompressFonts=true  -r150"
+# alias pdf_shrink='bash $HOME/Scripts/shell/shrinkpdf.sh'
+# alias setscreen='xrandr --newmode "1920x1080_60.00"  173.00  1920 2048 2248 2576  1080 1083 1088 1120 -hsync +vsync && xrandr --addmode HDMI-1 1920x1080_60.00'
+
+
