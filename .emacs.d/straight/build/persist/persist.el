@@ -1,1 +1,0 @@
-/home/sync0/.emacs.d/straight/repos/persist/persist.el

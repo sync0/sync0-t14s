@@ -253,12 +253,10 @@ sync0-portuguese-parts-speech '("sustantivo femenino" "sustantivo masculino" "ve
             (sync0-insert-today-timestamp))))))
 
   (add-hook 'before-save-hook (lambda ()
+;; Check whether file is in org-mode and whether it is located in my Zettelkasten directory
                                 (when (and (eq major-mode 'org-mode)
-                                           (or (equal default-directory (concat (getenv "HOME") "/Dropbox/org/"))
-                                               (equal default-directory (concat (getenv "HOME") "/Dropbox/org/projects/"))
-                                               (equal default-directory (concat (getenv "HOME") "/Dropbox/org/inbox/"))
-                                               (equal default-directory (concat (getenv "HOME") "/Dropbox/org/references/"))
-                                               (equal default-directory (concat (getenv "HOME") "/Dropbox/annotations/"))))
+                                      (string-prefix-p sync0-zettelkasten-directory (buffer-file-name)))
+                                               ;; (equal default-directory (concat (getenv "HOME") "/Dropbox/annotations/"))
                                   (sync0-update-timestamp))))
 
   (defun sync0-zettelkasten-annotations-update-author ()
@@ -313,7 +311,6 @@ sync0-portuguese-parts-speech '("sustantivo femenino" "sustantivo masculino" "ve
       (balance-windows)
                 (setq truncate-lines t)
                 (setq truncate-partial-width-windows t)
-;; (sync0-restore-margins)
       (other-window 1)))
 
     (defun sync0-split-and-follow-vertically ()
@@ -407,6 +404,7 @@ sync0-portuguese-parts-speech '("sustantivo femenino" "sustantivo masculino" "ve
   "3" 'sync0-split-and-follow-vertically
   "m" 'bookmark-set
   "j" 'counsel-bookmark
+  "q" 'keyboard-quit
   "w" 'save-buffer
   "b" 'ivy-switch-buffer
   "r" 'counsel-recentf
@@ -416,7 +414,8 @@ sync0-portuguese-parts-speech '("sustantivo femenino" "sustantivo masculino" "ve
   "o" 'other-window
   "p" 'previous-buffer
   "n" 'next-buffer
-  "k" 'kill-buffer))
+  "K" 'kill-buffer
+  "k" 'delete-window))
 
 (use-package evil  
   ;; :straight (evil :type git :host github :repo "emacs-evil/evil") 
@@ -475,6 +474,8 @@ sync0-portuguese-parts-speech '("sustantivo femenino" "sustantivo masculino" "ve
   ;; Turn on evil-escape mode when enabled.
   (evil-escape-mode 1)
 
+  (add-to-list 'evil-emacs-state-modes 'cfw:details-mode)
+
   ;; Change global key bindings
   (unbind-key "C-m" evil-normal-state-map)
   (unbind-key "M-." evil-normal-state-map)
@@ -489,6 +490,7 @@ sync0-portuguese-parts-speech '("sustantivo femenino" "sustantivo masculino" "ve
     "zb" 'sync0-delete-text-block
     "zl" 'transpose-lines
     "zw" 'transpose-words
+    "zj" 'evil-join
     "zp" 'transpose-paragraphs
    ;; (kbd "SPC") 'sync0-insert-whitespace
     "zs" 'transpose-sentences)
@@ -571,59 +573,57 @@ sync0-portuguese-parts-speech '("sustantivo femenino" "sustantivo masculino" "ve
     :hook (find-file . sync0-save-place-reposition))
 
 (use-package el-patch
-   :straight (el-patch :type git
-                       :host github
-                       :repo "raxod502/el-patch"))
+     :straight (el-patch :type git
+                         :host github
+                         :repo "raxod502/el-patch"))
 
-(eval-when-compile
-  (require 'el-patch))
+  (eval-when-compile
+    (require 'el-patch))
 
-(use-package deft
-    :straight (deft :type git :host github :repo "jrblevin/deft") 
-    :after (org org-roam)
-    :custom
-    (deft-recursive t)
-    (deft-default-extension "org")
-    (deft-directory syn0-zettelkasten-directory-sans)
-    (deft-new-file-format "%Y%m%d%H%M%S")
-    (deft-file-naming-rules
-    '((noslash . "-")
-      (nospace . "_")
-      (case-fn . downcase)))
-  :config/el-patch
-  (defun deft-parse-title (file contents)
-    "Parse the given FILE and CONTENTS and determine the title.
-If `deft-use-filename-as-title' is nil, the title is taken to
-be the first non-empty line of the FILE.  Else the base name of the FILE is
-used as title."
-    (el-patch-swap (if deft-use-filename-as-title
-                       (deft-base-filename file)
-                     (let ((begin (string-match "^.+$" contents)))
-                       (if begin
-                           (funcall deft-parse-title-function
-                                    (substring contents begin (match-end 0))))))
-                   (org-roam-db--get-title file)))
+  (use-package deft
+      :straight (deft :type git :host github :repo "jrblevin/deft") 
+      :after (org org-roam)
+      :custom
+      (deft-recursive t)
+      (deft-default-extension "org")
+      (deft-directory sync0-zettelkasten-directory-sans)
+      (deft-new-file-format "%Y%m%d%H%M%S")
+      (deft-file-naming-rules
+      '((noslash . "-")
+        (nospace . "_")
+        (case-fn . downcase)))
+    :config/el-patch
+    (defun deft-parse-title (file contents)
+      "Parse the given FILE and CONTENTS and determine the title.
+  If `deft-use-filename-as-title' is nil, the title is taken to
+  be the first non-empty line of the FILE.  Else the base name of the FILE is
+  used as title."
+      (el-patch-swap (if deft-use-filename-as-title
+                         (deft-base-filename file)
+                       (let ((begin (string-match "^.+$" contents)))
+                         (if begin
+                             (funcall deft-parse-title-function
+                                      (substring contents begin (match-end 0))))))
+                     (org-roam-db--get-title file)))
 
-  (defhydra sync0-hydra-deft-functions (:color amaranth :hint nil :exit t)
-    "
- ^Deft^
- ^------------------
- _n_: New file
- _f_: Filter
- _c_: Clear filter
- _d_: Delete file
-
- [q] Quit
+    (defhydra sync0-hydra-deft-functions (:color amaranth :hint nil :exit t)
       "
-    ("f" deft-filter)
-    ("c" deft-filter-clear)
-    ("n" deft-new-file)
-    ("d" deft-delete-file)
-    ("q" nil :color blue))
+   ^Deft^
+   ^------------------
+   _n_: New file
+   _f_: Filter
+   _c_: Clear filter
+   _d_: Delete file
 
-  :bind 
-  (:map deft-mode-map
-        ("<f9>" . sync0-hydra-deft-functions/body)))
+   [q] Quit
+        "
+      ("f" deft-filter)
+      ("c" deft-filter-clear)
+      ("n" deft-new-file)
+      ("d" deft-delete-file)
+      ("q" nil :color blue))
+
+(evil-leader/set-key-for-mode 'deft-mode "z" 'sync0-hydra-deft-functions/body))
 
 (use-package counsel 
     :after evil
@@ -723,251 +723,316 @@ used as title."
          :map evil-visual-state-map ("g"  . google-this)))
 
 (use-package mu4e
-    :commands mu4e
-    :init  (require 'smtpmail)
-    :custom
-    (user-full-name "Carlos Alberto Rivera Carreño")
-    ;; (user-mail-address "carc.sync0@gmail.com")
-    ;; (mu4e-reply-to-address "carc.sync0@gmail.com")
-    (mu4e-root-maildir "~/Mail")
-    (mu4e-attachment-dir "~/Downloads")
-    (message-signature-file "~/.emacs.d/sync0/.sync0_signature") 
-    (mu4e-compose-signature-auto-include t)
-    ;; get mail
-    (mu4e-get-mail-command "mbsync -V -c ~/.emacs.d/sync0/.mbsyncrc -a")
-    (mu4e-update-interval nil)
-    ;; show images
-    (mu4e-show-images t)
-    (mu4e-view-show-images t)
-    (mu4e-view-show-addresses t)
-    (mu4e-headers-auto-update t)
-    (mu4e-use-fancy-chars t)
-    ;; This allows me to use 'ivy' to select mailboxes
-    (mu4e-completing-read-function 'ivy-completing-read)
-    ;; Don't ask for a 'context' upon opening mu4e
-    (mu4e-context-policy 'pick-first)
-    (mu4e-compose-context-policy nil)
-    ;; don't save message to Sent Messages, IMAP takes care of this
-    ;; GMail already adds sent mail to the Sent Mail folder.
-    (mu4e-sent-messages-behavior 'delete)
-    ;; Don't ask to quit... why is this the default?
-    (mu4e-confirm-quit nil)
-    ;; Why would I want to leave my message open after I've sent it?
-    (message-kill-buffer-on-exit t)
-    ;; Rename files when moving
-    (mu4e-change-filenames-when-moving t)
-    ;; Needed for mbsync
-    ;; Configure smtpmail
-    (message-send-mail-function 'smtpmail-send-it)
-    ;; (starttls-use-gnutls t)
-    (smtpmail-starttls-credentials '(("smtp.gmail.com" 587 nil nil)))
-    (smtpmail-auth-credentials "~/.authinfo.gpg")
-    (smtpmail-default-smtp-server "smtp.gmail.com")
-    (smtpmail-smtp-server "smtp.gmail.com")
-    (smtpmail-smtp-service 587)
-    (smtpmail-debug-info t)
+      :commands mu4e
+      :init
+      (require 'smtpmail)
+      ;; (require 'org-mu4e)
+      :custom
+      (user-full-name "Carlos Alberto Rivera Carreño")
+      (mu4e-root-maildir "~/Mail")
+      (mu4e-attachment-dir "~/Downloads")
+      (message-signature-file "~/.emacs.d/sync0/.sync0_signature") 
+      (mu4e-compose-signature-auto-include t)
+      ;; get mail
+      ;; (mu4e-get-mail-command "mbsync -V -c ~/.emacs.d/sync0/.mbsyncrc -a")
+      (mu4e-get-mail-command "mbsync -Va -c ~/.emacs.d/sync0/.mbsyncrc")
+      (mu4e-update-interval nil)
+      ;; show images
+      (mu4e-show-images t)
+      (mu4e-view-show-images t)
+      (mu4e-view-show-addresses t)
+      (mu4e-headers-auto-update t)
+      (mu4e-use-fancy-chars t)
+      ;; This allows me to use 'ivy' to select mailboxes
+      (mu4e-completing-read-function 'ivy-completing-read)
+      ;; Don't ask for a 'context' upon opening mu4e
+      (mu4e-context-policy 'pick-first)
+     (mu4e-compose-context-policy nil)
+      ;; don't save message to Sent Messages, IMAP takes care of this
+      ;; GMail already adds sent mail to the Sent Mail folder.
+      (mu4e-sent-messages-behavior 'delete)
+      ;; Don't ask to quit... why is this the default?
+      (mu4e-confirm-quit nil)
+      ;; Why would I want to leave my message open after I've sent it?
+      (message-kill-buffer-on-exit t)
+      ;; Rename files when moving
+      (mu4e-change-filenames-when-moving t)
+      (mu4e-headers-include-related t)
+      (mu4e-headers-skip-duplicates t)
+      ;; Needed for mbsync
+      ;; Configure smtpmail
+      (message-send-mail-function 'smtpmail-send-it)
+      ;; (starttls-use-gnutls t)
+      (smtpmail-starttls-credentials '(("smtp.gmail.com" 587 nil nil)))
+      (smtpmail-auth-credentials "~/.authinfo.gpg")
+      (smtpmail-default-smtp-server "smtp.gmail.com")
+      (smtpmail-smtp-server "smtp.gmail.com")
+      (smtpmail-smtp-service 587)
+      (smtpmail-debug-info t)
 
-    :config
-    (add-to-list 'evil-emacs-state-modes 'mu4e-main-mode)
-    (add-to-list 'evil-emacs-state-modes 'mu4e-headers-mode)
-    (evil-set-initial-state 'mu4e-compose-mode 'insert)
+      :config
+      (add-to-list 'evil-emacs-state-modes 'mu4e-main-mode)
+      (add-to-list 'evil-emacs-state-modes 'mu4e-headers-mode)
+      (evil-set-initial-state 'mu4e-compose-mode 'insert)
 
-    (setq mu4e-headers-fields
-          '( (:date          .  25)    ;; alternatively, use :human-date
-             (:flags         .   10)
-             (:from          .  30)
-             (:subject       .  nil))) ;; alternatively, use :thread-subject
+      (setq mu4e-headers-fields
+            '( (:date          .  25)    ;; alternatively, use :human-date
+               (:flags         .   10)
+               (:from          .  30)
+               (:subject       .  nil))) ;; alternatively, use :thread-subject
 
-    ;; Configure contexts
-    (require 'mu4e-context)
+      ;; Configure contexts
+      (require 'mu4e-context)
 
-    (setq mu4e-contexts
-          `( ,(make-mu4e-context
-               :name "Principal (carc.sync0)"
-               :enter-func (lambda () (mu4e-message "Entering carc.sync0"))
-               :leave-func (lambda () (mu4e-message "Leaving carc.sync0"))
-               :match-func (lambda (msg)
-                             (when msg
-                               (mu4e-message-contact-field-matches
-                                msg '(:from :to :cc :bcc) "carc.sync0@gmail.com")))
-               :vars '(
-                       (user-mail-address . "carc.sync0@gmail.com")
-                       (mu4e-trash-folder . "/carc.sync0/[carc.sync0]/Trash")
-                       (mu4e-refile-folder . "/carc.sync0/[carc.sync0]/All Mail")
-                       (mu4e-sent-folder . "/carc.sync0/[carc.sync0]/Sent Mail")
-                       (mu4e-drafts-folder . "/carc.sync0/[carc.sync0]/Drafts")
-                       (mu4e-maildir-shortcuts . (("/carc.sync0/[carc.sync0]/Trash"       . ?t)
-                                                  ("/carc.sync0/[carc.sync0]/Sent Mail" . ?s)
-                                                  ("/carc.sync0/INBOX"            . ?i)
-                                                  ("/carc.sync0/[carc.sync0]/Drafts"    . ?d)
-                                                ;; ("/carc.sync0/[carc.sync0]/Starred"   . ?r)
-                                                  ("/carc.sync0/[carc.sync0]/All Mail"  . ?a)))))
+      (setq mu4e-contexts
+            `( ,(make-mu4e-context
+                 :name "Principal (carc.sync0)"
+                 :enter-func (lambda () (mu4e-message "Entering carc.sync0"))
+                 :leave-func (lambda () (mu4e-message "Leaving carc.sync0"))
+                 :match-func (lambda (msg)
+                               (when msg
+                                 (mu4e-message-contact-field-matches
+                                  msg '(:from :to :cc :bcc) "carc.sync0@gmail.com")))
+                 :vars '(
+                         (user-mail-address . "carc.sync0@gmail.com")
+                         (mu4e-trash-folder . "/carc.sync0/[carc.sync0]/Trash")
+                         (mu4e-refile-folder . "/carc.sync0/[carc.sync0]/All Mail")
+                         (mu4e-sent-folder . "/carc.sync0/[carc.sync0]/Sent Mail")
+                         (mu4e-drafts-folder . "/carc.sync0/[carc.sync0]/Drafts")
+                         (mu4e-maildir-shortcuts . (("/carc.sync0/[carc.sync0]/Trash"       . ?t)
+                                                    ("/carc.sync0/[carc.sync0]/Sent Mail" . ?s)
+                                                    ("/carc.sync0/INBOX"            . ?i)
+                                                    ("/carc.sync0/[carc.sync0]/Drafts"    . ?d)
+                                                  ;; ("/carc.sync0/[carc.sync0]/Starred"   . ?r)
+                                                    ("/carc.sync0/[carc.sync0]/All Mail"  . ?a)))))
 
-             ,(make-mu4e-context
-               :name "Backup (cantorlunae)"
-               :enter-func (lambda () (mu4e-message "Entering cantorlunae"))
-               :leave-func (lambda () (mu4e-message "Leaving cantorlunae"))
-               :match-func (lambda (msg)
-                             (when msg
-                               (mu4e-message-contact-field-matches
-                                msg '(:from :to :cc :bcc) "cantorlunae@gmail.com")))
-               :vars '(
-                       (user-mail-address . "cantorlunae@gmail.com")
-                       (mu4e-trash-folder . "/cantorlunae/[cantorlunae]/Trash")
-                       (mu4e-refile-folder . "/cantorlunae/[cantorlunae]/All Mail")
-                       (mu4e-sent-folder . "/cantorlunae/[cantorlunae]/Sent Mail")
-                       (mu4e-drafts-folder . "/cantorlunae/[cantorlunae]/Drafts")
-                       (mu4e-maildir-shortcuts . (("/cantorlunae/[cantorlunae]/Trash"       . ?t)
-                                                  ("/cantorlunae/[cantorlunae]/Sent Mail" . ?s)
-                                                  ("/cantorlunae/INBOX"            . ?i)
-                                                  ("/cantorlunae/[cantorlunae]/Drafts"    . ?d)
-                                                  ("/cantorlunae/[cantorlunae]/All Mail"  . ?a)))))))
-
-
-    ;; Use imagemagick, if available.
-    (when (fboundp 'imagemagick-register-types)
-      (imagemagick-register-types))
-
-    (setq mu4e-bookmarks `(;; ("\\\\Inbox" "Inbox" ?i)
-                           ("flag:flagged" "Flagged messages" ?f)
-                           ("flag:unread AND NOT flag:trashed" "Unread messages" ?u)
-                           ("date:today..now" "Today's messages" ?t)
-                           ("date:7d..now" "Last 7 days" ?w)
-                           ("mime:image/*" "Messages with images" ?p)
-                           ("maildir:/cantorlunae/INBOX OR maildir:/carc.sync0/INBOX" "All inboxes" ?i)))
-
-                           ;; (,(mapconcat 'identity
-                           ;;              (mapcar
-                           ;;               (lambda (maildir)
-                           ;;                 (concat "maildir:" (car maildir)))
-                           ;;               mu4e-maildir-shortcuts) " OR ")
-                           ;;  "All inboxes" ?i)
-
-;; (add-hook 'mu4e-mark-execute-pre-hook
-;; (lambda (mark msg)
-;; (cond ((member mark '(refile trash)) (mu4e-action-retag-message msg
-;; "-\\Inbox"))
-;; ((equal mark 'flag) (mu4e-action-retag-message msg "\\Starred"))
-;; ((equal mark 'unflag) (mu4e-action-retag-message msg "-\\Starred"
-;; )))))
+               ,(make-mu4e-context
+                 :name "Backup (cantorlunae)"
+                 :enter-func (lambda () (mu4e-message "Entering cantorlunae"))
+                 :leave-func (lambda () (mu4e-message "Leaving cantorlunae"))
+                 :match-func (lambda (msg)
+                               (when msg
+                                 (mu4e-message-contact-field-matches
+                                  msg '(:from :to :cc :bcc) "cantorlunae@gmail.com")))
+                 :vars '(
+                         (user-mail-address . "cantorlunae@gmail.com")
+                         (mu4e-trash-folder . "/cantorlunae/[cantorlunae]/Trash")
+                         (mu4e-refile-folder . "/cantorlunae/[cantorlunae]/All Mail")
+                         (mu4e-sent-folder . "/cantorlunae/[cantorlunae]/Sent Mail")
+                         (mu4e-drafts-folder . "/cantorlunae/[cantorlunae]/Drafts")
+                         (mu4e-maildir-shortcuts . (("/cantorlunae/[cantorlunae]/Trash"       . ?t)
+                                                    ("/cantorlunae/[cantorlunae]/Sent Mail" . ?s)
+                                                    ("/cantorlunae/INBOX"            . ?i)
+                                                    ("/cantorlunae/[cantorlunae]/Drafts"    . ?d)
+                                                    ("/cantorlunae/[cantorlunae]/All Mail"  . ?a)))))))
 
 
-    (add-to-list 'mu4e-view-actions '("ViewInBrowser" . mu4e-action-view-in-browser) t)
+      ;; Use imagemagick, if available.
+      (when (fboundp 'imagemagick-register-types)
+        (imagemagick-register-types))
 
-    (evil-define-key 'normal mu4e-compose-mode-map
-      "$" 'evil-end-of-visual-line
-      "^" 'evil-beginning-of-visual-line
-      "gg" 'mu4e-compose-goto-top
-      "G" 'mu4e-compose-goto-bottom
-      "]" 'evil-next-visual-line
-      "[" 'evil-previous-visual-line)
+      (setq mu4e-bookmarks `(;; ("\\\\Inbox" "Inbox" ?i)
+                             ("flag:flagged" "Flagged messages" ?f)
+                             ("flag:unread AND NOT flag:trashed" "Unread messages" ?u)
+                             ("date:today..now" "Today's messages" ?t)
+                             ("date:7d..now" "Last 7 days" ?w)
+                             ("mime:image/*" "Messages with images" ?p)
+                             ("maildir:/cantorlunae/INBOX OR maildir:/carc.sync0/INBOX" "All inboxes" ?i)))
 
-    ;; we seem to need this to fix the org-store-link issue
-    ;; (org-link-set-parameters "mu4e" :follow #'org-mu4e-open :store 
-    ;; #'org-mu4e-store-link)
 
-    :bind  (( 
-             :map mu4e-main-mode-map
-             ("J" . mu4e~headers-jump-to-maildir)
-             ("j" . next-line)
-             ("k" . previous-line)
-             ("u" . mu4e-update-mail-and-index)
-             ("b" . mu4e-headers-search-bookmark)
-             ("B" . mu4e-headers-search-bookmark-edit)
-             ("N" . mu4e-news)
-             (";" . mu4e-context-switch)
-             ("H" . mu4e-display-manual)
-             ("C" . mu4e-compose-new)
-             ;; ("cc" . mu4e-compose-new)
-             ("x" . mu4e-kill-update-mail)
-             ("A" . mu4e-about)
-             ("f" . smtpmail-send-queued-mail)
-             ("m" . mu4e~main-toggle-mail-sending-mode)
-             ("s" . mu4e-headers-search)
-             ("q" . mu4e-quit)
-             :map mu4e-headers-mode-map
-             ("q" . mu4e~headers-quit-buffer)
-             ("J" . mu4e~headers-jump-to-maildir)
-             ("C" . mu4e-compose-new)
-             ("E" . mu4e-compose-edit)
-             ("F" . mu4e-compose-forward)
-             ("R" . mu4e-compose-reply)
-             ("o" .   mu4e-headers-change-sorting)
-             ("j" . mu4e-headers-next)
-             ("k" . mu4e-headers-prev)
-             ("b" . mu4e-headers-search-bookmark)
-             ("B" . mu4e-headers-search-bookmark-edit)
-             (";" . mu4e-context-switch)
-             ("/" . mu4e-headers-search-narrow)
-             ("s" . mu4e-headers-search)
-             ("S" . mu4e-headers-search-edit)
-             ("x" . mu4e-mark-execute-all)
-             ("a" . mu4e-headers-action)
-             ("*" . mu4e-headers-mark-for-something) 
-             ("&" . mu4e-headers-mark-custom)
-             ("A" . mu4e-headers-mark-for-action)
-             ("m" . mu4e-headers-mark-for-move)
-             ("r" . mu4e-headers-mark-for-refile)
-             ("D" . mu4e-headers-mark-for-delete)
-             ("d" . mu4e-headers-mark-for-trash)
-             ("=" . mu4e-headers-mark-for-untrash)
-             ("u" . mu4e-headers-mark-for-unmark)
-             ("U" . mu4e-mark-unmark-all)
-             ("?" . mu4e-headers-mark-for-unread)
-             ("!" . mu4e-headers-mark-for-read)
-             ("%" . mu4e-headers-mark-pattern)
-             ("+" . mu4e-headers-mark-for-flag)
-             ("-" . mu4e-headers-mark-for-unflag)
-             ("[" . mu4e-headers-prev-unread)
-             ("]" . mu4e-headers-next-unread)
-             ("C-j" . mu4e-headers-next)
-             ("C-k" . mu4e-headers-prev)
-             :map mu4e-view-mode-map
-             ("j" . next-line)
-             ("k" . previous-line)
-             ("l" . evil-forward-char)
-             ("h" . evil-backward-char)
-             ("v" . evil-visual-char)
-             ("$" . evil-end-of-visual-line)
-             ("^" . evil-beginning-of-visual-line)
-             ("]" . evil-next-visual-line)
-             ("[" . evil-previous-visual-line)
-             (" " . mu4e-view-scroll-up-or-next)
-             ([tab] . shr-next-link)
-             ([backtab] . shr-previous-link)
-             ("q" . mu4e~view-quit-buffer)
-             ("C" . mu4e-compose-new)
-             ("H" . mu4e-view-toggle-html)
-             ("R" . mu4e-compose-reply)
-             ("p" . mu4e-view-save-attachment)
-             ("P" . mu4e-view-save-attachment-multi) 
-             ("O" . mu4e-headers-change-sorting)
-             ("o" . mu4e-view-open-attachment)
-             ("A" . mu4e-view-attachment-action)
-             ("a" . mu4e-view-action)
-             ("J" . mu4e~headers-jump-to-maildir)
-             ("C-j" . mu4e-view-headers-next)
-             ("C-k" . mu4e-view-headers-prev)
-             ("x" . mu4e-view-marked-execute)
-             ("&" . mu4e-view-mark-custom)
-             ("*" . mu4e-view-mark-for-something)   
-             ("m" . mu4e-view-mark-for-move)
-             ("r" . mu4e-view-mark-for-refile)
-             ("D" . mu4e-view-mark-for-delete)
-             ("d" . mu4e-view-mark-for-trash)
-             ("=" . mu4e-view-mark-for-untrash)
-             ("u" . mu4e-view-unmark)
-             ("U" . mu4e-view-unmark-all)
-             ("?" . mu4e-view-mark-for-unread)
-             ("!" . mu4e-view-mark-for-read)
-             ("%" . mu4e-view-mark-pattern)
-             ("+" . mu4e-view-mark-for-flag)
-             ("-" . mu4e-view-mark-for-unflag)
-             ("s" . mu4e-view-search-edit)
-             ("|" . mu4e-view-pipe)
-             ("." . mu4e-view-raw-message)
-             ("C--" . mu4e-headers-split-view-shrink)
-             ("C-+" . mu4e-headers-split-view-grow))))
+      (add-to-list 'mu4e-view-actions '("ViewInBrowser" . mu4e-action-view-in-browser) t)
+
+      (evil-define-key 'normal mu4e-compose-mode-map
+        "$" 'evil-end-of-visual-line
+        "^" 'evil-beginning-of-visual-line
+        "gg" 'mu4e-compose-goto-top
+        "G" 'mu4e-compose-goto-bottom
+        "]" 'evil-next-visual-line
+        "[" 'evil-previous-visual-line)
+
+;; Taken from https://github.com/abo-abo/hydra/wiki/mu4e
+(defhydra sync0-hydra-mu4e-headers (:color blue :hint nil)
+  "
+ ^General^   | ^Search^           | _!_: read    | _#_: deferred  | ^Switches^
+-^^----------+-^^-----------------| _?_: unread  | _%_: pattern   |-^^------------------
+_n_: next    | _s_: search        | _r_: refile  | _&_: custom    | _O_: sorting
+_p_: prev    | _S_: edit prev qry | _u_: unmk    | _+_: flag      | _P_: threading
+_]_: n unred | _/_: narrow search | _U_: unmk *  | _-_: unflag    | _Q_: full-search
+_[_: p unred | _b_: search bkmk   | _d_: trash   | _T_: thr       | _V_: skip dups 
+_y_: sw view | _B_: edit bkmk     | _D_: delete  | _t_: subthr    | _W_: include-related
+_R_: reply   | _{_: previous qry  | _m_: move    |-^^-------------+-^^------------------ 
+_C_: compose | _}_: next query    | _a_: action  | _|_: thru shl  | _`_: update, reindex
+_F_: forward | _C-+_: show more   | _A_: mk4actn | _H_: help      | _;_: context-switch
+             | _C--_: show less   | _*_: *thing  | _q_: quit hdrs | _j_: jump2maildir "
+
+  ;; general
+  ("n" mu4e-headers-next)
+  ("p" mu4e-headers-previous)
+  ("[" mu4e-select-next-unread)
+  ("]" mu4e-select-previous-unread)
+  ("y" mu4e-select-other-view)
+  ("R" mu4e-compose-reply)
+  ("C" mu4e-compose-new)
+  ("F" mu4e-compose-forward)
+;;  ("o" my/org-capture-mu4e)                  ; differs from built-in
+
+  ;; search
+  ("s" mu4e-headers-search)
+  ("S" mu4e-headers-search-edit)
+  ("/" mu4e-headers-search-narrow)
+  ("b" mu4e-headers-search-bookmark)
+  ("B" mu4e-headers-search-bookmark-edit)
+  ("{" mu4e-headers-query-prev)              ; differs from built-in
+  ("}" mu4e-headers-query-next)              ; differs from built-in
+  ("C-+" mu4e-headers-split-view-grow)
+  ("C--" mu4e-headers-split-view-shrink)
+
+  ;; mark stuff 
+  ("!" mu4e-headers-mark-for-read)
+  ("?" mu4e-headers-mark-for-unread)
+  ("r" mu4e-headers-mark-for-refile)
+  ("u" mu4e-headers-mark-for-unmark)
+  ("U" mu4e-mark-unmark-all)
+  ("d" mu4e-headers-mark-for-trash)
+  ("D" mu4e-headers-mark-for-delete)
+  ("m" mu4e-headers-mark-for-move)
+  ("a" mu4e-headers-action)                  ; not really a mark per-se
+  ("A" mu4e-headers-mark-for-action)         ; differs from built-in
+  ("*" mu4e-headers-mark-for-something)
+
+  ("#" mu4e-mark-resolve-deferred-marks)
+  ("%" mu4e-headers-mark-pattern)
+  ("&" mu4e-headers-mark-custom)
+  ("+" mu4e-headers-mark-for-flag)
+  ("-" mu4e-headers-mark-for-unflag)
+  ("t" mu4e-headers-mark-subthread)
+  ("T" mu4e-headers-mark-thread)
+
+  ;; miscellany
+  ("q" mu4e~headers-quit-buffer)
+  ("H" mu4e-display-manual)
+  ("|" mu4e-view-pipe)                       ; does not seem built-in any longer
+
+  ;; switches
+  ("O" mu4e-headers-change-sorting)
+  ("P" mu4e-headers-toggle-threading)
+  ("Q" mu4e-headers-toggle-full-search)
+  ("V" mu4e-headers-toggle-skip-duplicates)
+  ("W" mu4e-headers-toggle-include-related)
+
+  ;; more miscellany
+  ("`" mu4e-update-mail-and-index)           ; differs from built-in
+  (";" mu4e-context-switch)  
+  ("j" mu4e~headers-jump-to-maildir)
+
+  ("." nil))
+
+      ;; we seem to need this to fix the org-store-link issue
+       ;; (org-link-set-parameters "mu4e" :follow #'org-mu4e-open :store 
+       ;; #'org-mu4e-store-link)
+
+      :bind  (( 
+               :map mu4e-main-mode-map
+               ("J" . mu4e~headers-jump-to-maildir)
+               ("j" . next-line)
+               ("k" . previous-line)
+               ("u" . mu4e-update-mail-and-index)
+               ("b" . mu4e-headers-search-bookmark)
+               ("B" . mu4e-headers-search-bookmark-edit)
+               ("N" . mu4e-news)
+               (";" . mu4e-context-switch)
+               ("H" . mu4e-display-manual)
+               ("C" . mu4e-compose-new)
+               ;; ("cc" . mu4e-compose-new)
+               ("x" . mu4e-kill-update-mail)
+               ("A" . mu4e-about)
+               ("f" . smtpmail-send-queued-mail)
+               ("m" . mu4e~main-toggle-mail-sending-mode)
+               ("s" . mu4e-headers-search)
+               ("q" . mu4e-quit)
+               :map mu4e-headers-mode-map
+               ("q" . mu4e~headers-quit-buffer)
+               ("J" . mu4e~headers-jump-to-maildir)
+               ("C" . mu4e-compose-new)
+               ("E" . mu4e-compose-edit)
+               ("F" . mu4e-compose-forward)
+               ("R" . mu4e-compose-reply)
+               ("o" .   mu4e-headers-change-sorting)
+               ("j" . mu4e-headers-next)
+               ("k" . mu4e-headers-prev)
+               ("b" . mu4e-headers-search-bookmark)
+               ("B" . mu4e-headers-search-bookmark-edit)
+               (";" . mu4e-context-switch)
+               ("/" . mu4e-headers-search-narrow)
+               ("s" . mu4e-headers-search)
+               ("S" . mu4e-headers-search-edit)
+               ("x" . mu4e-mark-execute-all)
+               ("a" . mu4e-headers-action)
+               ("*" . mu4e-headers-mark-for-something) 
+               ("&" . mu4e-headers-mark-custom)
+               ("A" . mu4e-headers-mark-for-action)
+               ("m" . mu4e-headers-mark-for-move)
+               ("r" . mu4e-headers-mark-for-refile)
+               ("D" . mu4e-headers-mark-for-delete)
+               ("d" . mu4e-headers-mark-for-trash)
+               ("=" . mu4e-headers-mark-for-untrash)
+               ("u" . mu4e-headers-mark-for-unmark)
+               ("U" . mu4e-mark-unmark-all)
+               ("?" . mu4e-headers-mark-for-unread)
+               ("!" . mu4e-headers-mark-for-read)
+               ("%" . mu4e-headers-mark-pattern)
+               ("+" . mu4e-headers-mark-for-flag)
+               ("-" . mu4e-headers-mark-for-unflag)
+               ("[" . mu4e-headers-prev-unread)
+               ("]" . mu4e-headers-next-unread)
+               ("C-j" . mu4e-headers-next)
+               ("C-k" . mu4e-headers-prev)
+               :map mu4e-view-mode-map
+               ("j" . next-line)
+               ("k" . previous-line)
+               ("l" . evil-forward-char)
+               ("h" . evil-backward-char)
+               ("v" . evil-visual-char)
+               ("$" . evil-end-of-visual-line)
+               ("^" . evil-beginning-of-visual-line)
+               ("]" . evil-next-visual-line)
+               ("[" . evil-previous-visual-line)
+               (" " . mu4e-view-scroll-up-or-next)
+               ([tab] . shr-next-link)
+               ([backtab] . shr-previous-link)
+               ("q" . mu4e~view-quit-buffer)
+               ("C" . mu4e-compose-new)
+               ("H" . mu4e-view-toggle-html)
+               ("R" . mu4e-compose-reply)
+               ("p" . mu4e-view-save-attachment)
+               ("P" . mu4e-view-save-attachment-multi) 
+               ("O" . mu4e-headers-change-sorting)
+               ("o" . mu4e-view-open-attachment)
+               ("A" . mu4e-view-attachment-action)
+               ("a" . mu4e-view-action)
+               ("J" . mu4e~headers-jump-to-maildir)
+               ("C-j" . mu4e-view-headers-next)
+               ("C-k" . mu4e-view-headers-prev)
+               ("x" . mu4e-view-marked-execute)
+               ("&" . mu4e-view-mark-custom)
+               ("*" . mu4e-view-mark-for-something)   
+               ("m" . mu4e-view-mark-for-move)
+               ("r" . mu4e-view-mark-for-refile)
+               ("D" . mu4e-view-mark-for-delete)
+               ("d" . mu4e-view-mark-for-trash)
+               ("=" . mu4e-view-mark-for-untrash)
+               ("u" . mu4e-view-unmark)
+               ("U" . mu4e-view-unmark-all)
+               ("?" . mu4e-view-mark-for-unread)
+               ("!" . mu4e-view-mark-for-read)
+               ("%" . mu4e-view-mark-pattern)
+               ("+" . mu4e-view-mark-for-flag)
+               ("-" . mu4e-view-mark-for-unflag)
+               ("s" . mu4e-view-search-edit)
+               ("|" . mu4e-view-pipe)
+               ("." . mu4e-view-raw-message)
+               ("C--" . mu4e-headers-split-view-shrink)
+               ("C-+" . mu4e-headers-split-view-grow))))
 
 (use-package calendar 
   :custom
@@ -1068,6 +1133,64 @@ used as title."
   (setq calendar-holidays
         (append holiday-general-holidays holiday-other-holidays)))
 
+(use-package calfw-org
+  :after calfw
+  :straight (calfw-org :type git :host github :repo "kiwanami/emacs-calfw"))  
+
+(use-package calfw 
+  :straight (calfw :type git :host github :repo "kiwanami/emacs-calfw") 
+  :custom
+  (cfw:fchar-junction ?╋)
+  (cfw:fchar-vertical-line ?┃)
+  (cfw:fchar-horizontal-line ?━)
+  (cfw:fchar-left-junction ?┣)
+  (cfw:fchar-right-junction ?┫)
+  (cfw:fchar-top-junction ?┯)
+  (cfw:fchar-top-left-corner ?┏)
+  (cfw:fchar-top-right-corner ?┓)
+
+  :config 
+  (require 'calfw-org)
+
+  ;; (defun sync0-open-calendar ()
+  ;;   (interactive)
+  ;;   (let ((buf (get-buffer "*cfw-calendar*")))
+  ;;     (if buf
+  ;;         (pop-to-buffer buf nil)
+  ;;       (cfw:open-calendar-buffer
+  ;;        :contents-sources
+  ;;        (list (cfw:org-create-source "#c0c5ce")) :view 'week))))
+
+  ;; (setq sync0-org-agenda-files 
+  ;;       (let ((agenda-files   (org-agenda-files nil 'ifmode)))
+  ;;         (delete "~/Dropbox/org/etc/Habits.org"  agenda-files)
+  ;;         (delete "~/Dropbox/org/messages"  agenda-files)))
+
+  ;; Redefinition
+  ;; (eval-after-load "calfw-org"
+  ;;   '(defun cfw:org-collect-schedules-period (begin end)
+  ;;      "[internal] Return org schedule items between BEGIN and END."
+  ;;      (let ((org-agenda-prefix-format " ")
+  ;;            (span 'day))
+  ;;        (setq org-agenda-buffer
+  ;;              (when (buffer-live-p org-agenda-buffer)
+  ;;                org-agenda-buffer))
+  ;;        (org-compile-prefix-format nil)
+  ;;        (loop for date in (cfw:enumerate-days begin end) append
+  ;;              (loop for file in sync0-org-agenda-files 
+  ;;                    append
+  ;;                    (progn
+  ;;                      (org-check-agenda-file file)
+  ;;                      (apply 'org-agenda-get-day-entries
+  ;;                             file date
+  ;;                             cfw:org-agenda-schedule-args)))))))
+
+(evil-leader/set-key
+  "C" 'cfw:open-org-calendar))
+
+  ;; :bind (:map cfw:details-mode-map
+  ;;        ("SPC"  . cfw:details-kill-buffer-command))
+
 (use-package magit
   :straight (magit :type git :host github :repo "magit/magit") 
   :commands (magit-status magit-blame)
@@ -1080,8 +1203,8 @@ used as title."
          ("C-x M-g" . magit-dispatch)))
 
 (use-package git-gutter 
-:straight (git-gutter :type git :host github :repo "emacsorphanage/git-gutter") 
-      :after hydra
+      :straight (git-gutter :type git :host github :repo "emacsorphanage/git-gutter") 
+      :commands git-gutter-mode
       ;; :init
       ;; (global-git-gutter-mode +1)
       ;; :hook 
@@ -1161,7 +1284,6 @@ used as title."
 
 (use-package org-journal 
     :straight (org-journal :type git :host github :repo "bastibe/org-journal") 
-    :after org
     :custom
     ;; Set default directory to search for journal files. 
     ;;(org-journal-dir (concat sync0-dropbox-directory "org"))
@@ -1884,10 +2006,10 @@ used as title."
     ;; This setup prevents slowing down agenda parsing. 
     ;; I create a variable to stand for the path of the journal file for the current month.  
     ;; Then, I have org-agenda parse only this path and not all the past journal files.
-    (setq sync0-journal-today-file 
-          (concat sync0-dropbox-directory "org/journal/" (format-time-string "%Y%m%d") ".org"))
+    ;; (setq sync0-journal-today-file 
+    ;;       (concat sync0-dropbox-directory "org/journal/" (format-time-string "%Y%m%d") ".org"))
 
-    (add-to-list 'org-agenda-files sync0-journal-today-file)
+    ;; (add-to-list 'org-agenda-files sync0-journal-today-file)
 
         (setq org-agenda-custom-commands
               '(("d" "Deux semaines"
@@ -2133,6 +2255,13 @@ used as title."
          ("K" . sync0-org-agenda-previous-header)
          ("N" . sync0-org-agenda-new)))
 
+(use-package emms)
+
+(use-package org-emms
+:after emms
+:commands (org-emms-insert-track
+           org-emms-insert-track-position))
+
 (use-package org-roam
           :after evil-leader
           :straight (org-roam :type git :host github :repo "org-roam/org-roam") 
@@ -2150,10 +2279,6 @@ used as title."
               (org-roam-graph-exclude-matcher '("journal" "etc" "inbox" "projects" "spontaneous"))
 
         :config
-(evil-leader/set-key
-  "F" 'org-roam-find-file
-  "i" 'org-roam-insert)
-
         (setq org-roam-capture-templates '( 
          ("n" "Numéroté" plain (function org-roam--capture-get-point)
           "%?"
@@ -2173,7 +2298,39 @@ used as title."
                  #'org-roam-capture--get-point
                  "* %?"
                  :file-name "journal/%<%Y%m%d>"
-                 :head "#+TITLE: %<%A, %d %B %Y>\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: journal %<%Y> %<%B>\n\n"))))
+                 :head "#+TITLE: %<%A, %d %B %Y>\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: journal %<%Y> %<%B>\n\n")))
+
+(require 'org-journal)
+
+(defhydra sync0-hydra-org-roam-insert (:color blue :hint nil)
+"
+^Zettelkasten link insert functions^   
+^--------------------
+^Org-roam^          ^Org-mode^          ^Org-roam-bibtex^  ^Org-emms^
+^----------------------------------------- 
+_i_nsert roam link  insert org _l_ink   _c_itation link    _t_rack link
+_r_oam buffer       _s_tore link        note _a_ctions     track _p_osition 
+_b_uild cache       last stored lin_k_        
+plot _g_raph
+
+_q_uit
+"
+      ("i" org-roam-insert)
+      ("r" org-roam)
+      ("b" org-roam-db-build-cache)
+      ("g" org-roam-graph)
+      ("l" org-insert-link)
+      ("s" org-store-link)
+      ("k" org-insert-last-stored-link)
+      ("t" org-emms-insert-track)
+      ("p" org-emms-insert-track-position)
+      ("c" orb-insert)
+      ("a" orb-note-actions)
+      ("q" nil :color blue))
+
+    (evil-leader/set-key
+      "F" 'org-roam-find-file
+      "i" 'sync0-hydra-org-roam-insert/body))
 
 (use-package company-org-roam :after company)
 
@@ -2235,7 +2392,7 @@ used as title."
 
 ;; The following two functions are necessary to replicate the functionality of org-roam into org-capture.
 ;; https://emacs.stackexchange.com/questions/27620/orgmode-capturing-original-document-title
-(defun sync0-org-get-title (file)
+(defun sync0-org-get-title-keyword (file)
   (let (title)
     (when file
       (with-current-buffer
@@ -2243,6 +2400,14 @@ used as title."
         (pcase (org-collect-keywords '("TITLE"))
           (`(("TITLE" . ,val))
            (setq title (car val)))))
+      title)))
+
+(defun sync0-org-get-previous-heading-title (file)
+  (let (title)
+    (when file
+      (with-current-buffer
+          (get-file-buffer file)
+           (setq title (nth 4 (org-heading-components))))
       title)))
 
 (defun sync0-org-get-abbreviated-path (file)
@@ -2270,13 +2435,39 @@ used as title."
     (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
           (expand-file-name (format "%s.org" sync0-zettel-time) "~/Dropbox/org/"))
 
+      (defun sync0-org-capture-message-name ()
+    (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
+    (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
+    (setq sync0-fiche-name (read-string "Destinataire : "))
+    (setq sync0-fiche-name-upcase 
+        (let* ((author_list (split-string sync0-fiche-name "_"))
+              (last_name (nth 0 author_list))
+              (first_name (nth 1 author_list))
+              (author_string (format "%s %s" first_name last_name)))
+        (upcase-initials author_string)))
+          (expand-file-name (format "%s.org" sync0-zettel-time) "~/Dropbox/org/messages/"))
+
       (defun sync0-org-capture-reference-name ()
     (setq sync0-reference-filename (read-string "Nom du fichier : "))
+    (setq sync0-reference-year (substring sync0-reference-filename -4))
+    (setq sync0-fiche-name (read-string "Auteur : "))
+    (setq sync0-fiche-name-upcase 
+        (let* ((author_list (split-string sync0-fiche-name "_"))
+              (last_name (nth 0 author_list))
+              (first_name (nth 1 author_list))
+              (author_string (format "%s %s" first_name last_name)))
+        (upcase-initials author_string)))
+    (setq sync0-fiche-lastname-upcase 
+        (let* ((author_list (split-string sync0-fiche-name "_"))
+              (last_name (nth 0 author_list))
+              (first_name (nth 1 author_list)))
+        (upcase-initials last_name)))
     (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
     (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
           (expand-file-name (format "%s.org" sync0-reference-filename) "~/Dropbox/org/references/"))
 
       (defun sync0-org-capture-web-name ()
+    (setq sync0-reference-filename (read-string "Nom du fichier : "))
     (setq sync0-web-name (read-string "Nom du ROAM_KEY : "))
     (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
     (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
@@ -2286,19 +2477,26 @@ used as title."
     (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
     (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
     (setq sync0-project-name (read-string "Nom du projet: "))
+    (setq sync0-project-name-upcase (upcase-initials sync0-project-name))
           (expand-file-name (format "%s.org" sync0-zettel-time) "~/Dropbox/org/projects/"))
 
       (defun sync0-org-capture-fiche-name ()
     (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
     (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
     (setq sync0-fiche-name (read-string "Fiche created for: "))
-    (setq sync0-fiche-name-uppercase 
+    (setq sync0-fiche-name-upcase 
         (let* ((author_list (split-string sync0-fiche-name "_"))
               (last_name (nth 0 author_list))
               (first_name (nth 1 author_list))
               (author_string (format "%s %s" first_name last_name)))
         (upcase-initials author_string)))
           (expand-file-name (format "%s.org" sync0-zettel-time) "~/Dropbox/org/"))
+
+;; Taken from https://github.com/abo-abo/hydra/wiki/mu4e
+          (defun sync0-org-capture-mu4e ()
+  (interactive)
+  "Capture a TODO item via email."
+  (org-capture nil "o"))
 
             (setq org-capture-templates 
                   '(("j" "Journal" entry (function org-journal-find-location)
@@ -2310,43 +2508,49 @@ used as title."
                    :unnarrowed t :jump-to-captured t)
                    ("f" "Fiche" plain 
                    (file sync0-org-capture-fiche-name)
-                   "%(format \"#+TITLE: %s\n#+CREATED: %s\n#+DATE: \n#+ROAM_TAGS: fiches %s\" sync0-fiche-name-uppercase sync0-zettel-time-ordered sync0-fiche-name)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-title (org-capture-get :original-file))]]\n\n"
+                   "%(format \"#+TITLE: %s\n#+CREATED: %s\n#+DATE: \n#+ROAM_TAGS: fiches %s\" sync0-fiche-name-upcase sync0-zettel-time-ordered sync0-fiche-name)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-title-keyword (org-capture-get :original-file))]]\n\n"
                    :unnarrowed t :jump-to-captured t)
                    ("p" "Note de projet" plain 
                    (file sync0-org-capture-project-name)
-                   "%(format \"#+TITLE: \n#+CREATED: %s\n#+DATE: \n#+ROAM_TAGS: projects %s %s\" sync0-zettel-time-ordered sync0-project-name sync0-current-year)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-title (org-capture-get :original-file))]]\n\n"
+                   "%(format \"#+TITLE: \n#+CREATED: %s\n#+DATE: \n#+ROAM_TAGS: %s %s\" sync0-zettel-time-ordered sync0-project-name sync0-current-year)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-title-keyword (org-capture-get :original-file))]]\n\n"
                    :unnarrowed t :jump-to-captured t)
                 ("e" "Pensée éphémère" plain
                  (file sync0-org-capture-inbox-zettel-name)
-               "#+TITLE: \n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: inbox %<%Y> %<%B>\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-title (org-capture-get :original-file))]]\n\n"
+               "#+TITLE: \n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: inbox %<%Y> %<%B>\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-title-keyword (org-capture-get :original-file))]]\n\n"
                    :unnarrowed t :jump-to-captured t)
                      ("t" "Liste de tâches" plain
-                     (file sync0-org-capture-project-note-name)
-                     "%(format \"#+TITLE: Tâches de %s\n#+CATEGORY: %s\" sync0-project-name sync0-project-name-upcase)\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: projects todo %(format \"%s\n#+FILETAGS: :projects:todo:%s:\" sync0-project-name sync0-project-name)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-title (org-capture-get :original-file))]]\n\n%?"
+                     (file sync0-org-capture-project-name)
+                     "%(format \"#+TITLE: Tâches de %s\n#+CATEGORY: %s\" sync0-project-name sync0-project-name-upcase)\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: todo %(format \"%s\n#+FILETAGS: :projects:todo:%s:\" sync0-project-name sync0-project-name)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-title-keyword (org-capture-get :original-file))]]\n\n%?"
                    :unnarrowed t :jump-to-captured t)
                    ("a" "Annotation" plain 
                     (file sync0-org-capture-zettel-name)
-                     "#+TITLE: %(format \"%s\" sync0-zettelkasten-annotations-key)\n#+AUTHOR: %(format \"%s\" sync0-zettelkasten-annotations-author)\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %<%Y> %(format \"%s\" sync0-current-month-downcase) %(format \"%s\" sync0-zettelkasten-annotations-key) annotations\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-title (org-capture-get :original-file))]]\n\nDans la page %?"
+                     ;; "#+TITLE: %(format \"%s\" sync0-zettelkasten-annotations-key)\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %<%Y> %(format \"%s\" sync0-current-month-downcase) %(format \"%s\" sync0-zettelkasten-annotations-key) annotations\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-title-keyword (org-capture-get :original-file))]]\n\nDans [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))::*%(sync0-org-get-previous-heading-title (org-capture-get :original-file))][%(sync0-org-get-title-keyword (org-capture-get :original-file))]], page %?"
+                     "#+TITLE: %(format \"%s\" sync0-zettelkasten-annotations-key)\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %(format \"%s\" sync0-zettelkasten-annotations-key) annotations %<%Y> %(format \"%s\" sync0-current-month-downcase)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-title-keyword (org-capture-get :original-file))]]\n\nDans %(org-capture-get :annotation), page %?"
                    :unnarrowed t :jump-to-captured t)
                    ("l" "Note de lecture" plain 
                     (file sync0-org-capture-reference-name)
-                   "#+TITLE: %^{Title}\n#+SUBTITLE: %^{Subtitle}\n#+AUTHOR: %^{Author}\n#+ROAM_KEY: cite:%(format \"%s\" sync0-reference-filename)\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %<%Y> %(format \"%s\" sync0-reference-filename) references %?\n#+INTERLEAVE_PDF:\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-title (org-capture-get :original-file))]]\n\n"
+                   "#+TITLE: %^{Title}\n#+SUBTITLE: %^{Subtitle}\n#+AUTHOR: %(format \"%s\" sync0-fiche-name-upcase)\n#+ROAM_KEY: cite:%(format \"%s\" sync0-reference-filename)\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %(format \"%s %s %s\" sync0-reference-filename sync0-fiche-name sync0-reference-year)%?\n#+INTERLEAVE_PDF: /home/sync0/Documents/pdfs/%(format \"%s_%s\" sync0-fiche-lastname-upcase sync0-reference-year)_%(sync0-org-get-title-keyword (org-capture-get :buffer)).pdf\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-title-keyword (org-capture-get :original-file))]]\n\n"
                    :unnarrowed t :jump-to-captured t)
               ("w" "Site web" plain 
                  (file sync0-org-capture-web-name)
-             "#+TITLE: %^{Title}\n#+SUBTITLE: %^{Subtitle}\n#+AUTHOR: %^{Author}\n#+ROAM_KEY: cite:%(format \"%s\" sync0-web-name)\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %<%Y> %(format \"%s\" sync0-current-month-downcase) references %?\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-title (org-capture-get :original-file))]]\n\n"
+             "#+TITLE: %^{Title}\n#+SUBTITLE: %^{Subtitle}\n#+AUTHOR: %^{Author}\n#+ROAM_KEY: cite:%(format \"%s\" sync0-reference-filename)\n#+WEBSITE: %(format \"%s\" sync0-web-name)\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %<%Y> %(format \"%s\" sync0-current-month-downcase) %?\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-title-keyword (org-capture-get :original-file))]]\n\n"
                    :unnarrowed t :jump-to-captured t)
               ("n" "Numérotée" plain 
                  (file sync0-org-capture-zettel-name)
-              "#+TITLE: %^{Title}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %<%Y>  %<%B>\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-title (org-capture-get :original-file))]]\n\n"
+              "#+TITLE: %^{Title}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %<%Y> %(format \"%s\" sync0-current-month-downcase)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-title-keyword (org-capture-get :original-file))]]\n\n"
                    :unnarrowed t :jump-to-captured t)
                   ("s" "Écriture spontanée" plain
                  (file sync0-org-capture-spontaneous-zettel-name)
                    "#+TITLE: Divertisements du %<%d> %<%B> %<%Y>\n#+ROAM_TAGS: spontaneous %<%Y> %<%B>\n\n"
                    :unnarrowed t :jump-to-captured t)
+                    ("c" "Correspondant" plain 
+                 (file sync0-org-capture-message-name)
+                   "%(format \"#+TITLE: Messages pour %s\n#+CREATED: %s\n#+DATE: \n#+ROAM_TAGS: fiches %s\" sync0-fiche-name-upcase sync0-zettel-time-ordered sync0-fiche-name)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-title-keyword (org-capture-get :original-file))]]\n\n"
+                   :unnarrowed t :jump-to-captured t)
                     ("m" "Email" entry 
-                     (file+headline "~/Dropbox/org/messages.org" "Courriel")
-                     "** 無 %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%a\n" :jump-to-captured t :prepend t)))
+                     (file+headline "~/Dropbox/org/projects/messages.org" "À répondre")
+                    ;; "** 無 %^{Description}\n%A\n%?\n"
+                     "** 無 %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%A\n" :jump-to-captured t :prepend t)))
 
             :bind 
             (("\C-c c" . org-capture)))
@@ -2680,9 +2884,9 @@ are exported to a filename derived from the headline text."
   (org-bullets-bullet-list '(" ")))
 
 (use-package org-mu4e 
-  :straight nil
   :disabled t
-  :after org
+  :after mu4e
+  :straight nil
   :custom
   ;; Store link to message if in header view, not to header query.
   (org-mu4e-link-query-in-headers-mode nil))
@@ -2773,55 +2977,55 @@ are exported to a filename derived from the headline text."
           ("C-c 8"  . sync0-org-ref-open-pdf-at-point)))
 
 (use-package nov
-    :straight nil
-    :after (org-noter evil)
-    :load-path "~/.emacs.d/sync0/nov.el" 
-    :custom
-     (nov-text-width 60)
-    :config
-      (push '("\\.epub\\'" . nov-mode) auto-mode-alist)
+ :straight nil
+ :after (org-noter evil)
+ :load-path "~/.emacs.d/sync0/nov.el" 
+ :custom
+  (nov-text-width 66)
+ :config
+   (push '("\\.epub\\'" . nov-mode) auto-mode-alist)
 
-       (evil-define-key 'normal nov-mode-map
-    "r" 'nov-render-document
-   ;; "S" 'nov-view-content-source
-    ;; "g?" 'nov-display-metadata
-    "J" 'nov-next-document
-    "K" 'nov-previous-document
-    "T" 'nov-goto-toc
-    "i" 'org-noter-insert-note
-    "I" 'org-noter-insert-precise-note
-      )
+    (evil-define-key 'normal nov-mode-map
+ "r" 'nov-render-document
+;; "S" 'nov-view-content-source
+ ;; "g?" 'nov-display-metadata
+ "J" 'nov-next-document
+ "K" 'nov-previous-document
+ "T" 'nov-goto-toc
+ "i" 'org-noter-insert-note
+ "I" 'org-noter-insert-precise-note
+   )
 
-   (defun sync0-nov-font-setup ()
-    (progn
-      (face-remap-add-relative 'variable-pitch
-                               :family "Minion Pro"
-                               :height 170)
-        (nov-render-document)))
+(defun sync0-nov-font-setup ()
+ (progn
+   (face-remap-add-relative 'variable-pitch
+                            :family "Minion Pro"
+                            ;; :height 200
+                            :height 200)
+     (nov-render-document)))
 
-    (add-hook 'nov-mode-hook 'sync0-nov-font-setup))
+ (add-hook 'nov-mode-hook 'sync0-nov-font-setup))
 
-    (use-package esxml
-    :straight (esxml :type git :host github :repo "tali713/esxml"))
+ (use-package esxml
+ :straight (esxml :type git :host github :repo "tali713/esxml"))
 
-    (use-package org-noter
-;; :disabled t
-:straight (org-noter :type git :host github :repo "weirdNox/org-noter") 
-      :after (:any org pdf-view)
-      :config
-      (setq
-       ;; The WM can handle splits
-       org-noter-notes-window-location 'horizontal-split
-       ;; Please stop opening frames
-       org-noter-always-create-frame nil
-       ;; I want to see the whole file
-       org-noter-hide-other nil
-       ;; Use interleave properties 
-       org-noter-property-doc-file "INTERLEAVE_PDF"
-       ;; 
-       org-noter-default-heading-title (format-time-string "%Y%m%d%H%M%S")
-       ;; Everything is relative to the main notes file
-       org-noter-notes-search-path (list sync0-zettelkasten-directory)))
+ (use-package org-noter
+   :straight (org-noter :type git :host github :repo "weirdNox/org-noter") 
+   :after (:any org pdf-view)
+   :config
+   (setq
+    ;; The WM can handle splits
+    org-noter-notes-window-location 'horizontal-split
+    ;; Please stop opening frames
+    org-noter-always-create-frame nil
+    ;; I want to see the whole file
+    org-noter-hide-other nil
+    ;; Use interleave properties 
+    org-noter-property-doc-file "INTERLEAVE_PDF"
+    ;; 
+    org-noter-default-heading-title (format-time-string "%Y%m%d%H%M%S")
+    ;; Everything is relative to the main notes file
+    org-noter-notes-search-path (list sync0-zettelkasten-directory)))
 
 (use-package org-download
 :straight (org-download :type git :host github :repo "abo-abo/org-download") 
@@ -2829,7 +3033,8 @@ are exported to a filename derived from the headline text."
 :hook (dired-mode . org-download-enable)
 :custom
 (org-download-image-dir "~/Pictures/org")
-(org-download-screenshot-method "xfce4-screenshooter")
+(org-download-screenshot-method "spectacle")
+;; (org-download-screenshot-method "xfce4-screenshooter")
 
 :config
     (defhydra sync0-hydra-org-download-functions (:color amaranth :hint nil :exit t)
@@ -2887,14 +3092,14 @@ are exported to a filename derived from the headline text."
       ;; Define todo keywords.
       (org-todo-keywords '((sequence "無(1)" "次(2)" "中(3)" "見(4)" "待(5)" "阻(6)" "|" "完(7)" "取(8)")))
       ;; Set faces for org-todo-keywords
-      (org-todo-keyword-faces '(("無" . (:foreground "#dc322f" :weight semi-bold :height 0.8))
-                                ("次" . (:foreground "#d33682" :weight semi-bold :height 0.8))
-                                ("完" . (:foreground "#859900" :weight semi-bold :height 0.8))   
-                                ("待" . (:foreground "#cb4b16" :weight semi-bold :height 0.8))
-                                ("阻" . (:foreground "#268bd2" :weight semi-bold :height 0.8)) 
-                                ("取" . (:foreground "#6c71c4" :weight semi-bold :height 0.8)) 
-                                ("見" . (:foreground "#268bd2" :weight semi-bold :height 0.8)) 
-                                ("中" . (:foreground "#b58900" :weight semi-bold :height 0.8))))
+      (org-todo-keyword-faces '(("無" . (:foreground "#dc322f" :weight semi-bold :height 0.9))
+                                ("次" . (:foreground "#d33682" :weight semi-bold :height 0.9))
+                                ("完" . (:foreground "#859900" :weight semi-bold :height 0.9))   
+                                ("待" . (:foreground "#cb4b16" :weight semi-bold :height 0.9))
+                                ("阻" . (:foreground "#268bd2" :weight semi-bold :height 0.9)) 
+                                ("取" . (:foreground "#6c71c4" :weight semi-bold :height 0.9)) 
+                                ("見" . (:foreground "#268bd2" :weight semi-bold :height 0.9)) 
+                                ("中" . (:foreground "#b58900" :weight semi-bold :height 0.9))))
       (org-blank-before-new-entry '((heading . nil)(plain-list-item . nil)))
       ;; Stop emacs asking for confirmation
       (org-confirm-babel-evaluate nil)
@@ -2974,7 +3179,8 @@ are exported to a filename derived from the headline text."
         (windmove-right))
 
 (evil-leader/set-key
-   "O" 'sync0-overview-tree-window
+   "O" 'org-open-at-point
+   ;; "O" 'sync0-overview-tree-window
   ;; "o" 'sync0-overview-jump-to-overview
   "I" 'org-insert-link
   "T" 'sync0-org-tree-to-indirect-buffer)
@@ -3134,28 +3340,28 @@ are exported to a filename derived from the headline text."
                                 ("addressbook#contacts@group.v.calendar.google.com" . "~/Dropbox/org/etc/Birthdays.org"))))
 
 (use-package org2blog
-:straight (org2blog :type git :host github :repo "org2blog/org2blog") 
-      :after (org simple-secrets)
-      :commands (org2blog-user-interface)
-      :bind (("C-c b" . org2blog-user-interface))
-      :custom
-      (org-list-allow-alphabetical t)
-      :config
-      ;;    (setq load-path (cons "~/.emacs.d/org2blog/" load-path))
-      ;; (require 'org2blog-autoloads)
-      ;; blog setup
-      ;; (require 'auth-source)
-      (let* ((username (secret-lookup "sync0-blog-cybernetic-username"))
-             (password (secret-lookup "sync0-blog-cybernetic-password"))
-             (track-posts (list "org2blog.org" "Cahiers de révoltologie"))
-             (config `(("cahiers"
-                       :url "https://cyberneticrevolutionary.wordpress.com/xmlrpc.php"
-                       :username ,username
-                       :password ,password
-                       :default-title "Penseé"
-                       :track-posts ,track-posts
-                       :tags-as-categories nil))))
-        (setq org2blog/wp-blog-alist config)))
+  :straight (org2blog :type git :host github :repo "org2blog/org2blog") 
+  :after (org simple-secrets)
+  :commands (org2blog-user-interface)
+  :bind (("C-c b" . org2blog-user-interface))
+  :custom
+  (org-list-allow-alphabetical t)
+  :config
+  ;;    (setq load-path (cons "~/.emacs.d/org2blog/" load-path))
+  ;; (require 'org2blog-autoloads)
+  ;; blog setup
+  ;; (require 'auth-source)
+  (let* ((username (secret-lookup "sync0-blog-cybernetic-username"))
+         (password (secret-lookup "sync0-blog-cybernetic-password"))
+         (track-posts (list "org2blog.org" "Cahiers de révoltologie"))
+         (config `(("cahiers"
+                   :url "https://cyberneticrevolutionary.wordpress.com/xmlrpc.php"
+                   :username ,username
+                   :password ,password
+                   :default-title "Penseé"
+                   :track-posts ,track-posts
+                   :tags-as-categories nil))))
+    (setq org2blog/wp-blog-alist config)))
 
 (setq initial-scratch-message ";; 
 ;;
@@ -3223,18 +3429,21 @@ _q_uit
 (add-hook 'minibuffer-setup-hook #'sync0-no-fringes-in-minibuffer)
 
 (setq-default                    
- ;; Avoid ugly problemes with git-gutter.
- fringes-outside-margins t
- left-margin-width 2
- right-margin-width 0
- left-fringe-width 1
- right-fringe-width 0
- ;; Remove continuation arrow on right fringe.
- fringe-indicator-alist (delq (assq 'continuation fringe-indicator-alist)
-                              fringe-indicator-alist)
- indicate-buffer-boundaries nil
- indicate-empty-lines nil
- max-mini-window-height 0.3)
+          ;; Avoid ugly problemes with git-gutter.
+          fringes-outside-margins t
+          left-margin-width 3
+          ;; left-margin-width 2
+          right-margin-width 0
+          left-fringe-width 0
+;; create a function to restore the fringe value when using git-gutter-fringe
+          ;; left-fringe-width 1
+          right-fringe-width 0
+          ;; Remove continuation arrow on right fringe.
+          fringe-indicator-alist (delq (assq 'continuation fringe-indicator-alist)
+                                       fringe-indicator-alist)
+          indicate-buffer-boundaries nil
+          indicate-empty-lines nil
+          max-mini-window-height 0.3)
 
 (use-package all-the-icons 
     :straight (all-the-icons :type git :host github :repo "domtronn/all-the-icons.el") 
@@ -3384,15 +3593,15 @@ _q_uit
         (mini-modeline-mode t))
 
 (if (> (display-pixel-width) 2000)
-    ;; external monitor font size
+    ;; high resolution font size
     (progn (set-face-attribute 'default nil 
                           :family "Inconsolata"
                           :height 150)
       (setq line-spacing 0))
-  ;; laptop font size
+  ;; low resolution font size
   (progn (set-face-attribute 'default nil 
                         :family "Inconsolata"
-                        :height 180)
+                        :height 160)
     (setq line-spacing 1.5)))
 
 ;;   (defun sync0-buffer-face-mode-fixed ()
@@ -3411,13 +3620,13 @@ _q_uit
 (defun sync0-buffer-face-mode-variable ()
   "Set font to a variable width (proportional) fonts in current buffer"
   (if (> (display-pixel-width) 2000)
-      ;; external monitor font size
+  ;; high resolution font size
     (progn
       (setq buffer-face-mode-face '(:family "Minion Pro" :height 140))
   (setq line-spacing 0.25))
-    ;; laptop font size
+  ;; low resolution font size
     (progn
-    (setq buffer-face-mode-face '(:family "Minion Pro" :height 200))
+    (setq buffer-face-mode-face '(:family "Minion Pro" :height 160))
   (setq line-spacing 0.2)))
   (buffer-face-mode))
 
@@ -3471,21 +3680,22 @@ _q_uit
 
 (use-package visual-line
   :straight nil
-  :defer t
   :commands visual-line-mode
   :hook 
   ;; (mu4e-compose-mode . visual-line-mode)
   (mu4e-view-mode . visual-line-mode) 
   (mu4e-compose-mode . visual-line-mode))
 
-(use-package visual-fill-column
-  :straight nil
-  :commands visual-fill-column-mode
-  :hook 
-  (mu4e-view-mode . visual-fill-column-mode)
-  (mu4e-compose-mode . visual-fill-column-mode)
-  ;; (add-hook 'mu4e-view-mode-hook 'mu4e-view-fill-long-lines)
-  :config (setq visual-fill-column-width 66))
+;; (straight-use-package '(visual-fill-column :type git :host github :repo "joostkremers/visual-fill-column"))
+
+  (use-package visual-fill-column
+    :straight (visual-fill-column :type git :host github :repo "joostkremers/visual-fill-column")
+    :commands visual-fill-column-mode
+    :hook 
+    (mu4e-view-mode . visual-fill-column-mode)
+    (mu4e-compose-mode . visual-fill-column-mode)
+    ;; (add-hook 'mu4e-view-mode-hook 'mu4e-view-fill-long-lines)
+    :config (setq visual-fill-column-width 66))
 
 (use-package rainbow-delimiters
   :straight (rainbow-delimiters :type git :host github :repo "Fanael/rainbow-delimiters") 
@@ -4520,7 +4730,7 @@ for parsing BibTeX keys.  If parsing fails, try to set this variable to nil."
 #+ROAM_KEY: cite:${=key=}
 #+CREATED: %(sync0-insert-today-timestamp)
 #+DATE: %(sync0-insert-today-timestamp)
-#+ROAM_TAGS: ${=key=} references ${keywords} 
+#+ROAM_TAGS: ${=key=} ${keywords} 
 #+INTERLEAVE_PDF: ${file}
 
 

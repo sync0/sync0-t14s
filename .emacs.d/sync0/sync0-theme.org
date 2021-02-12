@@ -102,9 +102,12 @@ Other settings.
          (setq-default                    
           ;; Avoid ugly problemes with git-gutter.
           fringes-outside-margins t
-          left-margin-width 2
+          left-margin-width 3
+          ;; left-margin-width 2
           right-margin-width 0
-          left-fringe-width 1
+          left-fringe-width 0
+;; create a function to restore the fringe value when using git-gutter-fringe
+          ;; left-fringe-width 1
           right-fringe-width 0
           ;; Remove continuation arrow on right fringe.
           fringe-indicator-alist (delq (assq 'continuation fringe-indicator-alist)

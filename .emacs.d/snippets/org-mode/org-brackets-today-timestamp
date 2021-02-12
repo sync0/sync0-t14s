@@ -2,4 +2,4 @@
 # name: org-brackets-today-timestamp
 # key: date
 # --
-[`(sync0-insert-today-timestamp)`] $0
+(`(sync0-insert-today-timestamp)`) $0

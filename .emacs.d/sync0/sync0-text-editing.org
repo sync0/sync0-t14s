@@ -3,15 +3,15 @@
     Adjust font size according to screen resolution (when I use dual monitor setup)
 #+BEGIN_SRC emacs-lisp
   (if (> (display-pixel-width) 2000)
-      ;; external monitor font size
+      ;; high resolution font size
       (progn (set-face-attribute 'default nil 
                             :family "Inconsolata"
                             :height 150)
         (setq line-spacing 0))
-    ;; laptop font size
+    ;; low resolution font size
     (progn (set-face-attribute 'default nil 
                           :family "Inconsolata"
-                          :height 180)
+                          :height 160)
       (setq line-spacing 1.5)))
 
   ;;   (defun sync0-buffer-face-mode-fixed ()
@@ -33,13 +33,13 @@
     (defun sync0-buffer-face-mode-variable ()
       "Set font to a variable width (proportional) fonts in current buffer"
       (if (> (display-pixel-width) 2000)
-          ;; external monitor font size
+      ;; high resolution font size
         (progn
           (setq buffer-face-mode-face '(:family "Minion Pro" :height 140))
       (setq line-spacing 0.25))
-        ;; laptop font size
+      ;; low resolution font size
         (progn
-        (setq buffer-face-mode-face '(:family "Minion Pro" :height 200))
+        (setq buffer-face-mode-face '(:family "Minion Pro" :height 160))
       (setq line-spacing 0.2)))
       (buffer-face-mode))
  #+END_SRC
@@ -106,9 +106,10 @@
 
 * visual-line
 #+BEGIN_SRC emacs-lisp
+
+
   (use-package visual-line
     :straight nil
-    :defer t
     :commands visual-line-mode
     :hook 
     ;; (mu4e-compose-mode . visual-line-mode)
@@ -118,8 +119,11 @@
 
 * visual-fill-column
 #+BEGIN_SRC emacs-lisp
+
+;; (straight-use-package '(visual-fill-column :type git :host github :repo "joostkremers/visual-fill-column"))
+
   (use-package visual-fill-column
-    :straight nil
+    :straight (visual-fill-column :type git :host github :repo "joostkremers/visual-fill-column")
     :commands visual-fill-column-mode
     :hook 
     (mu4e-view-mode . visual-fill-column-mode)
@@ -824,43 +828,6 @@ some quality voices in the AUR repositories.
 
                     :hook 
             ((text-mode . sync0-text-mode-centered-window)
-             (prog-mode . sync0-prog-mode-centered-window)))
-
-  #+END_SRC 
-
-* 取 centered-window-mode
-  Center text. 
-  #+BEGIN_SRC emacs-lisp
-                  (use-package centered-window
-                    :straight (centered-window :type git :host github :repo "anler/centered-window-mode") 
-                    :config
-
-    ;;             (defun sync0-text-mode-centered-window ()
-    ;;              (progn
-    ;;           (setq cwm-left-fringe-ratio 100)
-    ;;         (centered-window-mode t)))
-
-                (defun sync0-prog-mode-centered-window ()
-                 (progn
-            ;; Ratio by which the left fringe is padded more than the right.
-            ;; Should be a value between 0 and 100
-            (setq cwm-left-fringe-ratio 30)
-            (centered-window-mode t)))
-
-              (defun sync0-emacs-configuration-centered-window ()
-                "Change margins of org-files in the configuration folder."
-                (when (derived-mode-p 'text-mode)
-        (if  (or ;;(derived-mode-p 'org-agenda-mode)
-                 (equal default-directory user-emacs-directory)
-                 (equal default-directory sync0-emacs-directory))
-            (setq cwm-left-fringe-ratio 30)
-            (setq cwm-left-fringe-ratio 100))))
-
-            (add-hook 'find-file-hook 'sync0-emacs-configuration-centered-window)
-            (add-hook 'buffer-list-update-hook 'sync0-emacs-configuration-centered-window)
-
-                    :hook 
-            ((text-mode . centered-window)
              (prog-mode . sync0-prog-mode-centered-window)))
 
   #+END_SRC 

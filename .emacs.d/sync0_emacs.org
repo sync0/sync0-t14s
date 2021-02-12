@@ -482,12 +482,10 @@ sync0-portuguese-parts-speech '("sustantivo femenino" "sustantivo masculino" "ve
             (sync0-insert-today-timestamp))))))
 
   (add-hook 'before-save-hook (lambda ()
+;; Check whether file is in org-mode and whether it is located in my Zettelkasten directory
                                 (when (and (eq major-mode 'org-mode)
-                                           (or (equal default-directory (concat (getenv "HOME") "/Dropbox/org/"))
-                                               (equal default-directory (concat (getenv "HOME") "/Dropbox/org/projects/"))
-                                               (equal default-directory (concat (getenv "HOME") "/Dropbox/org/inbox/"))
-                                               (equal default-directory (concat (getenv "HOME") "/Dropbox/org/references/"))
-                                               (equal default-directory (concat (getenv "HOME") "/Dropbox/annotations/"))))
+                                      (string-prefix-p sync0-zettelkasten-directory (buffer-file-name)))
+                                               ;; (equal default-directory (concat (getenv "HOME") "/Dropbox/annotations/"))
                                   (sync0-update-timestamp))))
 
   (defun sync0-zettelkasten-annotations-update-author ()
@@ -555,7 +553,6 @@ Moving around windows.
        (balance-windows)
                  (setq truncate-lines t)
                  (setq truncate-partial-width-windows t)
- ;; (sync0-restore-margins)
        (other-window 1)))
 
      (defun sync0-split-and-follow-vertically ()
@@ -667,6 +664,7 @@ loaded after packages are declared.
     "3" 'sync0-split-and-follow-vertically
     "m" 'bookmark-set
     "j" 'counsel-bookmark
+    "q" 'keyboard-quit
     "w" 'save-buffer
     "b" 'ivy-switch-buffer
     "r" 'counsel-recentf
@@ -676,7 +674,8 @@ loaded after packages are declared.
     "o" 'other-window
     "p" 'previous-buffer
     "n" 'next-buffer
-    "k" 'kill-buffer))
+    "K" 'kill-buffer
+    "k" 'delete-window))
   #+END_SRC
 
 *** evil
@@ -738,6 +737,8 @@ loaded after packages are declared.
        ;; Turn on evil-escape mode when enabled.
        (evil-escape-mode 1)
 
+       (add-to-list 'evil-emacs-state-modes 'cfw:details-mode)
+
        ;; Change global key bindings
        (unbind-key "C-m" evil-normal-state-map)
        (unbind-key "M-." evil-normal-state-map)
@@ -752,6 +753,7 @@ loaded after packages are declared.
          "zb" 'sync0-delete-text-block
          "zl" 'transpose-lines
          "zw" 'transpose-words
+         "zj" 'evil-join
          "zp" 'transpose-paragraphs
         ;; (kbd "SPC") 'sync0-insert-whitespace
          "zs" 'transpose-sentences)

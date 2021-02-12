@@ -30,7 +30,7 @@ Channel carc.sync0-inbox
 Master :carc.sync0-remote:
 Slave :carc.sync0-local:
 Patterns "INBOX"
-Create Slave
+Create Both
 Expunge Both
 Sync All
 SyncState *
@@ -38,7 +38,7 @@ SyncState *
 Channel carc.sync0-trash
 Master :carc.sync0-remote:"[Gmail]/Trash"
 Slave :carc.sync0-local:"[carc.sync0].Trash"
-Create Slave
+Create Both
 Expunge Both
 Sync All
 SyncState *
@@ -46,7 +46,7 @@ SyncState *
 Channel carc.sync0-sent
 Master :carc.sync0-remote:"[Gmail]/Sent Mail"
 Slave :carc.sync0-local:"[carc.sync0].Sent Mail"
-Create Slave
+Create Both
 Expunge Both
 Sync All
 SyncState *
@@ -54,7 +54,7 @@ SyncState *
 Channel carc.sync0-all
 Master :carc.sync0-remote:"[Gmail]/All Mail"
 Slave :carc.sync0-local:"[carc.sync0].All Mail"
-Create Slave
+Create Both
 Expunge Both
 Sync All
 SyncState *
@@ -62,7 +62,7 @@ SyncState *
 Channel carc.sync0-drafts
 Master :carc.sync0-remote:"[Gmail]/Drafts"
 Slave :carc.sync0-local:"[carc.sync0].Drafts"
-Create Slave
+Create Both
 Expunge Both
 Sync All
 SyncState *
@@ -110,7 +110,7 @@ Channel cantorlunae-inbox
 Master :cantorlunae-remote:
 Slave :cantorlunae-local:
 Patterns "INBOX"
-Create Slave
+Create Both
 Expunge Both
 Sync All
 SyncState *
@@ -118,7 +118,7 @@ SyncState *
 Channel cantorlunae-trash
 Master :cantorlunae-remote:"[Gmail]/Trash"
 Slave :cantorlunae-local:"[cantorlunae].Trash"
-Create Slave
+Create Both
 Expunge Both
 Sync All
 SyncState *
@@ -126,7 +126,7 @@ SyncState *
 Channel cantorlunae-sent
 Master :cantorlunae-remote:"[Gmail]/Sent Mail"
 Slave :cantorlunae-local:"[cantorlunae].Sent Mail"
-Create Slave
+Create Both
 Expunge Both
 Sync All
 SyncState *
@@ -134,7 +134,7 @@ SyncState *
 Channel cantorlunae-all
 Master :cantorlunae-remote:"[Gmail]/All Mail"
 Slave :cantorlunae-local:"[cantorlunae].All Mail"
-Create Slave
+Create Both
 Expunge Both
 Sync All
 SyncState *
@@ -142,7 +142,7 @@ SyncState *
 Channel cantorlunae-drafts
 Master :cantorlunae-remote:"[Gmail]/Drafts"
 Slave :cantorlunae-local:"[cantorlunae].Drafts"
-Create Slave
+Create Both
 Expunge Both
 Sync All
 SyncState *

@@ -4,11 +4,23 @@
 (setq sync0-bibtex-simon-arkseries '("Personal Pappers (1929-1979)" "Schoolwork and Early Career (1929-1943)" "Illinois Institute of Technology (1942-1949)" "RAND Corporation (1949-1973)" "Carnegie Mellon University (1948-2001)" "Consulting (1942-2000)" "Lectures and Talks (1951-2000)" "Publications (1949-2000)" "Correspondence (1940-2001)" "Dissertations (1956-1999)" "Awards (1958-1998)" "Miscellaneous (1942-2003)"))
 
 ;; Functions
+;; (defun sync0-print-bibtex-key ()
+;;   "Print the bibtex key of the document"
+;;   (if  (save-excursion 
+;;                (goto-char (point-min))
+;;         (re-search-forward "#\\+ROAM_KEY: cite:\\([[:graph:]]+\\)" nil t 1))
+;;       (match-string 1)
+;;     (save-excursion
+;;              (when 
+;;                  (or (re-search-backward "cite:\\([[:graph:]]+\\)\\]\\[[[:digit:]]+\\]\\]" nil t 1)
+;;                  (re-search-backward "cite\\[[[:digit:]]+\\]{\\([[:graph:]]+\\)}" nil t 1))
+;;                (match-string 1)))))
+
 (defun sync0-print-bibtex-key ()
   "Print the bibtex key of the document"
   (if  (save-excursion 
                (goto-char (point-min))
-        (re-search-forward "#\\+ROAM_KEY: cite:\\([[:graph:]]+\\)" nil t 1))
+        (re-search-forward "#\\+ROAM_TAGS: \\([[:graph:]]+\\)[[:blank:]]" nil t 1))
       (match-string 1)
     (save-excursion
              (when 

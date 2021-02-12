@@ -183,8 +183,8 @@
  (rear-context-string . "Jérôme Lallment\n")
  (position . 883))
 ("org-capture-last-stored"
- (filename . "~/Dropbox/org/20210110215320.org")
- (front-context-string . "#+TITLE: Tarjeta")
+ (filename . "~/Dropbox/org/projects/20210211234748.org")
+ (front-context-string . "#+TITLE: Tâches ")
  (rear-context-string)
  (position . 1))
 ("carc"
@@ -198,8 +198,8 @@
  (rear-context-string . "\"init.el\"))))))\n")
  (position . 5443))
 ("here"
- (filename . "~/Dropbox/org/journal/20210202.org")
+ (filename . "~/Dropbox/org/20210209183137.org")
  (front-context-string)
- (rear-context-string . "e configurer les")
- (position . 1048))
+ (rear-context-string . "t deux boîtes \n\n")
+ (position . 314))
 )

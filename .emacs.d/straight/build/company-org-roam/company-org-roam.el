@@ -1,1 +1,0 @@
-/home/sync0/.emacs.d/straight/repos/company-org-roam/company-org-roam.el

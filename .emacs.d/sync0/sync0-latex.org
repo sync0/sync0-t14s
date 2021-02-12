@@ -415,7 +415,7 @@
 ,#+ROAM_KEY: cite:${=key=}
 ,#+CREATED: %(sync0-insert-today-timestamp)
 ,#+DATE: %(sync0-insert-today-timestamp)
-,#+ROAM_TAGS: ${=key=} references ${keywords} 
+,#+ROAM_TAGS: ${=key=} ${keywords} 
 ,#+INTERLEAVE_PDF: ${file}
 
 

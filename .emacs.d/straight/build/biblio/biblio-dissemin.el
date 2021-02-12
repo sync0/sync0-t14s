@@ -1,1 +1,0 @@
-/home/sync0/.emacs.d/straight/repos/biblio.el/biblio-dissemin.el
