@@ -3,11 +3,11 @@
 # key: article
 # --
 @article\{${28:$$(unless yas-modified-p (sync0-bibtex-generate-autokey))},
-author = \{${5:Simon, Herbert}\},
+author = \{${5:$$(unless yas-modified-p (sync0-bibtex-completion-author))}\},
 date = \{${1:2001}\},
 title = \{${2:Artificial Intelligence}\},${3:
 subtitle = \{${4:The New Era}\},}
-journaltitle = \{${6:Journal of Experimental Psychology}\},${7:
+journaltitle = \{${6:$$(unless yas-modified-p (sync0-bibtex-completion-journaltitle))}\},${7:
 issuetitle = \{${8:The Mind and the Brain}\},}${9:
 series = \{${10:The Great Operation}\},}${11:
 volume = \{${12:24}\},}${13:

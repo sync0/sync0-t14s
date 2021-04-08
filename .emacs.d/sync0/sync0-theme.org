@@ -73,13 +73,13 @@ _q_uit
 
   Configure window dividers. 
   #+BEGIN_SRC emacs-lisp
-          ;; On graphical displays, you can use window dividers in order to separate
-          ;; windows visually.
-          ;; (setq-default 
-          ;;               window-divider-default-bottom-width 0
-          ;;               window-divider-default-right-width 2)
+          (setq-default 
+                        window-divider-default-bottom-width 2
+                        window-divider-default-right-width 2
+                        ;; Show both window dividers (right and bottom)
+                        window-divider-default-places 'right-only)
 
-    ;;      (add-hook 'emacs-startup-hook #'window-divider-mode)
+         (add-hook 'emacs-startup-hook #'window-divider-mode)
 #+END_SRC
 
 Remove fringes from minibuffer. This function was taken from [[https://github.com/hlissner][hlissner]]. See
@@ -99,6 +99,8 @@ when line truncation is enabled.
 
 Other settings.
 #+BEGIN_SRC emacs-lisp
+      (if (> (display-pixel-width) 1900)
+      ;; High resolution settings (t14s)
          (setq-default                    
           ;; Avoid ugly problemes with git-gutter.
           fringes-outside-margins t
@@ -106,7 +108,6 @@ Other settings.
           ;; left-margin-width 2
           right-margin-width 0
           left-fringe-width 0
-;; create a function to restore the fringe value when using git-gutter-fringe
           ;; left-fringe-width 1
           right-fringe-width 0
           ;; Remove continuation arrow on right fringe.
@@ -115,8 +116,222 @@ Other settings.
           indicate-buffer-boundaries nil
           indicate-empty-lines nil
           max-mini-window-height 0.3)
+      ;; Low resolution settings:
+         (setq-default                    
+          ;; Avoid ugly problemes with git-gutter.
+          fringes-outside-margins t
+          left-margin-width 1
+          ;; left-margin-width 2
+          right-margin-width 0
+          left-fringe-width 0
+          ;; create a function to restore the fringe value when using git-gutter-fringe
+          ;; left-fringe-width 1
+          right-fringe-width 0
+          ;; Remove continuation arrow on right fringe.
+          fringe-indicator-alist (delq (assq 'continuation fringe-indicator-alist)
+                                       fringe-indicator-alist)
+          indicate-buffer-boundaries nil
+          indicate-empty-lines nil
+          max-mini-window-height 0.3))
  #+END_SRC
 
+* Modeline
+I use the package ~mini-modeline~ because I always liked the idea of
+getting rid of the echo area. I work on a 12.5 inch screen, and so
+every line I can save is important. Even though ~mini-modeline~ is
+quite limited in what it offers, I like the simplicity of just
+displaying few information in my modeline. True, my modeline is
+quite spartan, and is not nearly as well-crafated  as
+doom-modeline (the one I previously used, and whose configuration
+I still keep), but it gets the job done, saves me one line of
+screen, and is not as distracting as other fancier mode-lines. I
+think this configuration helps to focus more on my writing, so it
+is good. 
+
+Display battery information in mode line. 
+
+#+BEGIN_SRC emacs-lisp
+(use-package battery
+ :custom
+  (battery-mode-line-format "%t")
+  (battery-update-interval 60)
+ :config
+  (display-battery-mode t))
+#+END_SRC 
+
+#+BEGIN_SRC emacs-lisp
+            ;; Define a local variable with the total number of lines.
+            (defvar-local sync0-mode-line-buffer-line-count nil)
+
+            ;; Define a function that counts the number of lines in the
+            ;; current buffer.
+            (defun sync0-mode-line-count-lines ()
+              "Count the number of lines in the current buffer."
+              (setq-local sync0-mode-line-buffer-line-count 
+                          (int-to-string (count-lines (point-min) (point-max)))))
+
+            ;; Recalculate the total number of lines using hooks. This is
+            ;; not the best approach, but I have not been able to devise a
+            ;; dynamic way to calculate these that does not result in Emacs
+            ;; "inventing" these results.
+            (add-hook 'find-file-hook 'sync0-mode-line-count-lines)
+            (add-hook 'after-save-hook 'sync0-mode-line-count-lines)
+            (add-hook 'after-revert-hook 'sync0-mode-line-count-lines)
+
+
+  (setq-default mode-line-format
+                    '(" " 
+                    ;;  mode-line-front-espace 
+                      (:eval (cond 
+                              (buffer-read-only (propertize "🔒"
+                                                            'face '(:family "Noto Color Emoji")
+                                                            'help-echo "buffer is read-only!!!"))
+                              ((buffer-modified-p) (propertize "💾"
+                                                               'face '(:family "Noto Color Emoji")))
+                              (t (propertize "✓"
+                                             'face '(:family "Noto Color Emoji")))))
+                      "  " 
+                      mode-line-buffer-identification 
+                      "  " 
+                      (:eval 
+                              (if (boundp 'guess-language-current-language) 
+              (cond  ((string-equal guess-language-current-language "en") 
+                              (propertize "EN" 'face '(:height 1.0 :family "Minion Pro" :weight bold)))
+                     ((string-equal guess-language-current-language "de") 
+                              (propertize "DE" 'face '(:height 1.0 :family "Minion Pro" :weight bold)))
+                     ((string-equal guess-language-current-language "pt") 
+                              (propertize "PT" 'face '(:height 1.0 :family "Minion Pro" :weight bold)))
+                   ((string-equal guess-language-current-language "it") 
+                            (propertize "IT" 'face '(:height 1.0 :family "Minion Pro" :weight bold)))
+                     ((string-equal guess-language-current-language "fr") 
+                              (propertize "FR" 'face '(:height 1.0 :family "Minion Pro" :weight bold)))
+                     ((string-equal guess-language-current-language "es") 
+                              (propertize "ES" 'face '(:height 1.0 :family "Minion Pro" :weight bold)))
+                      (t (propertize "NIL" 'face '(:height 1.0 :family "Minion Pro" :weight bold))))
+                                   ;; (upcase (prin1-to-string guess-language-current-language))
+                               (propertize "NIL" 'face '(:height 1.0 :family "Minion Pro" :weight bold))))
+                    ;; evil-mode-line-tag
+                      "  "
+                    (:eval 
+                     (let ((line-string "L:%l"))
+                       (if (and (not (buffer-modified-p))
+                                sync0-mode-line-buffer-line-count)
+                           (setq line-string 
+                                 (concat line-string "/" sync0-mode-line-buffer-line-count))
+                         line-string)))
+                     ;; "L:%l"
+                    "                                                               "
+                     (:eval (propertize 
+                             (capitalize 
+                              (s-replace "-mode" "" (format "%s" major-mode)))
+                                  'face '(:weight bold)))
+                     " " 
+                     (vc-mode vc-mode)
+                     " " 
+                     (:eval (when (boundp 'org-mode-line-string)
+                              (propertize  org-mode-line-string 'face '(:weight semi-bold))))
+                     (:eval (propertize (format-time-string " %H:%M ")
+                                        'face '(:weight bold))) 
+                     " " 
+                      (:eval  (propertize "⚡" 'face '(:family "Noto Color Emoji")))
+                     mode-line-misc-info
+  emacs-mode-line-end-spaces))
+#+END_SRC 
+
+Define mini-modeline segments.
+
+I borrowed a function from:
+https://stackoverflow.com/questions/8190277/how-do-i-display-the-total-number-of-lines-in-the-emacs-modeline
+
+#+BEGIN_SRC emacs-lisp
+        (use-package mini-modeline
+    :disabled t
+    :straight (mini-modeline :type git :host github :repo "kiennq/emacs-mini-modeline") 
+          ;; :preface
+          ;; ;; Define a local variable with the total number of lines.
+          ;; (defvar-local sync0-mode-line-buffer-line-count nil)
+
+          ;; ;; Define a function that counts the number of lines in the
+          ;; ;; current buffer.
+          ;; (defun sync0-mode-line-count-lines ()
+          ;;   "Count the number of lines in the current buffer."
+          ;;   (setq-local sync0-mode-line-buffer-line-count 
+          ;;               (int-to-string (count-lines (point-min) (point-max)))))
+
+          ;; ;; Recalculate the total number of lines using hooks. This is
+          ;; ;; not the best approach, but I have not been able to devise a
+          ;; ;; dynamic way to calculate these that does not result in Emacs
+          ;; ;; "inventing" these results.
+          ;; (add-hook 'find-file-hook 'sync0-mode-line-count-lines)
+          ;; (add-hook 'after-save-hook 'sync0-mode-line-count-lines)
+          ;; (add-hook 'after-revert-hook 'sync0-mode-line-count-lines)
+  :custom
+  (mini-modeline-display-gui-line nil)
+  (mini-modeline-enhance-visual nil)
+  ;; (mini-modeline-right-padding 3)
+          :config
+          (setq   mini-modeline-l-format
+                  '(" " 
+                    mode-line-front-espace 
+                    (:eval (cond 
+                            (buffer-read-only (propertize "🔒 "
+                                                          'face '(:family "Noto Color Emoji")
+                                                          'help-echo "buffer is read-only!!!"))
+                            ((buffer-modified-p) (propertize "💾 "
+                                                             'face '(:family "Noto Color Emoji")))
+                            (t (propertize "✔ "
+                                           'face '(:family "Noto Color Emoji")))))
+                    mode-line-buffer-identification 
+                    "  " 
+                    (:eval 
+                            (if (boundp 'guess-language-current-language) 
+            (cond  ((string-equal guess-language-current-language "en") 
+                            (propertize "EN" 'face '(:height 1.0 :family "Minion Pro" :weight bold)))
+                   ((string-equal guess-language-current-language "de") 
+                            (propertize "DE" 'face '(:height 1.0 :family "Minion Pro" :weight bold)))
+                   ((string-equal guess-language-current-language "pt") 
+                            (propertize "PT" 'face '(:height 1.0 :family "Minion Pro" :weight bold)))
+                   ((string-equal guess-language-current-language "it") 
+                            (propertize "IT" 'face '(:height 1.0 :family "Minion Pro" :weight bold)))
+                   ((string-equal guess-language-current-language "fr") 
+                            (propertize "FR" 'face '(:height 1.0 :family "Minion Pro" :weight bold)))
+                   ((string-equal guess-language-current-language "es") 
+                            (propertize "ES" 'face '(:height 1.0 :family "Minion Pro" :weight bold)))
+                    (t (propertize "NIL" 'face '(:height 1.0 :family "Minion Pro" :weight bold))))
+                                 ;; (upcase (prin1-to-string guess-language-current-language))
+                             (propertize "NIL" 'face '(:height 1.0 :family "Minion Pro" :weight bold))))
+                    "  "
+                    "L:%l"))
+;; Count the number of lines in modeline.
+                    ;; (:eval 
+                    ;;  (let ((line-string "L:%l"))
+                    ;;    (if (and (not (buffer-modified-p))
+                    ;;             sync0-mode-line-buffer-line-count)
+                    ;;        (setq line-string 
+                    ;;              (concat line-string "/" sync0-mode-line-buffer-line-count))
+                    ;;      line-string)))
+
+          (setq  mini-modeline-r-format
+                 '((:eval 
+                        (propertize 
+                         (capitalize 
+                          (s-replace "-mode" "" (format "%s" major-mode)))
+                         'face '(:weight bold)))
+                   " " 
+                   (vc-mode vc-mode)
+                   " " 
+                   (:eval (when (boundp 'org-mode-line-string)
+                            (propertize  org-mode-line-string 'face '(:weight semi-bold))))
+                   (:eval (propertize (format-time-string " %H:%M ")
+                                      'face '(:weight bold))) 
+                   " " 
+                    (:eval  (propertize "⚡" 'face '(:family "Noto Color Emoji")))
+                   mode-line-misc-info
+                   ))
+
+          (mini-modeline-mode t))
+  #+END_SRC 
+  
 * all-the-icons
 
 #+BEGIN_SRC emacs-lisp
@@ -135,7 +350,7 @@ for my needs.
 
 #+BEGIN_SRC emacs-lisp
   (use-package solaire-mode
-:disabled t
+ :disabled t
     :straight (solaire-mode :type git :host github :repo "hlissner/emacs-solaire-mode") 
     :hook
     (((change-major-mode after-revert ediff-prepare-buffer) . turn-on-solaire-mode)
@@ -183,10 +398,10 @@ I stopped using it.
          (load-theme 'doom-zenburn t)
         (load-theme 'doom-flatwhite t)
    :config
-      ;; Correct org-mode's native fontification.
-      (doom-themes-org-config)
       ;; Enable flashing mode-line on errors
-       (doom-themes-visual-bell-config))
+       ;; (doom-themes-visual-bell-config)
+      ;; Correct org-mode's native fontification.
+      (doom-themes-org-config))
 #+END_SRC 
 
 * cycle-themes
@@ -215,118 +430,6 @@ Cycle between themes.
     :hook (after-init . global-emojify-mode-line-mode))
 #+END_SRC 
 
-* mini-modeline
-I use the package ~mini-modeline~ because I always liked the idea of
-getting rid of the echo area. I work on a 12.5 inch screen, and so
-every line I can save is important. Even though ~mini-modeline~ is
-quite limited in what it offers, I like the simplicity of just
-displaying few information in my modeline. True, my modeline is
-quite spartan, and is not nearly as well-crafated  as
-doom-modeline (the one I previously used, and whose configuration
-I still keep), but it gets the job done, saves me one line of
-screen, and is not as distracting as other fancier mode-lines. I
-think this configuration helps to focus more on my writing, so it
-is good. 
-
-Display battery information in mode line. 
-
-#+BEGIN_SRC emacs-lisp
-(use-package battery
- :custom
-  (battery-mode-line-format "%t")
-  (battery-update-interval 60)
- :config
-  (display-battery-mode t))
-#+END_SRC 
-
-Define mini-modeline segments.
-
-I borrowed a function from:
-https://stackoverflow.com/questions/8190277/how-do-i-display-the-total-number-of-lines-in-the-emacs-modeline
-
-#+BEGIN_SRC emacs-lisp
-      (use-package mini-modeline
-  :straight (mini-modeline :type git :host github :repo "kiennq/emacs-mini-modeline") 
-        :preface
-        ;; Define a local variable with the total number of lines.
-        (defvar-local sync0-mode-line-buffer-line-count nil)
-
-        ;; Define a function that counts the number of lines in the
-        ;; current buffer.
-        (defun sync0-mode-line-count-lines ()
-          "Count the number of lines in the current buffer."
-          (setq-local sync0-mode-line-buffer-line-count 
-                      (int-to-string (count-lines (point-min) (point-max)))))
-
-        ;; Recalculate the total number of lines using hooks. This is
-        ;; not the best approach, but I have not been able to devise a
-        ;; dynamic way to calculate these that does not result in Emacs
-        ;; "inventing" these results.
-        (add-hook 'find-file-hook 'sync0-mode-line-count-lines)
-        (add-hook 'after-save-hook 'sync0-mode-line-count-lines)
-        (add-hook 'after-revert-hook 'sync0-mode-line-count-lines)
-:custom
-(mini-modeline-display-gui-line nil)
-(mini-modeline-enhance-visual nil)
-        :config
-        (setq   mini-modeline-l-format
-                '(" " 
-                  mode-line-front-espace 
-                  (:eval (cond 
-                          (buffer-read-only (propertize "🔒 "
-                                                        'face '(:family "Noto Color Emoji")
-                                                        'help-echo "buffer is read-only!!!"))
-                          ((buffer-modified-p) (propertize "💾 "
-                                                           'face '(:family "Noto Color Emoji")))
-                          (t (propertize "✔ "
-                                         'face '(:family "Noto Color Emoji")))))
-                  mode-line-buffer-identification 
-                  "  " 
-                  (:eval 
-                          (if (boundp 'guess-language-current-language) 
-          (cond  ((string-equal guess-language-current-language "en") 
-                          (propertize "EN" 'face '(:height 1.0 :family "Minion Pro" :weight bold)))
-                 ((string-equal guess-language-current-language "de") 
-                          (propertize "DE" 'face '(:height 1.0 :family "Minion Pro" :weight bold)))
-                 ((string-equal guess-language-current-language "pt") 
-                          (propertize "PT" 'face '(:height 1.0 :family "Minion Pro" :weight bold)))
-                 ((string-equal guess-language-current-language "fr") 
-                          (propertize "FR" 'face '(:height 1.0 :family "Minion Pro" :weight bold)))
-                 ((string-equal guess-language-current-language "es") 
-                          (propertize "ES" 'face '(:height 1.0 :family "Minion Pro" :weight bold)))
-                  (t (propertize "NIL" 'face '(:height 1.0 :family "Minion Pro" :weight bold))))
-                               ;; (upcase (prin1-to-string guess-language-current-language))
-                           (propertize "NIL" 'face '(:height 1.0 :family "Minion Pro" :weight bold))))
-                  "  "
-                  (:eval 
-                   (let ((line-string "L:%l"))
-                     (if (and (not (buffer-modified-p))
-                              sync0-mode-line-buffer-line-count)
-                         (setq line-string 
-                               (concat line-string "/" sync0-mode-line-buffer-line-count))
-                       line-string)))))
-
-        (setq  mini-modeline-r-format
-               '((:eval 
-                      (propertize 
-                       (capitalize 
-                        (s-replace "-mode" "" (prin1-to-string major-mode)))
-                       'face '(:weight bold)))
-                 " " 
-                 (vc-mode vc-mode)
-                 " " 
-                 (:eval (when (boundp 'org-mode-line-string)
-                          (propertize  org-mode-line-string 'face '(:weight semi-bold))))
-                 (:eval (propertize (format-time-string " %H:%M ")
-                                    'face '(:weight bold))) 
-                 " " 
-                  (:eval  (propertize "⚡" 'face '(:family "Noto Color Emoji")))
-                 mode-line-misc-info
-                 ))
-
-        (mini-modeline-mode t))
-  #+END_SRC 
-  
 * 取 hl-line mode
 
 #+BEGIN_SRC emacs-lisp

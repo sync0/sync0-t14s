@@ -285,7 +285,9 @@ Configure autosave.
                           `(org-default ((t (:family "Minion Pro" :weight normal :height 1.0))))
                           `(org-link ((t (:inherit org-default :underline t))))
                           `(org-ref-cite-face ((t (:inherit org-link)))) 
-                          `(org-footnote ((t (:family "Minion Pro" :height 0.8 :weight normal))))
+                          `(org-footnote ((t (:family "Minion Pro" :height 0.7 :weight ultra-bold))))
+                          ;; `(org-footnote ((t (:family "Inconsolata" :height 0.7 :weight ultra-bold))))
+                          `(org-checkbox ((t (:family "Inconsolata" :weight bold))))
                           `(org-document-info ((t (:family "Myriad Pro" :height 1.1))))
                           `(org-document-title ((t (:inherit org-document-info))))
                           `(org-level-1 ((t (:family "Myriad Pro" :height 1.2 :weight bold))))
@@ -447,71 +449,72 @@ sync0-portuguese-parts-speech '("sustantivo femenino" "sustantivo masculino" "ve
  
 ** Functions
 #+BEGIN_SRC emacs-lisp
-(defun sync0-log-today-timestamp () 
-  "Insert today's date in the YYYY/MM/DD format"
-    (insert (format-time-string "%A, %Y/%m/%d")))
-
-  (defun insert-current-day () 
-    (insert (format-time-string "%d")))
-
-  (defun insert-current-month () 
-    (insert (format-time-string "%B")))
-
-  (defun sync0-insert-today-timestamp () 
+  (defun sync0-log-today-timestamp () 
     "Insert today's date in the YYYY/MM/DD format"
-    (insert (format-time-string "%Y/%m/%d")))
+      (insert (format-time-string "%A, %Y/%m/%d")))
 
-  (defun sync0-org-insert-today-timestamp () 
-    "Insert today's date in the YYYY/MM/DD format"
-    (insert (format-time-string "<%Y-%m-%d>")))
+    (defun insert-current-day () 
+      (insert (format-time-string "%d")))
 
-  (defun sync0-update-timestamp ()
-    "Update current #+DATE timestamp"
-    (interactive)
-    (save-excursion
-      (goto-char (point-min))
-      (let ((regex "[0-9][0-9][0-9][0-9]\/[0-9][0-9]\/[0-9][0-9]")
-            (date (shell-command-to-string "echo -n $(date +'%Y/%m/%d')")))
-         (when (search-forward "#+DATE:" nil nil 1)
-           (if (progn (forward-char 1)(looking-at regex))
-               (replace-match date)
-             (sync0-insert-today-timestamp)))
-        (when (search-forward "Last modified: &" nil nil 1)
-          (if (progn (forward-char 1)(looking-at regex))
-              (replace-match date)
-            (sync0-insert-today-timestamp))))))
+    (defun insert-current-month () 
+      (insert (format-time-string "%B")))
 
-  (add-hook 'before-save-hook (lambda ()
-;; Check whether file is in org-mode and whether it is located in my Zettelkasten directory
-                                (when (and (eq major-mode 'org-mode)
-                                      (string-prefix-p sync0-zettelkasten-directory (buffer-file-name)))
-                                               ;; (equal default-directory (concat (getenv "HOME") "/Dropbox/annotations/"))
-                                  (sync0-update-timestamp))))
+    (defun sync0-insert-today-timestamp () 
+      "Insert today's date in the YYYY/MM/DD format"
+      (insert (format-time-string "%Y/%m/%d")))
 
-  (defun sync0-zettelkasten-annotations-update-author ()
-    "Save current #+AUTHOR for use later on."
-    (interactive)
- (when (equal default-directory sync0-zettelkasten-directory-references)
-    (save-excursion
-      (goto-char (point-min))
-         (when (re-search-forward "^#\\+AUTHOR: \\([[:print:]]+\\)$" nil t 1)
-             (setq sync0-zettelkasten-annotations-author (match-string-no-properties 1))))))
+    (defun sync0-org-insert-today-timestamp () 
+      "Insert today's date in the YYYY/MM/DD format"
+      (insert (format-time-string "<%Y-%m-%d>")))
 
-  (defun sync0-zettelkasten-annotations-update-roam-key ()
-    "Save current #+ROAM_KEY for use later on."
-    (interactive)
- (when (equal default-directory sync0-zettelkasten-directory-references)
-    (save-excursion
-      (goto-char (point-min))
-         (when (re-search-forward "^#\\+ROAM_KEY: cite:\\([[:print:]]+\\)$" nil t 1)
-           (progn
-             (setq sync0-zettelkasten-annotations-key (match-string-no-properties 1))
-             (setq sync0-zettelkasten-annotations-roam-key (concat "cite:" sync0-zettelkasten-annotations-key)))))))
+    (defun sync0-update-timestamp ()
+      "Update current #+DATE timestamp"
+      (interactive)
+      (save-excursion
+        (goto-char (point-min))
+        (let ((regex "[0-9][0-9][0-9][0-9]\/[0-9][0-9]\/[0-9][0-9]")
+              (date (shell-command-to-string "echo -n $(date +'%Y/%m/%d')")))
+           (when (search-forward "#+DATE:" nil nil 1)
+             (if (progn (forward-char 1)(looking-at regex))
+                 (replace-match date)
+               (sync0-insert-today-timestamp))))))
 
-(add-hook 'find-file-hook 'sync0-zettelkasten-annotations-update-author)
-(add-hook 'find-file-hook 'sync0-zettelkasten-annotations-update-roam-key)
-(add-hook 'buffer-list-update-hook 'sync0-zettelkasten-annotations-update-author)
-(add-hook 'buffer-list-update-hook 'sync0-zettelkasten-annotations-update-roam-key)
+          ;; (when (search-forward "Last modified: &" nil nil 1)
+          ;;   (if (progn (forward-char 1)(looking-at regex))
+          ;;       (replace-match date)
+          ;;     (sync0-insert-today-timestamp)))
+
+    (add-hook 'before-save-hook (lambda ()
+  ;; Check whether file is in org-mode and whether it is located in my Zettelkasten directory
+                                  (when (and (eq major-mode 'org-mode)
+                                        (string-prefix-p sync0-zettelkasten-directory (buffer-file-name)))
+                                                 ;; (equal default-directory (concat (getenv "HOME") "/Dropbox/annotations/"))
+                                    (sync0-update-timestamp))))
+
+    (defun sync0-zettelkasten-annotations-update-author ()
+      "Save current #+AUTHOR for use later on."
+      (interactive)
+   (when (equal default-directory sync0-zettelkasten-directory-references)
+      (save-excursion
+        (goto-char (point-min))
+           (when (re-search-forward "^#\\+AUTHOR: \\([[:print:]]+\\)$" nil t 1)
+               (setq sync0-zettelkasten-annotations-author (match-string-no-properties 1))))))
+
+    (defun sync0-zettelkasten-annotations-update-roam-key ()
+      "Save current #+ROAM_KEY for use later on."
+      (interactive)
+   (when (equal default-directory sync0-zettelkasten-directory-references)
+      (save-excursion
+        (goto-char (point-min))
+           (when (re-search-forward "^#\\+ROAM_KEY: cite:\\([[:print:]]+\\)$" nil t 1)
+             (progn
+               (setq sync0-zettelkasten-annotations-key (match-string-no-properties 1))
+               (setq sync0-zettelkasten-annotations-roam-key (concat "cite:" sync0-zettelkasten-annotations-key)))))))
+
+  (add-hook 'find-file-hook 'sync0-zettelkasten-annotations-update-author)
+  (add-hook 'find-file-hook 'sync0-zettelkasten-annotations-update-roam-key)
+  (add-hook 'buffer-list-update-hook 'sync0-zettelkasten-annotations-update-author)
+  (add-hook 'buffer-list-update-hook 'sync0-zettelkasten-annotations-update-roam-key)
 
 #+END_SRC
 
@@ -665,7 +668,8 @@ loaded after packages are declared.
     "m" 'bookmark-set
     "j" 'counsel-bookmark
     "q" 'keyboard-quit
-    "w" 'save-buffer
+    "w" 'write-file
+    "s" 'save-buffer
     "b" 'ivy-switch-buffer
     "r" 'counsel-recentf
     "y" 'counsel-yank-pop

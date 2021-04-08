@@ -90,7 +90,9 @@
                          `(org-default ((t (:family "Minion Pro" :weight normal :height 1.0))))
                          `(org-link ((t (:inherit org-default :underline t))))
                          `(org-ref-cite-face ((t (:inherit org-link)))) 
-                         `(org-footnote ((t (:family "Minion Pro" :height 0.8 :weight normal))))
+                         `(org-footnote ((t (:family "Minion Pro" :height 0.7 :weight ultra-bold))))
+                         ;; `(org-footnote ((t (:family "Inconsolata" :height 0.7 :weight ultra-bold))))
+                         `(org-checkbox ((t (:family "Inconsolata" :weight bold))))
                          `(org-document-info ((t (:family "Myriad Pro" :height 1.1))))
                          `(org-document-title ((t (:inherit org-document-info))))
                          `(org-level-1 ((t (:family "Myriad Pro" :height 1.2 :weight bold))))
@@ -246,11 +248,12 @@ sync0-portuguese-parts-speech '("sustantivo femenino" "sustantivo masculino" "ve
          (when (search-forward "#+DATE:" nil nil 1)
            (if (progn (forward-char 1)(looking-at regex))
                (replace-match date)
-             (sync0-insert-today-timestamp)))
-        (when (search-forward "Last modified: &" nil nil 1)
-          (if (progn (forward-char 1)(looking-at regex))
-              (replace-match date)
-            (sync0-insert-today-timestamp))))))
+             (sync0-insert-today-timestamp))))))
+
+        ;; (when (search-forward "Last modified: &" nil nil 1)
+        ;;   (if (progn (forward-char 1)(looking-at regex))
+        ;;       (replace-match date)
+        ;;     (sync0-insert-today-timestamp)))
 
   (add-hook 'before-save-hook (lambda ()
 ;; Check whether file is in org-mode and whether it is located in my Zettelkasten directory
@@ -405,7 +408,8 @@ sync0-portuguese-parts-speech '("sustantivo femenino" "sustantivo masculino" "ve
   "m" 'bookmark-set
   "j" 'counsel-bookmark
   "q" 'keyboard-quit
-  "w" 'save-buffer
+  "w" 'write-file
+  "s" 'save-buffer
   "b" 'ivy-switch-buffer
   "r" 'counsel-recentf
   "y" 'counsel-yank-pop
@@ -721,6 +725,26 @@ sync0-portuguese-parts-speech '("sustantivo femenino" "sustantivo masculino" "ve
   :bind (("C-c g" . google-this-search)
          ;; Search selection with google.
          :map evil-visual-state-map ("g"  . google-this)))
+
+(use-package flycheck
+:commands flycheck-mode
+:config
+(setq flycheck-display-errors-function #'flycheck-display-error-messages-unless-error-list)
+)
+
+(use-package py-autopep8
+:straight (py-autopep8 :type git :host github :repo "paetzke/py-autopep8.el") 
+:config
+(setq py-autopep8-options '("--max-line-length=100")))
+
+(use-package python
+:straight nil
+:config
+(setq jedi:setup-keys t)
+(setq jedi:complete-on-dot t)
+(add-hook 'python-mode-hook 'jedi:setup)
+(add-hook 'python-mode-hook 'py-autopep8-enable-on-save)
+(add-hook 'python-mode-hook 'flycheck-mode))
 
 (use-package mu4e
       :commands mu4e
@@ -1303,7 +1327,7 @@ _F_: forward | _C-+_: show more   | _A_: mk4actn | _H_: help      | _;_: context
     (org-journal-enable-encryption nil)
     (org-journal-carryover-items "TODO=\"無\"|TODO=\"次\"|TODO=\"中\"|TODO=\"待\"|TODO=\"阻\"")
     (org-journal-enable-agenda-integration nil)
-    (org-journal-file-header "#+TITLE: %A, %d %B %Y\n#+CREATED: %Y/%m/%d\n#+DATE: %Y/%m/%d\n#+ROAM_TAGS: journal %Y %B\n\n")
+    (org-journal-file-header "#+TITLE: %A, %Y/%m/%d\n#+CREATED: %Y/%m/%d\n#+DATE: %Y/%m/%d\n#+ROAM_TAGS: journal %Y %B\n\n")
 
     :config
     (defun sync0-org-journal-new-scheduled-entry (prefix &optional scheduled-time)
@@ -1993,13 +2017,14 @@ _F_: forward | _C-+_: show more   | _A_: mk4actn | _H_: help      | _;_: context
               nil)))
 
         ;; org-agenda configuration
-         (setq org-agenda-files (list "~/Dropbox/org/projects/"))
+         (setq org-agenda-files (list "~/Dropbox/org/todo/"))
 
          (let ((my-agenda-files (list "~/Dropbox/org/etc/Gcal.org"
                                       "~/Dropbox/org/etc/Events.org"
                                       "~/Dropbox/org/etc/Classes.org"
+                                      "~/Dropbox/org/messages/messages.org"
                                       ;; "~/Dropbox/org/etc/Habits.org"
-                                       "~/Dropbox/org/etc/todo.org"
+                                       ;; "~/Dropbox/org/etc/todo.org"
                                       "~/Dropbox/org/etc/menage.org")))
          (setq org-agenda-files (append org-agenda-files my-agenda-files)))
 
@@ -2262,6 +2287,12 @@ _F_: forward | _C-+_: show more   | _A_: mk4actn | _H_: help      | _;_: context
 :commands (org-emms-insert-track
            org-emms-insert-track-position))
 
+(server-start)
+
+(use-package org-protocol
+:after org
+:straight nil)
+
 (use-package org-roam
           :after evil-leader
           :straight (org-roam :type git :host github :repo "org-roam/org-roam") 
@@ -2276,7 +2307,7 @@ _F_: forward | _C-+_: show more   | _A_: mk4actn | _H_: help      | _;_: context
               (org-roam-tag-sources '(prop last-directory))
               (org-roam-completion-everywhere t)
               (org-roam-index-file "~/Dropbox/org/index.org")
-              (org-roam-graph-exclude-matcher '("journal" "etc" "inbox" "projects" "spontaneous"))
+              (org-roam-graph-exclude-matcher '("journal" "fiches" "etc" "trash" "todo" "inbox" "projects" "archived" "references" "drafts" "spontaneous"))
 
         :config
         (setq org-roam-capture-templates '( 
@@ -2288,9 +2319,9 @@ _F_: forward | _C-+_: show more   | _A_: mk4actn | _H_: help      | _;_: context
 
       (setq org-roam-capture-ref-templates
               '(("r" "ref" plain (function org-roam-capture--get-point)
-                 "#+ROAM_KEY: ${ref}\n\n%?"
-                 :file-name "website_${slug}_%<%Y-%m-%d>"
-                 :head "#+TITLE: ${title}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: website %<%Y>\n\n"
+                 "%?"
+                 :file-name "references/%<%Y%m%d%H%M%S>"
+                 :head "#+TITLE: \n#+ROAM_KEY: ${ref}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: websites %<%Y>\n\n"
                  :unnarrowed t)))
 
         (setq org-roam-dailies-capture-templates
@@ -2301,6 +2332,7 @@ _F_: forward | _C-+_: show more   | _A_: mk4actn | _H_: help      | _;_: context
                  :head "#+TITLE: %<%A, %d %B %Y>\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: journal %<%Y> %<%B>\n\n")))
 
 (require 'org-journal)
+(require 'org-roam-protocol)                
 
 (defhydra sync0-hydra-org-roam-insert (:color blue :hint nil)
 "
@@ -2330,7 +2362,8 @@ _q_uit
 
     (evil-leader/set-key
       "F" 'org-roam-find-file
-      "i" 'sync0-hydra-org-roam-insert/body))
+      "i" 'org-roam-insert
+      "I" 'sync0-hydra-org-roam-insert/body))
 
 (use-package company-org-roam :after company)
 
@@ -2372,188 +2405,316 @@ _q_uit
   (org-crypt-use-before-save-magic))
 
 (use-package org-capture 
-           :straight nil
-            :after (org evil-leader)
-            :preface 
-            (defun org-journal-find-location ()
-              ;; Open today's journal, but specify a non-nil prefix argument in order to
-              ;; inhibit inserting the heading; org-capture will insert the heading.
-              (org-journal-new-entry t)
-              ;; Position point on the journal's top-level heading so that org-capture
-              ;; will add the new entry as a child entry.
-              (goto-char (point-min)))
+                       :straight nil
+                        :after (org evil-leader)
+                        :preface 
+                        (defun org-journal-find-location ()
+                          ;; Open today's journal, but specify a non-nil prefix argument in order to
+                          ;; inhibit inserting the heading; org-capture will insert the heading.
+                          (org-journal-new-entry t)
+                          ;; Position point on the journal's top-level heading so that org-capture
+                          ;; will add the new entry as a child entry.
+                          (goto-char (point-min)))
 
-            :custom
-            (org-default-notes-file "~/Dropbox/etc/notes.org")
+                        :custom
+                        (org-default-notes-file "~/Dropbox/etc/notes.org")
 
-            :config 
-(evil-leader/set-key
-  "c" 'org-capture)
+                        :config 
+            (evil-leader/set-key
+              "c" 'org-capture)
 
-;; The following two functions are necessary to replicate the functionality of org-roam into org-capture.
-;; https://emacs.stackexchange.com/questions/27620/orgmode-capturing-original-document-title
-(defun sync0-org-get-title-keyword (file)
-  (let (title)
-    (when file
-      (with-current-buffer
-          (get-file-buffer file)
-        (pcase (org-collect-keywords '("TITLE"))
-          (`(("TITLE" . ,val))
-           (setq title (car val)))))
-      title)))
+            (add-hook 'org-capture-mode-hook 'evil-insert-state)
 
-(defun sync0-org-get-previous-heading-title (file)
-  (let (title)
-    (when file
-      (with-current-buffer
-          (get-file-buffer file)
-           (setq title (nth 4 (org-heading-components))))
-      title)))
+            ;; The following two functions are necessary to replicate the functionality of org-roam into org-capture.
+            ;; https://emacs.stackexchange.com/questions/27620/orgmode-capturing-original-document-title
+            (defun sync0-org-get-file-title-keyword (file)
+              (let (title)
+                (when file
+                  (with-current-buffer
+                      (get-file-buffer file)
+                    (pcase (org-collect-keywords '("TITLE"))
+                      (`(("TITLE" . ,val))
+                       (setq title (car val)))))
+                  title)))
 
-(defun sync0-org-get-abbreviated-path (file)
-(interactive)
-  (let (path)
-    (when file
-      (with-current-buffer
-          (get-file-buffer file)
-          (setq path (abbreviate-file-name file)))
-      path)))
+        ;; Adapted from: 
+        ;; https://kitchingroup.cheme.cmu.edu/blog/2013/05/05/Getting-keyword-options-in-org-files/
+        (defun sync0-org-get-keyword (KEYWORD)
+          "get the value from a line like this
+        #+KEYWORD: value
+        in a file."
+          (let ((case-fold-search t)
+                (re (format "^#\\+%s:[ \t]+\\([^\t\n]+\\)" KEYWORD)))
+            (when  (save-excursion
+                       (or (re-search-forward re nil t)
+                           (re-search-backward re nil t)))
+            (match-string-no-properties 1))))
 
-      ;; See https://emacs.stackexchange.com/questions/40749/using-user-prompted-file-name-for-org-capture-in-template
-      (defun sync0-org-capture-inbox-zettel-name ()
-    (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
-    (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
-          (expand-file-name (format "%s.org" sync0-zettel-time) "~/Dropbox/org/inbox/"))
+            (defun sync0-org-get-previous-heading-title (file)
+              (let (title)
+                (when file
+                  (with-current-buffer
+                      (get-file-buffer file)
+                       (setq title (nth 4 (org-heading-components))))
+                  title)))
 
-      (defun sync0-org-capture-spontaneous-zettel-name ()
-    (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
-    (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
-          (expand-file-name (format "%s.org" sync0-zettel-time) "~/Dropbox/org/spontaneous/"))
+            (defun sync0-org-get-previous-heading-or-title (file)
+              (let (title)
+                (when file
+                  (with-current-buffer
+                     (get-file-buffer file)
+                    (if (re-search-backward "^\\*+[ \t]+" nil t)
+                       (setq title (nth 4 (org-heading-components)))
+                       (pcase (org-collect-keywords '("TITLE"))
+                        (`(("TITLE" . ,val))
+                        (setq title (car val))))))
+                  title)))
 
-      (defun sync0-org-capture-zettel-name ()
-    (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
-    (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
-          (expand-file-name (format "%s.org" sync0-zettel-time) "~/Dropbox/org/"))
+            (defun sync0-org-get-author-keyword (file)
+              (let (author)
+                (when file
+                  (with-current-buffer
+                      (get-file-buffer file)
+                    (pcase (org-collect-keywords '("AUTHOR"))
+                      (`(("AUTHOR" . ,val))
+                       (setq author (car val)))))
+                  author)))
 
-      (defun sync0-org-capture-message-name ()
-    (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
-    (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
-    (setq sync0-fiche-name (read-string "Destinataire : "))
-    (setq sync0-fiche-name-upcase 
-        (let* ((author_list (split-string sync0-fiche-name "_"))
-              (last_name (nth 0 author_list))
-              (first_name (nth 1 author_list))
-              (author_string (format "%s %s" first_name last_name)))
-        (upcase-initials author_string)))
-          (expand-file-name (format "%s.org" sync0-zettel-time) "~/Dropbox/org/messages/"))
+            (defun sync0-org-get-abbreviated-path (file)
+            (interactive)
+              (let (path)
+                (when file
+                  (with-current-buffer
+                      (get-file-buffer file)
+                      (setq path (abbreviate-file-name file)))
+                  path)))
 
-      (defun sync0-org-capture-reference-name ()
-    (setq sync0-reference-filename (read-string "Nom du fichier : "))
-    (setq sync0-reference-year (substring sync0-reference-filename -4))
-    (setq sync0-fiche-name (read-string "Auteur : "))
-    (setq sync0-fiche-name-upcase 
-        (let* ((author_list (split-string sync0-fiche-name "_"))
-              (last_name (nth 0 author_list))
-              (first_name (nth 1 author_list))
-              (author_string (format "%s %s" first_name last_name)))
-        (upcase-initials author_string)))
-    (setq sync0-fiche-lastname-upcase 
-        (let* ((author_list (split-string sync0-fiche-name "_"))
-              (last_name (nth 0 author_list))
-              (first_name (nth 1 author_list)))
-        (upcase-initials last_name)))
-    (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
-    (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
-          (expand-file-name (format "%s.org" sync0-reference-filename) "~/Dropbox/org/references/"))
+                  ;; See https://emacs.stackexchange.com/questions/40749/using-user-prompted-file-name-for-org-capture-in-template
+                  (defun sync0-org-capture-inbox-zettel-name ()
+                (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
+                (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
+                      (expand-file-name (format "%s.org" sync0-zettel-time) "~/Dropbox/org/inbox/"))
 
-      (defun sync0-org-capture-web-name ()
-    (setq sync0-reference-filename (read-string "Nom du fichier : "))
-    (setq sync0-web-name (read-string "Nom du ROAM_KEY : "))
-    (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
-    (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
-          (expand-file-name (format "%s.org" sync0-reference-filename) "~/Dropbox/org/references/"))
+                  (defun sync0-org-capture-archived-zettel-name ()
+                (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
+                (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
+                      (expand-file-name (format "%s.org" sync0-zettel-time) "~/Dropbox/org/archived/"))
 
-      (defun sync0-org-capture-project-name ()
-    (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
-    (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
-    (setq sync0-project-name (read-string "Nom du projet: "))
-    (setq sync0-project-name-upcase (upcase-initials sync0-project-name))
-          (expand-file-name (format "%s.org" sync0-zettel-time) "~/Dropbox/org/projects/"))
+                  (defun sync0-org-capture-writings-zettel-name ()
+                (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
+                (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
+                      (expand-file-name (format "%s.org"
+                      sync0-zettel-time) "~/Dropbox/org/writings/"))
 
-      (defun sync0-org-capture-fiche-name ()
-    (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
-    (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
-    (setq sync0-fiche-name (read-string "Fiche created for: "))
-    (setq sync0-fiche-name-upcase 
-        (let* ((author_list (split-string sync0-fiche-name "_"))
-              (last_name (nth 0 author_list))
-              (first_name (nth 1 author_list))
-              (author_string (format "%s %s" first_name last_name)))
-        (upcase-initials author_string)))
-          (expand-file-name (format "%s.org" sync0-zettel-time) "~/Dropbox/org/"))
+                  (defun sync0-org-capture-annotation-name ()
+                (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
+                (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
+                      (expand-file-name (format "%s.org" sync0-zettel-time) "~/Dropbox/org/annotations/"))
 
-;; Taken from https://github.com/abo-abo/hydra/wiki/mu4e
-          (defun sync0-org-capture-mu4e ()
-  (interactive)
-  "Capture a TODO item via email."
-  (org-capture nil "o"))
+                  (defun sync0-org-capture-zettel-name ()
+                (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
+                (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
+                      (expand-file-name (format "%s.org" sync0-zettel-time) "~/Dropbox/org/"))
 
-            (setq org-capture-templates 
-                  '(("j" "Journal" entry (function org-journal-find-location)
-                     "* %(format-time-string org-journal-time-format)\n%?"
-                                   :jump-to-captured t :immediate-finish t)
-                   ("z" "Zettelkasten" plain 
-                   (file sync0-org-capture-zettel-name)
-                   "%(format \"#+TITLE: Zettelkasten sur \n#+CREATED: %s\n#+DATE: \n#+ROAM_TAGS: zettelkasten \n\n\" sync0-zettel-time-ordered)"
-                   :unnarrowed t :jump-to-captured t)
-                   ("f" "Fiche" plain 
-                   (file sync0-org-capture-fiche-name)
-                   "%(format \"#+TITLE: %s\n#+CREATED: %s\n#+DATE: \n#+ROAM_TAGS: fiches %s\" sync0-fiche-name-upcase sync0-zettel-time-ordered sync0-fiche-name)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-title-keyword (org-capture-get :original-file))]]\n\n"
-                   :unnarrowed t :jump-to-captured t)
-                   ("p" "Note de projet" plain 
-                   (file sync0-org-capture-project-name)
-                   "%(format \"#+TITLE: \n#+CREATED: %s\n#+DATE: \n#+ROAM_TAGS: %s %s\" sync0-zettel-time-ordered sync0-project-name sync0-current-year)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-title-keyword (org-capture-get :original-file))]]\n\n"
-                   :unnarrowed t :jump-to-captured t)
-                ("e" "Pensée éphémère" plain
-                 (file sync0-org-capture-inbox-zettel-name)
-               "#+TITLE: \n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: inbox %<%Y> %<%B>\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-title-keyword (org-capture-get :original-file))]]\n\n"
-                   :unnarrowed t :jump-to-captured t)
-                     ("t" "Liste de tâches" plain
-                     (file sync0-org-capture-project-name)
-                     "%(format \"#+TITLE: Tâches de %s\n#+CATEGORY: %s\" sync0-project-name sync0-project-name-upcase)\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: todo %(format \"%s\n#+FILETAGS: :projects:todo:%s:\" sync0-project-name sync0-project-name)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-title-keyword (org-capture-get :original-file))]]\n\n%?"
-                   :unnarrowed t :jump-to-captured t)
-                   ("a" "Annotation" plain 
-                    (file sync0-org-capture-zettel-name)
-                     ;; "#+TITLE: %(format \"%s\" sync0-zettelkasten-annotations-key)\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %<%Y> %(format \"%s\" sync0-current-month-downcase) %(format \"%s\" sync0-zettelkasten-annotations-key) annotations\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-title-keyword (org-capture-get :original-file))]]\n\nDans [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))::*%(sync0-org-get-previous-heading-title (org-capture-get :original-file))][%(sync0-org-get-title-keyword (org-capture-get :original-file))]], page %?"
-                     "#+TITLE: %(format \"%s\" sync0-zettelkasten-annotations-key)\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %(format \"%s\" sync0-zettelkasten-annotations-key) annotations %<%Y> %(format \"%s\" sync0-current-month-downcase)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-title-keyword (org-capture-get :original-file))]]\n\nDans %(org-capture-get :annotation), page %?"
-                   :unnarrowed t :jump-to-captured t)
-                   ("l" "Note de lecture" plain 
-                    (file sync0-org-capture-reference-name)
-                   "#+TITLE: %^{Title}\n#+SUBTITLE: %^{Subtitle}\n#+AUTHOR: %(format \"%s\" sync0-fiche-name-upcase)\n#+ROAM_KEY: cite:%(format \"%s\" sync0-reference-filename)\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %(format \"%s %s %s\" sync0-reference-filename sync0-fiche-name sync0-reference-year)%?\n#+INTERLEAVE_PDF: /home/sync0/Documents/pdfs/%(format \"%s_%s\" sync0-fiche-lastname-upcase sync0-reference-year)_%(sync0-org-get-title-keyword (org-capture-get :buffer)).pdf\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-title-keyword (org-capture-get :original-file))]]\n\n"
-                   :unnarrowed t :jump-to-captured t)
-              ("w" "Site web" plain 
-                 (file sync0-org-capture-web-name)
-             "#+TITLE: %^{Title}\n#+SUBTITLE: %^{Subtitle}\n#+AUTHOR: %^{Author}\n#+ROAM_KEY: cite:%(format \"%s\" sync0-reference-filename)\n#+WEBSITE: %(format \"%s\" sync0-web-name)\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %<%Y> %(format \"%s\" sync0-current-month-downcase) %?\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-title-keyword (org-capture-get :original-file))]]\n\n"
-                   :unnarrowed t :jump-to-captured t)
-              ("n" "Numérotée" plain 
-                 (file sync0-org-capture-zettel-name)
-              "#+TITLE: %^{Title}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %<%Y> %(format \"%s\" sync0-current-month-downcase)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-title-keyword (org-capture-get :original-file))]]\n\n"
-                   :unnarrowed t :jump-to-captured t)
-                  ("s" "Écriture spontanée" plain
-                 (file sync0-org-capture-spontaneous-zettel-name)
-                   "#+TITLE: Divertisements du %<%d> %<%B> %<%Y>\n#+ROAM_TAGS: spontaneous %<%Y> %<%B>\n\n"
-                   :unnarrowed t :jump-to-captured t)
-                    ("c" "Correspondant" plain 
-                 (file sync0-org-capture-message-name)
-                   "%(format \"#+TITLE: Messages pour %s\n#+CREATED: %s\n#+DATE: \n#+ROAM_TAGS: fiches %s\" sync0-fiche-name-upcase sync0-zettel-time-ordered sync0-fiche-name)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-title-keyword (org-capture-get :original-file))]]\n\n"
-                   :unnarrowed t :jump-to-captured t)
-                    ("m" "Email" entry 
-                     (file+headline "~/Dropbox/org/projects/messages.org" "À répondre")
-                    ;; "** 無 %^{Description}\n%A\n%?\n"
-                     "** 無 %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%A\n" :jump-to-captured t :prepend t)))
+                  (defun sync0-org-capture-message-name ()
+                (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
+                (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
+                (setq sync0-fiche-name (read-string "Destinataire : "))
+                (setq sync0-fiche-name-upcase 
+                    (let* ((author_list (split-string sync0-fiche-name "_"))
+                          (last_name (nth 0 author_list))
+                          (first_name (nth 1 author_list))
+                          (author_string (format "%s %s" first_name last_name)))
+                    (upcase-initials author_string)))
+                      (expand-file-name (format "%s.org" sync0-zettel-time) "~/Dropbox/org/messages/"))
 
-            :bind 
-            (("\C-c c" . org-capture)))
+                  (defun sync0-org-capture-reference-name ()
+                ;; (setq sync0-reference-filename (read-string "Nom du fichier : "))
+                ;; (setq sync0-reference-filename
+                ;;       (completing-read "Citation key: "
+                ;;         (mapcar #'(lambda (x) (cdr (assoc "=key=" x)))
+                ;;          (bibtex-completion-candidates))))
+                (setq sync0-reference-filename
+                      (completing-read "Citation key: "
+    (let ((roam-bibtex-tags
+             (cl-delete-if (lambda (k) (or (string-match-p "[[:blank:]]" k) (string-match-p "^[A-z-_]+$" k))) 
+            (org-roam-db--get-tags)))
+          (bibliography-bibtex-tags
+             (mapcar #'(lambda (x) (cdr (assoc "=key=" x)))
+               (bibtex-completion-candidates))))
+    (delete-dups (append roam-bibtex-tags bibliography-bibtex-tags)))))
+                 (setq sync0-reference-year (substring sync0-reference-filename -4))
+                ;; (setq sync0-fiche-name (read-string "Auteur : "))
+                 (setq sync0-author-name
+                       (completing-read "Auteur : "
+                        (delete-dups (mapcar #'(lambda (x) (cdr (assoc "author" x)))
+                          (bibtex-completion-candidates)))))
+                 (setq sync0-author-name-fixed
+                     (let* ((author_list (split-string sync0-author-name ", "))
+                           (last_name (nth 0 author_list))
+                           (first_name (nth 1 author_list)))
+                           (concat first_name " " last_name)))
+                 (setq sync0-fiche-name
+                     (let* ((author_list (split-string sync0-author-name ", "))
+                           (last_name (downcase (nth 0 author_list)))
+                           (first_name (downcase (nth 1 author_list))))
+                           (concat last_name "_" first_name)))
+                 (setq sync0-author-lastname-upcase
+                     (let ((author_list (split-string sync0-author-name ", ")))
+                            (nth 0 author_list)))
+                ;; (setq sync0-fiche-name-upcase 
+                ;;     (let* ((author_list (split-string sync0-fiche-name "_"))
+                ;;           (last_name (nth 0 author_list))
+                ;;           (first_name (nth 1 author_list))
+                ;;           (author_string (format "%s %s" first_name last_name)))
+                ;;     (upcase-initials author_string)))
+                ;; (setq sync0-fiche-lastname-upcase 
+                ;;     (let* ((author_list (split-string sync0-fiche-name "_"))
+                ;;           (last_name (nth 0 author_list))
+                ;;           (first_name (nth 1 author_list)))
+                ;;     (upcase-initials last_name)))
+                 (setq sync0-journal-title
+                       (completing-read "Journal title : "
+                        (delete-dups (mapcar #'(lambda (x) (cdr (assoc "journaltitle" x)))
+                          (bibtex-completion-candidates)))))
+                (setq sync0-reference-title (read-string "Titre: "))
+                (setq sync0-reference-subtitle (read-string "Sous-titre: "))
+                (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
+                (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
+(append-to-file
+(format "
+@article{%s,
+  author = {%s},
+  date = {%s},
+  title = {%s},
+  subtitle = {%s},
+  journaltitle = {%s},
+  file = {/home/sync0/Documents/pdfs/%s_%s_%s.pdf},
+}" sync0-reference-filename sync0-author-name sync0-reference-year sync0-reference-title sync0-reference-subtitle sync0-journal-title sync0-author-lastname-upcase sync0-reference-year sync0-reference-title)
+nil
+   "~/Dropbox/org/references/bibliography.bib")
+                      (expand-file-name (format "%s.org" sync0-reference-filename) "~/Dropbox/org/references/"))
+
+        (defun sync0-org-references-fetch-title-and-subtitle ()
+        (if (equal sync0-reference-subtitle "")
+            (format "%s" sync0-reference-title) 
+            (format "%s_%s" sync0-reference-title sync0-reference-subtitle))) 
+
+                  (defun sync0-org-capture-web-name ()
+                (setq sync0-reference-filename (read-string "Nom du fichier : "))
+             ;; (setq sync0-web-name (read-string "Nom du ROAM_KEY : "))
+                (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
+                (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
+                      (expand-file-name (format "%s.org" sync0-reference-filename) "~/Dropbox/org/references/"))
+
+                ;;   (defun sync0-org-capture-web-name ()
+                ;; (setq sync0-reference-filename (read-string "Nom du fichier : "))
+                ;; (setq sync0-web-name (read-string "Nom du ROAM_KEY : "))
+                ;; (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
+                ;; (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
+                ;;       (expand-file-name (format "%s.org" sync0-reference-filename) "~/Dropbox/org/references/"))
+
+                  (defun sync0-org-capture-project-name ()
+                (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
+                (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
+                (setq sync0-project-name (read-string "Nom du projet: "))
+                (setq sync0-project-name-upcase (upcase-initials sync0-project-name))
+                      (expand-file-name (format "%s.org" sync0-zettel-time) "~/Dropbox/org/projects/"))
+
+                  (defun sync0-org-capture-todo-name ()
+                (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
+                (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
+                (setq sync0-project-name (read-string "Nom du projet: "))
+                (setq sync0-project-name-upcase (upcase-initials sync0-project-name))
+                      (expand-file-name (format "%s.org" sync0-zettel-time) "~/Dropbox/org/todo/"))
+
+                  (defun sync0-org-capture-fiche-name ()
+                (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
+                (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
+                (setq sync0-fiche-name (completing-read "Fiche sur : "
+                                         (org-roam-db--get-tags)))
+                (setq sync0-fiche-name-upcase 
+                    (let* ((author_list (split-string sync0-fiche-name "_"))
+                          (last_name (nth 0 author_list))
+                          (first_name (nth 1 author_list))
+                          (author_string (format "%s %s" first_name last_name)))
+                    (upcase-initials author_string)))
+                      (expand-file-name (format "%s.org" sync0-zettel-time) "~/Dropbox/org/fiches/"))
+
+            ;; Taken from https://github.com/abo-abo/hydra/wiki/mu4e
+                      (defun sync0-org-capture-mu4e ()
+              (interactive)
+              "Capture a TODO item via email."
+              (org-capture nil "o"))
+
+                        (setq org-capture-templates 
+                              '(("j" "Journal" entry (function org-journal-find-location)
+                                 "* %(format-time-string org-journal-time-format)\n\n%?"
+                                               :jump-to-captured t :immediate-finish t)
+                               ("f" "Fiche" plain 
+                               (file sync0-org-capture-fiche-name)
+                               "%(format \"#+TITLE: %s\n#+CREATED: %s\n#+DATE: \n#+ROAM_TAGS: %s\" sync0-fiche-name-upcase sync0-zettel-time-ordered sync0-fiche-name)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-file-title-keyword (org-capture-get :original-file))]]\n\n%?"
+                               :unnarrowed t :jump-to-captured t)
+                               ("p" "Note de projet" plain 
+                               (file sync0-org-capture-project-name)
+                               "%(format \"#+TITLE: \n#+CREATED: %s\n#+DATE: \n#+ROAM_TAGS: %s %s %s\" sync0-zettel-time-ordered sync0-project-name sync0-current-year sync0-current-month)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-file-title-keyword (org-capture-get :original-file))]]\n\n%?"
+                               :unnarrowed t :jump-to-captured t)
+                               ("d" "Dépôt" plain 
+                               (file sync0-org-capture-project-name)
+                               "%(format \"#+TITLE: Dépôt de \n#+CREATED: %s\n#+DATE: \n#+ROAM_TAGS: repositories %s %s\" sync0-zettel-time-ordered sync0-project-name sync0-current-year)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-file-title-keyword (org-capture-get :original-file))]]\n\n%?"
+                               :unnarrowed t :jump-to-captured t)
+                            ("i" "Pensée éphémère" plain
+                             (file sync0-org-capture-inbox-zettel-name)
+                           "#+TITLE: \n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: inbox %<%Y> %<%B>\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-file-title-keyword (org-capture-get :original-file))]]\n\n%?"
+                               :unnarrowed t :jump-to-captured t)
+                                 ("t" "Liste de tâches" plain
+                                 (file sync0-org-capture-todo-name)
+                                 "%(format \"#+TITLE: Tâches de %s\n#+CATEGORY: %s\" sync0-project-name sync0-project-name-upcase)\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %(format \"%s\n#+FILETAGS: :projects:todo:%s:\" sync0-project-name sync0-project-name)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-file-title-keyword (org-capture-get :original-file))]]\n\n%?"
+                               :unnarrowed t :jump-to-captured t)
+                               ("a" "Annotation" plain 
+                                (file sync0-org-capture-annotation-name)
+                                 ;; "#+TITLE: %(format \"%s\" sync0-zettelkasten-annotations-key)\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %(format \"%s\" sync0-zettelkasten-annotations-key) %<%Y> %(format \"%s\" sync0-current-month-downcase)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-file-title-keyword (org-capture-get :original-file))]]\n\nDans %(org-capture-get :annotation), %(sync0-org-get-author-keyword (org-capture-get :original-file)) %?"
+                                 "#+TITLE: %(format \"%s\" sync0-zettelkasten-annotations-key)\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %(format \"%s\" sync0-zettelkasten-annotations-key) %<%Y> %(format \"%s\" sync0-current-month-downcase)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-file-title-keyword (org-capture-get :original-file))]]\n\nDans [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-previous-heading-or-title (org-capture-get :original-file))]], %(sync0-org-get-author-keyword (org-capture-get :original-file)) %?"
+                               :unnarrowed t :jump-to-captured t)
+                               ("r" "Référence" plain 
+                                (file sync0-org-capture-reference-name)
+                               "#+TITLE: %(format \"%s\" sync0-reference-title)\n#+SUBTITLE: %(format \"%s\" sync0-reference-subtitle)\n#+AUTHOR: %(format \"%s\" sync0-author-name-fixed)\n#+JOURNAL_TITLE: %(format \"%s\" sync0-journal-title)\n#+ROAM_KEY: cite:%(format \"%s\" sync0-reference-filename)\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %(format \"%s %s %s\" sync0-reference-filename sync0-fiche-name sync0-current-year)%?\n#+INTERLEAVE_PDF: /home/sync0/Documents/pdfs/%(format \"%s_%s\" sync0-author-lastname-upcase sync0-reference-year)_%(sync0-org-references-fetch-title-and-subtitle).pdf\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-file-title-keyword (org-capture-get :original-file))]]\n\n%?"
+                               :unnarrowed t :jump-to-captured t)
+                         ;;  ("w" "Site web" plain 
+                         ;;     (file sync0-org-capture-web-name)
+                         ;; "#+TITLE: %^{Title}\n#+SUBTITLE: %^{Subtitle}\n#+AUTHOR: %^{Author}\n#+ROAM_KEY: cite:%(format \"%s\" sync0-reference-filename)\n#+WEBSITE: %(format \"%s\" sync0-web-name)\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %<%Y> %(format \"%s\" sync0-current-month-downcase) %?\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-file-title-keyword (org-capture-get :original-file))]]\n\n"
+                         ;;       :unnarrowed t :jump-to-captured t)
+                          ("w" "Référence web" plain 
+                             (file sync0-org-capture-web-name)
+                         "#+TITLE: %^{Title}\n#+AUTHOR: %^{Author}\n#+ROAM_KEY: cite:%(format \"%s\" sync0-reference-filename)\n#+ROAM_KEY: %L\n#+WEBSITE: %L\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: websites %<%Y> %(format \"%s\" sync0-current-month-downcase) %?\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-file-title-keyword (org-capture-get :original-file))]]\n\n%:initial%?"
+                               :unnarrowed t :jump-to-captured t)
+                          ("n" "Nouveau Zettel" plain 
+                             (file sync0-org-capture-zettel-name)
+                          "#+TITLE: %^{Title}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %<%Y> %(format \"%s\" sync0-current-month-downcase)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-file-title-keyword (org-capture-get :original-file))]]\n\n%?"
+                               :unnarrowed t :jump-to-captured t)
+                          ("k" "Note d'archive" plain 
+                             (file sync0-org-capture-archived-zettel-name)
+                          "#+TITLE: %^{Title}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %<%Y> %(format \"%s\" sync0-current-month-downcase)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-file-title-keyword (org-capture-get :original-file))]]\n\n%?"
+                               :unnarrowed t :jump-to-captured t)
+                              ("e" "Écriture" plain
+                             (file sync0-org-capture-writings-zettel-name)
+                           "#+TITLE: \n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %<%Y> %(format \"%s\" sync0-current-month-downcase)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-file-title-keyword (org-capture-get :original-file))]]\n\n%?"
+                               :unnarrowed t :jump-to-captured t)
+                                ("c" "Correspondant (messages)" plain 
+                             (file sync0-org-capture-message-name)
+                               "%(format \"#+TITLE: Messages pour %s\n#+CREATED: %s\n#+DATE: \n#+ROAM_TAGS: fiches %s\" sync0-fiche-name-upcase sync0-zettel-time-ordered sync0-fiche-name)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-file-title-keyword (org-capture-get :original-file))]]\n\n"
+                               :unnarrowed t :jump-to-captured t)
+                                ("m" "Email" entry 
+                                 (file+headline "~/Dropbox/org/projects/messages.org" "À répondre")
+                                ;; "** 無 %^{Description}\n%A\n%?\n"
+                                 "** 無 %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%A\n" :jump-to-captured t :prepend t)))
+
+                        :bind 
+                        (("\C-c c" . org-capture)))
+
+(use-package org-protocol-capture-html
+  :straight (org-protocol-capture-html :type git :host github :repo "alphapapa/org-protocol-capture-html") 
+  :after (org-protocol s))
 
 (use-package org-habit 
   :straight nil
@@ -2664,7 +2825,7 @@ _q_uit
       "t" 'sync0-hydra-org-clock/body))
 
 (use-package ox-latex 
-:straight nil
+    :straight nil
     :after org
     :custom
     ;; Set latex compiler for org export. 
@@ -2691,7 +2852,7 @@ _q_uit
     (org-latex-logfiles-extensions (quote ("aux" "bcf" "lof" "lot" "tex~" "idx" "out" "toc" "nav" "snm" "vrb" "dvi" "fdb_latexmk" "blg" "brf" "fls" "entoc" "ps" "spl" "run.xml")))
 
     :config
-    (defun sync0-latex-and-beamer-export ()
+    (defun sync0-org-export-latex-and-beamer ()
       "Export current org file with beamer if it has beamer as latex class."
       (interactive)
       (when (equal major-mode 'org-mode) 
@@ -2875,7 +3036,7 @@ are exported to a filename derived from the headline text."
 
     :bind 
     (:map org-mode-map 
-          ("M-p" . sync0-latex-and-beamer-export)))
+          ("M-p" . sync0-org-export-latex-and-beamer)))
 
 (use-package org-bullets 
   :straight (org-bullets :type git :host github :repo "sabof/org-bullets") 
@@ -2905,7 +3066,7 @@ are exported to a filename derived from the headline text."
         (message "No PDF found for %s" key)))
 
     :custom
-    (reftex-default-bibliography '("~/Dropbox/org/etc/bibliography.bib"))
+    (reftex-default-bibliography '("~/Dropbox/org/references/bibliography.bib"))
     (org-ref-default-bibliography reftex-default-bibliography)
     (org-ref-pdf-directory sync0-pdfs-folder)
     (org-ref-completion-library 'org-ref-ivy-cite)
@@ -2923,7 +3084,7 @@ are exported to a filename derived from the headline text."
     (defun sync0-visit-bibliography-in-buffer ()
       (interactive)
       (find-file
-       (expand-file-name "~/Dropbox/org/etc/bibliography.bib")))
+       (expand-file-name "~/Dropbox/org/references/bibliography.bib")))
 
     (defhydra sync0-hydra-research-functions (:color amaranth :hint nil :exit t)
       "
@@ -2936,7 +3097,7 @@ are exported to a filename derived from the headline text."
    Open _b_ibliography    ^ ^                 Open inde_x_       
    Open _p_df             ^ ^                 Show _g_raph
 
-    _q_uit
+   _q_uit
         "
       ;; ("C" org-roam-capture)
       ("x" org-roam-jump-to-index)
@@ -2980,8 +3141,6 @@ are exported to a filename derived from the headline text."
  :straight nil
  :after (org-noter evil)
  :load-path "~/.emacs.d/sync0/nov.el" 
- :custom
-  (nov-text-width 66)
  :config
    (push '("\\.epub\\'" . nov-mode) auto-mode-alist)
 
@@ -2997,12 +3156,25 @@ are exported to a filename derived from the headline text."
    )
 
 (defun sync0-nov-font-setup ()
+   (if (> (display-pixel-width) 1900)
+   ;; high resolution (t14s)
  (progn
    (face-remap-add-relative 'variable-pitch
                             :family "Minion Pro"
                             ;; :height 200
                             :height 200)
-     (nov-render-document)))
+
+     (nov-text-width 66)
+     (nov-render-document))
+   ;; low resolution 
+ (progn
+   (face-remap-add-relative 'variable-pitch
+                            :family "Minion Pro"
+                            ;; :height 200
+                            ;; :height 155
+                            :height 130)
+     (nov-text-width 60)
+     (nov-render-document))))
 
  (add-hook 'nov-mode-hook 'sync0-nov-font-setup))
 
@@ -3045,7 +3217,7 @@ are exported to a filename derived from the headline text."
    _y_ank
    _s_creenshot
 
-   [q] Quit
+   _q_uit
         "
       ("c" org-download-clipboard)
       ("y" org-download-yank)
@@ -3056,252 +3228,333 @@ are exported to a filename derived from the headline text."
   "d" 'sync0-hydra-org-download-functions/body))
 
 (use-package org 
-      :after evil
-      :custom
-      (org-hide-leading-stars t)
-      ;; Leave one line between headlines 
-      (org-cycle-separator-lines 1)
-      ;; Don't fontify the whole damn line
-      (org-fontify-whole-block-delimiter-line t)
-      ;; Disable word wrap in org mode.
-      ;; (org-startup-truncated t)
-      ;; Initial indentation
-      (org-startup-indented nil)         
-      ;; Necessary to avoid crazy inconsistenscies using org-download and org-roam
-      (org-link-file-path-type 'absolute)
-      ;; Begin displaying entire trees.
-      (org-startup-folded nil)
-      ;; Better display of italics & bold.
-      (org-hide-emphasis-markers t)
-      ;; Define org-tags.
-      (org-tag-alist '(("projects" . ?p)
-                       ;; ("noexport" . ?n)
-                       ("readings" . ?r)
-                       ;; ("reviews" . ?r)
-                       ("exams" . ?e)
-                       ("urgent" . ?u)
-                       ("this_week" . ?t)
-                       ("this_month" . ?m)
-                       ("next_week" . ?n)
-                       ("short_term" . ?s)
-                       ("long_term" . ?l)
-                       ;; ("university" . ?u)
-                       ("important" . ?i)))
-      ;; Hide inherited tags from Org's agenda view.
-      ;; org-agenda-show-inherited-tags nil
-      ;; Define todo keywords.
-      (org-todo-keywords '((sequence "無(1)" "次(2)" "中(3)" "見(4)" "待(5)" "阻(6)" "|" "完(7)" "取(8)")))
-      ;; Set faces for org-todo-keywords
-      (org-todo-keyword-faces '(("無" . (:foreground "#dc322f" :weight semi-bold :height 0.9))
-                                ("次" . (:foreground "#d33682" :weight semi-bold :height 0.9))
-                                ("完" . (:foreground "#859900" :weight semi-bold :height 0.9))   
-                                ("待" . (:foreground "#cb4b16" :weight semi-bold :height 0.9))
-                                ("阻" . (:foreground "#268bd2" :weight semi-bold :height 0.9)) 
-                                ("取" . (:foreground "#6c71c4" :weight semi-bold :height 0.9)) 
-                                ("見" . (:foreground "#268bd2" :weight semi-bold :height 0.9)) 
-                                ("中" . (:foreground "#b58900" :weight semi-bold :height 0.9))))
-      (org-blank-before-new-entry '((heading . nil)(plain-list-item . nil)))
-      ;; Stop emacs asking for confirmation
-      (org-confirm-babel-evaluate nil)
-      (org-ellipsis "  ⌄ ") ;; folding symbol
-      ;; Do not show export buffer.
-      (org-export-show-temporary-export-buffer nil)
-      ;; Set path for org default directory (necessary for refile and agenda).
-      (org-directory (concat (getenv "HOME") "/Dropbox/org"))
-      (org-refile-use-outline-path 'file)
-      (org-outline-path-complete-in-steps nil)
-      (org-startup-with-inline-images t)
-      (org-refile-use-cache nil)
-      ;; Have org-mode indent elisp sections.
-      (org-src-tab-acts-natively nil)
-      ;; Color embeded source code
-      (org-src-fontify-natively t)
-      (org-fontify-done-headline t) 
-      (org-fontify-whole-heading-line t)
-      (org-fontify-quote-and-verse-blocks t)
-      ;; Don't fontify sub and superscripts.
-      (org-pretty-entities-include-sub-superscripts nil)
-      ;; Limit inheritance for certain tags. 
-      (org-tags-exclude-from-inheritance (quote ("crypt" "ignore")))
+        :after evil
+        :custom
+        (org-hide-leading-stars t)
+        ;; Leave one line between headlines 
+        (org-cycle-separator-lines 1)
+        ;; Don't fontify the whole damn line
+        (org-fontify-whole-block-delimiter-line t)
+        ;; Disable word wrap in org mode.
+        ;; (org-startup-truncated t)
+        ;; Initial indentation
+        (org-startup-indented nil)         
+        ;; Necessary to avoid crazy inconsistenscies using org-download and org-roam
+        (org-link-file-path-type 'absolute)
+        ;; Begin displaying entire trees.
+        (org-startup-folded nil)
+        ;; Better display of italics & bold.
+        (org-hide-emphasis-markers t)
+        ;; Define org-tags.
+        (org-tag-alist '(("projects" . ?p)
+                         ;; ("noexport" . ?n)
+                         ("readings" . ?r)
+                         ;; ("reviews" . ?r)
+                         ("exams" . ?e)
+                         ("urgent" . ?u)
+                         ("this_week" . ?t)
+                         ("this_month" . ?m)
+                         ("next_week" . ?n)
+                         ("short_term" . ?s)
+                         ("long_term" . ?l)
+                         ;; ("university" . ?u)
+                         ("important" . ?i)))
+        ;; Hide inherited tags from Org's agenda view.
+        ;; org-agenda-show-inherited-tags nil
+        ;; Define todo keywords.
+        (org-todo-keywords '((sequence "無(1)" "次(2)" "中(3)" "見(4)" "待(5)" "阻(6)" "|" "完(7)" "取(8)")))
+        ;; Set faces for org-todo-keywords
+        (org-todo-keyword-faces '(("無" . (:foreground "#dc322f" :weight semi-bold :height 0.9))
+                                  ("次" . (:foreground "#d33682" :weight semi-bold :height 0.9))
+                                  ("完" . (:foreground "#859900" :weight semi-bold :height 0.9))   
+                                  ("待" . (:foreground "#cb4b16" :weight semi-bold :height 0.9))
+                                  ("阻" . (:foreground "#268bd2" :weight semi-bold :height 0.9)) 
+                                  ("取" . (:foreground "#6c71c4" :weight semi-bold :height 0.9)) 
+                                  ("見" . (:foreground "#268bd2" :weight semi-bold :height 0.9)) 
+                                  ("中" . (:foreground "#b58900" :weight semi-bold :height 0.9))))
+        (org-blank-before-new-entry '((heading . nil)(plain-list-item . nil)))
+        ;; Stop emacs asking for confirmation
+        (org-confirm-babel-evaluate nil)
+        (org-ellipsis "  ⌄ ") ;; folding symbol
+        ;; Do not show export buffer.
+        (org-export-show-temporary-export-buffer nil)
+        ;; Set path for org default directory (necessary for refile and agenda).
+        (org-directory (concat (getenv "HOME") "/Dropbox/org"))
+        (org-refile-use-outline-path 'file)
+        (org-outline-path-complete-in-steps nil)
+        (org-startup-with-inline-images t)
+        (org-refile-use-cache nil)
+        ;; Have org-mode indent elisp sections.
+        (org-src-tab-acts-natively nil)
+        ;; Color embeded source code
+        (org-src-fontify-natively t)
+        (org-fontify-done-headline t) 
+        (org-fontify-whole-heading-line t)
+        (org-fontify-quote-and-verse-blocks t)
+        ;; Don't fontify sub and superscripts.
+        (org-pretty-entities-include-sub-superscripts nil)
+        ;; Limit inheritance for certain tags. 
+        (org-tags-exclude-from-inheritance (quote ("crypt" "ignore")))
 
-      :config 
-      ;; (require 'org-pdftools)
-      (require 'org-journal)
-      (require 'org-download)
-      ;; Free this keybinding for cycle-themes
-      (unbind-key "C-c C-t" org-mode-map)
-      (unbind-key "M-h" org-mode-map)
+        :config 
+        ;; (require 'org-pdftools)
+        (require 'org-journal)
+        (require 'org-download)
+        ;; Free this keybinding for cycle-themes
+        (unbind-key "C-c C-t" org-mode-map)
+        (unbind-key "M-h" org-mode-map)
 
-  (defun sync0-overview-tree-window ()
-    "Open a clone of the current buffer to the left, resize it to 30 columns, and bind <mouse-1> to jump to the same position in the base buffer."
-    (interactive)
-    (let ((new-buffer-name (concat "<tree>" (buffer-name))))
-      ;; Create tree buffer
-      (split-window-right 30)
-      (if (get-buffer new-buffer-name)
-          (switch-to-buffer new-buffer-name)  ; Use existing tree buffer
-        ;; Make new tree buffer
-        (progn  (clone-indirect-buffer new-buffer-name nil t)
-                (switch-to-buffer new-buffer-name)
-                (read-only-mode)
-                (hide-body)
-                (toggle-truncate-lines)
+    (defun sync0-overview-tree-window ()
+      "Open a clone of the current buffer to the left, resize it to 30 columns, and bind <mouse-1> to jump to the same position in the base buffer."
+      (interactive)
+      (let ((new-buffer-name (concat "<tree>" (buffer-name))))
+        ;; Create tree buffer
+        (split-window-right 30)
+        (if (get-buffer new-buffer-name)
+            (switch-to-buffer new-buffer-name)  ; Use existing tree buffer
+          ;; Make new tree buffer
+          (progn  (clone-indirect-buffer new-buffer-name nil t)
+                  (switch-to-buffer new-buffer-name)
+                  (read-only-mode)
+                  (hide-body)
+                  (toggle-truncate-lines)
 
-                ;; Do this twice in case the point is in a hidden line
-                (dotimes (_ 2 (forward-line 0)))
+                  ;; Do this twice in case the point is in a hidden line
+                  (dotimes (_ 2 (forward-line 0)))
 
-                ;; Map keys
-                (use-local-map (copy-keymap outline-mode-map))
-                (local-set-key (kbd "q") 'delete-window)
-                (mapc (lambda (key) (local-set-key (kbd key) 'my/jump-to-point-and-show))
-                      '("<mouse-1>" "RET"))))))
+                  ;; Map keys
+                  (use-local-map (copy-keymap outline-mode-map))
+                  (local-set-key (kbd "q") 'delete-window)
+                  (mapc (lambda (key) (local-set-key (kbd key) 'my/jump-to-point-and-show))
+                        '("<mouse-1>" "RET"))))))
 
-  (defun sync0-overview-jump-to-overview ()
-    "Switch to a cloned buffer's base buffer and move point to the cursor position in the clone."
-    (interactive)
-    (let ((buf (buffer-base-buffer)))
-      (unless buf
-        (error "You need to be in a cloned buffer!"))
-      (let ((pos (point))
-            (win (car (get-buffer-window-list buf))))
-        (if win
-            (select-window win)
-          (other-window 1)
-          (switch-to-buffer buf))
-        (goto-char pos)
-        (when (invisible-p (point))
-          (show-branches)))))
+    (defun sync0-overview-jump-to-overview ()
+      "Switch to a cloned buffer's base buffer and move point to the cursor position in the clone."
+      (interactive)
+      (let ((buf (buffer-base-buffer)))
+        (unless buf
+          (error "You need to be in a cloned buffer!"))
+        (let ((pos (point))
+              (win (car (get-buffer-window-list buf))))
+          (if win
+              (select-window win)
+            (other-window 1)
+            (switch-to-buffer buf))
+          (goto-char pos)
+          (when (invisible-p (point))
+            (show-branches)))))
 
-      (defun sync0-org-tree-to-indirect-buffer ()
-        "Open headline in the next window as a separate tree."
-        (interactive)
-        (org-tree-to-indirect-buffer)
-        (windmove-right))
+        (defun sync0-org-tree-to-indirect-buffer ()
+          "Open headline in the next window as a separate tree."
+          (interactive)
+          (org-tree-to-indirect-buffer)
+          (windmove-right))
 
-(evil-leader/set-key
-   "O" 'org-open-at-point
-   ;; "O" 'sync0-overview-tree-window
-  ;; "o" 'sync0-overview-jump-to-overview
-  "I" 'org-insert-link
-  "T" 'sync0-org-tree-to-indirect-buffer)
-
-    (defhydra sync0-hydra-file-access (:color amaranth :hint nil :exit t)
+    (defhydra sync0-hydra-org-functions (:color amaranth :hint nil :exit t)
       "
-       ^Windows^                ^Buffers^             ^Search^
-    ^^^^^^---------------------------------------------------------------
-    _1_: Delete others       _w_: Write           _r_: Recent
-    _2_: Split horizontally  _a_: Write as        _f_: Find
-    _3_: Split vertically    _b_: Open           
-    ^ ^                      _k_: Kill
-    ^ ^                      
-    ^^^^^^---------------------------------------------------------------
-       ^Bookmarks^           ^Planning^ 
-    ^^^^^^---------------------------------------------------------------
-    _j_: Jump to bookmark    _h_: Today
-    _g_: Bookmark o. window  
-    _m_: Set bookmark        
-    _l_: List bookmarks      _J_: org-journal
-    ^ ^                      
-    [q] Quit                 ^ ^
-    "
-      ("1" delete-other-windows)
-      ("2" sync0-split-and-follow-horizontally)
-      ("3" sync0-split-and-follow-vertically)
-      ("b" ivy-switch-buffer)
-      ;; Quickly save
-      ("w" save-buffer)
-      ("a" write-file)
-      ;; Kill current buffer and window
-      ("k" kill-buffer-and-window)
-      ;; ("o" ivy-switch-buffer-other-window)
-      ("r" counsel-recentf)
-      ("f" counsel-find-file)
-      ("m" bookmark-set)
-      ("j" counsel-bookmark)
-      ("g" bookmark-jump-other-window)
-      ("l" bookmark-bmenu-list)
-      ;; ("A" org-agenda)
-      ("J" sync0-org-journal-new-scheduled-entry)
-      ("h" sync0-pop-to-org-agenda)
+   ^Links^             ^Footnotes^          ^Trees^              ^Export^          ^Etc.^
+   ^---------------------------------------------------------------------------------------------------
+   Link _i_nsert       New _f_ootnote       Indirect _b_uffer    Latex _e_xport    Insert _d_rawer
+   Link _s_tore        Footnote _a_ctions   Open _o_verview      Export _t_rees
+   Last stored lin_k_  ^ ^                  Overview _j_ump 
+
+   _q_uit
+        "
+
+      ("s" org-store-link)
+      ("i" org-insert-link)
+      ("k" org-insert-last-stored-link)
+      ("f" org-footnote-new)
+      ("a" org-footnote-action)
+      ("b" sync0-org-tree-to-indirect-buffer)
+      ("j" sync0-overview-jump-to-overview)
+      ("o" sync0-overview-tree-window)
+      ("e" sync0-org-export-latex-and-beamer)
+      ("t" sync0-org-export-headlines-to-latex)
+      ("d" org-insert-drawer)
       ("q" nil :color blue))
 
-      (defun sync0-call-rebinding-org-blank-behaviour (fn)
-        (let ((org-blank-before-new-entry
-               (copy-tree org-blank-before-new-entry)))
-          (when (org-at-heading-p)
-            (rplacd (assoc 'heading org-blank-before-new-entry) nil))
-          (call-interactively fn)))
+  (evil-leader/set-key
+    "O" 'org-open-at-point)
+    ;; "O" 'sync0-overview-tree-window
+    ;; "o" 'sync0-overview-jump-to-overview
+    ;; "I" 'org-insert-link
+    ;; "z" 'sync0-org-tree-to-indirect-buffer
+    ;; "z" 'sync0-hydra-org-functions/body
 
-      (defun sync0-org-meta-return-dwim ()
-        "Improved version of default org-meta-return"
-        (interactive)
-        (sync0-call-rebinding-org-blank-behaviour 'org-meta-return))
+(evil-leader/set-key-for-mode 'org-mode "z" 'sync0-hydra-org-functions/body)
 
-      (defun sync0-org-insert-todo-heading-dwim ()
-        "Improved version of org-insert-todo-heading"
-        (interactive)
-        (sync0-call-rebinding-org-blank-behaviour 'org-insert-todo-heading))
+      (defhydra sync0-hydra-file-access (:color amaranth :hint nil :exit t)
+        "
+         ^Windows^                ^Buffers^             ^Search^
+      ^^^^^^---------------------------------------------------------------
+      _1_: Delete others       _w_: Write           _r_: Recent
+      _2_: Split horizontally  _a_: Write as        _f_: Find
+      _3_: Split vertically    _b_: Open           
+      ^ ^                      _k_: Kill
+      ^ ^                      
+      ^^^^^^---------------------------------------------------------------
+         ^Bookmarks^           ^Planning^ 
+      ^^^^^^---------------------------------------------------------------
+      _j_: Jump to bookmark    _h_: Today
+      _g_: Bookmark o. window  
+      _m_: Set bookmark        
+      _l_: List bookmarks      _J_: org-journal
+      ^ ^                      
+      [q] Quit                 ^ ^
+      "
+        ("1" delete-other-windows)
+        ("2" sync0-split-and-follow-horizontally)
+        ("3" sync0-split-and-follow-vertically)
+        ("b" ivy-switch-buffer)
+        ;; Quickly save
+        ("w" save-buffer)
+        ("a" write-file)
+        ;; Kill current buffer and window
+        ("k" kill-buffer-and-window)
+        ;; ("o" ivy-switch-buffer-other-window)
+        ("r" counsel-recentf)
+        ("f" counsel-find-file)
+        ("m" bookmark-set)
+        ("j" counsel-bookmark)
+        ("g" bookmark-jump-other-window)
+        ("l" bookmark-bmenu-list)
+        ;; ("A" org-agenda)
+        ("J" sync0-org-journal-new-scheduled-entry)
+        ("h" sync0-pop-to-org-agenda)
+        ("q" nil :color blue))
 
-      (defun sync0-clever-insert-item ()
-        "Clever insertion of org item."
-        (if (not (org-in-item-p))
-            (insert "\n")
-          (org-insert-item)))
+        ;; font lock keywords 
+        ;; org footnotes should look like real footnotes
+(add-to-list 'font-lock-extra-managed-props 'display)
+(font-lock-add-keywords 'org-mode
+ '(("\\(\\[fn:\\)[[:digit:]]+\\]" 1 '(face nil display ""))))
+(font-lock-add-keywords 'org-mode
+ '(("\\[fn:[[:digit:]]+\\(\\]\\)" 1 '(face nil display ""))))
 
-      (defun sync0-evil-org-eol-call (fun)
-        "Go to end of line and call provided function. FUN function callback"
-        (end-of-line)
-        (funcall fun)
-        (evil-append nil))
+(require 'cl-lib)
 
-      ;; redefinition evils normal mode map
-      (evil-define-key 'normal org-mode-map
-        "<" 'outline-previous-visible-heading
-        ">" 'outline-next-visible-heading
-        (kbd "C->") 'org-forward-heading-same-level
-        (kbd "C-<") 'org-backward-heading-same-level
-        (kbd "<S-tab>") 'sync0-org-tree-open-in-right-frame 
-        "H" 'org-metaleft
-        "L" 'org-metaright
-        "K" 'org-metaup
-        "J" 'org-metadown
-        "k" 'previous-line
-        "j" 'next-line
-        "o" '(lambda () (interactive) (sync0-evil-org-eol-call 'sync0-clever-insert-item))
-        "O" '(lambda () (interactive) (sync0-evil-org-eol-call 'org-insert-heading))
-        "$" 'org-end-of-line
-        "^" 'org-beginning-of-line
-        "[" 'backward-sentence
-        "]" 'forward-sentence
-        "{" 'org-backward-paragraph
-        "}" 'org-forward-paragraph
-        "-" 'org-cycle-list-bullet
-        (kbd "<tab>") 'org-cycle)
+;; Taken from https://emacs.stackexchange.com/questions/13514/how-to-obtain-the-statistic-of-the-the-frequency-of-words-in-a-buffer
+(defvar sync0-punctuation-marks '(","
+                            "."
+                            "'"
+                            "&"
+                            "\"")
+  "List of Punctuation Marks that you want to count.")
 
-      (evil-define-key 'visual org-mode-map
-        ;; "q" 'highlight-changes-remove-highlight
-        "z" 'org-emphasize)
+(defun sync0-count-raw-word-list (raw-word-list)
+  (cl-loop with result = nil
+           for elt in raw-word-list
+           do (cl-incf (cdr (or (assoc elt result)
+                             (first (push (cons elt 0) result)))))
+           finally return (sort result
+                                (lambda (a b) (string< (car a) (car b))))))
 
-      ;; List of files considered for org-refile.
-      (setq org-refile-targets (quote ((nil :maxlevel . 4)                ;; Default value.
-                                            ;; set for all agenda files
-                                       ;; ("todo.org" :maxlevel . 2)
-                                        (org-agenda-files :maxlevel . 4))))
+(defun sync0-word-stats ()
+  (interactive)
+  (let* ((words (split-string
+                 (downcase (buffer-string))
+                 (format "[ %s\f\t\n\r\v]+"
+                         (mapconcat #'identity sync0-punctuation-marks ""))
+                 t))
+         (punctuation-marks (cl-remove-if-not
+                             (lambda (elt) (member elt sync0-punctuation-marks))
+                             (split-string (buffer-string) "" t )))
+         (raw-word-list (append punctuation-marks words))
+         (word-list (sync0-count-raw-word-list raw-word-list)))
+    (with-current-buffer (get-buffer-create "*word-statistics*")
+      (erase-buffer)
+      (insert "| word | occurences |
+               |-----------+------------|\n")
 
-      ;; (org-refile-targets '((org-agenda-files :maxlevel . 4)))
+      (dolist (elt word-list)
+        (insert (format "| '%s' | %d |\n" (car elt) (cdr elt))))
 
-      (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+      (org-mode)
+      (indent-region (point-min) (point-max))
+      (goto-char 100)
+      (org-cycle)
+      (goto-char 79)
+      (org-table-sort-lines nil ?N)))
+  (pop-to-buffer "*word-statistics*"))
 
-      ;; (setq org-src-block-faces    '(("emacs-lisp" (:family "Fira Code"  :height 0.75))
-      ;;                                ("python" (:family "Fira Code"  :height 0.75))
-      ;;                                ("latex" (:family "Fira Code"  :height 0.75))))
+        (defun sync0-call-rebinding-org-blank-behaviour (fn)
+          (let ((org-blank-before-new-entry
+                 (copy-tree org-blank-before-new-entry)))
+            (when (org-at-heading-p)
+              (rplacd (assoc 'heading org-blank-before-new-entry) nil))
+            (call-interactively fn)))
 
-      :bind (("<f5>" . sync0-hydra-file-access/body)
-             ("C-x 2" . sync0-split-and-follow-horizontally)
-             ("C-x 3" . sync0-split-and-follow-vertically)
-             (:map org-mode-map
-              ("M-<return>" . sync0-org-meta-return-dwim)
-              ("M-S-<return>" . sync0-org-insert-todo-heading-dwim))))
+        (defun sync0-org-meta-return-dwim ()
+          "Improved version of default org-meta-return"
+          (interactive)
+          (sync0-call-rebinding-org-blank-behaviour 'org-meta-return))
+
+        (defun sync0-org-insert-todo-heading-dwim ()
+          "Improved version of org-insert-todo-heading"
+          (interactive)
+          (sync0-call-rebinding-org-blank-behaviour 'org-insert-todo-heading))
+
+        (defun sync0-clever-insert-item ()
+          "Clever insertion of org item."
+          (if (not (org-in-item-p))
+              (insert "\n")
+            (org-insert-item)))
+
+        (defun sync0-evil-org-eol-call (fun)
+          "Go to end of line and call provided function. FUN function callback"
+          (end-of-line)
+          (funcall fun)
+          (evil-append nil))
+
+        ;; redefinition evils normal mode map
+        (evil-define-key 'normal org-mode-map
+          "<" 'outline-previous-visible-heading
+          ">" 'outline-next-visible-heading
+          (kbd "C->") 'org-forward-heading-same-level
+          (kbd "C-<") 'org-backward-heading-same-level
+          (kbd "<S-tab>") 'sync0-org-tree-open-in-right-frame 
+          "H" 'org-metaleft
+          "L" 'org-metaright
+          "K" 'org-metaup
+          "J" 'org-metadown
+          "k" 'previous-line
+          "j" 'next-line
+          "o" '(lambda () (interactive) (sync0-evil-org-eol-call 'sync0-clever-insert-item))
+          "O" '(lambda () (interactive) (sync0-evil-org-eol-call 'org-insert-heading))
+          "$" 'org-end-of-line
+          "^" 'org-beginning-of-line
+          "[" 'backward-sentence
+          "]" 'forward-sentence
+          "{" 'org-backward-paragraph
+          "}" 'org-forward-paragraph
+          "-" 'org-cycle-list-bullet
+          (kbd "<tab>") 'org-cycle)
+
+        (evil-define-key 'visual org-mode-map
+          ;; "q" 'highlight-changes-remove-highlight
+          "z" 'org-emphasize)
+
+        ;; List of files considered for org-refile.
+        (setq org-refile-targets (quote ((nil :maxlevel . 4)                ;; Default value.
+                                              ;; set for all agenda files
+                                         ;; ("todo.org" :maxlevel . 2)
+                                          (org-agenda-files :maxlevel . 4))))
+
+        ;; (org-refile-targets '((org-agenda-files :maxlevel . 4)))
+
+        (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+
+        ;; (setq org-src-block-faces    '(("emacs-lisp" (:family "Fira Code"  :height 0.75))
+        ;;                                ("python" (:family "Fira Code"  :height 0.75))
+        ;;                                ("latex" (:family "Fira Code"  :height 0.75))))
+
+        :bind (;;("<f5>" . sync0-hydra-file-access/body)
+               ("C-x 2" . sync0-split-and-follow-horizontally)
+               ("C-x 3" . sync0-split-and-follow-vertically)
+               (:map org-mode-map
+                ("M-<return>" . sync0-org-meta-return-dwim)
+                ("M-S-<return>" . sync0-org-insert-todo-heading-dwim))))
 
 (use-package org-gcal 
 :straight (org-gcal :type git :host github :repo "kidd/org-gcal.el") 
@@ -3414,13 +3667,13 @@ _q_uit
 
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
-;; On graphical displays, you can use window dividers in order to separate
-      ;; windows visually.
-      ;; (setq-default 
-      ;;               window-divider-default-bottom-width 0
-      ;;               window-divider-default-right-width 2)
+(setq-default 
+               window-divider-default-bottom-width 2
+               window-divider-default-right-width 2
+               ;; Show both window dividers (right and bottom)
+               window-divider-default-places 'right-only)
 
-;;      (add-hook 'emacs-startup-hook #'window-divider-mode)
+(add-hook 'emacs-startup-hook #'window-divider-mode)
 
 (defun sync0-no-fringes-in-minibuffer ()
   "Disable fringes in the minibuffer window."
@@ -3428,22 +3681,211 @@ _q_uit
 
 (add-hook 'minibuffer-setup-hook #'sync0-no-fringes-in-minibuffer)
 
-(setq-default                    
-          ;; Avoid ugly problemes with git-gutter.
-          fringes-outside-margins t
-          left-margin-width 3
-          ;; left-margin-width 2
-          right-margin-width 0
-          left-fringe-width 0
-;; create a function to restore the fringe value when using git-gutter-fringe
-          ;; left-fringe-width 1
-          right-fringe-width 0
-          ;; Remove continuation arrow on right fringe.
-          fringe-indicator-alist (delq (assq 'continuation fringe-indicator-alist)
-                                       fringe-indicator-alist)
-          indicate-buffer-boundaries nil
-          indicate-empty-lines nil
-          max-mini-window-height 0.3)
+(if (> (display-pixel-width) 1900)
+;; High resolution settings (t14s)
+   (setq-default                    
+    ;; Avoid ugly problemes with git-gutter.
+    fringes-outside-margins t
+    left-margin-width 3
+    ;; left-margin-width 2
+    right-margin-width 0
+    left-fringe-width 0
+    ;; left-fringe-width 1
+    right-fringe-width 0
+    ;; Remove continuation arrow on right fringe.
+    fringe-indicator-alist (delq (assq 'continuation fringe-indicator-alist)
+                                 fringe-indicator-alist)
+    indicate-buffer-boundaries nil
+    indicate-empty-lines nil
+    max-mini-window-height 0.3)
+;; Low resolution settings:
+   (setq-default                    
+    ;; Avoid ugly problemes with git-gutter.
+    fringes-outside-margins t
+    left-margin-width 1
+    ;; left-margin-width 2
+    right-margin-width 0
+    left-fringe-width 0
+    ;; create a function to restore the fringe value when using git-gutter-fringe
+    ;; left-fringe-width 1
+    right-fringe-width 0
+    ;; Remove continuation arrow on right fringe.
+    fringe-indicator-alist (delq (assq 'continuation fringe-indicator-alist)
+                                 fringe-indicator-alist)
+    indicate-buffer-boundaries nil
+    indicate-empty-lines nil
+    max-mini-window-height 0.3))
+
+(use-package battery
+ :custom
+  (battery-mode-line-format "%t")
+  (battery-update-interval 60)
+ :config
+  (display-battery-mode t))
+
+;; Define a local variable with the total number of lines.
+          (defvar-local sync0-mode-line-buffer-line-count nil)
+
+          ;; Define a function that counts the number of lines in the
+          ;; current buffer.
+          (defun sync0-mode-line-count-lines ()
+            "Count the number of lines in the current buffer."
+            (setq-local sync0-mode-line-buffer-line-count 
+                        (int-to-string (count-lines (point-min) (point-max)))))
+
+          ;; Recalculate the total number of lines using hooks. This is
+          ;; not the best approach, but I have not been able to devise a
+          ;; dynamic way to calculate these that does not result in Emacs
+          ;; "inventing" these results.
+          (add-hook 'find-file-hook 'sync0-mode-line-count-lines)
+          (add-hook 'after-save-hook 'sync0-mode-line-count-lines)
+          (add-hook 'after-revert-hook 'sync0-mode-line-count-lines)
+
+
+(setq-default mode-line-format
+                  '(" " 
+                  ;;  mode-line-front-espace 
+                    (:eval (cond 
+                            (buffer-read-only (propertize "🔒"
+                                                          'face '(:family "Noto Color Emoji")
+                                                          'help-echo "buffer is read-only!!!"))
+                            ((buffer-modified-p) (propertize "💾"
+                                                             'face '(:family "Noto Color Emoji")))
+                            (t (propertize "✓"
+                                           'face '(:family "Noto Color Emoji")))))
+                    "  " 
+                    mode-line-buffer-identification 
+                    "  " 
+                    (:eval 
+                            (if (boundp 'guess-language-current-language) 
+            (cond  ((string-equal guess-language-current-language "en") 
+                            (propertize "EN" 'face '(:height 1.0 :family "Minion Pro" :weight bold)))
+                   ((string-equal guess-language-current-language "de") 
+                            (propertize "DE" 'face '(:height 1.0 :family "Minion Pro" :weight bold)))
+                   ((string-equal guess-language-current-language "pt") 
+                            (propertize "PT" 'face '(:height 1.0 :family "Minion Pro" :weight bold)))
+                 ((string-equal guess-language-current-language "it") 
+                          (propertize "IT" 'face '(:height 1.0 :family "Minion Pro" :weight bold)))
+                   ((string-equal guess-language-current-language "fr") 
+                            (propertize "FR" 'face '(:height 1.0 :family "Minion Pro" :weight bold)))
+                   ((string-equal guess-language-current-language "es") 
+                            (propertize "ES" 'face '(:height 1.0 :family "Minion Pro" :weight bold)))
+                    (t (propertize "NIL" 'face '(:height 1.0 :family "Minion Pro" :weight bold))))
+                                 ;; (upcase (prin1-to-string guess-language-current-language))
+                             (propertize "NIL" 'face '(:height 1.0 :family "Minion Pro" :weight bold))))
+                  ;; evil-mode-line-tag
+                    "  "
+                  (:eval 
+                   (let ((line-string "L:%l"))
+                     (if (and (not (buffer-modified-p))
+                              sync0-mode-line-buffer-line-count)
+                         (setq line-string 
+                               (concat line-string "/" sync0-mode-line-buffer-line-count))
+                       line-string)))
+                   ;; "L:%l"
+                  "                                                               "
+                   (:eval (propertize 
+                           (capitalize 
+                            (s-replace "-mode" "" (format "%s" major-mode)))
+                                'face '(:weight bold)))
+                   " " 
+                   (vc-mode vc-mode)
+                   " " 
+                   (:eval (when (boundp 'org-mode-line-string)
+                            (propertize  org-mode-line-string 'face '(:weight semi-bold))))
+                   (:eval (propertize (format-time-string " %H:%M ")
+                                      'face '(:weight bold))) 
+                   " " 
+                    (:eval  (propertize "⚡" 'face '(:family "Noto Color Emoji")))
+                   mode-line-misc-info
+emacs-mode-line-end-spaces))
+
+(use-package mini-modeline
+    :disabled t
+    :straight (mini-modeline :type git :host github :repo "kiennq/emacs-mini-modeline") 
+          ;; :preface
+          ;; ;; Define a local variable with the total number of lines.
+          ;; (defvar-local sync0-mode-line-buffer-line-count nil)
+
+          ;; ;; Define a function that counts the number of lines in the
+          ;; ;; current buffer.
+          ;; (defun sync0-mode-line-count-lines ()
+          ;;   "Count the number of lines in the current buffer."
+          ;;   (setq-local sync0-mode-line-buffer-line-count 
+          ;;               (int-to-string (count-lines (point-min) (point-max)))))
+
+          ;; ;; Recalculate the total number of lines using hooks. This is
+          ;; ;; not the best approach, but I have not been able to devise a
+          ;; ;; dynamic way to calculate these that does not result in Emacs
+          ;; ;; "inventing" these results.
+          ;; (add-hook 'find-file-hook 'sync0-mode-line-count-lines)
+          ;; (add-hook 'after-save-hook 'sync0-mode-line-count-lines)
+          ;; (add-hook 'after-revert-hook 'sync0-mode-line-count-lines)
+  :custom
+  (mini-modeline-display-gui-line nil)
+  (mini-modeline-enhance-visual nil)
+  ;; (mini-modeline-right-padding 3)
+          :config
+          (setq   mini-modeline-l-format
+                  '(" " 
+                    mode-line-front-espace 
+                    (:eval (cond 
+                            (buffer-read-only (propertize "🔒 "
+                                                          'face '(:family "Noto Color Emoji")
+                                                          'help-echo "buffer is read-only!!!"))
+                            ((buffer-modified-p) (propertize "💾 "
+                                                             'face '(:family "Noto Color Emoji")))
+                            (t (propertize "✔ "
+                                           'face '(:family "Noto Color Emoji")))))
+                    mode-line-buffer-identification 
+                    "  " 
+                    (:eval 
+                            (if (boundp 'guess-language-current-language) 
+            (cond  ((string-equal guess-language-current-language "en") 
+                            (propertize "EN" 'face '(:height 1.0 :family "Minion Pro" :weight bold)))
+                   ((string-equal guess-language-current-language "de") 
+                            (propertize "DE" 'face '(:height 1.0 :family "Minion Pro" :weight bold)))
+                   ((string-equal guess-language-current-language "pt") 
+                            (propertize "PT" 'face '(:height 1.0 :family "Minion Pro" :weight bold)))
+                   ((string-equal guess-language-current-language "it") 
+                            (propertize "IT" 'face '(:height 1.0 :family "Minion Pro" :weight bold)))
+                   ((string-equal guess-language-current-language "fr") 
+                            (propertize "FR" 'face '(:height 1.0 :family "Minion Pro" :weight bold)))
+                   ((string-equal guess-language-current-language "es") 
+                            (propertize "ES" 'face '(:height 1.0 :family "Minion Pro" :weight bold)))
+                    (t (propertize "NIL" 'face '(:height 1.0 :family "Minion Pro" :weight bold))))
+                                 ;; (upcase (prin1-to-string guess-language-current-language))
+                             (propertize "NIL" 'face '(:height 1.0 :family "Minion Pro" :weight bold))))
+                    "  "
+                    "L:%l"))
+;; Count the number of lines in modeline.
+                    ;; (:eval 
+                    ;;  (let ((line-string "L:%l"))
+                    ;;    (if (and (not (buffer-modified-p))
+                    ;;             sync0-mode-line-buffer-line-count)
+                    ;;        (setq line-string 
+                    ;;              (concat line-string "/" sync0-mode-line-buffer-line-count))
+                    ;;      line-string)))
+
+          (setq  mini-modeline-r-format
+                 '((:eval 
+                        (propertize 
+                         (capitalize 
+                          (s-replace "-mode" "" (format "%s" major-mode)))
+                         'face '(:weight bold)))
+                   " " 
+                   (vc-mode vc-mode)
+                   " " 
+                   (:eval (when (boundp 'org-mode-line-string)
+                            (propertize  org-mode-line-string 'face '(:weight semi-bold))))
+                   (:eval (propertize (format-time-string " %H:%M ")
+                                      'face '(:weight bold))) 
+                   " " 
+                    (:eval  (propertize "⚡" 'face '(:family "Noto Color Emoji")))
+                   mode-line-misc-info
+                   ))
+
+          (mini-modeline-mode t))
 
 (use-package all-the-icons 
     :straight (all-the-icons :type git :host github :repo "domtronn/all-the-icons.el") 
@@ -3453,25 +3895,25 @@ _q_uit
 
 (use-package solaire-mode
 :disabled t
-    :straight (solaire-mode :type git :host github :repo "hlissner/emacs-solaire-mode") 
-    :hook
-    (((change-major-mode after-revert ediff-prepare-buffer) . turn-on-solaire-mode)
-    (minibuffer-setup . solaire-mode-in-minibuffer))
-    ;; :custom
-    ;; (solaire-mode-remap-fringe nil)
-    :config
-    ;; (setq solaire-mode-remap-alist
-    ;;       '(((default solaire-default-face)                       . nil)
-    ;;         ((hl-line solaire-hl-line-face)                       . nil)
-    ;;         ((org-hide solaire-org-hide-face)                     . nil)
-    ;;         ((org-indent solaire-org-hide-face)                   . nil)
-    ;;         ((linum solaire-line-number-face)                     . nil)
-    ;;         ((mode-line solaire-mode-line-face)                   . solaire-mode-remap-modeline)
-    ;;         ((mode-line-inactive solaire-mode-line-inactive-face) . solaire-mode-remap-modeline)))
+   :straight (solaire-mode :type git :host github :repo "hlissner/emacs-solaire-mode") 
+   :hook
+   (((change-major-mode after-revert ediff-prepare-buffer) . turn-on-solaire-mode)
+   (minibuffer-setup . solaire-mode-in-minibuffer))
+   ;; :custom
+   ;; (solaire-mode-remap-fringe nil)
+   :config
+   ;; (setq solaire-mode-remap-alist
+   ;;       '(((default solaire-default-face)                       . nil)
+   ;;         ((hl-line solaire-hl-line-face)                       . nil)
+   ;;         ((org-hide solaire-org-hide-face)                     . nil)
+   ;;         ((org-indent solaire-org-hide-face)                   . nil)
+   ;;         ((linum solaire-line-number-face)                     . nil)
+   ;;         ((mode-line solaire-mode-line-face)                   . solaire-mode-remap-modeline)
+   ;;         ((mode-line-inactive solaire-mode-line-inactive-face) . solaire-mode-remap-modeline)))
 
-  (setq solaire-mode-auto-swap-bg nil)
+ (setq solaire-mode-auto-swap-bg nil)
 
-    (solaire-global-mode +1))
+   (solaire-global-mode +1))
 
 (use-package doom-themes  
  :straight (doom-themes :type git :host github :repo "hlissner/emacs-doom-themes") 
@@ -3487,10 +3929,10 @@ _q_uit
        (load-theme 'doom-zenburn t)
       (load-theme 'doom-flatwhite t)
  :config
-    ;; Correct org-mode's native fontification.
-    (doom-themes-org-config)
     ;; Enable flashing mode-line on errors
-     (doom-themes-visual-bell-config))
+     ;; (doom-themes-visual-bell-config)
+    ;; Correct org-mode's native fontification.
+    (doom-themes-org-config))
 
 (use-package cycle-themes 
   :straight (cycle-themes :type git :host github :repo "toroidal-code/cycle-themes.el") 
@@ -3504,109 +3946,22 @@ _q_uit
   ;; (setq cycle-themes-theme-list '(doom-zenburn doom-flatwhite))
   (setq cycle-themes-theme-list '(doom-zenburn doom-flatwhite)))
 
-(use-package battery
- :custom
-  (battery-mode-line-format "%t")
-  (battery-update-interval 60)
- :config
-  (display-battery-mode t))
-
-(use-package mini-modeline
-  :straight (mini-modeline :type git :host github :repo "kiennq/emacs-mini-modeline") 
-        :preface
-        ;; Define a local variable with the total number of lines.
-        (defvar-local sync0-mode-line-buffer-line-count nil)
-
-        ;; Define a function that counts the number of lines in the
-        ;; current buffer.
-        (defun sync0-mode-line-count-lines ()
-          "Count the number of lines in the current buffer."
-          (setq-local sync0-mode-line-buffer-line-count 
-                      (int-to-string (count-lines (point-min) (point-max)))))
-
-        ;; Recalculate the total number of lines using hooks. This is
-        ;; not the best approach, but I have not been able to devise a
-        ;; dynamic way to calculate these that does not result in Emacs
-        ;; "inventing" these results.
-        (add-hook 'find-file-hook 'sync0-mode-line-count-lines)
-        (add-hook 'after-save-hook 'sync0-mode-line-count-lines)
-        (add-hook 'after-revert-hook 'sync0-mode-line-count-lines)
-:custom
-(mini-modeline-display-gui-line nil)
-(mini-modeline-enhance-visual nil)
-        :config
-        (setq   mini-modeline-l-format
-                '(" " 
-                  mode-line-front-espace 
-                  (:eval (cond 
-                          (buffer-read-only (propertize "🔒 "
-                                                        'face '(:family "Noto Color Emoji")
-                                                        'help-echo "buffer is read-only!!!"))
-                          ((buffer-modified-p) (propertize "💾 "
-                                                           'face '(:family "Noto Color Emoji")))
-                          (t (propertize "✔ "
-                                         'face '(:family "Noto Color Emoji")))))
-                  mode-line-buffer-identification 
-                  "  " 
-                  (:eval 
-                          (if (boundp 'guess-language-current-language) 
-          (cond  ((string-equal guess-language-current-language "en") 
-                          (propertize "EN" 'face '(:height 1.0 :family "Minion Pro" :weight bold)))
-                 ((string-equal guess-language-current-language "de") 
-                          (propertize "DE" 'face '(:height 1.0 :family "Minion Pro" :weight bold)))
-                 ((string-equal guess-language-current-language "pt") 
-                          (propertize "PT" 'face '(:height 1.0 :family "Minion Pro" :weight bold)))
-                 ((string-equal guess-language-current-language "fr") 
-                          (propertize "FR" 'face '(:height 1.0 :family "Minion Pro" :weight bold)))
-                 ((string-equal guess-language-current-language "es") 
-                          (propertize "ES" 'face '(:height 1.0 :family "Minion Pro" :weight bold)))
-                  (t (propertize "NIL" 'face '(:height 1.0 :family "Minion Pro" :weight bold))))
-                               ;; (upcase (prin1-to-string guess-language-current-language))
-                           (propertize "NIL" 'face '(:height 1.0 :family "Minion Pro" :weight bold))))
-                  "  "
-                  (:eval 
-                   (let ((line-string "L:%l"))
-                     (if (and (not (buffer-modified-p))
-                              sync0-mode-line-buffer-line-count)
-                         (setq line-string 
-                               (concat line-string "/" sync0-mode-line-buffer-line-count))
-                       line-string)))))
-
-        (setq  mini-modeline-r-format
-               '((:eval 
-                      (propertize 
-                       (capitalize 
-                        (s-replace "-mode" "" (prin1-to-string major-mode)))
-                       'face '(:weight bold)))
-                 " " 
-                 (vc-mode vc-mode)
-                 " " 
-                 (:eval (when (boundp 'org-mode-line-string)
-                          (propertize  org-mode-line-string 'face '(:weight semi-bold))))
-                 (:eval (propertize (format-time-string " %H:%M ")
-                                    'face '(:weight bold))) 
-                 " " 
-                  (:eval  (propertize "⚡" 'face '(:family "Noto Color Emoji")))
-                 mode-line-misc-info
-                 ))
-
-        (mini-modeline-mode t))
-
-(if (> (display-pixel-width) 2000)
-    ;; high resolution font size
+(if (> (display-pixel-width) 1900)
+    ;; high resolution font size (t14s)
     (progn (set-face-attribute 'default nil 
                           :family "Inconsolata"
-                          :height 150)
-      (setq line-spacing 0))
+                          :height 175)
+                          ;;:height 170
+      (setq line-spacing 0.2))
   ;; low resolution font size
   (progn (set-face-attribute 'default nil 
                         :family "Inconsolata"
-                        :height 160)
-    (setq line-spacing 1.5)))
+                        :height 130)
+    (setq line-spacing 0.1)))
 
 ;;   (defun sync0-buffer-face-mode-fixed ()
 ;;     "Set font to a variable width (proportional) fonts in current buffer"
-;; (if (> (display-pixel-width) 2000)
+;; (if (> (display-pixel-width) 1900)
 ;;     ;; external monitor font size
 ;;     (progn 
 ;;         (setq buffer-face-mode-face '(:family "Inconsolata" :height 150))
@@ -3619,15 +3974,18 @@ _q_uit
 
 (defun sync0-buffer-face-mode-variable ()
   "Set font to a variable width (proportional) fonts in current buffer"
-  (if (> (display-pixel-width) 2000)
-  ;; high resolution font size
+  (if (> (display-pixel-width) 1900)
+  ;; high resolution font size (t14s)
     (progn
-      (setq buffer-face-mode-face '(:family "Minion Pro" :height 140))
-  (setq line-spacing 0.25))
+      (setq buffer-face-mode-face '(:family "Minion Pro" :height 230))
+      ;;(setq buffer-face-mode-face '(:family "Minion Pro" :height 200))
+  (setq line-spacing 0.35))
   ;; low resolution font size
     (progn
-    (setq buffer-face-mode-face '(:family "Minion Pro" :height 160))
-  (setq line-spacing 0.2)))
+    ;; (setq buffer-face-mode-face '(:family "Minion Pro" :height 155))
+     (setq buffer-face-mode-face '(:family "Minion Pro" :height 130))
+  ;; (setq line-spacing 0.2)
+  (setq line-spacing 0.25)))
   (buffer-face-mode))
 
 (add-hook 'erc-mode-hook 'sync0-buffer-face-mode-variable)
@@ -3833,6 +4191,10 @@ _k_: kill        _s_: split                   _{_: wrap with { }
                                (when (equal buffer-file-name "~/.emacs.d/abbrev_defs")
                                  (read-abbrev-file)))))
 
+(use-package company-jedi
+:straight (company-jedi :type git :host github :repo "emacsorphanage/company-jedi") 
+:after company)
+
 (use-package company
 ;;        :straight (company :type git :host github :repo "company-mode/company-mode") 
         :hook
@@ -3860,7 +4222,9 @@ _k_: kill        _s_: split                   _{_: wrap with { }
       ;; '((text-mode company-capf  company-yasnippet company-ispell company-org-roam)
       ;; '((text-mode company-capf company-dabbrev company-yasnippet company-ispell company-org-roam)
       ;;(text-mode company-capf company-yasnippet company-ispell company-bibtex)
-        (prog-mode company-elisp company-capf company-yasnippet)
+        (prog-mode company-capf company-yasnippet)
+        (elisp-mode company-elisp company-capf company-yasnippet)
+        (python-mode company-capf company-yasnippet company-jedi)
         (conf-mode company-capf company-dabbrev-code company-yasnippet))
       "An alist matching modes to company backends. The backends for any mode is
     built from this.")
@@ -3962,7 +4326,7 @@ _k_: kill        _s_: split                   _{_: wrap with { }
   (ispell-hunspell-dict-paths-alist
    '(("en_US-large" "/usr/share/hunspell/en_US-large.aff")
      ("de_DE" "/usr/share/hunspell/de_DE.aff")
-     ;; ("it_IT" "/usr/share/hunspell/it_IT.aff")
+     ("it_IT" "/usr/share/hunspell/it_IT.aff")
      ("es" "/usr/share/hunspell/es.aff")
      ("pt_BR" "/usr/share/hunspell/pt_BR.aff")
      ("fr_FR" "/usr/share/hunspell/fr_FR.aff")))
@@ -3975,7 +4339,7 @@ _k_: kill        _s_: split                   _{_: wrap with { }
                                                ("de_DE" "[[:alpha:]ÄÖÜéäöüß]" "[^[:alpha:]ÄÖÜéäöüß]" "['’-]" t ("-d" "de_DE") nil utf-8)
                                                ("es" "[[:alpha:]ÁÉÍÓÚÄËÏÖÜÑáéíóúäëïöüñ]" "[^[:alpha:]ÁÉÍÓÚÄËÏÖÜÑáéíóúäëïöüñ]" "['’-]" t ("-d" "es") nil utf-8)
                                                ("pt_BR" "[[:alpha:]a-zàáâãçéêíóôõúüA-ZÀÁÂÃÇÉÊÍÓÔÕÚÜ]" "[^[:alpha:]a-zàáâãçéêíóôõúüA-ZÀÁÂÃÇÉÊÍÓÔÕÚÜ]" "['-]" t  ("-d" "pt_BR") nil utf-8)
-                                               ;; ("it_IT" "[[:alpha:]AEÉIOUàèéìòù]" "[^[:alpha:]AEÉIOUàèéìòù]" "['’-]" t ("-d" "it_IT") "~tex" nil utf-8)
+                                               ("it_IT" "[[:alpha:]AEÉIOUàèéìòù]" "[^[:alpha:]AEÉIOUàèéìòù]" "['’-]" t ("-d" "it_IT") nil utf-8)
                                                ("fr_FR" "[[:alpha:]ÀÂÇÈÉÊËÎÏÔÙÛÜàâçèéêëîïôùûü]" "[^[:alpha:]ÀÂÇÈÉÊËÎÏÔÙÛÜàâçèéêëîïôùûü]" "[’'-]" t ("-d" "fr_FR")  nil utf-8))))
 
         ((executable-find "aspell")
@@ -3993,6 +4357,8 @@ _k_: kill        _s_: split                   _{_: wrap with { }
   (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_EXAMPLE" . "#\\+END_EXEMPLE"))
   (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_equation" . "#\\+END_equation"))
   (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_labeling" . "#\\+END_labeling"))
+  (add-to-list 'ispell-skip-region-alist '("#\\+[A-z]+: .+$"))
+  (add-to-list 'ispell-skip-region-alist '("\\[\\[" . "\\]\\]"))
   (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_equation*" . "#\\+END_equation*"))
   (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_align" . "#\\+END_align"))
   (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_align*" . "#\\+END_align*"))
@@ -4017,11 +4383,11 @@ _k_: kill        _s_: split                   _{_: wrap with { }
           "Currently active natural language")
 
         :custom
-        (guess-language-languages '(en fr es de pt))
+        (guess-language-languages '(en it pt de fr es))
         (guess-language-min-paragraph-length 30)
         (guess-language-langcodes
          '((en . ("en_US-large" "english"))
-           ;; (it . ("it_IT" "italian"))
+           (it . ("it_IT" "italian"))
            (pt . ("pt_BR" "portuguese"))
            (de . ("de_DE" "german"))
            (fr . ("fr_FR" "french"))
@@ -4056,6 +4422,12 @@ _k_: kill        _s_: split                   _{_: wrap with { }
                 (setq local-abbrev-table french-mode-abbrev-table)
                 (set-input-method "french-prefix")
                 (ispell-change-dictionary "fr_FR")))
+             ((string-equal lang "it")
+              (progn
+                (setq sync0-language-active "italian")
+                (setq local-abbrev-table italian-mode-abbrev-table)
+                (set-input-method "italian-postfix")
+                (ispell-change-dictionary "it_IT")))
              ((string-equal lang "en")
               (progn
                 (setq sync0-language-active "english")
@@ -4092,7 +4464,14 @@ _k_: kill        _s_: split                   _{_: wrap with { }
                 (setq local-abbrev-table french-mode-abbrev-table)
                 (set-input-method "french-prefix")
                 (ispell-change-dictionary "fr_FR"))))
-        (?5 "de" (lambda ()
+        (?5 "it" (lambda ()
+              (progn
+                  (setq  guess-language-current-language 'it)
+                (setq sync0-language-active "italian")
+                (setq local-abbrev-table italian-mode-abbrev-table)
+                (set-input-method "italian-postfix")
+                (ispell-change-dictionary "it_IT"))))
+        (?6 "de" (lambda ()
               (progn
                   (message "Deutsch ist die aktuelle Sprache")
                   (setq  guess-language-current-language 'de)
@@ -4163,6 +4542,8 @@ _k_: kill        _s_: split                   _{_: wrap with { }
                   (browse-url (format "https://www.merriam-webster.com/dictionary/%s" word)))
                  ((string-equal guess-language-current-language "de") 
                   (browse-url (format "https://www.duden.de/rechtschreibung/%s" word)))
+                 ((string-equal guess-language-current-language "it") 
+                  (browse-url (format "https://www.duden.de/rechtschreibung/%s" word)))
                  ((string-equal guess-language-current-language "pt") 
                   (browse-url (format "https://www.dicio.com.br/%s" word)))
                  ((string-equal guess-language-current-language "fr") 
@@ -4178,6 +4559,8 @@ _k_: kill        _s_: split                   _{_: wrap with { }
           (cond  ((string-equal guess-language-current-language "en") 
                   (browse-url (format "https://www.merriam-webster.com/dictionary/%s" word)))
                  ((string-equal guess-language-current-language "de") 
+                  (browse-url (format "https://www.verbformen.de/konjugation/?w=%s" word)))
+                 ((string-equal guess-language-current-language "it") 
                   (browse-url (format "https://www.verbformen.de/konjugation/?w=%s" word)))
                  ((string-equal guess-language-current-language "pt") 
                   (browse-url (format "https://www.conjugacao.com.br/verbo-%s/" word)))
@@ -4197,6 +4580,8 @@ _k_: kill        _s_: split                   _{_: wrap with { }
                   (browse-url (format "https://dictionnaire.lerobert.com/definition/%s#synonymes" word)))
                  ((string-equal guess-language-current-language "de") 
                   (browse-url (format "https://www.duden.de/rechtschreibung/%s#synonyme" word)))
+                 ((string-equal guess-language-current-language "it") 
+                  (browse-url (format "https://www.duden.de/rechtschreibung/%s#synonyme" word)))
                  ((string-equal guess-language-current-language "pt") 
                   (browse-url (format "https://www.dicio.com.br/%s" word)))
                  ((string-equal guess-language-current-language "es") 
@@ -4212,6 +4597,10 @@ _k_: kill        _s_: split                   _{_: wrap with { }
            (setq parts-list sync0-spanish-parts-speech)
             (ivy-completing-read "Elija uno: " parts-list)))
           ((string-equal lang "pt")
+           (progn
+           (setq parts-list sync0-portuguese-parts-speech)
+            (ivy-completing-read "Escolha um: " parts-list)))
+          ((string-equal lang "it")
            (progn
            (setq parts-list sync0-portuguese-parts-speech)
             (ivy-completing-read "Escolha um: " parts-list)))
@@ -4277,24 +4666,31 @@ _k_: kill        _s_: split                   _{_: wrap with { }
   :commands focus-mode)
 
 (use-package centered-window
-        :straight (centered-window :type git :host github :repo "anler/centered-window-mode") 
-        :config
+              :straight (centered-window :type git :host github :repo "anler/centered-window-mode") 
+              :config
 
-    (defun sync0-text-mode-centered-window ()
-     (progn
-  (setq cwm-left-fringe-ratio 100)
-(centered-window-mode t)))
+          (defun sync0-text-mode-centered-window ()
+"Set font to a variable width (proportional) fonts in current buffer"
+(if (> (display-pixel-width) 1900)
+;; high resolution (t14s)
+  (progn
+        (setq cwm-left-fringe-ratio 80)
+      (centered-window-mode t))
+;; low resolution 
+  (progn
+        (setq cwm-left-fringe-ratio 100)
+      (centered-window-mode t))))
 
-    (defun sync0-prog-mode-centered-window ()
-     (progn
-;; Ratio by which the left fringe is padded more than the right.
-;; Should be a value between 0 and 100
-(setq cwm-left-fringe-ratio 30)
-(centered-window-mode t)))
+          (defun sync0-prog-mode-centered-window ()
+           (progn
+      ;; Ratio by which the left fringe is padded more than the right.
+      ;; Should be a value between 0 and 100
+      (setq cwm-left-fringe-ratio 30)
+      (centered-window-mode t)))
 
-        :hook 
-((text-mode . sync0-text-mode-centered-window)
- (prog-mode . sync0-prog-mode-centered-window)))
+              :hook 
+      ((text-mode . sync0-text-mode-centered-window)
+       (prog-mode . sync0-prog-mode-centered-window)))
 
 (use-package olivetti
     :disabled t
@@ -4712,25 +5108,49 @@ for parsing BibTeX keys.  If parsing fails, try to set this variable to nil."
                                       ("keywords"))))))
 
 (use-package ivy-bibtex 
-    :after (ivy bibtex)
+;;    :after (ivy bibtex)
     :custom 
-    (bibtex-completion-bibliography '("~/Dropbox/org/etc/bibliography.bib")) ;; writing completion
+    (bibtex-completion-bibliography '("~/Dropbox/org/references/bibliography.bib")) ;; writing completion
     (bibtex-completion-notes-path '"~/Dropbox/org/references")
     (bibtex-completion-library-path '("~/Dropbox/org/references/"))
     (bibtex-completion-pdf-field "file")
-    (bibtex-completion-pdf-symbol "⌘")
-    (bibtex-completion-notes-symbol "✎")
+    (bibtex-completion-pdf-symbol "P")
+    (bibtex-completion-notes-symbol "N")
     (ivy-bibtex-default-action 'ivy-bibtex-edit-notes)
+    (bibtex-completion-additional-search-fields '(journaltitle keywords origdate subtitle volume booktitle))
+
     :config 
+ (setq bibtex-completion-display-formats
+     '((article       . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title}: ${subtitle} @ ${journaltitle} [${=key=}]")
+       (book          . "${=has-pdf=:1}${=has-note=:1}| ${author} [${origdate}](${date:4}) ${title} ${volume}: ${subtitle} [${=key=}]")
+       (inbook        . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title:55} @ ${booktitle} [${=key=}]")
+       (incollection  . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title:55} @ ${booktitle} [${=key=}]")
+       (inproceedings . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title:55} @ ${booktitle} [${=key=}]")
+       (t             . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date}) ${title}: ${subtitle} [${=key=}]")))
+
+ ;; (setq bibtex-completion-display-formats
+ ;;     '((article       . "${=has-pdf=:1}${=has-note=:1}| ${=key=}| ${author} (${date:4}) ${title:55} @ ${journaltitle:30}")
+ ;;       (book          . "${=has-pdf=:1}${=has-note=:1}| ${=key=}| ${author} [${origdate}](${date:4}) ${title} (${volume}): ${subtitle}")
+ ;;       (inbook        . "${=has-pdf=:1}${=has-note=:1}| ${=key=}| ${author} (${date:4}) ${title:55} @ ${chapter:30}")
+ ;;       (incollection  . "${=has-pdf=:1}${=has-note=:1}| ${=key=}| ${author} (${date:4}) ${title:55} @ ${booktitle:30}")
+ ;;       (inproceedings . "${=has-pdf=:1}${=has-note=:1}| ${=key=}| ${author} (${date:4}) ${title:55} @ ${booktitle:30}")
+ ;;       (t             . "${=has-pdf=:1}${=has-note=:1}| ${=key=}| ${author} (${date}) ${title}")))
+
+;; (setq bibtex-completion-display-formats
+;; '((t . "${=key=:*} ${=has-pdf=:1}${=has-note=:1} ${author:20} ${title:*} ${=type=:7}")))
+
     (setq bibtex-completion-notes-template-multiple-files  
      "
 #+TITLE: ${title}
 #+SUBTITLE: ${subtitle}
 #+AUTHOR: ${author-or-editor}
+#+JOURNAL_TITLE: ${journaltitle}
+#+BOOK_TITLE: ${booktitle}
+#+BOOK_TITLE: ${booksubtitle}
 #+ROAM_KEY: cite:${=key=}
-#+CREATED: %(sync0-insert-today-timestamp)
-#+DATE: %(sync0-insert-today-timestamp)
-#+ROAM_TAGS: ${=key=} ${keywords} 
+#+CREATED: 
+#+DATE: 
+#+ROAM_TAGS: ${=key=} ${author-or-editor} ${keywords} 
 #+INTERLEAVE_PDF: ${file}
 
 
@@ -4757,6 +5177,16 @@ for parsing BibTeX keys.  If parsing fails, try to set this variable to nil."
                                                (member (cons "=key=" key)
                                                        (cdr cand)))
                                              candidates))))
+
+    (defun sync0-bibtex-completion-journaltitle ()
+                       (completing-read "Journal title : "
+                        (delete-dups (mapcar #'(lambda (x) (cdr (assoc "journaltitle" x)))
+                          (bibtex-completion-candidates)))))
+
+    (defun sync0-bibtex-completion-author ()
+                       (completing-read "Auteur : "
+                        (delete-dups (mapcar #'(lambda (x) (cdr (assoc "author" x)))
+                          (bibtex-completion-candidates)))))
 
         (ivy-read "BibTeX entries%s: "
                   candidates

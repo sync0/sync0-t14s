@@ -2,21 +2,22 @@
 
     Adjust font size according to screen resolution (when I use dual monitor setup)
 #+BEGIN_SRC emacs-lisp
-  (if (> (display-pixel-width) 2000)
-      ;; high resolution font size
+  (if (> (display-pixel-width) 1900)
+      ;; high resolution font size (t14s)
       (progn (set-face-attribute 'default nil 
                             :family "Inconsolata"
-                            :height 150)
-        (setq line-spacing 0))
+                            :height 175)
+                            ;;:height 170
+        (setq line-spacing 0.2))
     ;; low resolution font size
     (progn (set-face-attribute 'default nil 
                           :family "Inconsolata"
-                          :height 160)
-      (setq line-spacing 1.5)))
+                          :height 130)
+      (setq line-spacing 0.1)))
 
   ;;   (defun sync0-buffer-face-mode-fixed ()
   ;;     "Set font to a variable width (proportional) fonts in current buffer"
-  ;; (if (> (display-pixel-width) 2000)
+  ;; (if (> (display-pixel-width) 1900)
   ;;     ;; external monitor font size
   ;;     (progn 
   ;;         (setq buffer-face-mode-face '(:family "Inconsolata" :height 150))
@@ -32,15 +33,18 @@
   #+BEGIN_SRC emacs-lisp
     (defun sync0-buffer-face-mode-variable ()
       "Set font to a variable width (proportional) fonts in current buffer"
-      (if (> (display-pixel-width) 2000)
-      ;; high resolution font size
+      (if (> (display-pixel-width) 1900)
+      ;; high resolution font size (t14s)
         (progn
-          (setq buffer-face-mode-face '(:family "Minion Pro" :height 140))
-      (setq line-spacing 0.25))
+          (setq buffer-face-mode-face '(:family "Minion Pro" :height 230))
+          ;;(setq buffer-face-mode-face '(:family "Minion Pro" :height 200))
+      (setq line-spacing 0.35))
       ;; low resolution font size
         (progn
-        (setq buffer-face-mode-face '(:family "Minion Pro" :height 160))
-      (setq line-spacing 0.2)))
+        ;; (setq buffer-face-mode-face '(:family "Minion Pro" :height 155))
+         (setq buffer-face-mode-face '(:family "Minion Pro" :height 130))
+      ;; (setq line-spacing 0.2)
+      (setq line-spacing 0.25)))
       (buffer-face-mode))
  #+END_SRC
 
@@ -287,8 +291,14 @@ _k_: kill        _s_: split                   _{_: wrap with { }
                                    (read-abbrev-file)))))
   #+END_SRC 
 
-* company-mode
+* company-jedi
+#+BEGIN_SRC emacs-lisp
+  (use-package company-jedi
+:straight (company-jedi :type git :host github :repo "emacsorphanage/company-jedi") 
+:after company)
+#+END_SRC 
 
+* company-mode
 #+BEGIN_SRC emacs-lisp
 (use-package company
 ;;        :straight (company :type git :host github :repo "company-mode/company-mode") 
@@ -317,7 +327,9 @@ _k_: kill        _s_: split                   _{_: wrap with { }
       ;; '((text-mode company-capf  company-yasnippet company-ispell company-org-roam)
       ;; '((text-mode company-capf company-dabbrev company-yasnippet company-ispell company-org-roam)
       ;;(text-mode company-capf company-yasnippet company-ispell company-bibtex)
-        (prog-mode company-elisp company-capf company-yasnippet)
+        (prog-mode company-capf company-yasnippet)
+        (elisp-mode company-elisp company-capf company-yasnippet)
+        (python-mode company-capf company-yasnippet company-jedi)
         (conf-mode company-capf company-dabbrev-code company-yasnippet))
       "An alist matching modes to company backends. The backends for any mode is
     built from this.")
@@ -430,7 +442,7 @@ _k_: kill        _s_: split                   _{_: wrap with { }
     (ispell-hunspell-dict-paths-alist
      '(("en_US-large" "/usr/share/hunspell/en_US-large.aff")
        ("de_DE" "/usr/share/hunspell/de_DE.aff")
-       ;; ("it_IT" "/usr/share/hunspell/it_IT.aff")
+       ("it_IT" "/usr/share/hunspell/it_IT.aff")
        ("es" "/usr/share/hunspell/es.aff")
        ("pt_BR" "/usr/share/hunspell/pt_BR.aff")
        ("fr_FR" "/usr/share/hunspell/fr_FR.aff")))
@@ -443,7 +455,7 @@ _k_: kill        _s_: split                   _{_: wrap with { }
                                                  ("de_DE" "[[:alpha:]ÄÖÜéäöüß]" "[^[:alpha:]ÄÖÜéäöüß]" "['’-]" t ("-d" "de_DE") nil utf-8)
                                                  ("es" "[[:alpha:]ÁÉÍÓÚÄËÏÖÜÑáéíóúäëïöüñ]" "[^[:alpha:]ÁÉÍÓÚÄËÏÖÜÑáéíóúäëïöüñ]" "['’-]" t ("-d" "es") nil utf-8)
                                                  ("pt_BR" "[[:alpha:]a-zàáâãçéêíóôõúüA-ZÀÁÂÃÇÉÊÍÓÔÕÚÜ]" "[^[:alpha:]a-zàáâãçéêíóôõúüA-ZÀÁÂÃÇÉÊÍÓÔÕÚÜ]" "['-]" t  ("-d" "pt_BR") nil utf-8)
-                                                 ;; ("it_IT" "[[:alpha:]AEÉIOUàèéìòù]" "[^[:alpha:]AEÉIOUàèéìòù]" "['’-]" t ("-d" "it_IT") "~tex" nil utf-8)
+                                                 ("it_IT" "[[:alpha:]AEÉIOUàèéìòù]" "[^[:alpha:]AEÉIOUàèéìòù]" "['’-]" t ("-d" "it_IT") nil utf-8)
                                                  ("fr_FR" "[[:alpha:]ÀÂÇÈÉÊËÎÏÔÙÛÜàâçèéêëîïôùûü]" "[^[:alpha:]ÀÂÇÈÉÊËÎÏÔÙÛÜàâçèéêëîïôùûü]" "[’'-]" t ("-d" "fr_FR")  nil utf-8))))
 
           ((executable-find "aspell")
@@ -461,6 +473,8 @@ _k_: kill        _s_: split                   _{_: wrap with { }
     (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_EXAMPLE" . "#\\+END_EXEMPLE"))
     (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_equation" . "#\\+END_equation"))
     (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_labeling" . "#\\+END_labeling"))
+    (add-to-list 'ispell-skip-region-alist '("#\\+[A-z]+: .+$"))
+    (add-to-list 'ispell-skip-region-alist '("\\[\\[" . "\\]\\]"))
     (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_equation*" . "#\\+END_equation*"))
     (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_align" . "#\\+END_align"))
     (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_align*" . "#\\+END_align*"))
@@ -495,11 +509,11 @@ per document.
           "Currently active natural language")
 
         :custom
-        (guess-language-languages '(en fr es de pt))
+        (guess-language-languages '(en it pt de fr es))
         (guess-language-min-paragraph-length 30)
         (guess-language-langcodes
          '((en . ("en_US-large" "english"))
-           ;; (it . ("it_IT" "italian"))
+           (it . ("it_IT" "italian"))
            (pt . ("pt_BR" "portuguese"))
            (de . ("de_DE" "german"))
            (fr . ("fr_FR" "french"))
@@ -534,6 +548,12 @@ per document.
                 (setq local-abbrev-table french-mode-abbrev-table)
                 (set-input-method "french-prefix")
                 (ispell-change-dictionary "fr_FR")))
+             ((string-equal lang "it")
+              (progn
+                (setq sync0-language-active "italian")
+                (setq local-abbrev-table italian-mode-abbrev-table)
+                (set-input-method "italian-postfix")
+                (ispell-change-dictionary "it_IT")))
              ((string-equal lang "en")
               (progn
                 (setq sync0-language-active "english")
@@ -570,7 +590,14 @@ per document.
                 (setq local-abbrev-table french-mode-abbrev-table)
                 (set-input-method "french-prefix")
                 (ispell-change-dictionary "fr_FR"))))
-        (?5 "de" (lambda ()
+        (?5 "it" (lambda ()
+              (progn
+                  (setq  guess-language-current-language 'it)
+                (setq sync0-language-active "italian")
+                (setq local-abbrev-table italian-mode-abbrev-table)
+                (set-input-method "italian-postfix")
+                (ispell-change-dictionary "it_IT"))))
+        (?6 "de" (lambda ()
               (progn
                   (message "Deutsch ist die aktuelle Sprache")
                   (setq  guess-language-current-language 'de)
@@ -641,6 +668,8 @@ per document.
                   (browse-url (format "https://www.merriam-webster.com/dictionary/%s" word)))
                  ((string-equal guess-language-current-language "de") 
                   (browse-url (format "https://www.duden.de/rechtschreibung/%s" word)))
+                 ((string-equal guess-language-current-language "it") 
+                  (browse-url (format "https://www.duden.de/rechtschreibung/%s" word)))
                  ((string-equal guess-language-current-language "pt") 
                   (browse-url (format "https://www.dicio.com.br/%s" word)))
                  ((string-equal guess-language-current-language "fr") 
@@ -656,6 +685,8 @@ per document.
           (cond  ((string-equal guess-language-current-language "en") 
                   (browse-url (format "https://www.merriam-webster.com/dictionary/%s" word)))
                  ((string-equal guess-language-current-language "de") 
+                  (browse-url (format "https://www.verbformen.de/konjugation/?w=%s" word)))
+                 ((string-equal guess-language-current-language "it") 
                   (browse-url (format "https://www.verbformen.de/konjugation/?w=%s" word)))
                  ((string-equal guess-language-current-language "pt") 
                   (browse-url (format "https://www.conjugacao.com.br/verbo-%s/" word)))
@@ -675,6 +706,8 @@ per document.
                   (browse-url (format "https://dictionnaire.lerobert.com/definition/%s#synonymes" word)))
                  ((string-equal guess-language-current-language "de") 
                   (browse-url (format "https://www.duden.de/rechtschreibung/%s#synonyme" word)))
+                 ((string-equal guess-language-current-language "it") 
+                  (browse-url (format "https://www.duden.de/rechtschreibung/%s#synonyme" word)))
                  ((string-equal guess-language-current-language "pt") 
                   (browse-url (format "https://www.dicio.com.br/%s" word)))
                  ((string-equal guess-language-current-language "es") 
@@ -690,6 +723,10 @@ per document.
            (setq parts-list sync0-spanish-parts-speech)
             (ivy-completing-read "Elija uno: " parts-list)))
           ((string-equal lang "pt")
+           (progn
+           (setq parts-list sync0-portuguese-parts-speech)
+            (ivy-completing-read "Escolha um: " parts-list)))
+          ((string-equal lang "it")
            (progn
            (setq parts-list sync0-portuguese-parts-speech)
             (ivy-completing-read "Escolha um: " parts-list)))
@@ -815,9 +852,16 @@ some quality voices in the AUR repositories.
                     :config
 
                 (defun sync0-text-mode-centered-window ()
-                 (progn
+      "Set font to a variable width (proportional) fonts in current buffer"
+      (if (> (display-pixel-width) 1900)
+      ;; high resolution (t14s)
+        (progn
+              (setq cwm-left-fringe-ratio 80)
+            (centered-window-mode t))
+      ;; low resolution 
+        (progn
               (setq cwm-left-fringe-ratio 100)
-            (centered-window-mode t)))
+            (centered-window-mode t))))
 
                 (defun sync0-prog-mode-centered-window ()
                  (progn

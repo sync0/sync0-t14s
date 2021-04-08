@@ -40,7 +40,7 @@
       ((re-search-backward "\\[\\[[[:graph:]]+\\]\\[\\([[:digit:]]+\\)\\]\\]" nil t 1)
              (match-string 1))
             ((re-search-backward "cite\\[\\([[:digit:]]+\\)\\]{[[:graph:]]+}}\\]" nil t 1)
-              (match-string 1)))))
+           (format "[%s]" (match-string 1))))))
 
 (defun sync0-last-cited-author ()
   "Search for the page cited in the last quote environment"

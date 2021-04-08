@@ -3,7 +3,7 @@
 # key: book
 # --
 @book\{${34:$$(unless yas-modified-p (sync0-bibtex-generate-autokey))},
-author = \{${5:Simon, Herbert}\},
+author = \{${5:$$(unless yas-modified-p (sync0-bibtex-completion-author))}\},
 date = \{${1:2001}\},${6:
 origdate = \{${7:1776}\},
 origtitle = \{${8:The Wealth of Nations}\},}

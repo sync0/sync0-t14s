@@ -183,8 +183,8 @@
  (rear-context-string . "Jérôme Lallment\n")
  (position . 883))
 ("org-capture-last-stored"
- (filename . "~/Dropbox/org/projects/20210211234748.org")
- (front-context-string . "#+TITLE: Tâches ")
+ (filename . "~/Dropbox/org/projects/20210408155352.org")
+ (front-context-string . "#+TITLE: Les div")
  (rear-context-string)
  (position . 1))
 ("carc"
@@ -198,8 +198,8 @@
  (rear-context-string . "\"init.el\"))))))\n")
  (position . 5443))
 ("here"
- (filename . "~/Dropbox/org/20210209183137.org")
- (front-context-string)
- (rear-context-string . "t deux boîtes \n\n")
- (position . 314))
+ (filename . "~/Dropbox/org/20210323022910.org")
+ (front-context-string . ".\n13. [ ] (1856/")
+ (rear-context-string . "  Rampal, p. 946")
+ (position . 3869))
 )
