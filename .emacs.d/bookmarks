@@ -63,10 +63,10 @@
  (rear-context-string . "Eles | têm    |\n")
  (position . 1687))
 ("here2"
- (filename . "~/.emacs.d/sync0/sync0-theme.org")
- (front-context-string . " \n            (i")
- (rear-context-string . "ad 'cycle-themes")
- (position . 4352))
+ (filename . "~/Dropbox/org/notes/references/sep1858-04-15.org")
+ (front-context-string . "e sync0-author-l")
+ (rear-context-string . "r: (void-variabl")
+ (position . 376))
 ("matonti"
  (filename . "~/Dropbox/notes/matonti2012.org")
  (front-context-string . "\n\n* 無 Conclusion")
@@ -183,8 +183,8 @@
  (rear-context-string . "Jérôme Lallment\n")
  (position . 883))
 ("org-capture-last-stored"
- (filename . "~/Dropbox/org/projects/20210408155352.org")
- (front-context-string . "#+TITLE: Les div")
+ (filename . "~/Dropbox/org/bibliographies/20210517172757.org")
+ (front-context-string . "#+TITLE: Bibliog")
  (rear-context-string)
  (position . 1))
 ("carc"
@@ -198,8 +198,8 @@
  (rear-context-string . "\"init.el\"))))))\n")
  (position . 5443))
 ("here"
- (filename . "~/Dropbox/org/20210323022910.org")
- (front-context-string . ".\n13. [ ] (1856/")
- (rear-context-string . "  Rampal, p. 946")
- (position . 3869))
+ (filename . "~/.emacs.d/sync0/sync0-yasnippet-doctorat.el")
+ (front-context-string . ")\n\n\n(provide 'sy")
+ (rear-context-string . "ies 1 candidate)")
+ (position . 1830))
 )

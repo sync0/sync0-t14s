@@ -205,19 +205,22 @@
 
 (setq sync0-zettelkasten-directory (concat (getenv "HOME") "/Dropbox/org/")
 sync0-zettelkasten-directory-sans (concat (getenv "HOME") "/Dropbox/org")
-sync0-zettelkasten-directory-references (concat (getenv "HOME") "/Dropbox/org/references/")
+sync0-default-bibliography (concat (getenv "HOME") "/Dropbox/bibliographies/doctorat.bib")
+sync0-zettelkasten-directory-references (concat (getenv "HOME") "/Dropbox/org/notes/references/")
 sync0-emacs-directory (concat (getenv "HOME") "/.emacs.d/sync0/")
 sync0-pdfs-folder (concat (getenv "HOME") "/Documents/pdfs/")
 sync0-current-year (format-time-string "%Y")
 sync0-current-month (format-time-string "%B")
 sync0-current-month-downcase (downcase (format-time-string "%B"))
 sync0-current-day (format-time-string "%d")
+sync0-biblatex-entry-types '("article" "book" "inbook" "incollection" "collection" "unpublished" "thesis" "proceedings" "inproceedings" "online" "report" "manual")
+sync0-biblatex-languages '("spanish" "english" "french" "german" "portuguese" "italian" "korean" "japanese" "dutch" "arabic" "hebrew" "latin" "greek" "unknown")
 sync0-english-parts-speech '("noun" "intransitive verb" "transitive verb" "verb" "conjunction" "adjective" "adverb")
 sync0-french-parts-speech '("nom féminin" "nom masculin" "verbe intransitif" "verbe transitif" "verbe" "conjonction" "adjectif" "adverbe")
 sync0-portuguese-parts-speech '("sustantivo femenino" "sustantivo masculino" "verbo intransitivo" "verbo transitivo" "verbo" "conjunção" "adjetivo" "advérbio")
           sync0-spanish-parts-speech '("sustantivo femenino" "sustantivo masculino" "verbo intransitivo" "verbo transitivo" "verbo" "conjunción" "adjectivo" "adverbio")
           sync0-zettelkasten-annotations-author  "John Doe"
-          sync0-zettelkasten-annotations-key  "doe"
+          sync0-zettelkasten-annotations-key  "doe1991"
            sync0-zettelkasten-annotations-roam-key "cite:doe1991")
 
 (defun sync0-log-today-timestamp () 
@@ -258,6 +261,7 @@ sync0-portuguese-parts-speech '("sustantivo femenino" "sustantivo masculino" "ve
   (add-hook 'before-save-hook (lambda ()
 ;; Check whether file is in org-mode and whether it is located in my Zettelkasten directory
                                 (when (and (eq major-mode 'org-mode)
+                                      (not (string-prefix-p "archives" (buffer-file-name)))
                                       (string-prefix-p sync0-zettelkasten-directory (buffer-file-name)))
                                                ;; (equal default-directory (concat (getenv "HOME") "/Dropbox/annotations/"))
                                   (sync0-update-timestamp))))
@@ -326,6 +330,19 @@ sync0-portuguese-parts-speech '("sustantivo femenino" "sustantivo masculino" "ve
 ;; (sync0-restore-margins)
       (other-window 1)))
 
+(defun sync0-find-next-file (&optional backward)
+  "Find the next file (by name) in the current directory.
+
+With prefix arg, find the previous file."
+  (interactive "P")
+  (when buffer-file-name
+    (let* ((file (expand-file-name buffer-file-name))
+           (files (cl-remove-if (lambda (file) (cl-first (file-attributes file)))
+                                (sort (directory-files (file-name-directory file) t nil t) 'string<)))
+           (pos (mod (+ (cl-position file files :test 'equal) (if backward -1 1))
+                     (length files))))
+      (find-file (nth pos files)))))
+
 (setq smart-quote-regexp-replacements
       '(("\\(\\w\\)- " . "\\1")
         ("\\(\\w\\)\\(  [-—] \\|—\\)" . "\\1---")))
@@ -368,6 +385,13 @@ sync0-portuguese-parts-speech '("sustantivo femenino" "sustantivo masculino" "ve
                             ("  " . " "))
                           nil   beg (min end (point-max))))
 
+(use-package undo-tree
+  ;; :straight nil
+:custom
+(undo-tree-enable-undo-in-region nil)
+:config
+(global-undo-tree-mode))
+
 (use-package hydra
   :straight (hydra :type git :host github :repo "abo-abo/hydra"))
 
@@ -392,8 +416,9 @@ sync0-portuguese-parts-speech '("sustantivo femenino" "sustantivo masculino" "ve
 
 (use-package evil-leader
         :straight (evil-leader :type git :host github :repo "cofi/evil-leader") 
+        :init
+        (setq evil-leader/in-all-states t)
         :hook (after-init . global-evil-leader-mode)
-
        :config
          (evil-leader/set-leader "<SPC>")
 
@@ -409,6 +434,7 @@ sync0-portuguese-parts-speech '("sustantivo femenino" "sustantivo masculino" "ve
   "j" 'counsel-bookmark
   "q" 'keyboard-quit
   "w" 'write-file
+  "e" 'eval-last-sexp
   "s" 'save-buffer
   "b" 'ivy-switch-buffer
   "r" 'counsel-recentf
@@ -418,8 +444,31 @@ sync0-portuguese-parts-speech '("sustantivo femenino" "sustantivo masculino" "ve
   "o" 'other-window
   "p" 'previous-buffer
   "n" 'next-buffer
+  "N" 'sync0-find-next-file
   "K" 'kill-buffer
   "k" 'delete-window))
+
+(use-package evil-escape 
+  :straight (evil-escape :type git :host github :repo "syl20bnr/evil-escape") 
+  :after evil
+  ;; :commands evil-escape-mode
+  :custom
+  (evil-escape-excluded-states '(normal visual multiedit emacs motion))
+  ;;(evil-escape-excluded-major-modes '(neotree-mode))
+  (evil-escape-key-sequence "fd")
+  (evil-escape-unordered-key-sequence t)
+  (evil-escape-delay 0.25)
+  :config
+  ;; no `evil-escape' in minibuffer
+  (push #'minibufferp evil-escape-inhibit-functions)
+  :bind (:map evil-insert-state-map
+              ("C-g"  . evil-escape)
+              :map evil-replace-state-map
+              ("C-g"  . evil-escape)
+              :map evil-visual-state-map
+              ("C-g"  . evil-escape)
+              :map evil-operator-state-map
+              ("C-g"  . evil-escape)))
 
 (use-package evil  
   ;; :straight (evil :type git :host github :repo "emacs-evil/evil") 
@@ -509,28 +558,6 @@ sync0-portuguese-parts-speech '("sustantivo femenino" "sustantivo masculino" "ve
   (define-key evil-motion-state-map (kbd "<remap> <evil-next-line>") 'evil-next-visual-line)
   (define-key evil-motion-state-map (kbd "<remap> <evil-previous-line>") 'evil-previous-visual-line))
 
-(use-package evil-escape 
-  :straight (evil-escape :type git :host github :repo "syl20bnr/evil-escape") 
-  :after evil
-  ;; :commands evil-escape-mode
-  :custom
-  (evil-escape-excluded-states '(normal visual multiedit emacs motion))
-  ;;(evil-escape-excluded-major-modes '(neotree-mode))
-  (evil-escape-key-sequence "fd")
-  (evil-escape-unordered-key-sequence t)
-  (evil-escape-delay 0.25)
-  :config
-  ;; no `evil-escape' in minibuffer
-  (push #'minibufferp evil-escape-inhibit-functions)
-  :bind (:map evil-insert-state-map
-              ("C-g"  . evil-escape)
-              :map evil-replace-state-map
-              ("C-g"  . evil-escape)
-              :map evil-visual-state-map
-              ("C-g"  . evil-escape)
-              :map evil-operator-state-map
-              ("C-g"  . evil-escape)))
-
 (use-package s)
 
 (use-package simple-secrets
@@ -540,6 +567,9 @@ sync0-portuguese-parts-speech '("sustantivo femenino" "sustantivo masculino" "ve
     :config 
     (setq secret-password-file "~/.emacs.d/sync0_secrets.gpg")
      (secret-load-keys))
+
+(use-package xah-find
+  :straight (xah-find :type git :host github :repo "xahlee/xah-find"))
 
 (use-package epa-file
   :straight nil
@@ -725,26 +755,6 @@ sync0-portuguese-parts-speech '("sustantivo femenino" "sustantivo masculino" "ve
   :bind (("C-c g" . google-this-search)
          ;; Search selection with google.
          :map evil-visual-state-map ("g"  . google-this)))
-
-(use-package flycheck
-:commands flycheck-mode
-:config
-(setq flycheck-display-errors-function #'flycheck-display-error-messages-unless-error-list)
-)
-
-(use-package py-autopep8
-:straight (py-autopep8 :type git :host github :repo "paetzke/py-autopep8.el") 
-:config
-(setq py-autopep8-options '("--max-line-length=100")))
-
-(use-package python
-:straight nil
-:config
-(setq jedi:setup-keys t)
-(setq jedi:complete-on-dot t)
-(add-hook 'python-mode-hook 'jedi:setup)
-(add-hook 'python-mode-hook 'py-autopep8-enable-on-save)
-(add-hook 'python-mode-hook 'flycheck-mode))
 
 (use-package mu4e
       :commands mu4e
@@ -1306,6 +1316,343 @@ _F_: forward | _C-+_: show more   | _A_: mk4actn | _H_: help      | _;_: context
     ;; Split windows horizontally in ediff (instead of vertically)
     (ediff-split-window-function #'split-window-vertically))
 
+(use-package rainbow-delimiters
+  :straight (rainbow-delimiters :type git :host github :repo "Fanael/rainbow-delimiters") 
+  :hook 
+  ((text-mode . rainbow-delimiters-mode)
+   (prog-mode . rainbow-delimiters-mode))
+  :custom
+  (rainbow-delimiters-max-face-count 3))
+
+(use-package paren
+ :straight nil
+:after evil
+:custom
+   (show-paren-delay 0.1)
+         (show-paren-highlight-openparen t)
+         ;; don't blink--too distracting
+         (blink-matching-paren nil)
+         (show-paren-when-point-inside-paren t)
+:config
+   (show-paren-mode 1))
+
+(use-package smartparens
+    :straight (smartparens :type git :host github :repo "Fuco1/smartparens") 
+    :after evil
+    :hook 
+    ((emacs-startup . smartparens-global-mode)
+      (emacs-startup . show-smartparens-global-mode)
+     ;; Disable smartparens in evil-mode's replace state; they conflict.
+     (evil-replace-state-entry-hook . turn-off-smartparens-mode)
+     (evil-replace-state-exit-hook  . turn-on-smartparens-mode))
+    :custom
+    (sp-autowrap-region nil) ; let evil-surround handle this
+    (sp-highlight-pair-overlay nil)
+    (sp-cancel-autoskip-on-backward-movement nil)
+    (sp-show-pair-delay 0)
+    (sp-max-pair-length 3)
+    :config
+    (require 'smartparens-config)
+    (require 'smartparens-latex)
+
+
+(defhydra sync0-hydra-smart-parens (:hint nil)
+    "
+Sexps functions (_q_uit)
+^Nav^            ^Barf/Slurp^                 ^Depth^
+^---^------------^----------^-----------------^-----^-----------------
+_f_: forward     _→_:          slurp forward   _R_: splice
+_b_: backward    _←_:          barf forward    _r_: raise
+_u_: backward ↑  _C-<right>_:  slurp backward  _↑_: raise backward
+_d_: forward ↓   _C-<left>_:   barf backward   _↓_: raise forward
+_p_: backward ↓
+_n_: forward ↑
+
+^Kill^           ^Misc^                       ^Wrap^
+^----^-----------^----^-----------------------^----^------------------
+_w_: copy        _j_: join                    _(_: wrap with ( )
+_k_: kill        _s_: split                   _{_: wrap with { }
+^^               _t_: transpose               _'_: wrap with ' '
+^^               _c_: convolute               _\"_: wrap with \" \"
+^^               _i_: indent defun"
+
+    ("q" nil)
+    ;; Wrapping
+    ("(" (lambda (_) (interactive "P") (sp-wrap-with-pair "(")))
+    ("{" (lambda (_) (interactive "P") (sp-wrap-with-pair "{")))
+    ("'" (lambda (_) (interactive "P") (sp-wrap-with-pair "'")))
+    ("\"" (lambda (_) (interactive "P") (sp-wrap-with-pair "\"")))
+    ;; Navigation
+    ("f" sp-forward-sexp )
+    ("b" sp-backward-sexp)
+    ("u" sp-backward-up-sexp)
+    ("d" sp-down-sexp)
+    ("p" sp-backward-down-sexp)
+    ("n" sp-up-sexp)
+    ;; Kill/copy
+    ("w" sp-copy-sexp)
+    ("k" sp-kill-sexp)
+    ;; Misc
+    ("t" sp-transpose-sexp)
+    ("j" sp-join-sexp)
+    ("s" sp-split-sexp)
+    ("c" sp-convolute-sexp)
+    ("i" sp-indent-defun)
+    ;; Depth changing
+    ("R" sp-splice-sexp)
+    ("r" sp-splice-sexp-killing-around)
+    ("<up>" sp-splice-sexp-killing-backward)
+    ("<down>" sp-splice-sexp-killing-forward)
+    ;; Barfing/slurping
+    ("<right>" sp-forward-slurp-sexp)
+    ("<left>" sp-forward-barf-sexp)
+    ("C-<left>" sp-backward-barf-sexp)
+    ("C-<right>" sp-backward-slurp-sexp))
+
+(evil-leader/set-key
+  "S" 'sync0-hydra-smart-parens/body))
+
+(use-package company-jedi
+:straight (company-jedi :type git :host github :repo "emacsorphanage/company-jedi") 
+:after company)
+
+(use-package company
+;;        :straight (company :type git :host github :repo "company-mode/company-mode") 
+        :hook
+        (after-init . global-company-mode)
+        :custom
+                (company-idle-delay 0.1)
+                (company-minimum-prefix-length 2)
+                (company-tooltip-limit 10)
+                (company-tooltip-align-annotations t)
+                (company-require-match 'never)
+                (company-global-modes '(not erc-mode message-mode help-mode gud-mode))
+                (company-frontends '(company-pseudo-tooltip-frontend 
+                            company-echo-metadata-frontend))  
+                (company-backends '(company-capf))
+                (company-auto-complete nil)
+    :config
+;; Disable company-mode in bibtex-mode (clashes with yasnippets)
+ (add-hook 'bibtex-mode-hook (company-mode -1))
+
+(define-key company-active-map (kbd "M-j") 'company-select-next)
+(define-key company-active-map (kbd "M-k") 'company-select-previous)
+
+    (defvar +company-backend-alist
+      '((text-mode company-capf  company-yasnippet company-org-roam)
+      ;; '((text-mode company-capf  company-yasnippet company-ispell company-org-roam)
+      ;; '((text-mode company-capf company-dabbrev company-yasnippet company-ispell company-org-roam)
+      ;;(text-mode company-capf company-yasnippet company-ispell company-bibtex)
+        (prog-mode company-capf company-yasnippet)
+        (elisp-mode company-elisp company-capf company-yasnippet)
+        (nxml-mode company-capf company-yasnippet company-nxml)
+        (python-mode company-capf company-yasnippet company-jedi)
+        (conf-mode company-capf company-dabbrev-code company-yasnippet))
+      "An alist matching modes to company backends. The backends for any mode is
+    built from this.")
+
+    (defun +company--backends ()
+      (let (backends)
+        (let ((mode major-mode)
+              (modes (list major-mode)))
+          (while (setq mode (get mode 'derived-mode-parent))
+            (push mode modes))
+          (dolist (mode modes)
+            (dolist (backend (append (cdr (assq mode +company-backend-alist))
+                                     (default-value 'company-backends)))
+              (push backend backends)))
+          (delete-dups
+           (append (cl-loop for (mode . backends) in +company-backend-alist
+                            if (or (eq major-mode mode)  ; major modes
+                                   (and (boundp mode)
+                                        (symbol-value mode))) ; minor modes
+                            append backends)
+                   (nreverse backends))))))
+
+    (defun doom-temp-buffer-p (buf)
+      "Returns non-nil if BUF is temporary."
+      (equal (substring (buffer-name buf) 0 1) " "))
+
+    (defun +company-init-backends-h ()
+      "Set `company-backends' for the current buffer."
+      (or (memq major-mode '(fundamental-mode special-mode))
+          buffer-read-only
+          (doom-temp-buffer-p (or (buffer-base-buffer) (current-buffer)))
+          (setq-local company-backends (+company--backends))))
+
+    (put '+company-init-backends-h 'permanent-local-hook t)
+
+    (add-hook 'after-change-major-mode-hook #'+company-init-backends-h 'append)
+
+    (defun sync0-config-prose-completion ()
+      "Make auto-complete less agressive in this buffer."
+      (setq-local company-minimum-prefix-length 4))
+
+    (add-hook 'text-mode-hook #'sync0-config-prose-completion))
+
+(use-package company-bibtex
+:straight (company-bibtex :type git :host github :repo "gbgar/company-bibtex") 
+:disabled t
+:custom
+(company-bibtex-key-regex "[[:alnum:]+_]*")
+(company-bibtex-bibliography '("~/Dropbox/notes/bibliography.bib")))
+
+(use-package company-box
+  :straight (company-box :type git :host github :repo "sebastiencs/company-box") 
+  :hook (company-mode . company-box-mode)
+  :config
+  (setq company-box-show-single-candidate t
+        company-box-backends-colors nil
+        company-box-max-candidates 10
+        company-box-icons-alist 'company-box-icons-all-the-icons
+        company-box-icons-all-the-icons
+        (let ((all-the-icons-scale-factor 0.8))
+          `((Unknown       . ,(all-the-icons-material "find_in_page"             :face 'all-the-icons-purple))
+            (Text          . ,(all-the-icons-material "text_fields"              :face 'all-the-icons-green))
+            (Method        . ,(all-the-icons-material "functions"                :face 'all-the-icons-red))
+            (Function      . ,(all-the-icons-material "functions"                :face 'all-the-icons-red))
+            (Constructor   . ,(all-the-icons-material "functions"                :face 'all-the-icons-red))
+            (Field         . ,(all-the-icons-material "functions"                :face 'all-the-icons-red))
+            (Variable      . ,(all-the-icons-material "adjust"                   :face 'all-the-icons-blue))
+            (Class         . ,(all-the-icons-material "class"                    :face 'all-the-icons-red))
+            (Interface     . ,(all-the-icons-material "settings_input_component" :face 'all-the-icons-red))
+            (Module        . ,(all-the-icons-material "view_module"              :face 'all-the-icons-red))
+            (Property      . ,(all-the-icons-material "settings"                 :face 'all-the-icons-red))
+            (Unit          . ,(all-the-icons-material "straighten"               :face 'all-the-icons-red))
+            (Value         . ,(all-the-icons-material "filter_1"                 :face 'all-the-icons-red))
+            (Enum          . ,(all-the-icons-material "plus_one"                 :face 'all-the-icons-red))
+            (Keyword       . ,(all-the-icons-material "filter_center_focus"      :face 'all-the-icons-red))
+            (Snippet       . ,(all-the-icons-material "short_text"               :face 'all-the-icons-red))
+            (Color         . ,(all-the-icons-material "color_lens"               :face 'all-the-icons-red))
+            (File          . ,(all-the-icons-material "insert_drive_file"        :face 'all-the-icons-red))
+            (Reference     . ,(all-the-icons-material "collections_bookmark"     :face 'all-the-icons-red))
+            (Folder        . ,(all-the-icons-material "folder"                   :face 'all-the-icons-red))
+            (EnumMember    . ,(all-the-icons-material "people"                   :face 'all-the-icons-red))
+            (Constant      . ,(all-the-icons-material "pause_circle_filled"      :face 'all-the-icons-red))
+            (Struct        . ,(all-the-icons-material "streetview"               :face 'all-the-icons-red))
+            (Event         . ,(all-the-icons-material "event"                    :face 'all-the-icons-red))
+            (Operator      . ,(all-the-icons-material "control_point"            :face 'all-the-icons-red))
+            (TypeParameter . ,(all-the-icons-material "class"                    :face 'all-the-icons-red))
+            (Template      . ,(all-the-icons-material "short_text"               :face 'all-the-icons-green))
+            (ElispFunction . ,(all-the-icons-material "functions"                :face 'all-the-icons-red))
+            (ElispVariable . ,(all-the-icons-material "check_circle"             :face 'all-the-icons-blue))
+            (ElispFeature  . ,(all-the-icons-material "stars"                    :face 'all-the-icons-orange))
+            (ElispFace     . ,(all-the-icons-material "format_paint"            :face 'all-the-icons-pink))))))
+
+(use-package nxml-mode
+:straight nil
+  :config
+  (setq nxml-child-indent 2
+        nxml-attribute-indent 2
+        ;; nxml-auto-insert-xml-declaration-flag nil
+        nxml-auto-insert-xml-declaration-flag t
+        nxml-bind-meta-tab-to-complete-flag t
+        nxml-slash-auto-complete-flag t)
+;;; Taken from
+;;;  https://martinfowler.com/articles/emacs-nxml-completion.html
+(defun sync0-nxml-tag-start ()
+  "returns position of < before point"
+  (save-excursion (search-backward "<" nil t)))
+
+(defun sync0-nxml-at-attribute-name-p ()
+  "truthy if in name of an attribute"
+  (save-excursion (re-search-backward rng-in-attribute-regex (sync0-nxml-tag-start) t)))
+
+(defun sync0-nxml-at-attribute-value-p ()
+  "truthy if in value of an attribute"
+  (save-excursion (re-search-backward rng-in-attribute-value-regex (sync0-nxml-tag-start) t)))
+
+(defun sync0-nxml-completion-at-point ()
+  "completion at point for nxml mode"
+  (interactive)
+  (cond
+   ((sync0-nxml-at-attribute-name-p)
+    (completion-at-point)
+    (insert "=\""))
+   ((sync0-nxml-at-attribute-value-p)
+    (completion-at-point)
+    (insert "\""))
+   (t (completion-at-point))))
+
+
+;;; taken from
+;;; https://www.reddit.com/r/emacs/comments/eji55u/usepackage_ensure_nil_not_working_as_intended/
+
+  ;; Outline hook
+  (add-hook 'nxml-mode-hook
+            (lambda ()
+              (outline-minor-mode)
+              (setq outline-regexp "^[ \t]*\<[a-zA-Z]+")))
+
+  ;; Helper to format
+  (defun sync0-pretty-print-xml-region (begin end)
+    "Pretty format XML markup in region. You need to have nxml-mode
+ http://www.emacswiki.org/cgi-bin/wiki/NxmlMode installed to do
+ this.  The function inserts linebreaks to separate tags that have
+ nothing but whitespace between them.  It then indents the markup
+ by using nxml's indentation rules."
+    (interactive "r")
+    (save-excursion
+      (nxml-mode)
+      (goto-char begin)
+      (while (search-forward-regexp "\>[ \\t]*\<" nil t)
+        (backward-char) (insert "\n"))
+      (indent-region begin end)))
+
+;;; taken from 
+;;; https://www.manueluberti.eu/emacs/2016/12/03/xmllint/
+(defun sync0-xml-format ()
+  "Format an XML buffer with `xmllint'."
+  (interactive)
+  (shell-command-on-region (point-min) (point-max)
+                           "xmllint -format -"
+                           (current-buffer) t
+                           "*Xmllint Error Buffer*" t))
+        )
+
+(use-package flycheck
+:commands flycheck-mode
+:config
+(setq flycheck-display-errors-function #'flycheck-display-error-messages-unless-error-list)
+)
+
+(use-package py-autopep8
+:straight (py-autopep8 :type git :host github :repo "paetzke/py-autopep8.el") 
+:config
+(setq py-autopep8-options '("--max-line-length=100")))
+
+(use-package python
+:straight nil
+:config
+(setq jedi:setup-keys t)
+(setq jedi:complete-on-dot t)
+(add-hook 'python-mode-hook 'jedi:setup)
+(add-hook 'python-mode-hook 'py-autopep8-enable-on-save)
+(add-hook 'python-mode-hook 'flycheck-mode))
+
+(use-package yasnippet 
+    :straight (yasnippet :type git :host github :repo "joaotavora/yasnippet") 
+    :config
+    (require 'ivy-bibtex)
+    (require 'sync0-yasnippet-bibtex)
+    (require 'sync0-yasnippet-doctorat)
+
+;; Fix conflict with Yasnippets
+;; See https://emacs.stackexchange.com/questions/29758/yasnippets-and-org-mode-yas-next-field-or-maybe-expand-does-not-expand
+(defun yas-org-very-safe-expand ()
+  (let ((yas-fallback-behavior 'return-nil)) (yas-expand)))
+
+(add-hook 'org-mode-hook
+      (lambda ()
+        (add-to-list 'org-tab-first-hook 'yas-org-very-safe-expand)
+        (define-key yas-keymap [tab] 'yas-next-field)))
+
+    :hook 
+    ((text-mode . yas-minor-mode)
+     (prog-mode . yas-minor-mode)
+     (bibtex-mode . yas-minor-mode)
+     (mu4e-mode . yas-minor-mode)))
+
 (use-package org-journal 
     :straight (org-journal :type git :host github :repo "bastibe/org-journal") 
     :custom
@@ -1339,6 +1686,7 @@ _F_: forward | _C-+_: show more   | _A_: mk4actn | _H_: help      | _;_: context
         (unless (= raw 16)
           (if (not prefix)
               (insert "")))))
+
 
     (defhydra sync0-hydra-org-journal (:color amaranth :hint nil :exit t)
       "
@@ -1569,7 +1917,7 @@ _F_: forward | _C-+_: show more   | _A_: mk4actn | _H_: help      | _;_: context
           ;; part) has schedules take precedence over deadelines based on
           ;; the assumption that headlines are scheduled so as to be
           ;; accomplished before the deadline. Therefore, although
-          ;; deadlines coudl occur before schedules, displaying this
+          ;; deadlines could occur before schedules, displaying this
           ;; information in the org-agenda would not offer any useful
           ;; information for planning purpose. In such cases, for real
           ;; tasks the headline would be eventually re-scheduled so as to
@@ -2017,15 +2365,15 @@ _F_: forward | _C-+_: show more   | _A_: mk4actn | _H_: help      | _;_: context
               nil)))
 
         ;; org-agenda configuration
-         (setq org-agenda-files (list "~/Dropbox/org/todo/"))
+         (setq org-agenda-files (list "~/Dropbox/org/projects/todo/"))
 
-         (let ((my-agenda-files (list "~/Dropbox/org/etc/Gcal.org"
-                                      "~/Dropbox/org/etc/Events.org"
-                                      "~/Dropbox/org/etc/Classes.org"
-                                      "~/Dropbox/org/messages/messages.org"
-                                      ;; "~/Dropbox/org/etc/Habits.org"
-                                       ;; "~/Dropbox/org/etc/todo.org"
-                                      "~/Dropbox/org/etc/menage.org")))
+         (let ((my-agenda-files (list "~/Dropbox/org/archived/etc/Gcal.org"
+                                      "~/Dropbox/org/archived/etc/Events.org"
+                                      "~/Dropbox/org/archived/etc/Classes.org"
+                                      "~/Dropbox/org/projects/messages/messages.org"
+                                      ;; "~/Dropbox/org/archived/etc/Habits.org"
+                                       ;; "~/Dropbox/org/archived/etc/todo.org"
+                                      "~/Dropbox/org/archived/etc/menage.org")))
          (setq org-agenda-files (append org-agenda-files my-agenda-files)))
 
     ;; This setup prevents slowing down agenda parsing. 
@@ -2304,12 +2652,47 @@ _F_: forward | _C-+_: show more   | _A_: mk4actn | _H_: help      | _;_: context
               (org-roam-completion-system 'default)
               (org-roam-link-file-path-type 'absolute)
               (org-roam-dailies-directory "journal/")
-              (org-roam-tag-sources '(prop last-directory))
+              (org-roam-tag-sources '(prop all-directories))
+              ;; (org-roam-tag-sources '(prop last-directory))
               (org-roam-completion-everywhere t)
+              (org-roam-title-sources '(alias title))
               (org-roam-index-file "~/Dropbox/org/index.org")
               (org-roam-graph-exclude-matcher '("journal" "fiches" "etc" "trash" "todo" "inbox" "projects" "archived" "references" "drafts" "spontaneous"))
 
         :config
+(defvar sync0-zettel-link-counter 0
+  "The number of newly created zettels for this Emacs session.")
+
+;;; Function to replace all org links with their description.
+;;; Taken from https://dev.to/mostalive/how-to-replace-an-org-mode-link-by-its-description-c70
+;;; This is useful when exporting my documents or
+;;; when sending them somebody. 
+
+ (defun sync0-org-replace-link-by-description ()
+      "Remove the link part of an org-mode link at point and keep
+    only the description"
+      (interactive)
+      (let ((elem (org-element-context)))
+        (if (eq (car elem) 'link)
+            (let* ((content-begin (org-element-property :contents-begin elem))
+                   (content-end  (org-element-property :contents-end elem))
+                   (link-begin (org-element-property :begin elem))
+                   (link-end (org-element-property :end elem)))
+              (if (and content-begin content-end)
+                  (let ((content (buffer-substring-no-properties content-begin content-end)))
+                    (delete-region link-begin (- link-end 1))
+                    (insert content)))))))
+
+ (defun sync0-org-replace-all-links-by-descriptions ()
+      "Remove the link part of an org-mode link at point and keep
+    only the description"
+      (interactive)
+(save-excursion
+(goto-char (point-min))
+ (replace-regexp  "\\[\\[file:[[:print:]]+\\.org.*\\]\\[\\([[:print:]]+\\)\\]\\]" "\\1")))
+;; (replace-regexp  "\\[\\[.*\\]\\[\\(.*\\)\\]\\]" "\\2")))
+
+
         (setq org-roam-capture-templates '( 
          ("n" "Numéroté" plain (function org-roam--capture-get-point)
           "%?"
@@ -2320,7 +2703,7 @@ _F_: forward | _C-+_: show more   | _A_: mk4actn | _H_: help      | _;_: context
       (setq org-roam-capture-ref-templates
               '(("r" "ref" plain (function org-roam-capture--get-point)
                  "%?"
-                 :file-name "references/%<%Y%m%d%H%M%S>"
+                 :file-name "notes/references/%<%Y%m%d%H%M%S>"
                  :head "#+TITLE: \n#+ROAM_KEY: ${ref}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: websites %<%Y>\n\n"
                  :unnarrowed t)))
 
@@ -2333,6 +2716,43 @@ _F_: forward | _C-+_: show more   | _A_: mk4actn | _H_: help      | _;_: context
 
 (require 'org-journal)
 (require 'org-roam-protocol)                
+
+(defun sync0-org-roam-insert ()
+  (interactive)
+  (with-current-buffer
+      (find-file-noselect
+       (concat sync0-zettelkasten-directory 
+               (format-time-string "charts/productivity/%Y%m.org")))
+               (goto-char (point-min))
+    (let* ((date (format-time-string "%Y/%m/%d"))
+           (entry (concat "\n| " date " | 0 | 1 |"))
+           (second-blank
+            (concat "^| "
+                    date
+                    " |[[:blank:]]+[[:digit:]]+ |\\([[:blank:]]*\\)|$"))
+           (first-blank
+            (concat "^| "
+                    date                    
+                    " |[[:blank:]]+|[[:blank:]]+\\([[:digit:]]+\\) |$"))
+           (both-there
+            (concat "^| "
+                    date 
+                    " |[[:blank:]]+[[:digit:]]+ |[[:blank:]]+\\([[:digit:]]+\\) |$")))
+      (cond ((or
+              (re-search-forward first-blank nil t 1)
+              (re-search-forward both-there nil t 1))
+             (let* ((old-value (string-to-number
+                                (match-string-no-properties 1)))
+                    (new-value (number-to-string
+                                (1+ old-value))))
+               (replace-match new-value nil nil nil 1)))
+            ((re-search-forward second-blank nil t 1)
+             (replace-match " 1 " nil nil nil 1))
+            (t (progn 
+                   (goto-char (point-max))
+                   (insert entry))))))
+  (org-roam-insert))
+
 
 (defhydra sync0-hydra-org-roam-insert (:color blue :hint nil)
 "
@@ -2347,7 +2767,7 @@ plot _g_raph
 
 _q_uit
 "
-      ("i" org-roam-insert)
+      ("i" sync0-org-roam-insert)
       ("r" org-roam)
       ("b" org-roam-db-build-cache)
       ("g" org-roam-graph)
@@ -2362,7 +2782,7 @@ _q_uit
 
     (evil-leader/set-key
       "F" 'org-roam-find-file
-      "i" 'org-roam-insert
+      "i" 'sync0-org-roam-insert
       "I" 'sync0-hydra-org-roam-insert/body))
 
 (use-package company-org-roam :after company)
@@ -2378,17 +2798,18 @@ _q_uit
       (orb-file-field-extensions '("pdf"))
       ;; Use this to insert citation keys
       (orb-insert-link-description 'citekey)
+      (orb-insert-interface 'ivy-bibtex)
       (orb-note-actions-interface 'hydra)
   :config
 
 (setq orb-preformat-keywords
-      '("citekey" "title" "subtitle" "url" "author-or-editor" "keywords" "file"))
+      '("citekey" "title" "subtitle" "booktitle" "booksubtitle" "journaltitle" "url" "author-or-editor" "keywords" "file"))
 
   (setq orb-templates
         '(("r" "ref" plain (function org-roam-capture--get-point)
          ""
-           :file-name "references/${citekey}"
-           :head "#+TITLE: ${title}\n#+SUBTITLE: ${subtitle}\n#+AUTHOR: ${author-or-editor}\n#+ROAM_KEY: ${ref}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: ${citekey} references ${keywords}\n#+INTERLEAVE_PDF: ${file}"
+           :file-name "~/Dropbox/org/notes/references/${citekey}"
+           :head "#+TITLE: ${title}\n#+SUBTITLE: ${subtitle}\n#+AUTHOR: ${author-or-editor}\n#+JOURNAL_TITLE: ${journaltitle}\n#+BOOK_TITLE: ${booktitle}\n#+BOOK_SUBTITLE: ${booksubtitle}\n#+ROAM_KEY: cite:${citekey}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: ${citekey} \"${author-or-editor}\"\n#+INTERLEAVE_PDF: ${file}"
            :unnarrowed t))))
 
 (use-package org-pdftools
@@ -2405,312 +2826,468 @@ _q_uit
   (org-crypt-use-before-save-magic))
 
 (use-package org-capture 
-                       :straight nil
-                        :after (org evil-leader)
-                        :preface 
-                        (defun org-journal-find-location ()
-                          ;; Open today's journal, but specify a non-nil prefix argument in order to
-                          ;; inhibit inserting the heading; org-capture will insert the heading.
-                          (org-journal-new-entry t)
-                          ;; Position point on the journal's top-level heading so that org-capture
-                          ;; will add the new entry as a child entry.
-                          (goto-char (point-min)))
+          :straight nil
+          :after (org evil-leader)
+          :preface 
+          (defun org-journal-find-location ()
+            ;; Open today's journal, but specify a non-nil prefix argument in order to
+            ;; inhibit inserting the heading; org-capture will insert the heading.
+            (org-journal-new-entry t)
+            ;; Position point on the journal's top-level heading so that org-capture
+            ;; will add the new entry as a child entry.
+            (goto-char (point-min)))
 
-                        :custom
-                        (org-default-notes-file "~/Dropbox/etc/notes.org")
+          :custom
+          (org-default-notes-file "~/Dropbox/archived/etc/notes.org")
 
-                        :config 
-            (evil-leader/set-key
-              "c" 'org-capture)
+          :config 
+          (evil-leader/set-key "c" 'org-capture)
 
-            (add-hook 'org-capture-mode-hook 'evil-insert-state)
+          (add-hook 'org-capture-mode-hook 'evil-insert-state)
 
-            ;; The following two functions are necessary to replicate the functionality of org-roam into org-capture.
-            ;; https://emacs.stackexchange.com/questions/27620/orgmode-capturing-original-document-title
-            (defun sync0-org-get-file-title-keyword (file)
-              (let (title)
-                (when file
-                  (with-current-buffer
-                      (get-file-buffer file)
-                    (pcase (org-collect-keywords '("TITLE"))
-                      (`(("TITLE" . ,val))
-                       (setq title (car val)))))
-                  title)))
+          ;; The following two functions are necessary to replicate the functionality of org-roam into org-capture.
+          ;; https://emacs.stackexchange.com/questions/27620/orgmode-capturing-original-document-title
+          (defun sync0-org-get-file-title-keyword (file)
+            (let (title)
+              (when file
+                (with-current-buffer
+                    (get-file-buffer file)
+                  (pcase (org-collect-keywords '("TITLE"))
+                    (`(("TITLE" . ,val))
+                     (setq title (car val)))))
+                title)))
 
-        ;; Adapted from: 
-        ;; https://kitchingroup.cheme.cmu.edu/blog/2013/05/05/Getting-keyword-options-in-org-files/
-        (defun sync0-org-get-keyword (KEYWORD)
-          "get the value from a line like this
-        #+KEYWORD: value
-        in a file."
-          (let ((case-fold-search t)
-                (re (format "^#\\+%s:[ \t]+\\([^\t\n]+\\)" KEYWORD)))
-            (when  (save-excursion
+          ;; Adapted from: 
+          ;; https://kitchingroup.cheme.cmu.edu/blog/2013/05/05/Getting-keyword-options-in-org-files/
+          (defun sync0-org-get-keyword (KEYWORD)
+            "get the value from a line like
+                                                this #+KEYWORD: value in a file."
+            (let ((case-fold-search t)
+                  (re (format "^#\\+%s:[ \t]+\\([^\t\n]+\\)" KEYWORD)))
+              (when  (save-excursion
                        (or (re-search-forward re nil t)
                            (re-search-backward re nil t)))
-            (match-string-no-properties 1))))
+                (match-string-no-properties 1))))
 
-            (defun sync0-org-get-previous-heading-title (file)
-              (let (title)
-                (when file
-                  (with-current-buffer
-                      (get-file-buffer file)
-                       (setq title (nth 4 (org-heading-components))))
-                  title)))
+          (defun sync0-org-get-previous-heading-or-title (file)
+            (let (title)
+              (when file
+                (with-current-buffer
+                    (get-file-buffer file)
+                  (if (re-search-backward "^\\*+[ \t]+" nil t)
+                      (setq title (nth 4 (org-heading-components)))
+                    (pcase (org-collect-keywords '("TITLE"))
+                      (`(("TITLE" . ,val))
+                       (setq title (car val))))))
+                title)))
 
-            (defun sync0-org-get-previous-heading-or-title (file)
-              (let (title)
-                (when file
-                  (with-current-buffer
-                     (get-file-buffer file)
-                    (if (re-search-backward "^\\*+[ \t]+" nil t)
-                       (setq title (nth 4 (org-heading-components)))
-                       (pcase (org-collect-keywords '("TITLE"))
-                        (`(("TITLE" . ,val))
-                        (setq title (car val))))))
-                  title)))
+          (defun sync0-org-get-author-keyword (file)
+            (let (author)
+              (when file
+                (with-current-buffer
+                    (get-file-buffer file)
+                  (pcase (org-collect-keywords '("AUTHOR"))
+                    (`(("AUTHOR" . ,val))
+                     (setq author (car val)))))
+                author)))
 
-            (defun sync0-org-get-author-keyword (file)
-              (let (author)
-                (when file
-                  (with-current-buffer
-                      (get-file-buffer file)
-                    (pcase (org-collect-keywords '("AUTHOR"))
-                      (`(("AUTHOR" . ,val))
-                       (setq author (car val)))))
-                  author)))
+        (defun sync0-org-get-abbreviated-path (file)
+          (interactive)
+          (let (path)
+            (when file
+              (with-current-buffer
+                  (get-file-buffer file)
+                (setq path (abbreviate-file-name file))) path)))
 
-            (defun sync0-org-get-abbreviated-path (file)
+
+      (defun sync0-org-capture-zettel-path ()
+        "Output the path where the new zettel will be created"
+        (let* ((key (org-capture-get :key))
+              (filename (if (or (equal key "r") 
+                                 (equal key "w"))
+                             sync0-reference-filename
+                           (format-time-string "%Y%m%d%H%M%S")))
+               (filter (concat sync0-zettelkasten-directory
+                               (cond ((equal key "a")  "notes/annotations")
+                                     ((or (equal key "r")  
+                                          (equal key "w"))  "notes/references")
+                                     ((equal key "f")  "fiches")
+                                     ((equal key "p")  "projects")
+                                     ((equal key "t") "projects/todo")
+                                     (t ""))))
+               (path (if  (or (equal key "p")
+                              (equal key "f")
+                              (equal key "z"))
+                       (completing-read "Dossier de la fiche : "
+                                        (cons filter 
+                                              (f-directories filter
+                                                             (lambda (k) (not (string-match-p "\\.+" k))) t)))
+                         filter)))
+  ;; Add this zettel to the productivy chart
+  (with-current-buffer
+      (find-file-noselect
+       (concat sync0-zettelkasten-directory 
+               (format-time-string "charts/productivity/%Y%m.org")))
+                 (goto-char (point-min))
+    (let* ((date (format-time-string "%Y/%m/%d"))
+           (entry (concat "\n| " date " | 1 | 0 |"))
+           (second-exist
+            (concat "^| "
+                    date                    
+                    " |\\([[:blank:]]+\\)|[[:blank:]]+[[:digit:]]+ |$"))
+           (previous-value
+            (concat "^| " date " |[[:blank:]]+\\([[:digit:]]+\\) |[[:blank:]]+[[:digit:]]+ |$")))
+      (cond ((re-search-forward previous-value nil t 1)
+             (let* ((old-value (string-to-number
+                                (match-string-no-properties 1)))
+                    (new-value (number-to-string
+                                (1+ old-value))))
+               (replace-match new-value nil nil nil 1)))
+            ((re-search-forward second-exist nil t 1)
+             (replace-match " 1 " nil nil nil 1))
+            (t (progn
+                 (goto-char (point-max))
+                 (insert entry)))))
+;; second part
+                 (goto-char (point-min))
+                 (let* ((word
+                        (cond ((or (equal key "r") 
+                                   (equal key "w"))
+                               "Références")
+                              ((or (equal key "p") 
+                                   (equal key "t"))
+                               "Projets")
+                              ((equal key "f") 
+                               "Fiches")
+                              ((equal key "a") 
+                               "Annotations")
+                              (t 
+                               "Zettel")))
+                       (regex (concat "^| " word " [[:blank:]]+|[[:blank:]]+\\([[:digit:]]+\\) |")))
+  (if (re-search-forward regex nil t 1)
+             (let* ((old-value (string-to-number
+                                (match-string-no-properties 1)))
+                    (new-value (number-to-string
+                                (1+ old-value))))
+               (replace-match new-value nil nil nil 1))
+                 (goto-char (point-max))
+  (insert (concat "| " word "   |        1 |       0 |")))))
+  ;; output the file name and path
+          (concat (format "%s/%s.org" path filename))))
+
+
+      (defun sync0-org-capture-zettel-body ()
+        (let* ((key (org-capture-get :key))
+               (filter (concat sync0-zettelkasten-directory
+                               (cond ((equal key "a")  "notes/annotations")
+                                     ((or (equal key "r")  
+                                          (equal key "w"))  "notes/references")
+                                     ((equal key "f")  "fiches")
+                                     ((equal key "p")  "projects")
+                                     ((equal key "t") "projects/todo")
+                                     (t ""))))
+               (candidates  (if (equal key "z")
+                                  (directory-files-recursively filter ".org$" nil (or (lambda (k) (string-match-p "permanent" k))
+                                                                                                        (lambda (k) (string-match-p "inbox" k))
+                                                                                                        (lambda (k) (string-match-p "notes/annotations" k))))
+                                (f-files filter (lambda (k) (string-match-p ".org$" k)) t)))
+               (title (completing-read "Titre de la fiche : "
+                                         (mapcar  #'(lambda (x) (org-roam-db--get-title x)) candidates)
+                                         nil nil nil nil nil t))
+               (title-quotes (concat "\"" (downcase title) "\""))
+               (alias (when (equal key "f")
+                  (read-string "Alias : " nil nil nil t)))
+               (alias-quotes (when alias (concat "\"" (downcase alias) "\"")))
+               (subtitle (unless (equal key "f")
+                  (read-string "Sous-titre : " nil nil nil t)))
+               (buffer (buffer-file-name))     
+               (project (when (or (equal key "p")
+                                  (equal key "t"))
+                          (read-string "Projet : " nil nil nil t)))
+               (creation  (format-time-string "%Y/%m/%d")))
+  ;; define string of zettel
+          (concat
+           "#+TITLE: " title "\n"
+           (unless (or (null subtitle)
+                       (equal subtitle ""))
+             (concat "#+SUBTITLE: " subtitle "\n"))
+           (unless (or (null alias)
+                       (equal alias ""))
+             (concat "#+ROAM_ALIAS: " "\"" alias "\"\n"))
+           "#+CREATED: " creation "\n"
+           "#+DATE: " creation "\n"
+           (when (and (equal key "t")
+                      (not (equal project "")))
+             (concat "#+CATEGORY: " (upcase project)))
+  ;; add roam tags according to zettel type
+           "#+ROAM_TAGS: "
+           (cond ((equal key "a")
+               (concat sync0-zettelkasten-annotations-key " " sync0-current-month-downcase
+                       (format-time-string " %Y\n")))
+              ((or (equal key "p")
+                  (equal key "t"))
+               (concat project " " sync0-current-month-downcase
+                       (format-time-string " %Y\n")))
+              ((equal key "f")
+               (concat (if (equal alias "") title-quotes alias-quotes) " "  sync0-current-month-downcase
+                       (format-time-string " %Y\n")))
+             (t (concat sync0-current-month-downcase
+                     (format-time-string " %Y\n"))))
+           (when (equal key "t")
+             (concat "#+FILETAGS: :projects:todo:" project ":\n"))
+           "\n"
+           "Origin: [[file:" (sync0-org-get-abbreviated-path buffer)
+           "]["
+           (sync0-org-get-file-title-keyword buffer)
+           "]]\n\n"
+           (when (equal key "a")
+             (concat "Dans la page X de [[file:"
+             (sync0-org-get-abbreviated-path buffer)
+           "]["
+           (sync0-org-get-previous-heading-or-title buffer)
+           "]] "
+           (sync0-org-get-author-keyword buffer)
+           " ")))))
+
+        (defun sync0-org-capture-reference ()
+          (let* ((type (if (equal (org-capture-get :key) "w")
+                           "online"
+                         (completing-read "BibLaTex entry type: " sync0-biblatex-entry-types)))
+                 ;; (biblatex-entries (cdr (assoc type sync0-capture-biblatex-fields-two)))
+                 (filename 
+                  (completing-read "Citation key: " (mapcar #'(lambda (x) (cdr (assoc "=key=" x)))
+                                                             (bibtex-completion-candidates))))
+                 ;; (filename 
+                 ;;  (completing-read "Citation key: "
+                 ;;                            (let ((roam-bibtex-tags
+                 ;;                                   (cl-delete-if (lambda (k) (or (string-match-p "[[:blank:]]" k)
+                 ;;                                                                 (string-match-p "^[A-z-_]+$" k))) 
+                 ;;                                                 (org-roam-db--get-tags)))
+                 ;;                                  (bibliography-bibtex-tags
+                 ;;                                   (mapcar #'(lambda (x) (cdr (assoc "=key=" x)))
+                 ;;                                             (bibtex-completion-candidates))))
+                 ;;                              (delete-dups (append roam-bibtex-tags bibliography-bibtex-tags)))))
+                 (creation (format-time-string "%Y/%m/%d")) 
+               (date 
+                (if (or (string-match "^[A-z-_]+[0-9-]\\{4,10\\}_\\([0-9-]\\{4,10\\}\\)[a-z]?[0-9_]*" filename)
+                          (string-match "^[A-z-_]+\\([0-9-]\\{4,10\\}\\)[a-z]?[0-9_]*" filename))
+                  (substring filename (match-beginning 1) (match-end 1))
+  (read-string "Date : ")))
+               (origdate 
+                (when (string-match "^[A-z-_]+\\([0-9-]\\{4,10\\}\\)_[0-9-]\\{4,10\\}[a-z]?[0-9_]*" filename)
+                  (substring filename (match-beginning 1) (match-end 1))))
+  (file-date (if (null origdate)
+  date
+  (concat "(" origdate ")" date)))
+                 (author (if (equal type "collection")
+                             (completing-read "Editeur : "
+                                              (delete-dups (mapcar #'(lambda (x) (cdr (assoc "editor" x)))
+                                                                     (bibtex-completion-candidates))))
+                           (completing-read "Auteur : "
+                                            (delete-dups (mapcar #'(lambda (x) (cdr (assoc "author" x)))
+                                                                   (bibtex-completion-candidates))))))
+                 (author-fixed (cond ((string-match " and " author)
+                                      ;; create a list with parts 
+                                      (let* ((author-list  (split-string author " and "))
+                                             (names (let (x)
+                                                      (dolist  (element author-list x)
+                                                        (setq x (concat x
+                                                                        (progn
+                                                                          (string-match ", \\([[:graph:]]+\\)$"   element)
+                                                                          (match-string 1 element))
+                                                                        " "
+                                                                        (progn
+                                                                          (string-match "\\([[:graph:]]+\\),"   element)
+                                                                          (match-string 1 element))
+                                                                        ", "))))))
+                                        (substring names 0 -2)))
+                                     ((string-match "^{" author)
+                                      (string-match "{\\([[:print:]]+\\)}" author)
+                                      (match-string 1 author))
+                                     (t (let* ((author-list (split-string author ", "))
+                                               (last-name (nth 0 author-list))
+                                               (first-name (nth 1 author-list)))
+                                          (concat first-name " " last-name)))))
+                 (author-quotes (concat "\"" (downcase author-fixed) "\""))
+                 (lastname (cond ((string-match " and " author)
+                                  ;; create a list with parts 
+                                  (let* ((author-list  (split-string author " and "))
+                                         (last-names (let (x)
+                                                       (dolist  (element author-list x)
+                                                         (setq x (concat x
+                                                                         (progn
+                                                                           (string-match "\\([[:graph:]]+\\),"   element)
+                                                                           (match-string 1 element))
+                                                                         ", "))))))
+                                    (substring last-names 0 -2)))
+                                 ((string-match "^{" author)
+                                  (string-match "{\\([[:print:]]+\\)}" author)
+                                  (match-string 1 author))
+                                 (t (nth 0 (split-string author ", ")))))
+                 (language (completing-read "Langage : " sync0-biblatex-languages))
+                 (journal (when (equal type "article")
+                                          (completing-read "Journal title : "
+                                                   (delete-dups (mapcar #'(lambda (x) (cdr (assoc "journaltitle" x)))
+                                                                  (bibtex-completion-candidates))))))
+                 (volume (when (equal type "article") (read-string "Tome du journal : ")))
+                 (number (when (equal type "article") (read-string "Numero du journal : ")))
+                 (publisher (when (or (equal type "book")
+                                      (equal type "collection"))
+                              (completing-read "Maison d'edition : "
+                                               (delete-dups (mapcar #'(lambda (x) (cdr (assoc "publisher" x)))
+                                                                      (bibtex-completion-candidates))))))
+                 (location (when (equal type "book")
+                                       (completing-read "Location : "
+                                             (delete-dups (mapcar #'(lambda (x) (cdr (assoc "location" x)))
+                                                                    (bibtex-completion-candidates))))))
+                 (pages (when (or (equal type "article")
+                                  (equal type "incollection")
+                                  (equal type "inbook"))
+                          (read-string "Pages (ex. : 90-180) : ")))
+                 (crossref (when (or (equal type "incollection")
+                                     (equal type "inbook"))
+                             (completing-read "Citation key: "
+                                              (mapcar #'(lambda (x) (cdr (assoc "=key=" x)))
+                                                        (bibtex-completion-candidates)))))
+                 (booktitle (when (or (equal type "incollection")
+                                      (equal type "inbook"))
+                              (completing-read "Booktitle : "
+                                               (delete-dups (mapcar #'(lambda (x) (cdr (assoc "booktitle" x)))
+                                                                      (bibtex-completion-candidates))))))
+                 (booksubtitle (when (or (equal type "incollection")
+                                      (equal type "inbook"))
+                                (read-string "Book subtitle  : ")))
+                 (addendum (when (equal type "unpublished") (read-string "Addendum (ex. Box, Folder, etc.) : ")))
+                 (url (when (equal type "online") (read-string "Url : " nil nil nil t)))
+                 (urldate (when (equal type "online") (format-time-string "%Y-%m-%d")))
+                 (title (read-string "Titre : " nil nil nil t))
+                 (subtitle (read-string "Sous-titre : " nil nil nil t))
+                 (file-title (if (equal subtitle "") title (concat title "_" subtitle)))
+                 (file (concat "/home/sync0/Documents/pdfs/" lastname "_" file-date "_" file-title ".pdf"))
+                 (buffer (buffer-file-name))     
+    ;; define list of conses whose first element is a biblatex category and
+    ;; the second element is its value, as a string, when previously defined
+    ;; by this fucntion
+                 (fields (list
+                          (list "title" title)
+                          (unless (equal subtitle "")
+                          (list "subtitle" subtitle))
+                          (list "origdate" origdate)
+                          (list "date" date)
+                          (if (equal type "collection")
+                              (list "editor" author)
+                            (list "author" author))
+                          (list "journal" journal)
+                          (if (or (equal type "book")
+                                  (equal type "collection"))
+                          (list "booktitle" title)
+                          (list "booktitle" booktitle))
+                          (if (or (equal type "book")
+                                  (equal type "collection"))
+                          (list "booksubtitle" subtitle)
+                          (list "booksubtitle" booksubtitle))
+                          (list "crossref" crossref)
+                          (list "volume" volume)
+                          (list "number" number)
+                          (list "publisher" publisher)
+                          (list "location" location)
+                          (list "pages" pages)
+                          (list "addendum" addendum)
+                          (list "url" url)
+                          (list "urldate" urldate)
+                          (list "language" language)
+                          (list "langid" language)
+                          (list "file" file)))
+    ;; define the biblatex entries
+                 (entries
+                  (let (x)
+                    (dolist (element fields x) 
+                      (unless (null (cadr element))
+                      ;; (when (stringp (second element)))
+                        (setq x (concat x (car element) " = {" (cadr element) "},\n"))))))
+    ;; select target bibliography file (.bib)
+                 (bib-file (completing-read "Fichier BibLaTeX : "
+                                (f-files "~/Dropbox/bibliographies" (lambda (k) (string-match-p ".bib" k)))))
+    ;; create string of new biblatex entry
+                 (biblatex-entry (concat "\n@" type "{" filename "," "\n" entries "\n}\n")))
+    ;; add biblatex entry to target bibliography file
+            (append-to-file biblatex-entry nil bib-file)
+            (setq  sync0-reference-filename filename)
+    ;; define the body of the reference zettel
+          (concat
+           "#+TITLE: " title "\n"
+           (unless (equal subtitle "") (concat "#+SUBTITLE: " subtitle "\n"))
+           "#+AUTHOR: " author-fixed "\n"
+           (when (equal type "article") (concat "#+JOURNAL_TITLE: " journal "\n"))
+           "#+ROAM_KEY: cite:" filename "\n"
+           (when (equal type "online") (concat "#+ROAM_KEY: " url "\n"))
+           "#+CREATED: " creation "\n"
+           "#+DATE: " creation "\n"
+           "#+ROAM_TAGS: " filename " " author-quotes " " type 
+           (format-time-string " %Y") "\n"
+           "#+INTERLEAVE_PDF: " file "\n" 
+           "Origin: [[file:"
+           (sync0-org-get-abbreviated-path buffer)
+           "]["
+           (sync0-org-get-file-title-keyword buffer)
+           "]]\n\n")))
+           ;; (when (equal type "online") "%:initial%?")
+
+          (defun sync0-org-references-fetch-title-and-subtitle ()
+            (if (equal sync0-reference-subtitle "")
+                (format "%s" sync0-reference-title) 
+              (format "%s_%s" sync0-reference-title sync0-reference-subtitle))) 
+
+          ;; Taken from https://github.com/abo-abo/hydra/wiki/mu4e
+          (defun sync0-org-capture-mu4e ()
             (interactive)
-              (let (path)
-                (when file
-                  (with-current-buffer
-                      (get-file-buffer file)
-                      (setq path (abbreviate-file-name file)))
-                  path)))
+            "Capture a TODO item via email."
+            (org-capture nil "o"))
 
-                  ;; See https://emacs.stackexchange.com/questions/40749/using-user-prompted-file-name-for-org-capture-in-template
-                  (defun sync0-org-capture-inbox-zettel-name ()
-                (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
-                (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
-                      (expand-file-name (format "%s.org" sync0-zettel-time) "~/Dropbox/org/inbox/"))
+          (setq org-capture-templates 
+                '(("j" "Journal" entry (function org-journal-find-location)
+                   "* %(format-time-string org-journal-time-format)\n\n%?"
+                   ;; "* %(format-time-string org-journal-time-format)\n\n%?"
+                   :jump-to-captured t :immediate-finish t)
+                  ("f" "Fiche" plain 
+                   (file sync0-org-capture-zettel-path)
+                   (function sync0-org-capture-zettel-body)
+                   :unnarrowed t)
+                  ("p" "Note de projet" plain 
+                   (file sync0-org-capture-zettel-path)
+                   (function sync0-org-capture-zettel-body)
+                   :unnarrowed t)
+                  ("t" "Liste de tâches" plain
+                   (file sync0-org-capture-zettel-path)
+                   (function sync0-org-capture-zettel-body)
+                   :unnarrowed t)
+                  ("a" "Annotation" plain 
+                   (file sync0-org-capture-zettel-path)
+                   (function sync0-org-capture-zettel-body)
+                   :unnarrowed t)
+                  ("r" "Référence" plain 
+                   (file sync0-org-capture-zettel-path)
+                   (function sync0-org-capture-reference)
+                   :unnarrowed t)
+                  ("w" "Référence web" plain 
+                   (file sync0-org-capture-zettel-path)
+                   (function sync0-org-capture-reference)
+                   :unnarrowed t)
+                  ("z" "Zettel" plain 
+                   (file sync0-org-capture-zettel-path)
+                   (function sync0-org-capture-zettel-body)
+                   :unnarrowed t)
+                  ;;    ("c" "Correspondant (messages)" plain 
+                  ;; (file sync0-org-capture-message-name)
+                  ;;   "%(format \"#+TITLE: Messages pour %s\n#+CREATED: %s\n#+DATE: \n#+ROAM_TAGS: fiches %s\" sync0-zettel-title-upcase sync0-zettel-time-ordered sync0-zettel-title)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-file-title-keyword (org-capture-get :original-file))]]\n\n"
+                  ;;   :unnarrowed t :jump-to-captured t)
+                  ("m" "Email" entry 
+                   (file+headline "~/Dropbox/org/projects/messages.org" "À répondre")
+                   ;; "** 無 %^{Description}\n%A\n%?\n"
+                   "** 無 %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%A\n" :jump-to-captured t :prepend t)))
 
-                  (defun sync0-org-capture-archived-zettel-name ()
-                (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
-                (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
-                      (expand-file-name (format "%s.org" sync0-zettel-time) "~/Dropbox/org/archived/"))
-
-                  (defun sync0-org-capture-writings-zettel-name ()
-                (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
-                (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
-                      (expand-file-name (format "%s.org"
-                      sync0-zettel-time) "~/Dropbox/org/writings/"))
-
-                  (defun sync0-org-capture-annotation-name ()
-                (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
-                (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
-                      (expand-file-name (format "%s.org" sync0-zettel-time) "~/Dropbox/org/annotations/"))
-
-                  (defun sync0-org-capture-zettel-name ()
-                (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
-                (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
-                      (expand-file-name (format "%s.org" sync0-zettel-time) "~/Dropbox/org/"))
-
-                  (defun sync0-org-capture-message-name ()
-                (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
-                (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
-                (setq sync0-fiche-name (read-string "Destinataire : "))
-                (setq sync0-fiche-name-upcase 
-                    (let* ((author_list (split-string sync0-fiche-name "_"))
-                          (last_name (nth 0 author_list))
-                          (first_name (nth 1 author_list))
-                          (author_string (format "%s %s" first_name last_name)))
-                    (upcase-initials author_string)))
-                      (expand-file-name (format "%s.org" sync0-zettel-time) "~/Dropbox/org/messages/"))
-
-                  (defun sync0-org-capture-reference-name ()
-                ;; (setq sync0-reference-filename (read-string "Nom du fichier : "))
-                ;; (setq sync0-reference-filename
-                ;;       (completing-read "Citation key: "
-                ;;         (mapcar #'(lambda (x) (cdr (assoc "=key=" x)))
-                ;;          (bibtex-completion-candidates))))
-                (setq sync0-reference-filename
-                      (completing-read "Citation key: "
-    (let ((roam-bibtex-tags
-             (cl-delete-if (lambda (k) (or (string-match-p "[[:blank:]]" k) (string-match-p "^[A-z-_]+$" k))) 
-            (org-roam-db--get-tags)))
-          (bibliography-bibtex-tags
-             (mapcar #'(lambda (x) (cdr (assoc "=key=" x)))
-               (bibtex-completion-candidates))))
-    (delete-dups (append roam-bibtex-tags bibliography-bibtex-tags)))))
-                 (setq sync0-reference-year (substring sync0-reference-filename -4))
-                ;; (setq sync0-fiche-name (read-string "Auteur : "))
-                 (setq sync0-author-name
-                       (completing-read "Auteur : "
-                        (delete-dups (mapcar #'(lambda (x) (cdr (assoc "author" x)))
-                          (bibtex-completion-candidates)))))
-                 (setq sync0-author-name-fixed
-                     (let* ((author_list (split-string sync0-author-name ", "))
-                           (last_name (nth 0 author_list))
-                           (first_name (nth 1 author_list)))
-                           (concat first_name " " last_name)))
-                 (setq sync0-fiche-name
-                     (let* ((author_list (split-string sync0-author-name ", "))
-                           (last_name (downcase (nth 0 author_list)))
-                           (first_name (downcase (nth 1 author_list))))
-                           (concat last_name "_" first_name)))
-                 (setq sync0-author-lastname-upcase
-                     (let ((author_list (split-string sync0-author-name ", ")))
-                            (nth 0 author_list)))
-                ;; (setq sync0-fiche-name-upcase 
-                ;;     (let* ((author_list (split-string sync0-fiche-name "_"))
-                ;;           (last_name (nth 0 author_list))
-                ;;           (first_name (nth 1 author_list))
-                ;;           (author_string (format "%s %s" first_name last_name)))
-                ;;     (upcase-initials author_string)))
-                ;; (setq sync0-fiche-lastname-upcase 
-                ;;     (let* ((author_list (split-string sync0-fiche-name "_"))
-                ;;           (last_name (nth 0 author_list))
-                ;;           (first_name (nth 1 author_list)))
-                ;;     (upcase-initials last_name)))
-                 (setq sync0-journal-title
-                       (completing-read "Journal title : "
-                        (delete-dups (mapcar #'(lambda (x) (cdr (assoc "journaltitle" x)))
-                          (bibtex-completion-candidates)))))
-                (setq sync0-reference-title (read-string "Titre: "))
-                (setq sync0-reference-subtitle (read-string "Sous-titre: "))
-                (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
-                (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
-(append-to-file
-(format "
-@article{%s,
-  author = {%s},
-  date = {%s},
-  title = {%s},
-  subtitle = {%s},
-  journaltitle = {%s},
-  file = {/home/sync0/Documents/pdfs/%s_%s_%s.pdf},
-}" sync0-reference-filename sync0-author-name sync0-reference-year sync0-reference-title sync0-reference-subtitle sync0-journal-title sync0-author-lastname-upcase sync0-reference-year sync0-reference-title)
-nil
-   "~/Dropbox/org/references/bibliography.bib")
-                      (expand-file-name (format "%s.org" sync0-reference-filename) "~/Dropbox/org/references/"))
-
-        (defun sync0-org-references-fetch-title-and-subtitle ()
-        (if (equal sync0-reference-subtitle "")
-            (format "%s" sync0-reference-title) 
-            (format "%s_%s" sync0-reference-title sync0-reference-subtitle))) 
-
-                  (defun sync0-org-capture-web-name ()
-                (setq sync0-reference-filename (read-string "Nom du fichier : "))
-             ;; (setq sync0-web-name (read-string "Nom du ROAM_KEY : "))
-                (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
-                (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
-                      (expand-file-name (format "%s.org" sync0-reference-filename) "~/Dropbox/org/references/"))
-
-                ;;   (defun sync0-org-capture-web-name ()
-                ;; (setq sync0-reference-filename (read-string "Nom du fichier : "))
-                ;; (setq sync0-web-name (read-string "Nom du ROAM_KEY : "))
-                ;; (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
-                ;; (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
-                ;;       (expand-file-name (format "%s.org" sync0-reference-filename) "~/Dropbox/org/references/"))
-
-                  (defun sync0-org-capture-project-name ()
-                (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
-                (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
-                (setq sync0-project-name (read-string "Nom du projet: "))
-                (setq sync0-project-name-upcase (upcase-initials sync0-project-name))
-                      (expand-file-name (format "%s.org" sync0-zettel-time) "~/Dropbox/org/projects/"))
-
-                  (defun sync0-org-capture-todo-name ()
-                (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
-                (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
-                (setq sync0-project-name (read-string "Nom du projet: "))
-                (setq sync0-project-name-upcase (upcase-initials sync0-project-name))
-                      (expand-file-name (format "%s.org" sync0-zettel-time) "~/Dropbox/org/todo/"))
-
-                  (defun sync0-org-capture-fiche-name ()
-                (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
-                (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
-                (setq sync0-fiche-name (completing-read "Fiche sur : "
-                                         (org-roam-db--get-tags)))
-                (setq sync0-fiche-name-upcase 
-                    (let* ((author_list (split-string sync0-fiche-name "_"))
-                          (last_name (nth 0 author_list))
-                          (first_name (nth 1 author_list))
-                          (author_string (format "%s %s" first_name last_name)))
-                    (upcase-initials author_string)))
-                      (expand-file-name (format "%s.org" sync0-zettel-time) "~/Dropbox/org/fiches/"))
-
-            ;; Taken from https://github.com/abo-abo/hydra/wiki/mu4e
-                      (defun sync0-org-capture-mu4e ()
-              (interactive)
-              "Capture a TODO item via email."
-              (org-capture nil "o"))
-
-                        (setq org-capture-templates 
-                              '(("j" "Journal" entry (function org-journal-find-location)
-                                 "* %(format-time-string org-journal-time-format)\n\n%?"
-                                               :jump-to-captured t :immediate-finish t)
-                               ("f" "Fiche" plain 
-                               (file sync0-org-capture-fiche-name)
-                               "%(format \"#+TITLE: %s\n#+CREATED: %s\n#+DATE: \n#+ROAM_TAGS: %s\" sync0-fiche-name-upcase sync0-zettel-time-ordered sync0-fiche-name)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-file-title-keyword (org-capture-get :original-file))]]\n\n%?"
-                               :unnarrowed t :jump-to-captured t)
-                               ("p" "Note de projet" plain 
-                               (file sync0-org-capture-project-name)
-                               "%(format \"#+TITLE: \n#+CREATED: %s\n#+DATE: \n#+ROAM_TAGS: %s %s %s\" sync0-zettel-time-ordered sync0-project-name sync0-current-year sync0-current-month)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-file-title-keyword (org-capture-get :original-file))]]\n\n%?"
-                               :unnarrowed t :jump-to-captured t)
-                               ("d" "Dépôt" plain 
-                               (file sync0-org-capture-project-name)
-                               "%(format \"#+TITLE: Dépôt de \n#+CREATED: %s\n#+DATE: \n#+ROAM_TAGS: repositories %s %s\" sync0-zettel-time-ordered sync0-project-name sync0-current-year)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-file-title-keyword (org-capture-get :original-file))]]\n\n%?"
-                               :unnarrowed t :jump-to-captured t)
-                            ("i" "Pensée éphémère" plain
-                             (file sync0-org-capture-inbox-zettel-name)
-                           "#+TITLE: \n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: inbox %<%Y> %<%B>\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-file-title-keyword (org-capture-get :original-file))]]\n\n%?"
-                               :unnarrowed t :jump-to-captured t)
-                                 ("t" "Liste de tâches" plain
-                                 (file sync0-org-capture-todo-name)
-                                 "%(format \"#+TITLE: Tâches de %s\n#+CATEGORY: %s\" sync0-project-name sync0-project-name-upcase)\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %(format \"%s\n#+FILETAGS: :projects:todo:%s:\" sync0-project-name sync0-project-name)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-file-title-keyword (org-capture-get :original-file))]]\n\n%?"
-                               :unnarrowed t :jump-to-captured t)
-                               ("a" "Annotation" plain 
-                                (file sync0-org-capture-annotation-name)
-                                 ;; "#+TITLE: %(format \"%s\" sync0-zettelkasten-annotations-key)\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %(format \"%s\" sync0-zettelkasten-annotations-key) %<%Y> %(format \"%s\" sync0-current-month-downcase)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-file-title-keyword (org-capture-get :original-file))]]\n\nDans %(org-capture-get :annotation), %(sync0-org-get-author-keyword (org-capture-get :original-file)) %?"
-                                 "#+TITLE: %(format \"%s\" sync0-zettelkasten-annotations-key)\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %(format \"%s\" sync0-zettelkasten-annotations-key) %<%Y> %(format \"%s\" sync0-current-month-downcase)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-file-title-keyword (org-capture-get :original-file))]]\n\nDans [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-previous-heading-or-title (org-capture-get :original-file))]], %(sync0-org-get-author-keyword (org-capture-get :original-file)) %?"
-                               :unnarrowed t :jump-to-captured t)
-                               ("r" "Référence" plain 
-                                (file sync0-org-capture-reference-name)
-                               "#+TITLE: %(format \"%s\" sync0-reference-title)\n#+SUBTITLE: %(format \"%s\" sync0-reference-subtitle)\n#+AUTHOR: %(format \"%s\" sync0-author-name-fixed)\n#+JOURNAL_TITLE: %(format \"%s\" sync0-journal-title)\n#+ROAM_KEY: cite:%(format \"%s\" sync0-reference-filename)\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %(format \"%s %s %s\" sync0-reference-filename sync0-fiche-name sync0-current-year)%?\n#+INTERLEAVE_PDF: /home/sync0/Documents/pdfs/%(format \"%s_%s\" sync0-author-lastname-upcase sync0-reference-year)_%(sync0-org-references-fetch-title-and-subtitle).pdf\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-file-title-keyword (org-capture-get :original-file))]]\n\n%?"
-                               :unnarrowed t :jump-to-captured t)
-                         ;;  ("w" "Site web" plain 
-                         ;;     (file sync0-org-capture-web-name)
-                         ;; "#+TITLE: %^{Title}\n#+SUBTITLE: %^{Subtitle}\n#+AUTHOR: %^{Author}\n#+ROAM_KEY: cite:%(format \"%s\" sync0-reference-filename)\n#+WEBSITE: %(format \"%s\" sync0-web-name)\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %<%Y> %(format \"%s\" sync0-current-month-downcase) %?\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-file-title-keyword (org-capture-get :original-file))]]\n\n"
-                         ;;       :unnarrowed t :jump-to-captured t)
-                          ("w" "Référence web" plain 
-                             (file sync0-org-capture-web-name)
-                         "#+TITLE: %^{Title}\n#+AUTHOR: %^{Author}\n#+ROAM_KEY: cite:%(format \"%s\" sync0-reference-filename)\n#+ROAM_KEY: %L\n#+WEBSITE: %L\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: websites %<%Y> %(format \"%s\" sync0-current-month-downcase) %?\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-file-title-keyword (org-capture-get :original-file))]]\n\n%:initial%?"
-                               :unnarrowed t :jump-to-captured t)
-                          ("n" "Nouveau Zettel" plain 
-                             (file sync0-org-capture-zettel-name)
-                          "#+TITLE: %^{Title}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %<%Y> %(format \"%s\" sync0-current-month-downcase)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-file-title-keyword (org-capture-get :original-file))]]\n\n%?"
-                               :unnarrowed t :jump-to-captured t)
-                          ("k" "Note d'archive" plain 
-                             (file sync0-org-capture-archived-zettel-name)
-                          "#+TITLE: %^{Title}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %<%Y> %(format \"%s\" sync0-current-month-downcase)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-file-title-keyword (org-capture-get :original-file))]]\n\n%?"
-                               :unnarrowed t :jump-to-captured t)
-                              ("e" "Écriture" plain
-                             (file sync0-org-capture-writings-zettel-name)
-                           "#+TITLE: \n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %<%Y> %(format \"%s\" sync0-current-month-downcase)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-file-title-keyword (org-capture-get :original-file))]]\n\n%?"
-                               :unnarrowed t :jump-to-captured t)
-                                ("c" "Correspondant (messages)" plain 
-                             (file sync0-org-capture-message-name)
-                               "%(format \"#+TITLE: Messages pour %s\n#+CREATED: %s\n#+DATE: \n#+ROAM_TAGS: fiches %s\" sync0-fiche-name-upcase sync0-zettel-time-ordered sync0-fiche-name)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-file-title-keyword (org-capture-get :original-file))]]\n\n"
-                               :unnarrowed t :jump-to-captured t)
-                                ("m" "Email" entry 
-                                 (file+headline "~/Dropbox/org/projects/messages.org" "À répondre")
-                                ;; "** 無 %^{Description}\n%A\n%?\n"
-                                 "** 無 %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%A\n" :jump-to-captured t :prepend t)))
-
-                        :bind 
-                        (("\C-c c" . org-capture)))
+          :bind 
+          (("\C-c c" . org-capture)))
 
 (use-package org-protocol-capture-html
   :straight (org-protocol-capture-html :type git :host github :repo "alphapapa/org-protocol-capture-html") 
@@ -2849,7 +3426,7 @@ _q_uit
     ;; Export to Microsoft Word (doc).
     (org-export-odt-preferred-output-format "doc")
     (org-odt-preferred-output-format "doc")
-    (org-latex-logfiles-extensions (quote ("aux" "bcf" "lof" "lot" "tex~" "idx" "out" "toc" "nav" "snm" "vrb" "dvi" "fdb_latexmk" "blg" "brf" "fls" "entoc" "ps" "spl" "run.xml")))
+    (org-latex-logfiles-extensions '("aux" "lof" "lot" "tex~" "idx" "out" "toc" "nav" "snm" "vrb" "dvi" "fdb_latexmk" "blg" "brf" "fls" "entoc" "ps" "spl" "run.xml"))
 
     :config
     (defun sync0-org-export-latex-and-beamer ()
@@ -2858,10 +3435,10 @@ _q_uit
       (when (equal major-mode 'org-mode) 
         (if (string-match "^\\#\\+SETUPFILE: .*beamer\\.org.*" (buffer-string))
             (progn
-              (setq org-latex-pdf-process (list "latexmk -xelatex -bibtex -output-directory=%o -f %f"))
+              (setq org-latex-pdf-process '("latexmk -xelatex -bibtex -output-directory=%o -f %f"))
               (org-beamer-export-to-pdf))
           (progn
-            (setq org-latex-pdf-process (list "latexmk -lualatex -bibtex -output-directory=%o -f %f"))
+            (setq org-latex-pdf-process '("latexmk -lualatex -bibtex -output-directory=%o -f %f"))
             (org-latex-export-to-pdf)))))
 
 ;; export headlines to separate files
@@ -3066,14 +3643,15 @@ are exported to a filename derived from the headline text."
         (message "No PDF found for %s" key)))
 
     :custom
-    (reftex-default-bibliography '("~/Dropbox/org/references/bibliography.bib"))
+    (reftex-default-bibliography '("~/Dropbox/bibliographies/bibliography.bib"
+                                   "~/Dropbox/bibliographies/doctorat.bib"))
     (org-ref-default-bibliography reftex-default-bibliography)
     (org-ref-pdf-directory sync0-pdfs-folder)
     (org-ref-completion-library 'org-ref-ivy-cite)
     (org-ref-open-pdf-function 'sync0-org-ref-open-pdf-at-point)
 
     :config
-(require 'doi-utils)
+   (require 'doi-utils)
 
     (setq org-ref-notes-function
           (lambda (thekey)
@@ -3084,18 +3662,18 @@ are exported to a filename derived from the headline text."
     (defun sync0-visit-bibliography-in-buffer ()
       (interactive)
       (find-file
-       (expand-file-name "~/Dropbox/org/references/bibliography.bib")))
+       (expand-file-name "~/Dropbox/bibliographies/bibliography.bib")))
 
     (defhydra sync0-hydra-research-functions (:color amaranth :hint nil :exit t)
       "
-   ^Research functions^   ^References^        ^Roam^          ^Roam link actions^
+   ^Research functions^   ^References^        ^Roam^              ^Roam link actions^
    ^------------------------------------------------------------------------------
-   Orb _i_nsert           _I_nsert footnote   Find _f_ile     Link _s_tore 
-   Orb _a_ctions          _Q_uote (Csquotes)  _R_oam buffer   _L_ast stored link
-   Entry _n_otes          _F_oreign quote     Open _d_eft     Roam _l_ink                     
-   Bibtex _e_ntry         ^ ^                 _B_uild cache   Link to _h_eadline
-   Open _b_ibliography    ^ ^                 Open inde_x_       
-   Open _p_df             ^ ^                 Show _g_raph
+   Orb _i_nsert           _I_nsert footnote   Find _f_ile         Link _s_tore 
+   Orb _a_ctions          _Q_uote (Csquotes)  Open _r_oam buffer  _L_ast stored link
+   Entry _n_otes          _F_oreign quote     Open _d_eft         Roam _l_ink                     
+   Bibtex _e_ntry         Insert _c_itation   _B_uild cache       Link to _h_eadline
+   Open _b_ibliography    ^ ^                 Open inde_x_        _D_elete link at point
+   Open _p_df             ^ ^                 Show _g_raph        _R_emove all links
 
    _q_uit
         "
@@ -3105,7 +3683,7 @@ are exported to a filename derived from the headline text."
       ("i" orb-insert)
       ("a" orb-note-actions)
       ("d" deft)
-      ("R" org-roam)
+      ("r" org-roam)
       ("B" org-roam-db-build-cache)
       ("f" org-roam-find-file)
       ("g" org-roam-graph)
@@ -3113,7 +3691,9 @@ are exported to a filename derived from the headline text."
       ("h" org-insert-link)
       ("L" org-insert-last-stored-link)
    ;; ("L" org-roam-insert-immediate)
-   ;; ("I" org-ref-ivy-insert-cite-link)
+      ("c" org-ref-ivy-insert-cite-link)
+      ("D" sync0-org-replace-link-by-description)
+      ("R" sync0-org-replace-all-links-by-descriptions)
       ("n" ivy-bibtex)
       ("e" org-ref-open-citation-at-point)
       ("b" sync0-visit-bibliography-in-buffer)
@@ -3300,6 +3880,7 @@ are exported to a filename derived from the headline text."
         ;; (require 'org-pdftools)
         (require 'org-journal)
         (require 'org-download)
+        (require 'org-ref)
         ;; Free this keybinding for cycle-themes
         (unbind-key "C-c C-t" org-mode-map)
         (unbind-key "M-h" org-mode-map)
@@ -3543,6 +4124,14 @@ are exported to a filename derived from the headline text."
 
         ;; (org-refile-targets '((org-agenda-files :maxlevel . 4)))
 
+(setq org-file-apps
+'((auto-mode . emacs)
+ (directory . emacs)
+ ("\\.mm\\'" . default)
+ ("\\.x?html?\\'" . default)
+ ("\\.pdf\\'" . emacs)))
+
+
         (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 
         ;; (setq org-src-block-faces    '(("emacs-lisp" (:family "Fira Code"  :height 0.75))
@@ -3572,10 +4161,10 @@ are exported to a filename derived from the headline text."
     (defun sync0-org-gcal-erase-buffers ()
      (interactive)
       "Erase buffers of calendar files"
-      (let ((delete-classes (find-file-noselect "~/Dropbox/org/etc/Classes.org"))
-            (delete-events (find-file-noselect "~/Dropbox/org/etc/Events.org"))
-            (delete-gcal (find-file-noselect "~/Dropbox/org/etc/Gcal.org"))
-            (delete-habits (find-file-noselect "~/Dropbox/org/etc/Habits.org")))
+      (let ((delete-classes (find-file-noselect "~/Dropbox/org/archived/etc/Classes.org"))
+            (delete-events (find-file-noselect "~/Dropbox/org/archived/etc/Events.org"))
+            (delete-gcal (find-file-noselect "~/Dropbox/org/archived/etc/Gcal.org"))
+            (delete-habits (find-file-noselect "~/Dropbox/org/archived/etc/Habits.org")))
         (progn 
           (with-current-buffer delete-classes
             (erase-buffer))
@@ -3586,11 +4175,11 @@ are exported to a filename derived from the headline text."
           (with-current-buffer delete-habits
             (erase-buffer)))))
 
-    (setq org-gcal-file-alist '(("carc.sync0@gmail.com" .  "~/Dropbox/org/etc/Gcal.org")
-                                ("5iudo90h5e3nabbubvsj1lov4o@group.calendar.google.com" . "~/Dropbox/org/etc/Classes.org")
-                                ("p9vu3a782nahsma6ud1rdg1qpc@group.calendar.google.com" . "~/Dropbox/org/etc/Events.org")
-                                ("vbnn8eksqpqun2mbtdlknhh9uk@group.calendar.google.com" . "~/Dropbox/org/etc/Habits.org")
-                                ("addressbook#contacts@group.v.calendar.google.com" . "~/Dropbox/org/etc/Birthdays.org"))))
+    (setq org-gcal-file-alist '(("carc.sync0@gmail.com" .  "~/Dropbox/org/archived/etc/Gcal.org")
+                                ("5iudo90h5e3nabbubvsj1lov4o@group.calendar.google.com" . "~/Dropbox/org/archived/etc/Classes.org")
+                                ("p9vu3a782nahsma6ud1rdg1qpc@group.calendar.google.com" . "~/Dropbox/org/archived/etc/Events.org")
+                                ("vbnn8eksqpqun2mbtdlknhh9uk@group.calendar.google.com" . "~/Dropbox/org/archived/etc/Habits.org")
+                                ("addressbook#contacts@group.v.calendar.google.com" . "~/Dropbox/org/archived/etc/Birthdays.org"))))
 
 (use-package org2blog
   :straight (org2blog :type git :host github :repo "org2blog/org2blog") 
@@ -4055,102 +4644,6 @@ emacs-mode-line-end-spaces))
     ;; (add-hook 'mu4e-view-mode-hook 'mu4e-view-fill-long-lines)
     :config (setq visual-fill-column-width 66))
 
-(use-package rainbow-delimiters
-  :straight (rainbow-delimiters :type git :host github :repo "Fanael/rainbow-delimiters") 
-  :hook 
-  ((text-mode . rainbow-delimiters-mode)
-   (prog-mode . rainbow-delimiters-mode))
-  :custom
-  (rainbow-delimiters-max-face-count 3))
-
-(use-package paren
- :straight nil
-:after evil
-:custom
-   (show-paren-delay 0.1)
-         (show-paren-highlight-openparen t)
-         ;; don't blink--too distracting
-         (blink-matching-paren nil)
-         (show-paren-when-point-inside-paren t)
-:config
-   (show-paren-mode 1))
-
-(use-package smartparens
-    :straight (smartparens :type git :host github :repo "Fuco1/smartparens") 
-    :after evil
-    :hook 
-    ((emacs-startup . smartparens-global-mode)
-      (emacs-startup . show-smartparens-global-mode)
-     ;; Disable smartparens in evil-mode's replace state; they conflict.
-     (evil-replace-state-entry-hook . turn-off-smartparens-mode)
-     (evil-replace-state-exit-hook  . turn-on-smartparens-mode))
-    :custom
-    (sp-autowrap-region nil) ; let evil-surround handle this
-    (sp-highlight-pair-overlay nil)
-    (sp-cancel-autoskip-on-backward-movement nil)
-    (sp-show-pair-delay 0)
-    (sp-max-pair-length 3)
-    :config
-    (require 'smartparens-config)
-    (require 'smartparens-latex)
-
-
-(defhydra sync0-hydra-smart-parens (:hint nil)
-    "
-Sexps functions (_q_uit)
-^Nav^            ^Barf/Slurp^                 ^Depth^
-^---^------------^----------^-----------------^-----^-----------------
-_f_: forward     _→_:          slurp forward   _R_: splice
-_b_: backward    _←_:          barf forward    _r_: raise
-_u_: backward ↑  _C-<right>_:  slurp backward  _↑_: raise backward
-_d_: forward ↓   _C-<left>_:   barf backward   _↓_: raise forward
-_p_: backward ↓
-_n_: forward ↑
-
-^Kill^           ^Misc^                       ^Wrap^
-^----^-----------^----^-----------------------^----^------------------
-_w_: copy        _j_: join                    _(_: wrap with ( )
-_k_: kill        _s_: split                   _{_: wrap with { }
-^^               _t_: transpose               _'_: wrap with ' '
-^^               _c_: convolute               _\"_: wrap with \" \"
-^^               _i_: indent defun"
-
-    ("q" nil)
-    ;; Wrapping
-    ("(" (lambda (_) (interactive "P") (sp-wrap-with-pair "(")))
-    ("{" (lambda (_) (interactive "P") (sp-wrap-with-pair "{")))
-    ("'" (lambda (_) (interactive "P") (sp-wrap-with-pair "'")))
-    ("\"" (lambda (_) (interactive "P") (sp-wrap-with-pair "\"")))
-    ;; Navigation
-    ("f" sp-forward-sexp )
-    ("b" sp-backward-sexp)
-    ("u" sp-backward-up-sexp)
-    ("d" sp-down-sexp)
-    ("p" sp-backward-down-sexp)
-    ("n" sp-up-sexp)
-    ;; Kill/copy
-    ("w" sp-copy-sexp)
-    ("k" sp-kill-sexp)
-    ;; Misc
-    ("t" sp-transpose-sexp)
-    ("j" sp-join-sexp)
-    ("s" sp-split-sexp)
-    ("c" sp-convolute-sexp)
-    ("i" sp-indent-defun)
-    ;; Depth changing
-    ("R" sp-splice-sexp)
-    ("r" sp-splice-sexp-killing-around)
-    ("<up>" sp-splice-sexp-killing-backward)
-    ("<down>" sp-splice-sexp-killing-forward)
-    ;; Barfing/slurping
-    ("<right>" sp-forward-slurp-sexp)
-    ("<left>" sp-forward-barf-sexp)
-    ("C-<left>" sp-backward-barf-sexp)
-    ("C-<right>" sp-backward-slurp-sexp))
-
-(evil-leader/set-key
-  "S" 'sync0-hydra-smart-parens/body))
-
 (use-package abbrev
   :straight nil
   :custom
@@ -4190,132 +4683,6 @@ _k_: kill        _s_: split                   _{_: wrap with { }
   (add-hook 'after-save-hook (lambda ()
                                (when (equal buffer-file-name "~/.emacs.d/abbrev_defs")
                                  (read-abbrev-file)))))
-
-(use-package company-jedi
-:straight (company-jedi :type git :host github :repo "emacsorphanage/company-jedi") 
-:after company)
-
-(use-package company
-;;        :straight (company :type git :host github :repo "company-mode/company-mode") 
-        :hook
-        (after-init . global-company-mode)
-        :custom
-                (company-idle-delay 0.1)
-                (company-minimum-prefix-length 2)
-                (company-tooltip-limit 10)
-                (company-tooltip-align-annotations t)
-                (company-require-match 'never)
-                (company-global-modes '(not erc-mode message-mode help-mode gud-mode))
-                (company-frontends '(company-pseudo-tooltip-frontend 
-                            company-echo-metadata-frontend))  
-                (company-backends '(company-capf))
-                (company-auto-complete nil)
-    :config
-;; Disable company-mode in bibtex-mode (clashes with yasnippets)
- (add-hook 'bibtex-mode-hook (company-mode -1))
-
-(define-key company-active-map (kbd "M-j") 'company-select-next)
-(define-key company-active-map (kbd "M-k") 'company-select-previous)
-
-    (defvar +company-backend-alist
-      '((text-mode company-capf  company-yasnippet company-org-roam)
-      ;; '((text-mode company-capf  company-yasnippet company-ispell company-org-roam)
-      ;; '((text-mode company-capf company-dabbrev company-yasnippet company-ispell company-org-roam)
-      ;;(text-mode company-capf company-yasnippet company-ispell company-bibtex)
-        (prog-mode company-capf company-yasnippet)
-        (elisp-mode company-elisp company-capf company-yasnippet)
-        (python-mode company-capf company-yasnippet company-jedi)
-        (conf-mode company-capf company-dabbrev-code company-yasnippet))
-      "An alist matching modes to company backends. The backends for any mode is
-    built from this.")
-
-    (defun +company--backends ()
-      (let (backends)
-        (let ((mode major-mode)
-              (modes (list major-mode)))
-          (while (setq mode (get mode 'derived-mode-parent))
-            (push mode modes))
-          (dolist (mode modes)
-            (dolist (backend (append (cdr (assq mode +company-backend-alist))
-                                     (default-value 'company-backends)))
-              (push backend backends)))
-          (delete-dups
-           (append (cl-loop for (mode . backends) in +company-backend-alist
-                            if (or (eq major-mode mode)  ; major modes
-                                   (and (boundp mode)
-                                        (symbol-value mode))) ; minor modes
-                            append backends)
-                   (nreverse backends))))))
-
-    (defun doom-temp-buffer-p (buf)
-      "Returns non-nil if BUF is temporary."
-      (equal (substring (buffer-name buf) 0 1) " "))
-
-    (defun +company-init-backends-h ()
-      "Set `company-backends' for the current buffer."
-      (or (memq major-mode '(fundamental-mode special-mode))
-          buffer-read-only
-          (doom-temp-buffer-p (or (buffer-base-buffer) (current-buffer)))
-          (setq-local company-backends (+company--backends))))
-
-    (put '+company-init-backends-h 'permanent-local-hook t)
-
-    (add-hook 'after-change-major-mode-hook #'+company-init-backends-h 'append)
-
-    (defun sync0-config-prose-completion ()
-      "Make auto-complete less agressive in this buffer."
-      (setq-local company-minimum-prefix-length 4))
-
-    (add-hook 'text-mode-hook #'sync0-config-prose-completion))
-
-(use-package company-bibtex
-:straight (company-bibtex :type git :host github :repo "gbgar/company-bibtex") 
-:disabled t
-:custom
-(company-bibtex-key-regex "[[:alnum:]+_]*")
-(company-bibtex-bibliography '("~/Dropbox/notes/bibliography.bib")))
-
-(use-package company-box
-  :straight (company-box :type git :host github :repo "sebastiencs/company-box") 
-  :hook (company-mode . company-box-mode)
-  :config
-  (setq company-box-show-single-candidate t
-        company-box-backends-colors nil
-        company-box-max-candidates 10
-        company-box-icons-alist 'company-box-icons-all-the-icons
-        company-box-icons-all-the-icons
-        (let ((all-the-icons-scale-factor 0.8))
-          `((Unknown       . ,(all-the-icons-material "find_in_page"             :face 'all-the-icons-purple))
-            (Text          . ,(all-the-icons-material "text_fields"              :face 'all-the-icons-green))
-            (Method        . ,(all-the-icons-material "functions"                :face 'all-the-icons-red))
-            (Function      . ,(all-the-icons-material "functions"                :face 'all-the-icons-red))
-            (Constructor   . ,(all-the-icons-material "functions"                :face 'all-the-icons-red))
-            (Field         . ,(all-the-icons-material "functions"                :face 'all-the-icons-red))
-            (Variable      . ,(all-the-icons-material "adjust"                   :face 'all-the-icons-blue))
-            (Class         . ,(all-the-icons-material "class"                    :face 'all-the-icons-red))
-            (Interface     . ,(all-the-icons-material "settings_input_component" :face 'all-the-icons-red))
-            (Module        . ,(all-the-icons-material "view_module"              :face 'all-the-icons-red))
-            (Property      . ,(all-the-icons-material "settings"                 :face 'all-the-icons-red))
-            (Unit          . ,(all-the-icons-material "straighten"               :face 'all-the-icons-red))
-            (Value         . ,(all-the-icons-material "filter_1"                 :face 'all-the-icons-red))
-            (Enum          . ,(all-the-icons-material "plus_one"                 :face 'all-the-icons-red))
-            (Keyword       . ,(all-the-icons-material "filter_center_focus"      :face 'all-the-icons-red))
-            (Snippet       . ,(all-the-icons-material "short_text"               :face 'all-the-icons-red))
-            (Color         . ,(all-the-icons-material "color_lens"               :face 'all-the-icons-red))
-            (File          . ,(all-the-icons-material "insert_drive_file"        :face 'all-the-icons-red))
-            (Reference     . ,(all-the-icons-material "collections_bookmark"     :face 'all-the-icons-red))
-            (Folder        . ,(all-the-icons-material "folder"                   :face 'all-the-icons-red))
-            (EnumMember    . ,(all-the-icons-material "people"                   :face 'all-the-icons-red))
-            (Constant      . ,(all-the-icons-material "pause_circle_filled"      :face 'all-the-icons-red))
-            (Struct        . ,(all-the-icons-material "streetview"               :face 'all-the-icons-red))
-            (Event         . ,(all-the-icons-material "event"                    :face 'all-the-icons-red))
-            (Operator      . ,(all-the-icons-material "control_point"            :face 'all-the-icons-red))
-            (TypeParameter . ,(all-the-icons-material "class"                    :face 'all-the-icons-red))
-            (Template      . ,(all-the-icons-material "short_text"               :face 'all-the-icons-green))
-            (ElispFunction . ,(all-the-icons-material "functions"                :face 'all-the-icons-red))
-            (ElispVariable . ,(all-the-icons-material "check_circle"             :face 'all-the-icons-blue))
-            (ElispFeature  . ,(all-the-icons-material "stars"                    :face 'all-the-icons-orange))
-            (ElispFace     . ,(all-the-icons-material "format_paint"            :face 'all-the-icons-pink))))))
 
 (use-package ispell
    :hook (text-mode . ispell-minor-mode)
@@ -4626,71 +4993,53 @@ _k_: kill        _s_: split                   _{_: wrap with { }
         "
           ;; Quickly work with bookmarks
           ("d" sync0-lookup-word)
+          ("i" sync0-ispell-word-then-abbrev)
           ("c" sync0-lookup-conjugation)
           ("t" sync0-lookup-thesaurus)
           ("q"  nil :color blue))
 
 (evil-leader/set-key
+  "L" 'sync0-ispell-word-then-abbrev
   "l" 'sync0-hydra-language-functions/body)
 
         (add-hook 'guess-language-after-detection-functions #'sync0-language-change)
 
         :bind (("M-#" . sync0-lookup-word)
                ("M-i" . sync0-ispell-word-then-abbrev)
-               ("C-d" . sync0-hydra-language-functions/body)
+               ;; ("C-d" . sync0-hydra-language-functions/body)
                ("M-$" . sync0-lookup-conjugation)))
-
-(use-package yasnippet 
-    :straight (yasnippet :type git :host github :repo "joaotavora/yasnippet") 
-    :config
-    (require 'sync0-yasnippet-bibtex)
-
-;; Fix conflict with Yasnippets
-;; See https://emacs.stackexchange.com/questions/29758/yasnippets-and-org-mode-yas-next-field-or-maybe-expand-does-not-expand
-(defun yas-org-very-safe-expand ()
-  (let ((yas-fallback-behavior 'return-nil)) (yas-expand)))
-
-(add-hook 'org-mode-hook
-      (lambda ()
-        (add-to-list 'org-tab-first-hook 'yas-org-very-safe-expand)
-        (define-key yas-keymap [tab] 'yas-next-field)))
-
-    :hook 
-    ((text-mode . yas-minor-mode)
-     (prog-mode . yas-minor-mode)
-     (mu4e-mode . yas-minor-mode)
-     (bibtex-mode . yas-minor-mode)))
 
 (use-package focus
   :straight (focus :type git :host github :repo "larstvei/Focus") 
   :commands focus-mode)
 
 (use-package centered-window
-              :straight (centered-window :type git :host github :repo "anler/centered-window-mode") 
-              :config
+                    :straight (centered-window :type git :host github :repo "anler/centered-window-mode") 
+                    :config
 
-          (defun sync0-text-mode-centered-window ()
-"Set font to a variable width (proportional) fonts in current buffer"
-(if (> (display-pixel-width) 1900)
-;; high resolution (t14s)
-  (progn
-        (setq cwm-left-fringe-ratio 80)
-      (centered-window-mode t))
-;; low resolution 
-  (progn
-        (setq cwm-left-fringe-ratio 100)
-      (centered-window-mode t))))
+                (defun sync0-text-mode-centered-window ()
+      "Set font to a variable width (proportional) fonts in current buffer"
+      (if (> (display-pixel-width) 1900)
+      ;; high resolution (t14s)
+        (progn
+              ;; (setq cwm-left-fringe-ratio 80)
+              (setq cwm-left-fringe-ratio 60)
+            (centered-window-mode t))
+      ;; low resolution 
+        (progn
+              (setq cwm-left-fringe-ratio 100)
+            (centered-window-mode t))))
 
-          (defun sync0-prog-mode-centered-window ()
-           (progn
-      ;; Ratio by which the left fringe is padded more than the right.
-      ;; Should be a value between 0 and 100
-      (setq cwm-left-fringe-ratio 30)
-      (centered-window-mode t)))
+                (defun sync0-prog-mode-centered-window ()
+                 (progn
+            ;; Ratio by which the left fringe is padded more than the right.
+            ;; Should be a value between 0 and 100
+            (setq cwm-left-fringe-ratio 30)
+            (centered-window-mode t)))
 
-              :hook 
-      ((text-mode . sync0-text-mode-centered-window)
-       (prog-mode . sync0-prog-mode-centered-window)))
+                    :hook 
+            ((text-mode . sync0-text-mode-centered-window)
+             (prog-mode . sync0-prog-mode-centered-window)))
 
 (use-package olivetti
     :disabled t
@@ -4775,349 +5124,19 @@ _k_: kill        _s_: split                   _{_: wrap with { }
   ;; Add standard Sweave file extensions to the list of files recognized  by AuCTeX.
   (add-hook 'TeX-mode-hook (lambda () (reftex-isearch-minor-mode))))
 
-(use-package bibtex
-  :straight nil
-  :defer t
-  :custom
-  (bibtex-dialect 'biblatex) ;; biblatex as default bib format
-  (bibtex-maintain-sorted-entries t)
-  (bibtex-field-delimiters 'braces)
-  (bibtex-entry-delimiters 'braces)
-  (bibtex-comma-after-last-field t)
-  (bibtex-align-at-equal-sign t)
-  (bibtex-text-indentation 0)
-  (bibtex-autokey-names 1)
-  (bibtex-autokey-names-stretch 1)
-  (bibtex-autokey-additional-names "_et_al")
-  (bibtex-autokey-name-separator "_")
-  (bibtex-autokey-name-year-separator "")
-  (bibtex-autokey-name-length t)
-  (bibtex-autokey-year-title-separator "")
-  (bibtex-autokey-titleword-length 0)
-  (bibtex-autokey-year-length 4)
-  (bibtex-autokey-titleword-case-convert "uppercase")
-  (bibtex-autokey-titlewords 0)
-  (bibtex-entry-format '(opts-or-alts required-fields numerical-fields page-dashes whitespace braces last-comma delimiters sort-fields))
-
-  :config
-
-  (defvar sync0-bibtex-reference-keys
-    (lazy-completion-table sync0-bibtex-reference-keys
-                           (lambda () (sync0-bibtex-parse-keys nil t)))
-    "Completion table for BibTeX reference keys.
-The CDRs of the elements are t for header keys and nil for crossref keys.")
-
-  (defun sync0-bibtex-autokey-get-year ()
-    "Return year field contents as a string obeying `bibtex-autokey-year-length'."
-    (let ((yearfield (bibtex-autokey-get-field "date")))
-      (substring yearfield (max 0 (- (length yearfield)
-                                     bibtex-autokey-year-length)))))
-
-  (defun sync0-bibtex-generate-autokey ()
-    "This overwrites the bibtex-generate-autokey function that comes with Emacs.
-          I want my keys to be formatted: authornameYEAR, then a letter
-          if there is already an entry that matches authornameYEAR."
-    (interactive)
-    (let* ((names (bibtex-autokey-get-names))
-           (year (sync0-bibtex-autokey-get-year))
-           (existing-keys (bibtex-parse-keys)) key)
-      (setq key (format "%s%s" names year))
-      (let ((ret key))
-        (cl-loop for c
-                 from ?a to ?z
-                 while (assoc ret existing-keys)
-                 do (setq ret (format "%s%c" key c)))
-        ret)))
-
-  (defun sync0-bibtex-parse-keys (&optional abortable verbose)
-    "Set `bibtex-reference-keys' to the keys used in the whole buffer.
-Find both entry keys and crossref entries.  If ABORTABLE is non-nil abort
-on user input.  If VERBOSE is non-nil give messages about progress.
-Return alist of keys if parsing was completed, `aborted' otherwise.
-If `bibtex-parse-keys-fast' is non-nil, use fast but simplified algorithm
-for parsing BibTeX keys.  If parsing fails, try to set this variable to nil."
-    (if (eq major-mode 'bibtex-mode)
-        (let (ref-keys crossref-keys)
-          (save-excursion
-            (save-match-data
-              (if verbose
-                  (bibtex-progress-message
-                   (concat (buffer-name) ": parsing reference keys")))
-              (catch 'userkey
-                (goto-char (point-min))
-                (if bibtex-parse-keys-fast
-                    (let ((case-fold-search t)
-                          (re (concat bibtex-entry-head "\\|"
-                                      ",[ \t\n]*crossref[ \t\n]*=[ \t\n]*"
-                                      "\\(\"[^\"]*\"\\|{[^}]*}\\)[ \t\n]*[,})]")))
-                      (while (re-search-forward re nil t)
-                        (if (and abortable (input-pending-p))
-                            ;; user has aborted by typing a key: return `aborted'
-                            (throw 'userkey 'aborted))
-                        (cond ((match-end 3)
-                               ;; This is a crossref.
-                               (let ((key (buffer-substring-no-properties
-                                           (1+ (match-beginning 3)) (1- (match-end 3)))))
-                                 (unless (assoc key crossref-keys)
-                                   (push (list key) crossref-keys))))
-                              ;; only keys of known entries
-                              ((assoc-string (bibtex-type-in-head)
-                                             bibtex-entry-alist t)
-                               ;; This is an entry.
-                               (let ((key (bibtex-key-in-head)))
-                                 (unless (assoc key ref-keys)
-                                   (push (cons key t) ref-keys)))))))
-
-                  (let (;; ignore @String entries because they are handled
-                        ;; separately by `bibtex-parse-strings'
-                        (bibtex-sort-ignore-string-entries t)
-                        bounds)
-                    (bibtex-map-entries
-                     (lambda (key _beg end)
-                       (if (and abortable
-                                (input-pending-p))
-                           ;; user has aborted by typing a key: return `aborted'
-                           (throw 'userkey 'aborted))
-                       (if verbose (bibtex-progress-message))
-                       (unless (assoc key ref-keys)
-                         (push (cons key t) ref-keys))
-                       (if (and (setq bounds (bibtex-search-forward-field "crossref" end))
-                                (setq key (bibtex-text-in-field-bounds bounds t))
-                                (not (assoc key crossref-keys)))
-                           (push (list key) crossref-keys))))))
-
-                (dolist (key crossref-keys)
-                  (unless (assoc (car key) ref-keys) (push key ref-keys)))
-                (if verbose
-                    (bibtex-progress-message 'done))
-                ;; successful operation --> return `bibtex-reference-keys'
-                (setq bibtex-reference-keys ref-keys)))))))
-
-  (defun sync0-bibtex-next-key ()
-    "Print the bibtex key of the document"
-    (interactive)
-    (let ((bibtex-key (re-search-forward "@.+{" nil nil 1)))
-      (goto-char bibtex-key)))
-
-  (defun sync0-bibtex-previous-key ()
-    "Print the bibtex key of the document"
-    (interactive)
-    (let ((bibtex-key (re-search-backward "@.+{" nil nil 2)))
-      (goto-char bibtex-key)
-      (re-search-forward "@.+{" nil nil 1)))
-
-  (with-eval-after-load 'evil
-    (evil-define-key 'normal bibtex-mode-map
-      "K" 'sync0-bibtex-previous-key
-      "J" 'sync0-bibtex-next-key))
-
-  ;; Define default fields.
-  (setq bibtex-BibTeX-entry-alist '(("Article" "Article in Journal"
-                                     ("author")
-                                     ("date")
-                                     ("title" "Title of the article (BibTeX converts it to lowercase)")
-                                     ("subtitle" "Title of the article (BibTeX converts it to lowercase)")
-                                     ("journaltitle")
-                                     ("journalsubtitle")
-                                     ("volume" "Volume of the journal")
-                                     ("number" "Number of the journal (only allowed if entry contains volume)")
-                                     ("issue" "Issue in the journal")
-                                     ("pages" "Pages in the journal")
-                                     ("url" "Pages in the journal")
-                                     ("urldate" "Pages in the journal")
-                                     ("doi" "Pages in the journal")
-                                     ("library" "Pages in the journal")
-                                     ("language" "Pages in the journal")
-                                     ("langid" "Pages in the journal")
-                                     ("langidopts" "Pages in the journal")
-                                     ("file" "Pages in the journal")
-                                     ("addendum" "Pages in the journal")
-                                     ("keywords"))
-                                    ("InProceedings" "Article in Conference Proceedings"
-                                     ("author")
-                                     ("date")
-                                     ("title" "Title of the article (BibTeX converts it to lowercase)")
-                                     ("subtitle" "Title of the article (BibTeX converts it to lowercase)")
-                                     ("crossref")
-                                     ("booktitle" "Name of the conference proceedings")
-                                     ("booksubtitle" "Name of the conference proceedings")
-                                     ("organization")
-                                     ("eventdate")
-                                     ("eventtitle")
-                                     ("venue")
-                                     ("series")
-                                     ("volume" "Volume of the conference proceedings in the series")
-                                     ("number" "Number of the conference proceedings in a small series (overwritten by volume)")
-                                     ("pages" "Pages in the conference proceedings")
-                                     ("edition" "Pages in the conference proceedings")
-                                     ("publisher" "Publishing company, its location")
-                                     ("editor" "Publishing company, its location")
-                                     ("translator" "Publishing company, its location")
-                                     ("location" "Publishing company, its location")
-                                     ("url" "Publishing company, its location")
-                                     ("urldate" "Publishing company, its location")
-                                     ("doi" "Pages in the journal")
-                                     ("library" "Pages in the journal")
-                                     ("language" "Pages in the journal")
-                                     ("langid" "Pages in the journal")
-                                     ("langidopts" "Pages in the journal")
-                                     ("file" "Pages in the journal")
-                                     ("addendum")
-                                     ("keywords"))
-                                    ("InCollection" "Article in a Collection"
-                                     (("author")
-                                      ("title" "Title of the article (BibTeX converts it to lowercase)"))
-                                     (("subtitle" "Title of the article (BibTeX converts it to lowercase)")
-                                      ("date")
-                                      ("crossref" "Title of the article (BibTeX converts it to lowercase)")
-                                      ("booktitle" "Name of the conference proceedings")
-                                      ("booksubtitle" "Name of the conference proceedings")
-                                      ("series")
-                                      ("volume" "Volume of the conference proceedings in the series")
-                                      ("number" "Number of the conference proceedings in a small series (overwritten by volume)")
-                                      ("chapter" "Number of the conference proceedings in a small series (overwritten by volume)")
-                                      ("pages" "Pages in the conference proceedings")
-                                      ("edition" "Publishing company, its location")
-                                      ("publisher" "Publishing company, its location")
-                                      ("editor" "Publishing company, its location")
-                                      ("translator" "Publishing company, its location")
-                                      ("location" "Publishing company, its location")
-                                      ("url" "Publishing company, its location")
-                                      ("urldate" "Publishing company, its location")
-                                      ("doi" "Pages in the journal")
-                                      ("library" "Pages in the journal")
-                                      ("language" "Pages in the journal")
-                                      ("langid" "Pages in the journal")
-                                      ("langidopts" "Pages in the journal")
-                                      ("file" "Pages in the journal")
-                                      ("addendum")
-                                      ("keywords")))
-                                    ("InBook" "Chapter or Pages in a Book"
-                                     (("title" "Title of the article (BibTeX converts it to lowercase)"))
-                                     (("author")
-                                      ("subtitle" "Title of the article (BibTeX converts it to lowercase)")
-                                      ("date")
-                                      ("origdate")
-                                      ("origtitle")
-                                      ("crossref" "Title of the article (BibTeX converts it to lowercase)")
-                                      ("booktitle" "Name of the conference proceedings")
-                                      ("booksubtitle" "Name of the conference proceedings")
-                                      ("series")
-                                      ("volume" "Volume of the conference proceedings in the series")
-                                      ("number" "Number of the conference proceedings in a small series (overwritten by volume)")
-                                      ("chapter" "Number of the conference proceedings in a small series (overwritten by volume)")
-                                      ("pages" "Pages in the conference proceedings")
-                                      ("edition" "Publishing company, its location")
-                                      ("publisher" "Publishing company, its location")
-                                      ("editor" "Publishing company, its location")
-                                      ("translator" "Publishing company, its location")
-                                      ("location" "Publishing company, its location")
-                                      ("url" "Publishing company, its location")
-                                      ("urldate" "Publishing company, its location")
-                                      ("doi" "Pages in the journal")
-                                      ("library" "Pages in the journal")
-                                      ("language" "Pages in the journal")
-                                      ("langid" "Pages in the journal")
-                                      ("langidopts" "Pages in the journal")
-                                      ("file" "Pages in the journal")
-                                      ("addendum")
-                                      ("keywords")))
-                                    ("Proceedings" "Conference Proceedings"
-                                     ("title" "Title of the conference proceedings")
-                                     ("date")
-                                     nil
-                                     ("booktitle" "Title of the proceedings for cross references")
-                                     ("editor")
-                                     ("volume" "Volume of the conference proceedings in the series")
-                                     ("number" "Number of the conference proceedings in a small series (overwritten by volume)")
-                                     ("series" "Series in which the conference proceedings appeared")
-                                     ("address")
-                                     ("month")
-                                     ("organization" "Sponsoring organization of the conference")
-                                     ("publisher" "Publishing company, its location")
-                                     ("note"))
-                                    ("Book" "Book"
-                                     ("author")
-                                     ("date")
-                                     ("origdate")
-                                     ("origtitle")
-                                     ("title" "Title of the article (BibTeX converts it to lowercase)")
-                                     ("subtitle" "Title of the article (BibTeX converts it to lowercase)")
-                                     ("booktitle" "Name of the conference proceedings")
-                                     ("booksubtitle" "Name of the conference proceedings")
-                                     ("series")
-                                     ("volume" "Volume of the conference proceedings in the series")
-                                     ("number" "Number of the conference proceedings in a small series (overwritten by volume)")
-                                     ("edition" "Publishing company, its location")
-                                     ("publisher" "Publishing company, its location")
-                                     ("editor" "Publishing company, its location")
-                                     ("translator" "Publishing company, its location")
-                                     ("location" "Publishing company, its location")
-                                     ("url" "Publishing company, its location")
-                                     ("urldate" "Publishing company, its location")
-                                     ("doi" "Pages in the journal")
-                                     ("library" "Pages in the journal")
-                                     ("isbn" "Pages in the journal")
-                                     ("origlanguage" "Pages in the journal")
-                                     ("language" "Pages in the journal")
-                                     ("langid" "Pages in the journal")
-                                     ("langidopts" "Pages in the journal")
-                                     ("file" "Pages in the journal")
-                                     ("addendum")
-                                     ("keywords"))
-                                    ("Unpublished" "Unpublished"
-                                     ("author")
-                                     ("date")
-                                     ("title" "Title of the article (BibTeX converts it to lowercase)")
-                                     ("subtitle" "Title of the article (BibTeX converts it to lowercase)")
-                                     ("type" "Title of the article (BibTeX converts it to lowercase)")
-                                     ("eventdate" "Title of the article (BibTeX converts it to lowercase)")
-                                     ("eventtitle" "Title of the article (BibTeX converts it to lowercase)")
-                                     ("venue" "Title of the article (BibTeX converts it to lowercase)")
-                                     ("location" "Title of the article (BibTeX converts it to lowercase)")
-                                     ("url" "Publishing company, its location")
-                                     ("urldate" "Publishing company, its location")
-                                     ("doi" "Pages in the journal")
-                                     ("library" "Pages in the journal")
-                                     ("origlanguage" "Pages in the journal")
-                                     ("language" "Pages in the journal")
-                                     ("langid" "Pages in the journal")
-                                     ("langidopts" "Pages in the journal")
-                                     ("file" "Pages in the journal")
-                                     ("addendum")
-                                     ("keywords"))
-                                    ("Misc" "Miscellaneous" nil nil
-                                     (("title" "Title of the article (BibTeX converts it to lowercase)"))
-                                     (("author")
-                                      ("date")
-                                      ("subtitle" "Title of the article (BibTeX converts it to lowercase)")
-                                      ("organization" "Title of the article (BibTeX converts it to lowercase)")
-                                      ("type" "Title of the article (BibTeX converts it to lowercase)")
-                                      ("version" "Title of the article (BibTeX converts it to lowercase)")
-                                      ("location" "Title of the article (BibTeX converts it to lowercase)")
-                                      ("url" "Publishing company, its location")
-                                      ("urldate" "Publishing company, its location")
-                                      ("doi" "Pages in the journal")
-                                      ("library" "Pages in the journal")
-                                      ("origlanguage" "Pages in the journal")
-                                      ("language" "Pages in the journal")
-                                      ("langid" "Pages in the journal")
-                                      ("langidopts" "Pages in the journal")
-                                      ("file" "Pages in the journal")
-                                      ("addendum")
-                                      ("keywords"))))))
-
 (use-package ivy-bibtex 
 ;;    :after (ivy bibtex)
     :custom 
-    (bibtex-completion-bibliography '("~/Dropbox/org/references/bibliography.bib")) ;; writing completion
-    (bibtex-completion-notes-path '"~/Dropbox/org/references")
-    (bibtex-completion-library-path '("~/Dropbox/org/references/"))
+    ;; writing completion
+    (bibtex-completion-bibliography '("~/Dropbox/bibliographies/bibliography.bib"
+                                      "~/Dropbox/bibliographies/doctorat.bib")) 
+    (bibtex-completion-notes-path '"~/Dropbox/org/notes/references")
+    (bibtex-completion-library-path '("~/Dropbox/org/notes/references/"))
     (bibtex-completion-pdf-field "file")
     (bibtex-completion-pdf-symbol "P")
     (bibtex-completion-notes-symbol "N")
     (ivy-bibtex-default-action 'ivy-bibtex-edit-notes)
-    (bibtex-completion-additional-search-fields '(journaltitle keywords origdate subtitle volume booktitle))
+    (bibtex-completion-additional-search-fields '(editor journaltitle origdate subtitle volume booktitle location publisher))
 
     :config 
  (setq bibtex-completion-display-formats
@@ -5127,17 +5146,6 @@ for parsing BibTeX keys.  If parsing fails, try to set this variable to nil."
        (incollection  . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title:55} @ ${booktitle} [${=key=}]")
        (inproceedings . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title:55} @ ${booktitle} [${=key=}]")
        (t             . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date}) ${title}: ${subtitle} [${=key=}]")))
-
- ;; (setq bibtex-completion-display-formats
- ;;     '((article       . "${=has-pdf=:1}${=has-note=:1}| ${=key=}| ${author} (${date:4}) ${title:55} @ ${journaltitle:30}")
- ;;       (book          . "${=has-pdf=:1}${=has-note=:1}| ${=key=}| ${author} [${origdate}](${date:4}) ${title} (${volume}): ${subtitle}")
- ;;       (inbook        . "${=has-pdf=:1}${=has-note=:1}| ${=key=}| ${author} (${date:4}) ${title:55} @ ${chapter:30}")
- ;;       (incollection  . "${=has-pdf=:1}${=has-note=:1}| ${=key=}| ${author} (${date:4}) ${title:55} @ ${booktitle:30}")
- ;;       (inproceedings . "${=has-pdf=:1}${=has-note=:1}| ${=key=}| ${author} (${date:4}) ${title:55} @ ${booktitle:30}")
- ;;       (t             . "${=has-pdf=:1}${=has-note=:1}| ${=key=}| ${author} (${date}) ${title}")))
-
-;; (setq bibtex-completion-display-formats
-;; '((t . "${=key=:*} ${=has-pdf=:1}${=has-note=:1} ${author:20} ${title:*} ${=type=:7}")))
 
     (setq bibtex-completion-notes-template-multiple-files  
      "
@@ -5150,11 +5158,21 @@ for parsing BibTeX keys.  If parsing fails, try to set this variable to nil."
 #+ROAM_KEY: cite:${=key=}
 #+CREATED: 
 #+DATE: 
-#+ROAM_TAGS: ${=key=} ${author-or-editor} ${keywords} 
+#+ROAM_TAGS: ${=key=} ${author-or-editor} 
 #+INTERLEAVE_PDF: ${file}
 
 
 ")
+
+    (defun sync0-bibtex-completion-journaltitle ()
+                       (completing-read "Journal title : "
+                        (delete-dups (mapcar #'(lambda (x) (cdr (assoc "journaltitle" x)))
+                          (bibtex-completion-candidates)))))
+
+    (defun sync0-bibtex-completion-author ()
+                       (completing-read "Auteur : "
+                        (delete-dups (mapcar #'(lambda (x) (cdr (assoc "author" x)))
+                          (bibtex-completion-candidates)))))
 
 (defun sync0-ivy-bibtex-extractor ()
   (interactive)
@@ -5177,22 +5195,1278 @@ for parsing BibTeX keys.  If parsing fails, try to set this variable to nil."
                                                (member (cons "=key=" key)
                                                        (cdr cand)))
                                              candidates))))
-
-    (defun sync0-bibtex-completion-journaltitle ()
-                       (completing-read "Journal title : "
-                        (delete-dups (mapcar #'(lambda (x) (cdr (assoc "journaltitle" x)))
-                          (bibtex-completion-candidates)))))
-
-    (defun sync0-bibtex-completion-author ()
-                       (completing-read "Auteur : "
-                        (delete-dups (mapcar #'(lambda (x) (cdr (assoc "author" x)))
-                          (bibtex-completion-candidates)))))
-
         (ivy-read "BibTeX entries%s: "
                   candidates
                   :preselect preselect
                   :caller 'ivy-bibtex
                   :action ivy-bibtex-default-action))))
+
+(use-package bibtex
+   :straight nil
+   :custom
+   (bibtex-dialect 'biblatex) ;; biblatex as default bib format
+   (bibtex-maintain-sorted-entries t)
+   (bibtex-field-delimiters 'braces)
+   (bibtex-entry-delimiters 'braces)
+   (bibtex-comma-after-last-field t)
+   (bibtex-align-at-equal-sign t)
+   (bibtex-text-indentation 0)
+   (bibtex-autokey-names 1)
+   (bibtex-autokey-names-stretch 1)
+   (bibtex-autokey-additional-names "_et_al")
+   (bibtex-autokey-name-separator "_")
+   (bibtex-autokey-name-year-separator "")
+   (bibtex-autokey-name-length t)
+   (bibtex-autokey-year-title-separator "")
+   (bibtex-autokey-titleword-length 0)
+   (bibtex-autokey-year-length 4)
+   (bibtex-autokey-titleword-case-convert "uppercase")
+   (bibtex-autokey-titlewords 0)
+   (bibtex-entry-format '(opts-or-alts numerical-fields page-dashes whitespace braces last-comma delimiters sort-fields))
+   ;; (bibtex-entry-format '(opts-or-alts required-fields numerical-fields page-dashes whitespace braces last-comma delimiters sort-fields))
+
+   :config
+;;   (require 'ivy-bibtex)
+   (autoload 'ivy-bibtex "ivy-bibtex" "" t)
+
+
+   (defvar sync0-bibtex-reference-keys
+     (lazy-completion-table sync0-bibtex-reference-keys
+                            (lambda () (sync0-bibtex-parse-keys nil t)))
+     "Completion table for BibTeX reference keys.
+ The CDRs of the elements are t for header keys and nil for crossref keys.")
+
+   (defun sync0-bibtex-autokey-get-year ()
+     "Return year field contents as a string obeying `bibtex-autokey-year-length'."
+     (let ((yearfield (bibtex-autokey-get-field "date")))
+       (substring yearfield (max 0 (- (length yearfield)
+                                      bibtex-autokey-year-length)))))
+
+   (defun sync0-bibtex-generate-autokey ()
+     "This overwrites the bibtex-generate-autokey function that comes with Emacs.
+           I want my keys to be formatted: authornameYEAR, then a letter
+           if there is already an entry that matches authornameYEAR."
+     (interactive)
+     (let* ((names (bibtex-autokey-get-names))
+            (year (sync0-bibtex-autokey-get-year))
+            (existing-keys (bibtex-parse-keys)) key)
+       (setq key (format "%s%s" names year))
+       (let ((ret key))
+         (cl-loop for c
+                  from ?a to ?z
+                  while (assoc ret existing-keys)
+                  do (setq ret (format "%s%c" key c)))
+         ret)))
+
+   (defun sync0-bibtex-parse-keys (&optional abortable verbose)
+     "Set `bibtex-reference-keys' to the keys used in the whole buffer.
+ Find both entry keys and crossref entries.  If ABORTABLE is non-nil abort
+ on user input.  If VERBOSE is non-nil give messages about progress.
+ Return alist of keys if parsing was completed, `aborted' otherwise.
+ If `bibtex-parse-keys-fast' is non-nil, use fast but simplified algorithm
+ for parsing BibTeX keys.  If parsing fails, try to set this variable to nil."
+     (if (eq major-mode 'bibtex-mode)
+         (let (ref-keys crossref-keys)
+           (save-excursion
+             (save-match-data
+               (if verbose
+                   (bibtex-progress-message
+                    (concat (buffer-name) ": parsing reference keys")))
+               (catch 'userkey
+                 (goto-char (point-min))
+                 (if bibtex-parse-keys-fast
+                     (let ((case-fold-search t)
+                           (re (concat bibtex-entry-head "\\|"
+                                       ",[ \t\n]*crossref[ \t\n]*=[ \t\n]*"
+                                       "\\(\"[^\"]*\"\\|{[^}]*}\\)[ \t\n]*[,})]")))
+                       (while (re-search-forward re nil t)
+                         (if (and abortable (input-pending-p))
+                             ;; user has aborted by typing a key: return `aborted'
+                             (throw 'userkey 'aborted))
+                         (cond ((match-end 3)
+                                ;; This is a crossref.
+                                (let ((key (buffer-substring-no-properties
+                                            (1+ (match-beginning 3)) (1- (match-end 3)))))
+                                  (unless (assoc key crossref-keys)
+                                    (push (list key) crossref-keys))))
+                               ;; only keys of known entries
+                               ((assoc-string (bibtex-type-in-head)
+                                              bibtex-entry-alist t)
+                                ;; This is an entry.
+                                (let ((key (bibtex-key-in-head)))
+                                  (unless (assoc key ref-keys)
+                                    (push (cons key t) ref-keys)))))))
+
+                   (let (;; ignore @String entries because they are handled
+                         ;; separately by `bibtex-parse-strings'
+                         (bibtex-sort-ignore-string-entries t)
+                         bounds)
+                     (bibtex-map-entries
+                      (lambda (key _beg end)
+                        (if (and abortable
+                                 (input-pending-p))
+                            ;; user has aborted by typing a key: return `aborted'
+                            (throw 'userkey 'aborted))
+                        (if verbose (bibtex-progress-message))
+                        (unless (assoc key ref-keys)
+                          (push (cons key t) ref-keys))
+                        (if (and (setq bounds (bibtex-search-forward-field "crossref" end))
+                                 (setq key (bibtex-text-in-field-bounds bounds t))
+                                 (not (assoc key crossref-keys)))
+                            (push (list key) crossref-keys))))))
+
+                 (dolist (key crossref-keys)
+                   (unless (assoc (car key) ref-keys) (push key ref-keys)))
+                 (if verbose
+                     (bibtex-progress-message 'done))
+                 ;; successful operation --> return `bibtex-reference-keys'
+                 (setq bibtex-reference-keys ref-keys)))))))
+
+   (defun sync0-bibtex-next-key ()
+     "Print the bibtex key of the document"
+     (interactive)
+     (let ((bibtex-key (re-search-forward "@.+{" nil nil 1)))
+       (goto-char bibtex-key)))
+
+   (defun sync0-bibtex-previous-key ()
+     "Print the bibtex key of the document"
+     (interactive)
+     (let ((bibtex-key (re-search-backward "@.+{" nil nil 2)))
+       (goto-char bibtex-key)
+       (re-search-forward "@.+{" nil nil 1)))
+
+   (with-eval-after-load 'evil
+     (evil-define-key 'normal bibtex-mode-map
+       "K" 'sync0-bibtex-previous-key
+       "J" 'sync0-bibtex-next-key))
+
+   ;; Define default fields.
+   (setq bibtex-BibTeX-entry-alist '(("Article" "Article in Journal"
+                                      ("author")
+                                      ("date")
+                                      ("title" "Title of the article (BibTeX converts it to lowercase)")
+                                      ("subtitle" "Title of the article (BibTeX converts it to lowercase)")
+                                      ("journaltitle")
+                                      ("journalsubtitle")
+                                      ("volume" "Volume of the journal")
+                                      ("number" "Number of the journal (only allowed if entry contains volume)")
+                                      ("issue" "Issue in the journal")
+                                      ("pages" "Pages in the journal")
+                                      ("url" "Pages in the journal")
+                                      ("urldate" "Pages in the journal")
+                                      ("doi" "Pages in the journal")
+                                      ("library" "Pages in the journal")
+                                      ("language" "Pages in the journal")
+                                      ("langid" "Pages in the journal")
+                                      ("langidopts" "Pages in the journal")
+                                      ("file" "Pages in the journal")
+                                      ("addendum" "Pages in the journal")
+                                      ("keywords"))
+                                     ("InProceedings" "Article in Conference Proceedings"
+                                      ("author")
+                                      ("date")
+                                      ("title" "Title of the article (BibTeX converts it to lowercase)")
+                                      ("subtitle" "Title of the article (BibTeX converts it to lowercase)")
+                                      ("crossref")
+                                      ("booktitle" "Name of the conference proceedings")
+                                      ("booksubtitle" "Name of the conference proceedings")
+                                      ("organization")
+                                      ("eventdate")
+                                      ("eventtitle")
+                                      ("venue")
+                                      ("series")
+                                      ("volume" "Volume of the conference proceedings in the series")
+                                      ("number" "Number of the conference proceedings in a small series (overwritten by volume)")
+                                      ("pages" "Pages in the conference proceedings")
+                                      ("edition" "Pages in the conference proceedings")
+                                      ("publisher" "Publishing company, its location")
+                                      ("editor" "Publishing company, its location")
+                                      ("translator" "Publishing company, its location")
+                                      ("location" "Publishing company, its location")
+                                      ("url" "Publishing company, its location")
+                                      ("urldate" "Publishing company, its location")
+                                      ("doi" "Pages in the journal")
+                                      ("library" "Pages in the journal")
+                                      ("language" "Pages in the journal")
+                                      ("langid" "Pages in the journal")
+                                      ("langidopts" "Pages in the journal")
+                                      ("file" "Pages in the journal")
+                                      ("addendum")
+                                      ("keywords"))
+                                     ("InCollection" "Article in a Collection"
+                                      (("author")
+                                       ("title" "Title of the article (BibTeX converts it to lowercase)"))
+                                      (("subtitle" "Title of the article (BibTeX converts it to lowercase)")
+                                       ("date")
+                                       ("crossref" "Title of the article (BibTeX converts it to lowercase)")
+                                       ("booktitle" "Name of the conference proceedings")
+                                       ("booksubtitle" "Name of the conference proceedings")
+                                       ("series")
+                                       ("volume" "Volume of the conference proceedings in the series")
+                                       ("number" "Number of the conference proceedings in a small series (overwritten by volume)")
+                                       ("chapter" "Number of the conference proceedings in a small series (overwritten by volume)")
+                                       ("pages" "Pages in the conference proceedings")
+                                       ("edition" "Publishing company, its location")
+                                       ("publisher" "Publishing company, its location")
+                                       ("editor" "Publishing company, its location")
+                                       ("translator" "Publishing company, its location")
+                                       ("location" "Publishing company, its location")
+                                       ("url" "Publishing company, its location")
+                                       ("urldate" "Publishing company, its location")
+                                       ("doi" "Pages in the journal")
+                                       ("library" "Pages in the journal")
+                                       ("language" "Pages in the journal")
+                                       ("langid" "Pages in the journal")
+                                       ("langidopts" "Pages in the journal")
+                                       ("file" "Pages in the journal")
+                                       ("addendum")
+                                       ("keywords")))
+                                     ("InBook" "Chapter or Pages in a Book"
+                                      (("title" "Title of the article (BibTeX converts it to lowercase)"))
+                                      (("author")
+                                       ("subtitle" "Title of the article (BibTeX converts it to lowercase)")
+                                       ("date")
+                                       ("origdate")
+                                       ("origtitle")
+                                       ("crossref" "Title of the article (BibTeX converts it to lowercase)")
+                                       ("booktitle" "Name of the conference proceedings")
+                                       ("booksubtitle" "Name of the conference proceedings")
+                                       ("series")
+                                       ("volume" "Volume of the conference proceedings in the series")
+                                       ("number" "Number of the conference proceedings in a small series (overwritten by volume)")
+                                       ("chapter" "Number of the conference proceedings in a small series (overwritten by volume)")
+                                       ("pages" "Pages in the conference proceedings")
+                                       ("edition" "Publishing company, its location")
+                                       ("publisher" "Publishing company, its location")
+                                       ("editor" "Publishing company, its location")
+                                       ("translator" "Publishing company, its location")
+                                       ("location" "Publishing company, its location")
+                                       ("url" "Publishing company, its location")
+                                       ("urldate" "Publishing company, its location")
+                                       ("doi" "Pages in the journal")
+                                       ("library" "Pages in the journal")
+                                       ("language" "Pages in the journal")
+                                       ("langid" "Pages in the journal")
+                                       ("langidopts" "Pages in the journal")
+                                       ("file" "Pages in the journal")
+                                       ("addendum")
+                                       ("keywords")))
+                                     ("Proceedings" "Conference Proceedings"
+                                      ("title" "Title of the conference proceedings")
+                                      ("date")
+                                      nil
+                                      ("booktitle" "Title of the proceedings for cross references")
+                                      ("editor")
+                                      ("volume" "Volume of the conference proceedings in the series")
+                                      ("number" "Number of the conference proceedings in a small series (overwritten by volume)")
+                                      ("series" "Series in which the conference proceedings appeared")
+                                      ("address")
+                                      ("month")
+                                      ("organization" "Sponsoring organization of the conference")
+                                      ("publisher" "Publishing company, its location")
+                                      ("note"))
+                                     ("Book" "Book"
+                                      ("author")
+                                      ("date")
+                                      ("origdate")
+                                      ("origtitle")
+                                      ("title" "Title of the article (BibTeX converts it to lowercase)")
+                                      ("subtitle" "Title of the article (BibTeX converts it to lowercase)")
+                                      ("booktitle" "Name of the conference proceedings")
+                                      ("booksubtitle" "Name of the conference proceedings")
+                                      ("series")
+                                      ("volume" "Volume of the conference proceedings in the series")
+                                      ("number" "Number of the conference proceedings in a small series (overwritten by volume)")
+                                      ("edition" "Publishing company, its location")
+                                      ("publisher" "Publishing company, its location")
+                                      ("editor" "Publishing company, its location")
+                                      ("translator" "Publishing company, its location")
+                                      ("location" "Publishing company, its location")
+                                      ("url" "Publishing company, its location")
+                                      ("urldate" "Publishing company, its location")
+                                      ("doi" "Pages in the journal")
+                                      ("library" "Pages in the journal")
+                                      ("isbn" "Pages in the journal")
+                                      ("origlanguage" "Pages in the journal")
+                                      ("language" "Pages in the journal")
+                                      ("langid" "Pages in the journal")
+                                      ("langidopts" "Pages in the journal")
+                                      ("file" "Pages in the journal")
+                                      ("addendum")
+                                      ("keywords"))
+                                     ("Unpublished" "Unpublished"
+                                      ("author")
+                                      ("date")
+                                      ("title" "Title of the article (BibTeX converts it to lowercase)")
+                                      ("subtitle" "Title of the article (BibTeX converts it to lowercase)")
+                                      ("type" "Title of the article (BibTeX converts it to lowercase)")
+                                      ("eventdate" "Title of the article (BibTeX converts it to lowercase)")
+                                      ("eventtitle" "Title of the article (BibTeX converts it to lowercase)")
+                                      ("venue" "Title of the article (BibTeX converts it to lowercase)")
+                                      ("location" "Title of the article (BibTeX converts it to lowercase)")
+                                      ("url" "Publishing company, its location")
+                                      ("urldate" "Publishing company, its location")
+                                      ("doi" "Pages in the journal")
+                                      ("library" "Pages in the journal")
+                                      ("origlanguage" "Pages in the journal")
+                                      ("language" "Pages in the journal")
+                                      ("langid" "Pages in the journal")
+                                      ("langidopts" "Pages in the journal")
+                                      ("file" "Pages in the journal")
+                                      ("addendum")
+                                      ("keywords"))
+                                     ("Misc" "Miscellaneous" nil nil
+                                      (("title" "Title of the article (BibTeX converts it to lowercase)"))
+                                      (("author")
+                                       ("date")
+                                       ("subtitle" "Title of the article (BibTeX converts it to lowercase)")
+                                       ("organization" "Title of the article (BibTeX converts it to lowercase)")
+                                       ("type" "Title of the article (BibTeX converts it to lowercase)")
+                                       ("version" "Title of the article (BibTeX converts it to lowercase)")
+                                       ("location" "Title of the article (BibTeX converts it to lowercase)")
+                                       ("url" "Publishing company, its location")
+                                       ("urldate" "Publishing company, its location")
+                                       ("doi" "Pages in the journal")
+                                       ("library" "Pages in the journal")
+                                       ("origlanguage" "Pages in the journal")
+                                       ("language" "Pages in the journal")
+                                       ("langid" "Pages in the journal")
+                                       ("langidopts" "Pages in the journal")
+                                       ("file" "Pages in the journal")
+                                       ("addendum")
+                                       ("keywords")))))
+
+
+   (setq bibtex-biblatex-entry-alist '(("Article" "Article in Journal"
+ (("author")
+  ("title")
+  ("journaltitle")
+  ;; ("year" nil nil 0)
+  ("date" nil nil 0))
+ nil
+ (("translator")
+  ("annotator")
+  ("commentator")
+  ("subtitle")
+  ("titleaddon")
+  ("editor")
+  ("editora")
+  ("editorb")
+  ("editorc")
+  ("journalsubtitle")
+  ("issuetitle")
+  ("issuesubtitle")
+  ("language")
+  ("origlanguage")
+  ("series")
+  ("volume")
+  ("number")
+  ("eid")
+  ("issue")
+  ("month")
+  ("pages")
+  ("version")
+  ("note")
+  ("issn")
+  ("addendum")
+  ("pubstate")
+  ("doi")
+  ("eprint")
+  ("eprintclass")
+  ("eprinttype")
+  ("url")
+  ("urldate")))
+("Book" "Single-Volume Book"
+ (("author")
+  ("title")
+  ;; ("year" nil nil 0)
+  ("date" nil nil 0))
+ nil
+ (("editor")
+  ("editora")
+  ("editorb")
+  ("editorc")
+  ("translator")
+  ("annotator")
+  ("commentator")
+  ("introduction")
+  ("foreword")
+  ("afterword")
+  ("subtitle")
+  ("titleaddon")
+  ("maintitle")
+  ("mainsubtitle")
+  ("maintitleaddon")
+  ("language")
+  ("origlanguage")
+  ("volume")
+  ("part")
+  ("edition")
+  ("volumes")
+  ("series")
+  ("number")
+  ("note")
+  ("publisher")
+  ("location")
+  ("isbn")
+  ("chapter")
+  ("pages")
+  ("pagetotal")
+  ("addendum")
+  ("pubstate")
+  ("doi")
+  ("eprint")
+  ("eprintclass")
+  ("eprinttype")
+  ("url")
+  ("urldate")))
+("MVBook" "Multi-Volume Book"
+ (("author")
+  ("title")
+  ;; ("year" nil nil 0)
+  ("date" nil nil 0))
+ nil
+ (("editor")
+  ("editora")
+  ("editorb")
+  ("editorc")
+  ("translator")
+  ("annotator")
+  ("commentator")
+  ("introduction")
+  ("foreword")
+  ("afterword")
+  ("subtitle")
+  ("titleaddon")
+  ("language")
+  ("origlanguage")
+  ("edition")
+  ("volumes")
+  ("series")
+  ("number")
+  ("note")
+  ("publisher")
+  ("location")
+  ("isbn")
+  ("pagetotal")
+  ("addendum")
+  ("pubstate")
+  ("doi")
+  ("eprint")
+  ("eprintclass")
+  ("eprinttype")
+  ("url")
+  ("urldate")))
+("InBook" "Chapter or Pages in a Book"
+ (("title")
+  ;; ("year" nil nil 0)
+  ("date" nil nil 0))
+ (("author")
+  ("booktitle"))
+ (("bookauthor")
+  ("editor")
+  ("editora")
+  ("editorb")
+  ("editorc")
+  ("translator")
+  ("annotator")
+  ("commentator")
+  ("introduction")
+  ("foreword")
+  ("afterword")
+  ("subtitle")
+  ("titleaddon")
+  ("maintitle")
+  ("mainsubtitle")
+  ("maintitleaddon")
+  ("booksubtitle")
+  ("booktitleaddon")
+  ("language")
+  ("origlanguage")
+  ("volume")
+  ("part")
+  ("edition")
+  ("volumes")
+  ("series")
+  ("number")
+  ("note")
+  ("publisher")
+  ("location")
+  ("isbn")
+  ("chapter")
+  ("pages")
+  ("addendum")
+  ("pubstate")
+  ("doi")
+  ("eprint")
+  ("eprintclass")
+  ("eprinttype")
+  ("url")
+  ("urldate")))
+("BookInBook" "Book in Collection"
+ (("title")
+  ;; ("year" nil nil 0)
+  ("date" nil nil 0))
+ (("author")
+  ("booktitle"))
+ (("bookauthor")
+  ("editor")
+  ("editora")
+  ("editorb")
+  ("editorc")
+  ("translator")
+  ("annotator")
+  ("commentator")
+  ("introduction")
+  ("foreword")
+  ("afterword")
+  ("subtitle")
+  ("titleaddon")
+  ("maintitle")
+  ("mainsubtitle")
+  ("maintitleaddon")
+  ("booksubtitle")
+  ("booktitleaddon")
+  ("language")
+  ("origlanguage")
+  ("volume")
+  ("part")
+  ("edition")
+  ("volumes")
+  ("series")
+  ("number")
+  ("note")
+  ("publisher")
+  ("location")
+  ("isbn")
+  ("chapter")
+  ("pages")
+  ("addendum")
+  ("pubstate")
+  ("doi")
+  ("eprint")
+  ("eprintclass")
+  ("eprinttype")
+  ("url")
+  ("urldate")))
+("SuppBook" "Supplemental Material in a Book"
+ (("title")
+  ;; ("year" nil nil 0)
+  ("date" nil nil 0))
+ (("author")
+  ("booktitle"))
+ (("bookauthor")
+  ("editor")
+  ("editora")
+  ("editorb")
+  ("editorc")
+  ("translator")
+  ("annotator")
+  ("commentator")
+  ("introduction")
+  ("foreword")
+  ("afterword")
+  ("subtitle")
+  ("titleaddon")
+  ("maintitle")
+  ("mainsubtitle")
+  ("maintitleaddon")
+  ("booksubtitle")
+  ("booktitleaddon")
+  ("language")
+  ("origlanguage")
+  ("volume")
+  ("part")
+  ("edition")
+  ("volumes")
+  ("series")
+  ("number")
+  ("note")
+  ("publisher")
+  ("location")
+  ("isbn")
+  ("chapter")
+  ("pages")
+  ("addendum")
+  ("pubstate")
+  ("doi")
+  ("eprint")
+  ("eprintclass")
+  ("eprinttype")
+  ("url")
+  ("urldate")))
+("Booklet" "Booklet (Bound, but no Publisher)"
+ (("author" nil nil 0)
+  ("editor" nil nil 0)
+  ("title")
+  ;; ("year" nil nil 1)
+  ("date" nil nil 1))
+ nil
+ (("subtitle")
+  ("titleaddon")
+  ("language")
+  ("howpublished")
+  ("type")
+  ("note")
+  ("location")
+  ("chapter")
+  ("pages")
+  ("pagetotal")
+  ("addendum")
+  ("pubstate")
+  ("doi")
+  ("eprint")
+  ("eprintclass")
+  ("eprinttype")
+  ("url")
+  ("urldate")))
+("Collection" "Single-Volume Collection"
+ (("editor")
+  ("title")
+  ;; ("year" nil nil 0)
+  ("date" nil nil 0))
+ nil
+ (("editora")
+  ("editorb")
+  ("editorc")
+  ("translator")
+  ("annotator")
+  ("commentator")
+  ("introduction")
+  ("foreword")
+  ("afterword")
+  ("subtitle")
+  ("titleaddon")
+  ("maintitle")
+  ("mainsubtitle")
+  ("maintitleaddon")
+  ("language")
+  ("origlanguage")
+  ("volume")
+  ("part")
+  ("edition")
+  ("volumes")
+  ("series")
+  ("number")
+  ("note")
+  ("publisher")
+  ("location")
+  ("isbn")
+  ("chapter")
+  ("pages")
+  ("pagetotal")
+  ("addendum")
+  ("pubstate")
+  ("doi")
+  ("eprint")
+  ("eprintclass")
+  ("eprinttype")
+  ("url")
+  ("urldate")))
+("MVCollection" "Multi-Volume Collection"
+ (("editor")
+  ("title")
+  ;; ("year" nil nil 0)
+  ("date" nil nil 0))
+ nil
+ (("editora")
+  ("editorb")
+  ("editorc")
+  ("translator")
+  ("annotator")
+  ("commentator")
+  ("introduction")
+  ("foreword")
+  ("afterword")
+  ("subtitle")
+  ("titleaddon")
+  ("language")
+  ("origlanguage")
+  ("edition")
+  ("volumes")
+  ("series")
+  ("number")
+  ("note")
+  ("publisher")
+  ("location")
+  ("isbn")
+  ("pagetotal")
+  ("addendum")
+  ("pubstate")
+  ("doi")
+  ("eprint")
+  ("eprintclass")
+  ("eprinttype")
+  ("url")
+  ("urldate")))
+("InCollection" "Article in a Collection"
+ (("author")
+  ("title")
+  ;; ("year" nil nil 0)
+  ("date" nil nil 0))
+ (("booktitle"))
+ (("editor")
+  ("editora")
+  ("editorb")
+  ("editorc")
+  ("translator")
+  ("annotator")
+  ("commentator")
+  ("introduction")
+  ("foreword")
+  ("afterword")
+  ("subtitle")
+  ("titleaddon")
+  ("maintitle")
+  ("mainsubtitle")
+  ("maintitleaddon")
+  ("booksubtitle")
+  ("booktitleaddon")
+  ("language")
+  ("origlanguage")
+  ("volume")
+  ("part")
+  ("edition")
+  ("volumes")
+  ("series")
+  ("number")
+  ("note")
+  ("publisher")
+  ("location")
+  ("isbn")
+  ("chapter")
+  ("pages")
+  ("addendum")
+  ("pubstate")
+  ("doi")
+  ("eprint")
+  ("eprintclass")
+  ("eprinttype")
+  ("url")
+  ("urldate")))
+("SuppCollection" "Supplemental Material in a Collection"
+ (("author")
+  ("editor")
+  ("title")
+  ;; ("year" nil nil 0)
+  ("date" nil nil 0))
+ (("booktitle"))
+ (("editora")
+  ("editorb")
+  ("editorc")
+  ("translator")
+  ("annotator")
+  ("commentator")
+  ("introduction")
+  ("foreword")
+  ("afterword")
+  ("subtitle")
+  ("titleaddon")
+  ("maintitle")
+  ("mainsubtitle")
+  ("maintitleaddon")
+  ("booksubtitle")
+  ("booktitleaddon")
+  ("language")
+  ("origlanguage")
+  ("volume")
+  ("part")
+  ("edition")
+  ("volumes")
+  ("series")
+  ("number")
+  ("note")
+  ("publisher")
+  ("location")
+  ("isbn")
+  ("chapter")
+  ("pages")
+  ("addendum")
+  ("pubstate")
+  ("doi")
+  ("eprint")
+  ("eprintclass")
+  ("eprinttype")
+  ("url")
+  ("urldate")))
+("Manual" "Technical Manual"
+ (("author" nil nil 0)
+  ("editor" nil nil 0)
+  ("title")
+  ;; ("year" nil nil 1)
+  ("date" nil nil 1))
+ nil
+ (("subtitle")
+  ("titleaddon")
+  ("language")
+  ("edition")
+  ("type")
+  ("series")
+  ("number")
+  ("version")
+  ("note")
+  ("organization")
+  ("publisher")
+  ("location")
+  ("isbn")
+  ("chapter")
+  ("pages")
+  ("pagetotal")
+  ("addendum")
+  ("pubstate")
+  ("doi")
+  ("eprint")
+  ("eprintclass")
+  ("eprinttype")
+  ("url")
+  ("urldate")))
+("Misc" "Miscellaneous"
+ (("author" nil nil 0)
+  ("editor" nil nil 0)
+  ("title")
+  ;; ("year" nil nil 1)
+  ("date" nil nil 1))
+ nil
+ (("subtitle")
+  ("titleaddon")
+  ("language")
+  ("howpublished")
+  ("type")
+  ("version")
+  ("note")
+  ("organization")
+  ("location")
+  ("date")
+  ("month")
+  ("year")
+  ("addendum")
+  ("pubstate")
+  ("doi")
+  ("eprint")
+  ("eprintclass")
+  ("eprinttype")
+  ("url")
+  ("urldate")))
+("Online" "Online Resource"
+ (("author" nil nil 0)
+  ("editor" nil nil 0)
+  ("title")
+  ;; ("year" nil nil 1)
+  ("date" nil nil 1)
+  ("url"))
+ nil
+ (("subtitle")
+  ("titleaddon")
+  ("language")
+  ("version")
+  ("note")
+  ("organization")
+  ("date")
+  ("month")
+  ("year")
+  ("addendum")
+  ("pubstate")
+  ("urldate")))
+("Patent" "Patent"
+ (("author")
+  ("title")
+  ("number")
+  ;; ("year" nil nil 0)
+  ("date" nil nil 0))
+ nil
+ (("holder")
+  ("subtitle")
+  ("titleaddon")
+  ("type")
+  ("version")
+  ("location")
+  ("note")
+  ("date")
+  ("month")
+  ("year")
+  ("addendum")
+  ("pubstate")
+  ("doi")
+  ("eprint")
+  ("eprintclass")
+  ("eprinttype")
+  ("url")
+  ("urldate")))
+("Periodical" "Complete Issue of a Periodical"
+ (("editor")
+  ("title")
+  ;; ("year" nil nil 0)
+  ("date" nil nil 0))
+ nil
+ (("editora")
+  ("editorb")
+  ("editorc")
+  ("subtitle")
+  ("issuetitle")
+  ("issuesubtitle")
+  ("language")
+  ("series")
+  ("volume")
+  ("number")
+  ("issue")
+  ("date")
+  ("month")
+  ("year")
+  ("note")
+  ("issn")
+  ("addendum")
+  ("pubstate")
+  ("doi")
+  ("eprint")
+  ("eprintclass")
+  ("eprinttype")
+  ("url")
+  ("urldate")))
+("SuppPeriodical" "Supplemental Material in a Periodical"
+ (("author")
+  ("title")
+  ("journaltitle")
+  ;; ("year" nil nil 0)
+  ("date" nil nil 0))
+ nil
+ (("translator")
+  ("annotator")
+  ("commentator")
+  ("subtitle")
+  ("titleaddon")
+  ("editor")
+  ("editora")
+  ("editorb")
+  ("editorc")
+  ("journalsubtitle")
+  ("issuetitle")
+  ("issuesubtitle")
+  ("language")
+  ("origlanguage")
+  ("series")
+  ("volume")
+  ("number")
+  ("eid")
+  ("issue")
+  ("month")
+  ("pages")
+  ("version")
+  ("note")
+  ("issn")
+  ("addendum")
+  ("pubstate")
+  ("doi")
+  ("eprint")
+  ("eprintclass")
+  ("eprinttype")
+  ("url")
+  ("urldate")))
+("Proceedings" "Single-Volume Conference Proceedings"
+ (("title")
+  ;; ("year" nil nil 0)
+  ("date" nil nil 0))
+ nil
+ (("subtitle")
+  ("titleaddon")
+  ("maintitle")
+  ("mainsubtitle")
+  ("maintitleaddon")
+  ("eventtitle")
+  ("eventdate")
+  ("venue")
+  ("language")
+  ("editor")
+  ("volume")
+  ("part")
+  ("volumes")
+  ("series")
+  ("number")
+  ("note")
+  ("organization")
+  ("publisher")
+  ("location")
+  ("month")
+  ("isbn")
+  ("chapter")
+  ("pages")
+  ("pagetotal")
+  ("addendum")
+  ("pubstate")
+  ("doi")
+  ("eprint")
+  ("eprintclass")
+  ("eprinttype")
+  ("url")
+  ("urldate")))
+("MVProceedings" "Multi-Volume Conference Proceedings"
+ (("editor")
+  ("title")
+  ;; ("year" nil nil 0)
+  ("date" nil nil 0))
+ nil
+ (("subtitle")
+  ("titleaddon")
+  ("eventtitle")
+  ("eventdate")
+  ("venue")
+  ("language")
+  ("volumes")
+  ("series")
+  ("number")
+  ("note")
+  ("organization")
+  ("publisher")
+  ("location")
+  ("month")
+  ("isbn")
+  ("pagetotal")
+  ("addendum")
+  ("pubstate")
+  ("doi")
+  ("eprint")
+  ("eprintclass")
+  ("eprinttype")
+  ("url")
+  ("urldate")))
+("InProceedings" "Article in Conference Proceedings"
+ (("author")
+  ("title")
+  ;; ("year" nil nil 0)
+  ("date" nil nil 0))
+ (("booktitle"))
+ (("editor")
+  ("subtitle")
+  ("titleaddon")
+  ("maintitle")
+  ("mainsubtitle")
+  ("maintitleaddon")
+  ("booksubtitle")
+  ("booktitleaddon")
+  ("eventtitle")
+  ("eventdate")
+  ("venue")
+  ("language")
+  ("volume")
+  ("part")
+  ("volumes")
+  ("series")
+  ("number")
+  ("note")
+  ("organization")
+  ("publisher")
+  ("location")
+  ("month")
+  ("isbn")
+  ("chapter")
+  ("pages")
+  ("addendum")
+  ("pubstate")
+  ("doi")
+  ("eprint")
+  ("eprintclass")
+  ("eprinttype")
+  ("url")
+  ("urldate")))
+("Reference" "Single-Volume Work of Reference"
+ (("editor")
+  ("title")
+  ;; ("year" nil nil 0)
+  ("date" nil nil 0))
+ nil
+ (("editora")
+  ("editorb")
+  ("editorc")
+  ("translator")
+  ("annotator")
+  ("commentator")
+  ("introduction")
+  ("foreword")
+  ("afterword")
+  ("subtitle")
+  ("titleaddon")
+  ("maintitle")
+  ("mainsubtitle")
+  ("maintitleaddon")
+  ("language")
+  ("origlanguage")
+  ("volume")
+  ("part")
+  ("edition")
+  ("volumes")
+  ("series")
+  ("number")
+  ("note")
+  ("publisher")
+  ("location")
+  ("isbn")
+  ("chapter")
+  ("pages")
+  ("pagetotal")
+  ("addendum")
+  ("pubstate")
+  ("doi")
+  ("eprint")
+  ("eprintclass")
+  ("eprinttype")
+  ("url")
+  ("urldate")))
+("MVReference" "Multi-Volume Work of Reference"
+ (("editor")
+  ("title")
+  ;; ("year" nil nil 0)
+  ("date" nil nil 0))
+ nil
+ (("editora")
+  ("editorb")
+  ("editorc")
+  ("translator")
+  ("annotator")
+  ("commentator")
+  ("introduction")
+  ("foreword")
+  ("afterword")
+  ("subtitle")
+  ("titleaddon")
+  ("language")
+  ("origlanguage")
+  ("edition")
+  ("volumes")
+  ("series")
+  ("number")
+  ("note")
+  ("publisher")
+  ("location")
+  ("isbn")
+  ("pagetotal")
+  ("addendum")
+  ("pubstate")
+  ("doi")
+  ("eprint")
+  ("eprintclass")
+  ("eprinttype")
+  ("url")
+  ("urldate")))
+("InReference" "Article in a Work of Reference"
+ (("author")
+  ("editor")
+  ("title")
+  ;; ("year" nil nil 0)
+  ("date" nil nil 0))
+ (("booktitle"))
+ (("editora")
+  ("editorb")
+  ("editorc")
+  ("translator")
+  ("annotator")
+  ("commentator")
+  ("introduction")
+  ("foreword")
+  ("afterword")
+  ("subtitle")
+  ("titleaddon")
+  ("maintitle")
+  ("mainsubtitle")
+  ("maintitleaddon")
+  ("booksubtitle")
+  ("booktitleaddon")
+  ("language")
+  ("origlanguage")
+  ("volume")
+  ("part")
+  ("edition")
+  ("volumes")
+  ("series")
+  ("number")
+  ("note")
+  ("publisher")
+  ("location")
+  ("isbn")
+  ("chapter")
+  ("pages")
+  ("addendum")
+  ("pubstate")
+  ("doi")
+  ("eprint")
+  ("eprintclass")
+  ("eprinttype")
+  ("url")
+  ("urldate")))
+("Report" "Technical or Research Report"
+ (("author")
+  ("title")
+  ("type")
+  ("institution")
+  ;; ("year" nil nil 0)
+  ("date" nil nil 0))
+ nil
+ (("subtitle")
+  ("titleaddon")
+  ("language")
+  ("number")
+  ("version")
+  ("note")
+  ("location")
+  ("month")
+  ("isrn")
+  ("chapter")
+  ("pages")
+  ("pagetotal")
+  ("addendum")
+  ("pubstate")
+  ("doi")
+  ("eprint")
+  ("eprintclass")
+  ("eprinttype")
+  ("url")
+  ("urldate")))
+("Thesis" "PhD. or Master's Thesis"
+ (("author")
+  ("title")
+  ("type")
+  ("institution")
+  ;; ("year" nil nil 0)
+  ("date" nil nil 0))
+ nil
+ (("subtitle")
+  ("titleaddon")
+  ("language")
+  ("note")
+  ("location")
+  ("month")
+  ("isbn")
+  ("chapter")
+  ("pages")
+  ("pagetotal")
+  ("addendum")
+  ("pubstate")
+  ("doi")
+  ("eprint")
+  ("eprintclass")
+  ("eprinttype")
+  ("url")
+  ("urldate")))
+("Unpublished" "Unpublished"
+ (("author")
+  ("title")
+  ;; ("year" nil nil 0)
+  ("date" nil nil 0))
+ nil
+ (("subtitle")
+  ("titleaddon")
+  ("language")
+  ("howpublished")
+  ("note")
+  ("location")
+  ("isbn")
+  ("date")
+  ("month")
+  ("year")
+  ("addendum")
+  ("pubstate")
+  ("url")
+  ("urldate")))))
+
+                                       )
 
 (use-package pdf-tools
   ;; :straight (pdf-tools :type git :host github :repo "politza/pdf-tools") 
@@ -5223,6 +6497,8 @@ for parsing BibTeX keys.  If parsing fails, try to set this variable to nil."
     (interactive)
     (setq pdf-view-midnight-colors '("#C0C5CE" . "#4F5B66" )) ; amber
     (pdf-view-midnight-minor-mode))
+
+  (unbind-key "<SPC>" pdf-view-mode-map)
 
   :bind ((:map pdf-view-mode-map
                ("C-s" . isearch-forward)

@@ -49,6 +49,7 @@
           (if (not prefix)
               (insert "")))))
 
+
     (defhydra sync0-hydra-org-journal (:color amaranth :hint nil :exit t)
       "
    ^Journaling functions^
@@ -281,7 +282,7 @@
               ;; part) has schedules take precedence over deadelines based on
               ;; the assumption that headlines are scheduled so as to be
               ;; accomplished before the deadline. Therefore, although
-              ;; deadlines coudl occur before schedules, displaying this
+              ;; deadlines could occur before schedules, displaying this
               ;; information in the org-agenda would not offer any useful
               ;; information for planning purpose. In such cases, for real
               ;; tasks the headline would be eventually re-scheduled so as to
@@ -729,15 +730,15 @@
                   nil)))
 
             ;; org-agenda configuration
-             (setq org-agenda-files (list "~/Dropbox/org/todo/"))
+             (setq org-agenda-files (list "~/Dropbox/org/projects/todo/"))
 
-             (let ((my-agenda-files (list "~/Dropbox/org/etc/Gcal.org"
-                                          "~/Dropbox/org/etc/Events.org"
-                                          "~/Dropbox/org/etc/Classes.org"
-                                          "~/Dropbox/org/messages/messages.org"
-                                          ;; "~/Dropbox/org/etc/Habits.org"
-                                           ;; "~/Dropbox/org/etc/todo.org"
-                                          "~/Dropbox/org/etc/menage.org")))
+             (let ((my-agenda-files (list "~/Dropbox/org/archived/etc/Gcal.org"
+                                          "~/Dropbox/org/archived/etc/Events.org"
+                                          "~/Dropbox/org/archived/etc/Classes.org"
+                                          "~/Dropbox/org/projects/messages/messages.org"
+                                          ;; "~/Dropbox/org/archived/etc/Habits.org"
+                                           ;; "~/Dropbox/org/archived/etc/todo.org"
+                                          "~/Dropbox/org/archived/etc/menage.org")))
              (setq org-agenda-files (append org-agenda-files my-agenda-files)))
 
         ;; This setup prevents slowing down agenda parsing. 
@@ -1025,12 +1026,47 @@
               (org-roam-completion-system 'default)
               (org-roam-link-file-path-type 'absolute)
               (org-roam-dailies-directory "journal/")
-              (org-roam-tag-sources '(prop last-directory))
+              (org-roam-tag-sources '(prop all-directories))
+              ;; (org-roam-tag-sources '(prop last-directory))
               (org-roam-completion-everywhere t)
+              (org-roam-title-sources '(alias title))
               (org-roam-index-file "~/Dropbox/org/index.org")
               (org-roam-graph-exclude-matcher '("journal" "fiches" "etc" "trash" "todo" "inbox" "projects" "archived" "references" "drafts" "spontaneous"))
 
         :config
+(defvar sync0-zettel-link-counter 0
+  "The number of newly created zettels for this Emacs session.")
+
+;;; Function to replace all org links with their description.
+;;; Taken from https://dev.to/mostalive/how-to-replace-an-org-mode-link-by-its-description-c70
+;;; This is useful when exporting my documents or
+;;; when sending them somebody. 
+
+ (defun sync0-org-replace-link-by-description ()
+      "Remove the link part of an org-mode link at point and keep
+    only the description"
+      (interactive)
+      (let ((elem (org-element-context)))
+        (if (eq (car elem) 'link)
+            (let* ((content-begin (org-element-property :contents-begin elem))
+                   (content-end  (org-element-property :contents-end elem))
+                   (link-begin (org-element-property :begin elem))
+                   (link-end (org-element-property :end elem)))
+              (if (and content-begin content-end)
+                  (let ((content (buffer-substring-no-properties content-begin content-end)))
+                    (delete-region link-begin (- link-end 1))
+                    (insert content)))))))
+
+ (defun sync0-org-replace-all-links-by-descriptions ()
+      "Remove the link part of an org-mode link at point and keep
+    only the description"
+      (interactive)
+(save-excursion
+(goto-char (point-min))
+ (replace-regexp  "\\[\\[file:[[:print:]]+\\.org.*\\]\\[\\([[:print:]]+\\)\\]\\]" "\\1")))
+;; (replace-regexp  "\\[\\[.*\\]\\[\\(.*\\)\\]\\]" "\\2")))
+
+
         (setq org-roam-capture-templates '( 
          ("n" "Numéroté" plain (function org-roam--capture-get-point)
           "%?"
@@ -1041,7 +1077,7 @@
       (setq org-roam-capture-ref-templates
               '(("r" "ref" plain (function org-roam-capture--get-point)
                  "%?"
-                 :file-name "references/%<%Y%m%d%H%M%S>"
+                 :file-name "notes/references/%<%Y%m%d%H%M%S>"
                  :head "#+TITLE: \n#+ROAM_KEY: ${ref}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: websites %<%Y>\n\n"
                  :unnarrowed t)))
 
@@ -1054,6 +1090,43 @@
 
 (require 'org-journal)
 (require 'org-roam-protocol)                
+
+(defun sync0-org-roam-insert ()
+  (interactive)
+  (with-current-buffer
+      (find-file-noselect
+       (concat sync0-zettelkasten-directory 
+               (format-time-string "charts/productivity/%Y%m.org")))
+               (goto-char (point-min))
+    (let* ((date (format-time-string "%Y/%m/%d"))
+           (entry (concat "\n| " date " | 0 | 1 |"))
+           (second-blank
+            (concat "^| "
+                    date
+                    " |[[:blank:]]+[[:digit:]]+ |\\([[:blank:]]*\\)|$"))
+           (first-blank
+            (concat "^| "
+                    date                    
+                    " |[[:blank:]]+|[[:blank:]]+\\([[:digit:]]+\\) |$"))
+           (both-there
+            (concat "^| "
+                    date 
+                    " |[[:blank:]]+[[:digit:]]+ |[[:blank:]]+\\([[:digit:]]+\\) |$")))
+      (cond ((or
+              (re-search-forward first-blank nil t 1)
+              (re-search-forward both-there nil t 1))
+             (let* ((old-value (string-to-number
+                                (match-string-no-properties 1)))
+                    (new-value (number-to-string
+                                (1+ old-value))))
+               (replace-match new-value nil nil nil 1)))
+            ((re-search-forward second-blank nil t 1)
+             (replace-match " 1 " nil nil nil 1))
+            (t (progn 
+                   (goto-char (point-max))
+                   (insert entry))))))
+  (org-roam-insert))
+
 
 (defhydra sync0-hydra-org-roam-insert (:color blue :hint nil)
 "
@@ -1068,7 +1141,7 @@ plot _g_raph
 
 _q_uit
 "
-      ("i" org-roam-insert)
+      ("i" sync0-org-roam-insert)
       ("r" org-roam)
       ("b" org-roam-db-build-cache)
       ("g" org-roam-graph)
@@ -1083,7 +1156,7 @@ _q_uit
 
     (evil-leader/set-key
       "F" 'org-roam-find-file
-      "i" 'org-roam-insert
+      "i" 'sync0-org-roam-insert
       "I" 'sync0-hydra-org-roam-insert/body))
 
 #+END_SRC 
@@ -1106,17 +1179,18 @@ _q_uit
           (orb-file-field-extensions '("pdf"))
           ;; Use this to insert citation keys
           (orb-insert-link-description 'citekey)
+          (orb-insert-interface 'ivy-bibtex)
           (orb-note-actions-interface 'hydra)
       :config
 
     (setq orb-preformat-keywords
-          '("citekey" "title" "subtitle" "url" "author-or-editor" "keywords" "file"))
+          '("citekey" "title" "subtitle" "booktitle" "booksubtitle" "journaltitle" "url" "author-or-editor" "keywords" "file"))
 
       (setq orb-templates
             '(("r" "ref" plain (function org-roam-capture--get-point)
              ""
-               :file-name "references/${citekey}"
-               :head "#+TITLE: ${title}\n#+SUBTITLE: ${subtitle}\n#+AUTHOR: ${author-or-editor}\n#+ROAM_KEY: ${ref}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: ${citekey} references ${keywords}\n#+INTERLEAVE_PDF: ${file}"
+               :file-name "~/Dropbox/org/notes/references/${citekey}"
+               :head "#+TITLE: ${title}\n#+SUBTITLE: ${subtitle}\n#+AUTHOR: ${author-or-editor}\n#+JOURNAL_TITLE: ${journaltitle}\n#+BOOK_TITLE: ${booktitle}\n#+BOOK_SUBTITLE: ${booksubtitle}\n#+ROAM_KEY: cite:${citekey}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: ${citekey} \"${author-or-editor}\"\n#+INTERLEAVE_PDF: ${file}"
                :unnarrowed t))))
 #+END_SRC 
 
@@ -1142,315 +1216,471 @@ _q_uit
   #+END_SRC 
 
 * org-capture
-  #+BEGIN_SRC emacs-lisp
-                      (use-package org-capture 
-                       :straight nil
-                        :after (org evil-leader)
-                        :preface 
-                        (defun org-journal-find-location ()
-                          ;; Open today's journal, but specify a non-nil prefix argument in order to
-                          ;; inhibit inserting the heading; org-capture will insert the heading.
-                          (org-journal-new-entry t)
-                          ;; Position point on the journal's top-level heading so that org-capture
-                          ;; will add the new entry as a child entry.
-                          (goto-char (point-min)))
+#+BEGIN_SRC emacs-lisp
+        (use-package org-capture 
+          :straight nil
+          :after (org evil-leader)
+          :preface 
+          (defun org-journal-find-location ()
+            ;; Open today's journal, but specify a non-nil prefix argument in order to
+            ;; inhibit inserting the heading; org-capture will insert the heading.
+            (org-journal-new-entry t)
+            ;; Position point on the journal's top-level heading so that org-capture
+            ;; will add the new entry as a child entry.
+            (goto-char (point-min)))
 
-                        :custom
-                        (org-default-notes-file "~/Dropbox/etc/notes.org")
+          :custom
+          (org-default-notes-file "~/Dropbox/archived/etc/notes.org")
 
-                        :config 
-            (evil-leader/set-key
-              "c" 'org-capture)
+          :config 
+          (evil-leader/set-key "c" 'org-capture)
 
-            (add-hook 'org-capture-mode-hook 'evil-insert-state)
+          (add-hook 'org-capture-mode-hook 'evil-insert-state)
 
-            ;; The following two functions are necessary to replicate the functionality of org-roam into org-capture.
-            ;; https://emacs.stackexchange.com/questions/27620/orgmode-capturing-original-document-title
-            (defun sync0-org-get-file-title-keyword (file)
-              (let (title)
-                (when file
-                  (with-current-buffer
-                      (get-file-buffer file)
-                    (pcase (org-collect-keywords '("TITLE"))
-                      (`(("TITLE" . ,val))
-                       (setq title (car val)))))
-                  title)))
+          ;; The following two functions are necessary to replicate the functionality of org-roam into org-capture.
+          ;; https://emacs.stackexchange.com/questions/27620/orgmode-capturing-original-document-title
+          (defun sync0-org-get-file-title-keyword (file)
+            (let (title)
+              (when file
+                (with-current-buffer
+                    (get-file-buffer file)
+                  (pcase (org-collect-keywords '("TITLE"))
+                    (`(("TITLE" . ,val))
+                     (setq title (car val)))))
+                title)))
 
-        ;; Adapted from: 
-        ;; https://kitchingroup.cheme.cmu.edu/blog/2013/05/05/Getting-keyword-options-in-org-files/
-        (defun sync0-org-get-keyword (KEYWORD)
-          "get the value from a line like this
-        ,#+KEYWORD: value
-        in a file."
-          (let ((case-fold-search t)
-                (re (format "^#\\+%s:[ \t]+\\([^\t\n]+\\)" KEYWORD)))
-            (when  (save-excursion
+          ;; Adapted from: 
+          ;; https://kitchingroup.cheme.cmu.edu/blog/2013/05/05/Getting-keyword-options-in-org-files/
+          (defun sync0-org-get-keyword (KEYWORD)
+            "get the value from a line like
+                                                this #+KEYWORD: value in a file."
+            (let ((case-fold-search t)
+                  (re (format "^#\\+%s:[ \t]+\\([^\t\n]+\\)" KEYWORD)))
+              (when  (save-excursion
                        (or (re-search-forward re nil t)
                            (re-search-backward re nil t)))
-            (match-string-no-properties 1))))
+                (match-string-no-properties 1))))
 
-            (defun sync0-org-get-previous-heading-title (file)
-              (let (title)
-                (when file
-                  (with-current-buffer
-                      (get-file-buffer file)
-                       (setq title (nth 4 (org-heading-components))))
-                  title)))
+          (defun sync0-org-get-previous-heading-or-title (file)
+            (let (title)
+              (when file
+                (with-current-buffer
+                    (get-file-buffer file)
+                  (if (re-search-backward "^\\*+[ \t]+" nil t)
+                      (setq title (nth 4 (org-heading-components)))
+                    (pcase (org-collect-keywords '("TITLE"))
+                      (`(("TITLE" . ,val))
+                       (setq title (car val))))))
+                title)))
 
-            (defun sync0-org-get-previous-heading-or-title (file)
-              (let (title)
-                (when file
-                  (with-current-buffer
-                     (get-file-buffer file)
-                    (if (re-search-backward "^\\*+[ \t]+" nil t)
-                       (setq title (nth 4 (org-heading-components)))
-                       (pcase (org-collect-keywords '("TITLE"))
-                        (`(("TITLE" . ,val))
-                        (setq title (car val))))))
-                  title)))
+          (defun sync0-org-get-author-keyword (file)
+            (let (author)
+              (when file
+                (with-current-buffer
+                    (get-file-buffer file)
+                  (pcase (org-collect-keywords '("AUTHOR"))
+                    (`(("AUTHOR" . ,val))
+                     (setq author (car val)))))
+                author)))
 
-            (defun sync0-org-get-author-keyword (file)
-              (let (author)
-                (when file
-                  (with-current-buffer
-                      (get-file-buffer file)
-                    (pcase (org-collect-keywords '("AUTHOR"))
-                      (`(("AUTHOR" . ,val))
-                       (setq author (car val)))))
-                  author)))
+        (defun sync0-org-get-abbreviated-path (file)
+          (interactive)
+          (let (path)
+            (when file
+              (with-current-buffer
+                  (get-file-buffer file)
+                (setq path (abbreviate-file-name file))) path)))
 
-            (defun sync0-org-get-abbreviated-path (file)
+
+      (defun sync0-org-capture-zettel-path ()
+        "Output the path where the new zettel will be created"
+        (let* ((key (org-capture-get :key))
+              (filename (if (or (equal key "r") 
+                                 (equal key "w"))
+                             sync0-reference-filename
+                           (format-time-string "%Y%m%d%H%M%S")))
+               (filter (concat sync0-zettelkasten-directory
+                               (cond ((equal key "a")  "notes/annotations")
+                                     ((or (equal key "r")  
+                                          (equal key "w"))  "notes/references")
+                                     ((equal key "f")  "fiches")
+                                     ((equal key "p")  "projects")
+                                     ((equal key "t") "projects/todo")
+                                     (t ""))))
+               (path (if  (or (equal key "p")
+                              (equal key "f")
+                              (equal key "z"))
+                       (completing-read "Dossier de la fiche : "
+                                        (cons filter 
+                                              (f-directories filter
+                                                             (lambda (k) (not (string-match-p "\\.+" k))) t)))
+                         filter)))
+  ;; Add this zettel to the productivy chart
+  (with-current-buffer
+      (find-file-noselect
+       (concat sync0-zettelkasten-directory 
+               (format-time-string "charts/productivity/%Y%m.org")))
+                 (goto-char (point-min))
+    (let* ((date (format-time-string "%Y/%m/%d"))
+           (entry (concat "\n| " date " | 1 | 0 |"))
+           (second-exist
+            (concat "^| "
+                    date                    
+                    " |\\([[:blank:]]+\\)|[[:blank:]]+[[:digit:]]+ |$"))
+           (previous-value
+            (concat "^| " date " |[[:blank:]]+\\([[:digit:]]+\\) |[[:blank:]]+[[:digit:]]+ |$")))
+      (cond ((re-search-forward previous-value nil t 1)
+             (let* ((old-value (string-to-number
+                                (match-string-no-properties 1)))
+                    (new-value (number-to-string
+                                (1+ old-value))))
+               (replace-match new-value nil nil nil 1)))
+            ((re-search-forward second-exist nil t 1)
+             (replace-match " 1 " nil nil nil 1))
+            (t (progn
+                 (goto-char (point-max))
+                 (insert entry)))))
+;; second part
+                 (goto-char (point-min))
+                 (let* ((word
+                        (cond ((or (equal key "r") 
+                                   (equal key "w"))
+                               "Références")
+                              ((or (equal key "p") 
+                                   (equal key "t"))
+                               "Projets")
+                              ((equal key "f") 
+                               "Fiches")
+                              ((equal key "a") 
+                               "Annotations")
+                              (t 
+                               "Zettel")))
+                       (regex (concat "^| " word " [[:blank:]]+|[[:blank:]]+\\([[:digit:]]+\\) |")))
+  (if (re-search-forward regex nil t 1)
+             (let* ((old-value (string-to-number
+                                (match-string-no-properties 1)))
+                    (new-value (number-to-string
+                                (1+ old-value))))
+               (replace-match new-value nil nil nil 1))
+                 (goto-char (point-max))
+  (insert (concat "| " word "   |        1 |       0 |")))))
+  ;; output the file name and path
+          (concat (format "%s/%s.org" path filename))))
+
+
+      (defun sync0-org-capture-zettel-body ()
+        (let* ((key (org-capture-get :key))
+               (filter (concat sync0-zettelkasten-directory
+                               (cond ((equal key "a")  "notes/annotations")
+                                     ((or (equal key "r")  
+                                          (equal key "w"))  "notes/references")
+                                     ((equal key "f")  "fiches")
+                                     ((equal key "p")  "projects")
+                                     ((equal key "t") "projects/todo")
+                                     (t ""))))
+               (candidates  (if (equal key "z")
+                                  (directory-files-recursively filter ".org$" nil (or (lambda (k) (string-match-p "permanent" k))
+                                                                                                        (lambda (k) (string-match-p "inbox" k))
+                                                                                                        (lambda (k) (string-match-p "notes/annotations" k))))
+                                (f-files filter (lambda (k) (string-match-p ".org$" k)) t)))
+               (title (completing-read "Titre de la fiche : "
+                                         (mapcar  #'(lambda (x) (org-roam-db--get-title x)) candidates)
+                                         nil nil nil nil nil t))
+               (title-quotes (concat "\"" (downcase title) "\""))
+               (alias (when (equal key "f")
+                  (read-string "Alias : " nil nil nil t)))
+               (alias-quotes (when alias (concat "\"" (downcase alias) "\"")))
+               (subtitle (unless (equal key "f")
+                  (read-string "Sous-titre : " nil nil nil t)))
+               (buffer (buffer-file-name))     
+               (project (when (or (equal key "p")
+                                  (equal key "t"))
+                          (read-string "Projet : " nil nil nil t)))
+               (creation  (format-time-string "%Y/%m/%d")))
+  ;; define string of zettel
+          (concat
+           "#+TITLE: " title "\n"
+           (unless (or (null subtitle)
+                       (equal subtitle ""))
+             (concat "#+SUBTITLE: " subtitle "\n"))
+           (unless (or (null alias)
+                       (equal alias ""))
+             (concat "#+ROAM_ALIAS: " "\"" alias "\"\n"))
+           "#+CREATED: " creation "\n"
+           "#+DATE: " creation "\n"
+           (when (and (equal key "t")
+                      (not (equal project "")))
+             (concat "#+CATEGORY: " (upcase project)))
+  ;; add roam tags according to zettel type
+           "#+ROAM_TAGS: "
+           (cond ((equal key "a")
+               (concat sync0-zettelkasten-annotations-key " " sync0-current-month-downcase
+                       (format-time-string " %Y\n")))
+              ((or (equal key "p")
+                  (equal key "t"))
+               (concat project " " sync0-current-month-downcase
+                       (format-time-string " %Y\n")))
+              ((equal key "f")
+               (concat (if (equal alias "") title-quotes alias-quotes) " "  sync0-current-month-downcase
+                       (format-time-string " %Y\n")))
+             (t (concat sync0-current-month-downcase
+                     (format-time-string " %Y\n"))))
+           (when (equal key "t")
+             (concat "#+FILETAGS: :projects:todo:" project ":\n"))
+           "\n"
+           "Origin: [[file:" (sync0-org-get-abbreviated-path buffer)
+           "]["
+           (sync0-org-get-file-title-keyword buffer)
+           "]]\n\n"
+           (when (equal key "a")
+             (concat "Dans la page X de [[file:"
+             (sync0-org-get-abbreviated-path buffer)
+           "]["
+           (sync0-org-get-previous-heading-or-title buffer)
+           "]] "
+           (sync0-org-get-author-keyword buffer)
+           " ")))))
+
+        (defun sync0-org-capture-reference ()
+          (let* ((type (if (equal (org-capture-get :key) "w")
+                           "online"
+                         (completing-read "BibLaTex entry type: " sync0-biblatex-entry-types)))
+                 ;; (biblatex-entries (cdr (assoc type sync0-capture-biblatex-fields-two)))
+                 (filename 
+                  (completing-read "Citation key: " (mapcar #'(lambda (x) (cdr (assoc "=key=" x)))
+                                                             (bibtex-completion-candidates))))
+                 ;; (filename 
+                 ;;  (completing-read "Citation key: "
+                 ;;                            (let ((roam-bibtex-tags
+                 ;;                                   (cl-delete-if (lambda (k) (or (string-match-p "[[:blank:]]" k)
+                 ;;                                                                 (string-match-p "^[A-z-_]+$" k))) 
+                 ;;                                                 (org-roam-db--get-tags)))
+                 ;;                                  (bibliography-bibtex-tags
+                 ;;                                   (mapcar #'(lambda (x) (cdr (assoc "=key=" x)))
+                 ;;                                             (bibtex-completion-candidates))))
+                 ;;                              (delete-dups (append roam-bibtex-tags bibliography-bibtex-tags)))))
+                 (creation (format-time-string "%Y/%m/%d")) 
+               (date 
+                (if (or (string-match "^[A-z-_]+[0-9-]\\{4,10\\}_\\([0-9-]\\{4,10\\}\\)[a-z]?[0-9_]*" filename)
+                          (string-match "^[A-z-_]+\\([0-9-]\\{4,10\\}\\)[a-z]?[0-9_]*" filename))
+                  (substring filename (match-beginning 1) (match-end 1))
+  (read-string "Date : ")))
+               (origdate 
+                (when (string-match "^[A-z-_]+\\([0-9-]\\{4,10\\}\\)_[0-9-]\\{4,10\\}[a-z]?[0-9_]*" filename)
+                  (substring filename (match-beginning 1) (match-end 1))))
+  (file-date (if (null origdate)
+  date
+  (concat "(" origdate ")" date)))
+                 (author (if (equal type "collection")
+                             (completing-read "Editeur : "
+                                              (delete-dups (mapcar #'(lambda (x) (cdr (assoc "editor" x)))
+                                                                     (bibtex-completion-candidates))))
+                           (completing-read "Auteur : "
+                                            (delete-dups (mapcar #'(lambda (x) (cdr (assoc "author" x)))
+                                                                   (bibtex-completion-candidates))))))
+                 (author-fixed (cond ((string-match " and " author)
+                                      ;; create a list with parts 
+                                      (let* ((author-list  (split-string author " and "))
+                                             (names (let (x)
+                                                      (dolist  (element author-list x)
+                                                        (setq x (concat x
+                                                                        (progn
+                                                                          (string-match ", \\([[:graph:]]+\\)$"   element)
+                                                                          (match-string 1 element))
+                                                                        " "
+                                                                        (progn
+                                                                          (string-match "\\([[:graph:]]+\\),"   element)
+                                                                          (match-string 1 element))
+                                                                        ", "))))))
+                                        (substring names 0 -2)))
+                                     ((string-match "^{" author)
+                                      (string-match "{\\([[:print:]]+\\)}" author)
+                                      (match-string 1 author))
+                                     (t (let* ((author-list (split-string author ", "))
+                                               (last-name (nth 0 author-list))
+                                               (first-name (nth 1 author-list)))
+                                          (concat first-name " " last-name)))))
+                 (author-quotes (concat "\"" (downcase author-fixed) "\""))
+                 (lastname (cond ((string-match " and " author)
+                                  ;; create a list with parts 
+                                  (let* ((author-list  (split-string author " and "))
+                                         (last-names (let (x)
+                                                       (dolist  (element author-list x)
+                                                         (setq x (concat x
+                                                                         (progn
+                                                                           (string-match "\\([[:graph:]]+\\),"   element)
+                                                                           (match-string 1 element))
+                                                                         ", "))))))
+                                    (substring last-names 0 -2)))
+                                 ((string-match "^{" author)
+                                  (string-match "{\\([[:print:]]+\\)}" author)
+                                  (match-string 1 author))
+                                 (t (nth 0 (split-string author ", ")))))
+                 (language (completing-read "Langage : " sync0-biblatex-languages))
+                 (journal (when (equal type "article")
+                                          (completing-read "Journal title : "
+                                                   (delete-dups (mapcar #'(lambda (x) (cdr (assoc "journaltitle" x)))
+                                                                  (bibtex-completion-candidates))))))
+                 (volume (when (equal type "article") (read-string "Tome du journal : ")))
+                 (number (when (equal type "article") (read-string "Numero du journal : ")))
+                 (publisher (when (or (equal type "book")
+                                      (equal type "collection"))
+                              (completing-read "Maison d'edition : "
+                                               (delete-dups (mapcar #'(lambda (x) (cdr (assoc "publisher" x)))
+                                                                      (bibtex-completion-candidates))))))
+                 (location (when (equal type "book")
+                                       (completing-read "Location : "
+                                             (delete-dups (mapcar #'(lambda (x) (cdr (assoc "location" x)))
+                                                                    (bibtex-completion-candidates))))))
+                 (pages (when (or (equal type "article")
+                                  (equal type "incollection")
+                                  (equal type "inbook"))
+                          (read-string "Pages (ex. : 90-180) : ")))
+                 (crossref (when (or (equal type "incollection")
+                                     (equal type "inbook"))
+                             (completing-read "Citation key: "
+                                              (mapcar #'(lambda (x) (cdr (assoc "=key=" x)))
+                                                        (bibtex-completion-candidates)))))
+                 (booktitle (when (or (equal type "incollection")
+                                      (equal type "inbook"))
+                              (completing-read "Booktitle : "
+                                               (delete-dups (mapcar #'(lambda (x) (cdr (assoc "booktitle" x)))
+                                                                      (bibtex-completion-candidates))))))
+                 (booksubtitle (when (or (equal type "incollection")
+                                      (equal type "inbook"))
+                                (read-string "Book subtitle  : ")))
+                 (addendum (when (equal type "unpublished") (read-string "Addendum (ex. Box, Folder, etc.) : ")))
+                 (url (when (equal type "online") (read-string "Url : " nil nil nil t)))
+                 (urldate (when (equal type "online") (format-time-string "%Y-%m-%d")))
+                 (title (read-string "Titre : " nil nil nil t))
+                 (subtitle (read-string "Sous-titre : " nil nil nil t))
+                 (file-title (if (equal subtitle "") title (concat title "_" subtitle)))
+                 (file (concat "/home/sync0/Documents/pdfs/" lastname "_" file-date "_" file-title ".pdf"))
+                 (buffer (buffer-file-name))     
+    ;; define list of conses whose first element is a biblatex category and
+    ;; the second element is its value, as a string, when previously defined
+    ;; by this fucntion
+                 (fields (list
+                          (list "title" title)
+                          (unless (equal subtitle "")
+                          (list "subtitle" subtitle))
+                          (list "origdate" origdate)
+                          (list "date" date)
+                          (if (equal type "collection")
+                              (list "editor" author)
+                            (list "author" author))
+                          (list "journal" journal)
+                          (if (or (equal type "book")
+                                  (equal type "collection"))
+                          (list "booktitle" title)
+                          (list "booktitle" booktitle))
+                          (if (or (equal type "book")
+                                  (equal type "collection"))
+                          (list "booksubtitle" subtitle)
+                          (list "booksubtitle" booksubtitle))
+                          (list "crossref" crossref)
+                          (list "volume" volume)
+                          (list "number" number)
+                          (list "publisher" publisher)
+                          (list "location" location)
+                          (list "pages" pages)
+                          (list "addendum" addendum)
+                          (list "url" url)
+                          (list "urldate" urldate)
+                          (list "language" language)
+                          (list "langid" language)
+                          (list "file" file)))
+    ;; define the biblatex entries
+                 (entries
+                  (let (x)
+                    (dolist (element fields x) 
+                      (unless (null (cadr element))
+                      ;; (when (stringp (second element)))
+                        (setq x (concat x (car element) " = {" (cadr element) "},\n"))))))
+    ;; select target bibliography file (.bib)
+                 (bib-file (completing-read "Fichier BibLaTeX : "
+                                (f-files "~/Dropbox/bibliographies" (lambda (k) (string-match-p ".bib" k)))))
+    ;; create string of new biblatex entry
+                 (biblatex-entry (concat "\n@" type "{" filename "," "\n" entries "\n}\n")))
+    ;; add biblatex entry to target bibliography file
+            (append-to-file biblatex-entry nil bib-file)
+            (setq  sync0-reference-filename filename)
+    ;; define the body of the reference zettel
+          (concat
+           "#+TITLE: " title "\n"
+           (unless (equal subtitle "") (concat "#+SUBTITLE: " subtitle "\n"))
+           "#+AUTHOR: " author-fixed "\n"
+           (when (equal type "article") (concat "#+JOURNAL_TITLE: " journal "\n"))
+           "#+ROAM_KEY: cite:" filename "\n"
+           (when (equal type "online") (concat "#+ROAM_KEY: " url "\n"))
+           "#+CREATED: " creation "\n"
+           "#+DATE: " creation "\n"
+           "#+ROAM_TAGS: " filename " " author-quotes " " type 
+           (format-time-string " %Y") "\n"
+           "#+INTERLEAVE_PDF: " file "\n" 
+           "Origin: [[file:"
+           (sync0-org-get-abbreviated-path buffer)
+           "]["
+           (sync0-org-get-file-title-keyword buffer)
+           "]]\n\n")))
+           ;; (when (equal type "online") "%:initial%?")
+
+          (defun sync0-org-references-fetch-title-and-subtitle ()
+            (if (equal sync0-reference-subtitle "")
+                (format "%s" sync0-reference-title) 
+              (format "%s_%s" sync0-reference-title sync0-reference-subtitle))) 
+
+          ;; Taken from https://github.com/abo-abo/hydra/wiki/mu4e
+          (defun sync0-org-capture-mu4e ()
             (interactive)
-              (let (path)
-                (when file
-                  (with-current-buffer
-                      (get-file-buffer file)
-                      (setq path (abbreviate-file-name file)))
-                  path)))
+            "Capture a TODO item via email."
+            (org-capture nil "o"))
 
-                  ;; See https://emacs.stackexchange.com/questions/40749/using-user-prompted-file-name-for-org-capture-in-template
-                  (defun sync0-org-capture-inbox-zettel-name ()
-                (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
-                (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
-                      (expand-file-name (format "%s.org" sync0-zettel-time) "~/Dropbox/org/inbox/"))
+          (setq org-capture-templates 
+                '(("j" "Journal" entry (function org-journal-find-location)
+                   "* %(format-time-string org-journal-time-format)\n\n%?"
+                   ;; "* %(format-time-string org-journal-time-format)\n\n%?"
+                   :jump-to-captured t :immediate-finish t)
+                  ("f" "Fiche" plain 
+                   (file sync0-org-capture-zettel-path)
+                   (function sync0-org-capture-zettel-body)
+                   :unnarrowed t)
+                  ("p" "Note de projet" plain 
+                   (file sync0-org-capture-zettel-path)
+                   (function sync0-org-capture-zettel-body)
+                   :unnarrowed t)
+                  ("t" "Liste de tâches" plain
+                   (file sync0-org-capture-zettel-path)
+                   (function sync0-org-capture-zettel-body)
+                   :unnarrowed t)
+                  ("a" "Annotation" plain 
+                   (file sync0-org-capture-zettel-path)
+                   (function sync0-org-capture-zettel-body)
+                   :unnarrowed t)
+                  ("r" "Référence" plain 
+                   (file sync0-org-capture-zettel-path)
+                   (function sync0-org-capture-reference)
+                   :unnarrowed t)
+                  ("w" "Référence web" plain 
+                   (file sync0-org-capture-zettel-path)
+                   (function sync0-org-capture-reference)
+                   :unnarrowed t)
+                  ("z" "Zettel" plain 
+                   (file sync0-org-capture-zettel-path)
+                   (function sync0-org-capture-zettel-body)
+                   :unnarrowed t)
+                  ;;    ("c" "Correspondant (messages)" plain 
+                  ;; (file sync0-org-capture-message-name)
+                  ;;   "%(format \"#+TITLE: Messages pour %s\n#+CREATED: %s\n#+DATE: \n#+ROAM_TAGS: fiches %s\" sync0-zettel-title-upcase sync0-zettel-time-ordered sync0-zettel-title)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-file-title-keyword (org-capture-get :original-file))]]\n\n"
+                  ;;   :unnarrowed t :jump-to-captured t)
+                  ("m" "Email" entry 
+                   (file+headline "~/Dropbox/org/projects/messages.org" "À répondre")
+                   ;; "** 無 %^{Description}\n%A\n%?\n"
+                   "** 無 %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%A\n" :jump-to-captured t :prepend t)))
 
-                  (defun sync0-org-capture-archived-zettel-name ()
-                (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
-                (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
-                      (expand-file-name (format "%s.org" sync0-zettel-time) "~/Dropbox/org/archived/"))
-
-                  (defun sync0-org-capture-writings-zettel-name ()
-                (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
-                (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
-                      (expand-file-name (format "%s.org"
-                      sync0-zettel-time) "~/Dropbox/org/writings/"))
-
-                  (defun sync0-org-capture-annotation-name ()
-                (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
-                (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
-                      (expand-file-name (format "%s.org" sync0-zettel-time) "~/Dropbox/org/annotations/"))
-
-                  (defun sync0-org-capture-zettel-name ()
-                (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
-                (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
-                      (expand-file-name (format "%s.org" sync0-zettel-time) "~/Dropbox/org/"))
-
-                  (defun sync0-org-capture-message-name ()
-                (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
-                (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
-                (setq sync0-fiche-name (read-string "Destinataire : "))
-                (setq sync0-fiche-name-upcase 
-                    (let* ((author_list (split-string sync0-fiche-name "_"))
-                          (last_name (nth 0 author_list))
-                          (first_name (nth 1 author_list))
-                          (author_string (format "%s %s" first_name last_name)))
-                    (upcase-initials author_string)))
-                      (expand-file-name (format "%s.org" sync0-zettel-time) "~/Dropbox/org/messages/"))
-
-                  (defun sync0-org-capture-reference-name ()
-                ;; (setq sync0-reference-filename (read-string "Nom du fichier : "))
-                ;; (setq sync0-reference-filename
-                ;;       (completing-read "Citation key: "
-                ;;         (mapcar #'(lambda (x) (cdr (assoc "=key=" x)))
-                ;;          (bibtex-completion-candidates))))
-                (setq sync0-reference-filename
-                      (completing-read "Citation key: "
-    (let ((roam-bibtex-tags
-             (cl-delete-if (lambda (k) (or (string-match-p "[[:blank:]]" k) (string-match-p "^[A-z-_]+$" k))) 
-            (org-roam-db--get-tags)))
-          (bibliography-bibtex-tags
-             (mapcar #'(lambda (x) (cdr (assoc "=key=" x)))
-               (bibtex-completion-candidates))))
-    (delete-dups (append roam-bibtex-tags bibliography-bibtex-tags)))))
-                 (setq sync0-reference-year (substring sync0-reference-filename -4))
-                ;; (setq sync0-fiche-name (read-string "Auteur : "))
-                 (setq sync0-author-name
-                       (completing-read "Auteur : "
-                        (delete-dups (mapcar #'(lambda (x) (cdr (assoc "author" x)))
-                          (bibtex-completion-candidates)))))
-                 (setq sync0-author-name-fixed
-                     (let* ((author_list (split-string sync0-author-name ", "))
-                           (last_name (nth 0 author_list))
-                           (first_name (nth 1 author_list)))
-                           (concat first_name " " last_name)))
-                 (setq sync0-fiche-name
-                     (let* ((author_list (split-string sync0-author-name ", "))
-                           (last_name (downcase (nth 0 author_list)))
-                           (first_name (downcase (nth 1 author_list))))
-                           (concat last_name "_" first_name)))
-                 (setq sync0-author-lastname-upcase
-                     (let ((author_list (split-string sync0-author-name ", ")))
-                            (nth 0 author_list)))
-                ;; (setq sync0-fiche-name-upcase 
-                ;;     (let* ((author_list (split-string sync0-fiche-name "_"))
-                ;;           (last_name (nth 0 author_list))
-                ;;           (first_name (nth 1 author_list))
-                ;;           (author_string (format "%s %s" first_name last_name)))
-                ;;     (upcase-initials author_string)))
-                ;; (setq sync0-fiche-lastname-upcase 
-                ;;     (let* ((author_list (split-string sync0-fiche-name "_"))
-                ;;           (last_name (nth 0 author_list))
-                ;;           (first_name (nth 1 author_list)))
-                ;;     (upcase-initials last_name)))
-                 (setq sync0-journal-title
-                       (completing-read "Journal title : "
-                        (delete-dups (mapcar #'(lambda (x) (cdr (assoc "journaltitle" x)))
-                          (bibtex-completion-candidates)))))
-                (setq sync0-reference-title (read-string "Titre: "))
-                (setq sync0-reference-subtitle (read-string "Sous-titre: "))
-                (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
-                (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
-(append-to-file
-(format "
-@article{%s,
-  author = {%s},
-  date = {%s},
-  title = {%s},
-  subtitle = {%s},
-  journaltitle = {%s},
-  file = {/home/sync0/Documents/pdfs/%s_%s_%s.pdf},
-}" sync0-reference-filename sync0-author-name sync0-reference-year sync0-reference-title sync0-reference-subtitle sync0-journal-title sync0-author-lastname-upcase sync0-reference-year sync0-reference-title)
-nil
-   "~/Dropbox/org/references/bibliography.bib")
-                      (expand-file-name (format "%s.org" sync0-reference-filename) "~/Dropbox/org/references/"))
-
-        (defun sync0-org-references-fetch-title-and-subtitle ()
-        (if (equal sync0-reference-subtitle "")
-            (format "%s" sync0-reference-title) 
-            (format "%s_%s" sync0-reference-title sync0-reference-subtitle))) 
-
-                  (defun sync0-org-capture-web-name ()
-                (setq sync0-reference-filename (read-string "Nom du fichier : "))
-             ;; (setq sync0-web-name (read-string "Nom du ROAM_KEY : "))
-                (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
-                (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
-                      (expand-file-name (format "%s.org" sync0-reference-filename) "~/Dropbox/org/references/"))
-
-                ;;   (defun sync0-org-capture-web-name ()
-                ;; (setq sync0-reference-filename (read-string "Nom du fichier : "))
-                ;; (setq sync0-web-name (read-string "Nom du ROAM_KEY : "))
-                ;; (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
-                ;; (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
-                ;;       (expand-file-name (format "%s.org" sync0-reference-filename) "~/Dropbox/org/references/"))
-
-                  (defun sync0-org-capture-project-name ()
-                (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
-                (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
-                (setq sync0-project-name (read-string "Nom du projet: "))
-                (setq sync0-project-name-upcase (upcase-initials sync0-project-name))
-                      (expand-file-name (format "%s.org" sync0-zettel-time) "~/Dropbox/org/projects/"))
-
-                  (defun sync0-org-capture-todo-name ()
-                (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
-                (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
-                (setq sync0-project-name (read-string "Nom du projet: "))
-                (setq sync0-project-name-upcase (upcase-initials sync0-project-name))
-                      (expand-file-name (format "%s.org" sync0-zettel-time) "~/Dropbox/org/todo/"))
-
-                  (defun sync0-org-capture-fiche-name ()
-                (setq sync0-zettel-time (format-time-string "%Y%m%d%H%M%S")) 
-                (setq sync0-zettel-time-ordered (format-time-string "%Y/%m/%d")) 
-                (setq sync0-fiche-name (completing-read "Fiche sur : "
-                                         (org-roam-db--get-tags)))
-                (setq sync0-fiche-name-upcase 
-                    (let* ((author_list (split-string sync0-fiche-name "_"))
-                          (last_name (nth 0 author_list))
-                          (first_name (nth 1 author_list))
-                          (author_string (format "%s %s" first_name last_name)))
-                    (upcase-initials author_string)))
-                      (expand-file-name (format "%s.org" sync0-zettel-time) "~/Dropbox/org/fiches/"))
-
-            ;; Taken from https://github.com/abo-abo/hydra/wiki/mu4e
-                      (defun sync0-org-capture-mu4e ()
-              (interactive)
-              "Capture a TODO item via email."
-              (org-capture nil "o"))
-
-                        (setq org-capture-templates 
-                              '(("j" "Journal" entry (function org-journal-find-location)
-                                 "* %(format-time-string org-journal-time-format)\n\n%?"
-                                               :jump-to-captured t :immediate-finish t)
-                               ("f" "Fiche" plain 
-                               (file sync0-org-capture-fiche-name)
-                               "%(format \"#+TITLE: %s\n#+CREATED: %s\n#+DATE: \n#+ROAM_TAGS: %s\" sync0-fiche-name-upcase sync0-zettel-time-ordered sync0-fiche-name)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-file-title-keyword (org-capture-get :original-file))]]\n\n%?"
-                               :unnarrowed t :jump-to-captured t)
-                               ("p" "Note de projet" plain 
-                               (file sync0-org-capture-project-name)
-                               "%(format \"#+TITLE: \n#+CREATED: %s\n#+DATE: \n#+ROAM_TAGS: %s %s %s\" sync0-zettel-time-ordered sync0-project-name sync0-current-year sync0-current-month)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-file-title-keyword (org-capture-get :original-file))]]\n\n%?"
-                               :unnarrowed t :jump-to-captured t)
-                               ("d" "Dépôt" plain 
-                               (file sync0-org-capture-project-name)
-                               "%(format \"#+TITLE: Dépôt de \n#+CREATED: %s\n#+DATE: \n#+ROAM_TAGS: repositories %s %s\" sync0-zettel-time-ordered sync0-project-name sync0-current-year)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-file-title-keyword (org-capture-get :original-file))]]\n\n%?"
-                               :unnarrowed t :jump-to-captured t)
-                            ("i" "Pensée éphémère" plain
-                             (file sync0-org-capture-inbox-zettel-name)
-                           "#+TITLE: \n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: inbox %<%Y> %<%B>\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-file-title-keyword (org-capture-get :original-file))]]\n\n%?"
-                               :unnarrowed t :jump-to-captured t)
-                                 ("t" "Liste de tâches" plain
-                                 (file sync0-org-capture-todo-name)
-                                 "%(format \"#+TITLE: Tâches de %s\n#+CATEGORY: %s\" sync0-project-name sync0-project-name-upcase)\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %(format \"%s\n#+FILETAGS: :projects:todo:%s:\" sync0-project-name sync0-project-name)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-file-title-keyword (org-capture-get :original-file))]]\n\n%?"
-                               :unnarrowed t :jump-to-captured t)
-                               ("a" "Annotation" plain 
-                                (file sync0-org-capture-annotation-name)
-                                 ;; "#+TITLE: %(format \"%s\" sync0-zettelkasten-annotations-key)\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %(format \"%s\" sync0-zettelkasten-annotations-key) %<%Y> %(format \"%s\" sync0-current-month-downcase)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-file-title-keyword (org-capture-get :original-file))]]\n\nDans %(org-capture-get :annotation), %(sync0-org-get-author-keyword (org-capture-get :original-file)) %?"
-                                 "#+TITLE: %(format \"%s\" sync0-zettelkasten-annotations-key)\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %(format \"%s\" sync0-zettelkasten-annotations-key) %<%Y> %(format \"%s\" sync0-current-month-downcase)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-file-title-keyword (org-capture-get :original-file))]]\n\nDans [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-previous-heading-or-title (org-capture-get :original-file))]], %(sync0-org-get-author-keyword (org-capture-get :original-file)) %?"
-                               :unnarrowed t :jump-to-captured t)
-                               ("r" "Référence" plain 
-                                (file sync0-org-capture-reference-name)
-                               "#+TITLE: %(format \"%s\" sync0-reference-title)\n#+SUBTITLE: %(format \"%s\" sync0-reference-subtitle)\n#+AUTHOR: %(format \"%s\" sync0-author-name-fixed)\n#+JOURNAL_TITLE: %(format \"%s\" sync0-journal-title)\n#+ROAM_KEY: cite:%(format \"%s\" sync0-reference-filename)\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %(format \"%s %s %s\" sync0-reference-filename sync0-fiche-name sync0-current-year)%?\n#+INTERLEAVE_PDF: /home/sync0/Documents/pdfs/%(format \"%s_%s\" sync0-author-lastname-upcase sync0-reference-year)_%(sync0-org-references-fetch-title-and-subtitle).pdf\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-file-title-keyword (org-capture-get :original-file))]]\n\n%?"
-                               :unnarrowed t :jump-to-captured t)
-                         ;;  ("w" "Site web" plain 
-                         ;;     (file sync0-org-capture-web-name)
-                         ;; "#+TITLE: %^{Title}\n#+SUBTITLE: %^{Subtitle}\n#+AUTHOR: %^{Author}\n#+ROAM_KEY: cite:%(format \"%s\" sync0-reference-filename)\n#+WEBSITE: %(format \"%s\" sync0-web-name)\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %<%Y> %(format \"%s\" sync0-current-month-downcase) %?\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-file-title-keyword (org-capture-get :original-file))]]\n\n"
-                         ;;       :unnarrowed t :jump-to-captured t)
-                          ("w" "Référence web" plain 
-                             (file sync0-org-capture-web-name)
-                         "#+TITLE: %^{Title}\n#+AUTHOR: %^{Author}\n#+ROAM_KEY: cite:%(format \"%s\" sync0-reference-filename)\n#+ROAM_KEY: %L\n#+WEBSITE: %L\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: websites %<%Y> %(format \"%s\" sync0-current-month-downcase) %?\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-file-title-keyword (org-capture-get :original-file))]]\n\n%:initial%?"
-                               :unnarrowed t :jump-to-captured t)
-                          ("n" "Nouveau Zettel" plain 
-                             (file sync0-org-capture-zettel-name)
-                          "#+TITLE: %^{Title}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %<%Y> %(format \"%s\" sync0-current-month-downcase)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-file-title-keyword (org-capture-get :original-file))]]\n\n%?"
-                               :unnarrowed t :jump-to-captured t)
-                          ("k" "Note d'archive" plain 
-                             (file sync0-org-capture-archived-zettel-name)
-                          "#+TITLE: %^{Title}\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %<%Y> %(format \"%s\" sync0-current-month-downcase)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-file-title-keyword (org-capture-get :original-file))]]\n\n%?"
-                               :unnarrowed t :jump-to-captured t)
-                              ("e" "Écriture" plain
-                             (file sync0-org-capture-writings-zettel-name)
-                           "#+TITLE: \n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: %<%Y> %(format \"%s\" sync0-current-month-downcase)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-file-title-keyword (org-capture-get :original-file))]]\n\n%?"
-                               :unnarrowed t :jump-to-captured t)
-                                ("c" "Correspondant (messages)" plain 
-                             (file sync0-org-capture-message-name)
-                               "%(format \"#+TITLE: Messages pour %s\n#+CREATED: %s\n#+DATE: \n#+ROAM_TAGS: fiches %s\" sync0-fiche-name-upcase sync0-zettel-time-ordered sync0-fiche-name)\n\nOrigin: [[file:%(sync0-org-get-abbreviated-path (org-capture-get :original-file))][%(sync0-org-get-file-title-keyword (org-capture-get :original-file))]]\n\n"
-                               :unnarrowed t :jump-to-captured t)
-                                ("m" "Email" entry 
-                                 (file+headline "~/Dropbox/org/projects/messages.org" "À répondre")
-                                ;; "** 無 %^{Description}\n%A\n%?\n"
-                                 "** 無 %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n%A\n" :jump-to-captured t :prepend t)))
-
-                        :bind 
-                        (("\C-c c" . org-capture)))
-                                   #+END_SRC 
+          :bind 
+          (("\C-c c" . org-capture)))
+#+END_SRC 
 * org-protocol-capture-html
   #+BEGIN_SRC emacs-lisp
     (use-package org-protocol-capture-html
@@ -1621,7 +1851,7 @@ _q_uit
     ;; Export to Microsoft Word (doc).
     (org-export-odt-preferred-output-format "doc")
     (org-odt-preferred-output-format "doc")
-    (org-latex-logfiles-extensions (quote ("aux" "bcf" "lof" "lot" "tex~" "idx" "out" "toc" "nav" "snm" "vrb" "dvi" "fdb_latexmk" "blg" "brf" "fls" "entoc" "ps" "spl" "run.xml")))
+    (org-latex-logfiles-extensions '("aux" "lof" "lot" "tex~" "idx" "out" "toc" "nav" "snm" "vrb" "dvi" "fdb_latexmk" "blg" "brf" "fls" "entoc" "ps" "spl" "run.xml"))
 
     :config
     (defun sync0-org-export-latex-and-beamer ()
@@ -1630,10 +1860,10 @@ _q_uit
       (when (equal major-mode 'org-mode) 
         (if (string-match "^\\#\\+SETUPFILE: .*beamer\\.org.*" (buffer-string))
             (progn
-              (setq org-latex-pdf-process (list "latexmk -xelatex -bibtex -output-directory=%o -f %f"))
+              (setq org-latex-pdf-process '("latexmk -xelatex -bibtex -output-directory=%o -f %f"))
               (org-beamer-export-to-pdf))
           (progn
-            (setq org-latex-pdf-process (list "latexmk -lualatex -bibtex -output-directory=%o -f %f"))
+            (setq org-latex-pdf-process '("latexmk -lualatex -bibtex -output-directory=%o -f %f"))
             (org-latex-export-to-pdf)))))
 
 ;; export headlines to separate files
@@ -1853,14 +2083,15 @@ are exported to a filename derived from the headline text."
         (message "No PDF found for %s" key)))
 
     :custom
-    (reftex-default-bibliography '("~/Dropbox/org/references/bibliography.bib"))
+    (reftex-default-bibliography '("~/Dropbox/bibliographies/bibliography.bib"
+                                   "~/Dropbox/bibliographies/doctorat.bib"))
     (org-ref-default-bibliography reftex-default-bibliography)
     (org-ref-pdf-directory sync0-pdfs-folder)
     (org-ref-completion-library 'org-ref-ivy-cite)
     (org-ref-open-pdf-function 'sync0-org-ref-open-pdf-at-point)
 
     :config
-(require 'doi-utils)
+   (require 'doi-utils)
 
     (setq org-ref-notes-function
           (lambda (thekey)
@@ -1871,18 +2102,18 @@ are exported to a filename derived from the headline text."
     (defun sync0-visit-bibliography-in-buffer ()
       (interactive)
       (find-file
-       (expand-file-name "~/Dropbox/org/references/bibliography.bib")))
+       (expand-file-name "~/Dropbox/bibliographies/bibliography.bib")))
 
     (defhydra sync0-hydra-research-functions (:color amaranth :hint nil :exit t)
       "
-   ^Research functions^   ^References^        ^Roam^          ^Roam link actions^
+   ^Research functions^   ^References^        ^Roam^              ^Roam link actions^
    ^------------------------------------------------------------------------------
-   Orb _i_nsert           _I_nsert footnote   Find _f_ile     Link _s_tore 
-   Orb _a_ctions          _Q_uote (Csquotes)  _R_oam buffer   _L_ast stored link
-   Entry _n_otes          _F_oreign quote     Open _d_eft     Roam _l_ink                     
-   Bibtex _e_ntry         ^ ^                 _B_uild cache   Link to _h_eadline
-   Open _b_ibliography    ^ ^                 Open inde_x_       
-   Open _p_df             ^ ^                 Show _g_raph
+   Orb _i_nsert           _I_nsert footnote   Find _f_ile         Link _s_tore 
+   Orb _a_ctions          _Q_uote (Csquotes)  Open _r_oam buffer  _L_ast stored link
+   Entry _n_otes          _F_oreign quote     Open _d_eft         Roam _l_ink                     
+   Bibtex _e_ntry         Insert _c_itation   _B_uild cache       Link to _h_eadline
+   Open _b_ibliography    ^ ^                 Open inde_x_        _D_elete link at point
+   Open _p_df             ^ ^                 Show _g_raph        _R_emove all links
                                                                      
    _q_uit
         "
@@ -1892,7 +2123,7 @@ are exported to a filename derived from the headline text."
       ("i" orb-insert)
       ("a" orb-note-actions)
       ("d" deft)
-      ("R" org-roam)
+      ("r" org-roam)
       ("B" org-roam-db-build-cache)
       ("f" org-roam-find-file)
       ("g" org-roam-graph)
@@ -1900,7 +2131,9 @@ are exported to a filename derived from the headline text."
       ("h" org-insert-link)
       ("L" org-insert-last-stored-link)
    ;; ("L" org-roam-insert-immediate)
-   ;; ("I" org-ref-ivy-insert-cite-link)
+      ("c" org-ref-ivy-insert-cite-link)
+      ("D" sync0-org-replace-link-by-description)
+      ("R" sync0-org-replace-all-links-by-descriptions)
       ("n" ivy-bibtex)
       ("e" org-ref-open-citation-at-point)
       ("b" sync0-visit-bibliography-in-buffer)
@@ -2096,6 +2329,7 @@ are exported to a filename derived from the headline text."
         ;; (require 'org-pdftools)
         (require 'org-journal)
         (require 'org-download)
+        (require 'org-ref)
         ;; Free this keybinding for cycle-themes
         (unbind-key "C-c C-t" org-mode-map)
         (unbind-key "M-h" org-mode-map)
@@ -2339,6 +2573,14 @@ are exported to a filename derived from the headline text."
 
         ;; (org-refile-targets '((org-agenda-files :maxlevel . 4)))
 
+(setq org-file-apps
+'((auto-mode . emacs)
+ (directory . emacs)
+ ("\\.mm\\'" . default)
+ ("\\.x?html?\\'" . default)
+ ("\\.pdf\\'" . emacs)))
+
+
         (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 
         ;; (setq org-src-block-faces    '(("emacs-lisp" (:family "Fira Code"  :height 0.75))
@@ -2375,10 +2617,10 @@ buffers.
     (defun sync0-org-gcal-erase-buffers ()
      (interactive)
       "Erase buffers of calendar files"
-      (let ((delete-classes (find-file-noselect "~/Dropbox/org/etc/Classes.org"))
-            (delete-events (find-file-noselect "~/Dropbox/org/etc/Events.org"))
-            (delete-gcal (find-file-noselect "~/Dropbox/org/etc/Gcal.org"))
-            (delete-habits (find-file-noselect "~/Dropbox/org/etc/Habits.org")))
+      (let ((delete-classes (find-file-noselect "~/Dropbox/org/archived/etc/Classes.org"))
+            (delete-events (find-file-noselect "~/Dropbox/org/archived/etc/Events.org"))
+            (delete-gcal (find-file-noselect "~/Dropbox/org/archived/etc/Gcal.org"))
+            (delete-habits (find-file-noselect "~/Dropbox/org/archived/etc/Habits.org")))
         (progn 
           (with-current-buffer delete-classes
             (erase-buffer))
@@ -2389,11 +2631,11 @@ buffers.
           (with-current-buffer delete-habits
             (erase-buffer)))))
 
-    (setq org-gcal-file-alist '(("carc.sync0@gmail.com" .  "~/Dropbox/org/etc/Gcal.org")
-                                ("5iudo90h5e3nabbubvsj1lov4o@group.calendar.google.com" . "~/Dropbox/org/etc/Classes.org")
-                                ("p9vu3a782nahsma6ud1rdg1qpc@group.calendar.google.com" . "~/Dropbox/org/etc/Events.org")
-                                ("vbnn8eksqpqun2mbtdlknhh9uk@group.calendar.google.com" . "~/Dropbox/org/etc/Habits.org")
-                                ("addressbook#contacts@group.v.calendar.google.com" . "~/Dropbox/org/etc/Birthdays.org"))))
+    (setq org-gcal-file-alist '(("carc.sync0@gmail.com" .  "~/Dropbox/org/archived/etc/Gcal.org")
+                                ("5iudo90h5e3nabbubvsj1lov4o@group.calendar.google.com" . "~/Dropbox/org/archived/etc/Classes.org")
+                                ("p9vu3a782nahsma6ud1rdg1qpc@group.calendar.google.com" . "~/Dropbox/org/archived/etc/Events.org")
+                                ("vbnn8eksqpqun2mbtdlknhh9uk@group.calendar.google.com" . "~/Dropbox/org/archived/etc/Habits.org")
+                                ("addressbook#contacts@group.v.calendar.google.com" . "~/Dropbox/org/archived/etc/Birthdays.org"))))
 #+END_SRC 
 
 * org2blog 

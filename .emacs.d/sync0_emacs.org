@@ -431,19 +431,22 @@ https://stackoverflow.com/questions/23207958/how-to-prevent-emacs-dired-from-spl
 #+BEGIN_SRC emacs-lisp
 (setq sync0-zettelkasten-directory (concat (getenv "HOME") "/Dropbox/org/")
 sync0-zettelkasten-directory-sans (concat (getenv "HOME") "/Dropbox/org")
-sync0-zettelkasten-directory-references (concat (getenv "HOME") "/Dropbox/org/references/")
+sync0-default-bibliography (concat (getenv "HOME") "/Dropbox/bibliographies/doctorat.bib")
+sync0-zettelkasten-directory-references (concat (getenv "HOME") "/Dropbox/org/notes/references/")
 sync0-emacs-directory (concat (getenv "HOME") "/.emacs.d/sync0/")
 sync0-pdfs-folder (concat (getenv "HOME") "/Documents/pdfs/")
 sync0-current-year (format-time-string "%Y")
 sync0-current-month (format-time-string "%B")
 sync0-current-month-downcase (downcase (format-time-string "%B"))
 sync0-current-day (format-time-string "%d")
+sync0-biblatex-entry-types '("article" "book" "inbook" "incollection" "collection" "unpublished" "thesis" "proceedings" "inproceedings" "online" "report" "manual")
+sync0-biblatex-languages '("spanish" "english" "french" "german" "portuguese" "italian" "korean" "japanese" "dutch" "arabic" "hebrew" "latin" "greek" "unknown")
 sync0-english-parts-speech '("noun" "intransitive verb" "transitive verb" "verb" "conjunction" "adjective" "adverb")
 sync0-french-parts-speech '("nom féminin" "nom masculin" "verbe intransitif" "verbe transitif" "verbe" "conjonction" "adjectif" "adverbe")
 sync0-portuguese-parts-speech '("sustantivo femenino" "sustantivo masculino" "verbo intransitivo" "verbo transitivo" "verbo" "conjunção" "adjetivo" "advérbio")
           sync0-spanish-parts-speech '("sustantivo femenino" "sustantivo masculino" "verbo intransitivo" "verbo transitivo" "verbo" "conjunción" "adjectivo" "adverbio")
           sync0-zettelkasten-annotations-author  "John Doe"
-          sync0-zettelkasten-annotations-key  "doe"
+          sync0-zettelkasten-annotations-key  "doe1991"
            sync0-zettelkasten-annotations-roam-key "cite:doe1991")
 #+END_SRC
  
@@ -487,6 +490,7 @@ sync0-portuguese-parts-speech '("sustantivo femenino" "sustantivo masculino" "ve
     (add-hook 'before-save-hook (lambda ()
   ;; Check whether file is in org-mode and whether it is located in my Zettelkasten directory
                                   (when (and (eq major-mode 'org-mode)
+                                        (not (string-prefix-p "archives" (buffer-file-name)))
                                         (string-prefix-p sync0-zettelkasten-directory (buffer-file-name)))
                                                  ;; (equal default-directory (concat (getenv "HOME") "/Dropbox/annotations/"))
                                     (sync0-update-timestamp))))
@@ -569,6 +573,26 @@ Moving around windows.
        (other-window 1)))
  #+END_SRC
 
+These functions are useful to navigate the zettels in a directory.
+ They are useful for review purposes. 
+ The following fucntions were taken from:
+https://emacs.stackexchange.com/questions/12153/does-some-command-exist-which-goes-to-the-next-file-of-the-current-directory
+
+#+BEGIN_SRC emacs-lisp
+(defun sync0-find-next-file (&optional backward)
+  "Find the next file (by name) in the current directory.
+
+With prefix arg, find the previous file."
+  (interactive "P")
+  (when buffer-file-name
+    (let* ((file (expand-file-name buffer-file-name))
+           (files (cl-remove-if (lambda (file) (cl-first (file-attributes file)))
+                                (sort (directory-files (file-name-directory file) t nil t) 'string<)))
+           (pos (mod (+ (cl-position file files :test 'equal) (if backward -1 1))
+                     (length files))))
+      (find-file (nth pos files)))))
+#+END_SRC 
+
 This is a collection of functions that become problematic when
 loaded after packages are declared.
 
@@ -617,6 +641,16 @@ loaded after packages are declared.
 #+END_SRC
 
 ** Fundamental Packages
+*** undo-tree
+#+BEGIN_SRC emacs-lisp
+(use-package undo-tree
+  ;; :straight nil
+:custom
+(undo-tree-enable-undo-in-region nil)
+:config
+(global-undo-tree-mode))
+#+END_SRC
+
 *** hydra
 #+BEGIN_SRC emacs-lisp
 (use-package hydra
@@ -652,8 +686,9 @@ loaded after packages are declared.
   #+BEGIN_SRC emacs-lisp
       (use-package evil-leader
           :straight (evil-leader :type git :host github :repo "cofi/evil-leader") 
+          :init
+          (setq evil-leader/in-all-states t)
           :hook (after-init . global-evil-leader-mode)
-
          :config
            (evil-leader/set-leader "<SPC>")
 
@@ -669,6 +704,7 @@ loaded after packages are declared.
     "j" 'counsel-bookmark
     "q" 'keyboard-quit
     "w" 'write-file
+    "e" 'eval-last-sexp
     "s" 'save-buffer
     "b" 'ivy-switch-buffer
     "r" 'counsel-recentf
@@ -678,8 +714,75 @@ loaded after packages are declared.
     "o" 'other-window
     "p" 'previous-buffer
     "n" 'next-buffer
+    "N" 'sync0-find-next-file
     "K" 'kill-buffer
     "k" 'delete-window))
+  #+END_SRC
+
+*** evil-escape
+ #+BEGIN_SRC emacs-lisp
+ (use-package evil-escape 
+   :straight (evil-escape :type git :host github :repo "syl20bnr/evil-escape") 
+   :after evil
+   ;; :commands evil-escape-mode
+   :custom
+   (evil-escape-excluded-states '(normal visual multiedit emacs motion))
+   ;;(evil-escape-excluded-major-modes '(neotree-mode))
+   (evil-escape-key-sequence "fd")
+   (evil-escape-unordered-key-sequence t)
+   (evil-escape-delay 0.25)
+   :config
+   ;; no `evil-escape' in minibuffer
+   (push #'minibufferp evil-escape-inhibit-functions)
+   :bind (:map evil-insert-state-map
+               ("C-g"  . evil-escape)
+               :map evil-replace-state-map
+               ("C-g"  . evil-escape)
+               :map evil-visual-state-map
+               ("C-g"  . evil-escape)
+               :map evil-operator-state-map
+               ("C-g"  . evil-escape)))
+ #+END_SRC
+
+**** 取 evil-multiedit
+  #+BEGIN_SRC emacs-lisp
+  (use-package evil-multiedit 
+    :straight (evil-multiedit :type git :host github :repo "hlissner/evil-multiedit") 
+    :disabled t
+    :defer t
+    :commands 
+    (evil-multiedit-and-next evil-multiedit-match-and-next evil-multiedit-toggle-marker-here)
+    :after evil
+    :bind (:map evil-visual-state-map
+                ;; Highlights all matches of the selection in the buffer.
+                ("R" . evil-multiedit-match-all)
+                ;; Match selected region.
+                ("M-d" . evil-multiedit-and-next)
+                ("M-D" . evil-multiedit-and-prev)
+                ;; Restore the last group of multiedit regions.
+                ("C-M-D"  . evil-multiedit-restore)
+                :map evil-normal-state-map
+                ;; Match the word under cursor (i.e. make it an edit region). Consecutive presses will
+                ;; incrementally add the next unmatched match.
+                ("M-d"  . evil-multiedit-match-and-next)
+                :map evil-insert-state-map
+                ;; Insert marker at point
+                ("M-d"  . evil-multiedit-toggle-marker-here)
+                :map evil-normal-state-map
+                ;; Same as M-d but in reverse.
+                ("M-D"  . evil-multiedit-match-and-prev)
+                ;; OPTIONAL: If you prefer to grab symbols rather than words, use
+                ;; `evil-multiedit-match-symbol-and-next` (or prev).
+                ;; RET will toggle the region under the cursor
+                :map evil-multiedit-state-map
+                ("RET"  . evil-multiedit-toggle-or-restrict-region)
+                ;; ...and in visual mode, RET will disable all fields outside the selected region
+                ("RET"  . evil-multiedit-toggle-or-restrict-region)
+                ;; For moving between edit regions
+                ("C-n"  . evil-multiedit-next)
+                ("C-p"  . evil-multiedit-prev)
+                ("C-n"  . evil-multiedit-next)
+                ("C-p"  . evil-multiedit-prev)))
   #+END_SRC
 
 *** evil
@@ -773,72 +876,6 @@ loaded after packages are declared.
        (define-key evil-motion-state-map (kbd "<remap> <evil-previous-line>") 'evil-previous-visual-line))
      #+END_SRC
 
-**** evil-escape
-  #+BEGIN_SRC emacs-lisp
-  (use-package evil-escape 
-    :straight (evil-escape :type git :host github :repo "syl20bnr/evil-escape") 
-    :after evil
-    ;; :commands evil-escape-mode
-    :custom
-    (evil-escape-excluded-states '(normal visual multiedit emacs motion))
-    ;;(evil-escape-excluded-major-modes '(neotree-mode))
-    (evil-escape-key-sequence "fd")
-    (evil-escape-unordered-key-sequence t)
-    (evil-escape-delay 0.25)
-    :config
-    ;; no `evil-escape' in minibuffer
-    (push #'minibufferp evil-escape-inhibit-functions)
-    :bind (:map evil-insert-state-map
-                ("C-g"  . evil-escape)
-                :map evil-replace-state-map
-                ("C-g"  . evil-escape)
-                :map evil-visual-state-map
-                ("C-g"  . evil-escape)
-                :map evil-operator-state-map
-                ("C-g"  . evil-escape)))
-  #+END_SRC
-
-**** 取 evil-multiedit
-  #+BEGIN_SRC emacs-lisp
-  (use-package evil-multiedit 
-    :straight (evil-multiedit :type git :host github :repo "hlissner/evil-multiedit") 
-    :disabled t
-    :defer t
-    :commands 
-    (evil-multiedit-and-next evil-multiedit-match-and-next evil-multiedit-toggle-marker-here)
-    :after evil
-    :bind (:map evil-visual-state-map
-                ;; Highlights all matches of the selection in the buffer.
-                ("R" . evil-multiedit-match-all)
-                ;; Match selected region.
-                ("M-d" . evil-multiedit-and-next)
-                ("M-D" . evil-multiedit-and-prev)
-                ;; Restore the last group of multiedit regions.
-                ("C-M-D"  . evil-multiedit-restore)
-                :map evil-normal-state-map
-                ;; Match the word under cursor (i.e. make it an edit region). Consecutive presses will
-                ;; incrementally add the next unmatched match.
-                ("M-d"  . evil-multiedit-match-and-next)
-                :map evil-insert-state-map
-                ;; Insert marker at point
-                ("M-d"  . evil-multiedit-toggle-marker-here)
-                :map evil-normal-state-map
-                ;; Same as M-d but in reverse.
-                ("M-D"  . evil-multiedit-match-and-prev)
-                ;; OPTIONAL: If you prefer to grab symbols rather than words, use
-                ;; `evil-multiedit-match-symbol-and-next` (or prev).
-                ;; RET will toggle the region under the cursor
-                :map evil-multiedit-state-map
-                ("RET"  . evil-multiedit-toggle-or-restrict-region)
-                ;; ...and in visual mode, RET will disable all fields outside the selected region
-                ("RET"  . evil-multiedit-toggle-or-restrict-region)
-                ;; For moving between edit regions
-                ("C-n"  . evil-multiedit-next)
-                ("C-p"  . evil-multiedit-prev)
-                ("C-n"  . evil-multiedit-next)
-                ("C-p"  . evil-multiedit-prev)))
-  #+END_SRC
-
 *** simple-secrets
  The long lost Emacs string manipulation library. This is required for
  ~simple-secrets~ to work. 
@@ -863,6 +900,12 @@ loaded after packages are declared.
       (setq secret-password-file "~/.emacs.d/sync0_secrets.gpg")
        (secret-load-keys))
   #+END_SRC
+
+*** xah-find
+#+BEGIN_SRC emacs-lisp
+  (use-package xah-find
+    :straight (xah-find :type git :host github :repo "xahlee/xah-find"))  
+#+END_SRC 
 
 *** epa-file
   #+BEGIN_SRC emacs-lisp
@@ -925,6 +968,9 @@ composing academic documents.
 
 All packages that I don't know where to put are laid here. 
 #+INCLUDE: "~/.emacs.d/sync0/sync0-other-packages.org" 
+
+All packages about programming
+#+INCLUDE: "~/.emacs.d/sync0/sync0-programming.org" 
 
 Since org-mode is my most used package, I dedicated a
 configuration file just for itself.

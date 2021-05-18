@@ -48,6 +48,7 @@
                        ("comment" "#+BEGIN_COMMENT\n$1\n#+END_COMMENT\n$0" "org-comment" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/org-comment" nil nil)
                        ("date" "(`(sync0-insert-today-timestamp)`) $0" "org-brackets-today-timestamp" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/org-brackets-today-timestamp" nil nil)
                        ("th" "\\nth{$1}$0" "nth" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/nth" nil nil)
+                       ("pg" "(p. ${1:$$(unless yas-modified-p (sync0-reference-last-cited-pages))})$0" "note-taking-citation-pages" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/note-taking-citation-pages" nil nil)
                        ("math" "\\$${1:}\\$$0\n" "math_text" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/math_mode" nil nil)
                        ("newtext" "** ${1:title}\n:PROPERTIES:\n:YEAR: ${2:1929} \n:JOURNAL: \n:VOLUME: \n:ISSUE:\n:PAGES: \n:ADDED: [`(insert (format-time-string \"%Y-%m-%d\"))`]\n:END:\n$0" "master_text" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/master_text" nil nil)
                        ("mquote" "#+BEGIN_QUOTE\n$1 [[cite:`(sync0-print-bibtex-key)`][p. ${2:`(sync0-last-cited-page)`}, par. ${3:1}]].\n#+END_QUOTE\n$0" "master_quote" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/master_quote" nil nil)
@@ -72,7 +73,7 @@
                        ("sie" "\\sie{$1}$0" "latex_francais_siecle" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/latex_francais_siecle" nil nil)
                        ("frac" "\\frac{${1:\\partial^2 \\sin x}}{${2:\\partial x^2}} $0 " "latex_frac" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/latex_frac" nil nil)
                        ("lequation" "\\begin{equation*}\n$1 = $2\n\\end{equation*} $0" "latex_equation_environment" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/latex_equation" nil nil)
-                       ("cite" "`(yas-choose-value '(\"\\\\paren\" \"\\\\text\" \"\\\\auto\" \"\\\\foot\"))`cite${1:[${2:prenote}]}${3:[${4:postnote}]}{${5:key}} $0" "latex_cite" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/latex_cite" nil nil)
+                       ("latex-cite" "`(yas-choose-value '(\"\\\\paren\" \"\\\\text\" \"\\\\auto\" \"\\\\foot\"))`cite${1:[${2:prenote}]}${3:[${4:postnote}]}{${5:key}} $0" "latex_cite" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/latex_cite" nil nil)
                        ("bold" "\\mathbf{${1:X}}_${2:i} $0 \n" "latex_bold_vector" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/latex_bold_vector" nil nil)
                        ("bar" "\\bar{${1:X}} $0 \n" "latex_bar" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/latex_bar" nil nil)
                        ("lalign" "\\begin{align*}\n$1 &= $2 \\\\\\\n$3 &= $4\n\\end{align*} $0" "latex_align_environment" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/latex_align" nil nil)
@@ -98,7 +99,7 @@
                        ("fcquote" "\\foreignblockcquote{${1:english}}{${2:Cicero45}}{${3:Lorem ipsum dolor sit amet}}$0" "csquotes_foreignblockcquote" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/csquotes_foreignblockcquote" nil nil)
                        ("fquote" "#+ATTR_LATEX: :options {`(yas-choose-value '(\"english\" \"french\"))`}[{\\cite[${2:`(sync0-last-cited-page)`}]{${1:`(sync0-print-bibtex-key)`}}}]\n#+BEGIN_foreigndisplayquote\n$3\n#+END_foreigndisplayquote\n$0" "csquotes_foreignblockquote" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/csquotes_foreign_displayquote" nil nil)
                        ("enquote" "\\\\enquote{${1:Lorem ipsum dolor sit amet}}$0" "latex_csquotes_enquote" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/csquotes_enquote" nil nil)
-                       ("quote" "#+ATTR_LATEX: :options [{\\cite${2:`(sync0-last-cited-page)`}{${1:`(sync0-print-bibtex-key)`}}}]\n#+BEGIN_displayquote\n$3\n#+END_displayquote\n$0" "csquotes_displayquote" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/csquotes_displayquote" nil nil)
+                       ("ct" "#+ATTR_LATEX: :options [\\{\\cite${2:$$(unless yas-modified-p (sync0-last-cited-page))}\\{${1:`(sync0-last-cited-author)`}\\}\\}]\n#+BEGIN_displayquote\n$3\n#+END_displayquote\n$0" "csquotes_displayquote" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/csquotes_displayquote" nil nil)
                        ("bquote" "\\blockquote[${1:Marcus Tullius Cicero}]{${2:Lorem ipsum dolor sit amet}}$0" "csquotes_blockquote" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/csquotes_blockquote" nil nil)
                        ("cquote" "\\blockcquote{${1:Cicero45}}{${2:Lorem ipsum dolor sit amet}}$0" "csquotes_blockcquote" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/csquotes_blockcquote" nil nil)
                        ("bf" "\\textbf{$1}$0\n" "boldface_text" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/bold_text_function" nil nil)
@@ -107,4 +108,4 @@
                        ("beamer" "    :PROPERTIES:\n    :BEAMER_env: alertblock\n    :END:\n    #+BEGIN_EXAMPLE\n    \\begin{alertblock}{${1:Lorem ipsum dolor}}\n    $2\n    \\end{alertblock}\n    #+END_EXAMPLE\n    $0\n" "alert_block_beamer" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/beamer_alert_block" nil nil)))
 
 
-;;; Do not edit! File generated at Fri Mar 26 00:48:41 2021
+;;; Do not edit! File generated at Sun Apr 25 00:05:22 2021

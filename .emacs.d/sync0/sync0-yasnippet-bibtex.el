@@ -1,3 +1,4 @@
+(require 'ivy-bibtex)
 ;; Variables
 (setq sync0-bibtex-types '("Manual" "Patent" "Report" "Thesis" "Article" "Paper"))
 
@@ -20,7 +21,7 @@
   "Print the bibtex key of the document"
   (if  (save-excursion 
                (goto-char (point-min))
-        (re-search-forward "#\\+ROAM_TAGS: \\([[:graph:]]+\\)[[:blank:]]" nil t 1))
+        (re-search-forward "^#\\+ROAM_TAGS: \\([[:graph:]]+\\)[[:blank:]]" nil t 1))
       (match-string 1)
     (save-excursion
              (when 
@@ -33,21 +34,49 @@
 (concat (sync0-print-bibtex-key) "_" (format-time-string "%Y%m%d%H%M")))
 
 
+(defun sync0-reference-last-cited-pages ()
+  "Search for the page cited in the last quote environment"
+  (save-excursion
+    (when
+        (or (re-search-backward "^#\\+ATTR_LATEX: :options \\[{\\\\cite\\[\\([[:digit:]]+\\)\\]" nil t 1)
+            (re-search-backward "(p. \\([[:digit:]]+\\))" nil t 1)
+(re-search-backward "\\[\\[[[:graph:]]+\\]\\[\\([[:digit:]]+\\)\\]\\]" nil t 1))
+      (match-string 1))))
+
 (defun sync0-last-cited-page ()
   "Search for the page cited in the last quote environment"
   (save-excursion
-    (cond
-      ((re-search-backward "\\[\\[[[:graph:]]+\\]\\[\\([[:digit:]]+\\)\\]\\]" nil t 1)
-             (match-string 1))
-            ((re-search-backward "cite\\[\\([[:digit:]]+\\)\\]{[[:graph:]]+}}\\]" nil t 1)
-           (format "[%s]" (match-string 1))))))
+    (when
+        (or (re-search-backward "^#\\+ATTR_LATEX: :options \\[{\\\\cite\\[\\([[:digit:]]+\\)\\]" nil t 1)
+      (re-search-backward "(p. \\([[:digit:]]+\\))" nil t 1)
+      (re-search-backward "\\[\\[[[:graph:]]+\\]\\[\\([[:digit:]]+\\)\\]\\]" nil t 1))
+      (format "[%s]" (match-string 1)))))
 
 (defun sync0-last-cited-author ()
   "Search for the page cited in the last quote environment"
   (save-excursion
-    (when 
-        (re-search-backward "cite\\[.*\\]{\\(.+\\)}" nil t 1)
-      (match-string 1))))
+    (if (or (re-search-backward "cite\\[[0-9]*\\]{\\([a-9-_]+\\)}" nil t 1)
+            (re-search-backward "cite{\\([a-9-_]+\\)}" nil t 1)
+            (re-search-backward "cite:\\([a-9-_]+\\)\\]" nil t 1))
+        (match-string 1)
+  (let* ((candidates (bibtex-completion-candidates))
+         (key (bibtex-completion-key-at-point))
+         ;; (preselect (and key
+         ;;                 (cl-position-if (lambda (cand)
+         ;;                                   (member (cons "=key=" key)
+         ;;                                           (cdr cand)))
+         ;;                                 candidates)))
+    (selection (ivy-read "BibTeX entries: "
+              candidates
+              ;; :preselect preselect
+              :caller 'ivy-bibtex
+              :history 'ivy-bibtex-history)))
+              (cdr (assoc "=key=" (cdr (assoc selection candidates))))))))
+
+      ;; (completing-read "Citation key: "
+      ;;                  (mapcar #'(lambda (x) (cdr (assoc "=key=" x)))
+      ;;                          (bibtex-completion-candidates))))))
+
 
 (defun sync0-bibtex-extract-editors ()
   "Extract the author or editor from entry as string"
@@ -162,6 +191,7 @@
                (downlastname  (downcase lastname))
                (downfirstname  (downcase firstname)))
           (format "%s-%s" downlastname downfirstname))))))
+
 
 (yas-reload-all)
 
