@@ -574,33 +574,35 @@ some quality voices in the AUR repositories.
 * centered-window-mode
   Center text. 
 #+BEGIN_SRC emacs-lisp
-(use-package centered-window
-                    :straight (centered-window :type git :host github :repo "anler/centered-window-mode") 
-                    :config
+  (use-package centered-window
+                      :straight (centered-window :type git :host github :repo "anler/centered-window-mode") 
+                      :config
 
-                (defun sync0-text-mode-centered-window ()
-      "Set font to a variable width (proportional) fonts in current buffer"
-      (if (> (display-pixel-width) 1900)
-      ;; high resolution (t14s)
-        (progn
-              ;; (setq cwm-left-fringe-ratio 80)
-              (setq cwm-left-fringe-ratio 60)
-            (centered-window-mode t))
-      ;; low resolution 
-        (progn
-              (setq cwm-left-fringe-ratio 100)
-            (centered-window-mode t))))
+                  (defun sync0-text-mode-centered-window ()
+        "Set font to a variable width (proportional) fonts in current buffer"
+        (if (> (display-pixel-width) 1900)
+        ;; high resolution (t14s)
+          (progn
+                ;; (setq cwm-left-fringe-ratio 80)
+                (setq cwm-left-fringe-ratio 50)
+              (centered-window-mode t))
+        ;; low resolution 
+          (progn
+                (setq cwm-left-fringe-ratio 100)
+              (centered-window-mode t))))
 
-                (defun sync0-prog-mode-centered-window ()
-                 (progn
-            ;; Ratio by which the left fringe is padded more than the right.
-            ;; Should be a value between 0 and 100
-            (setq cwm-left-fringe-ratio 30)
-            (centered-window-mode t)))
+                  (defun sync0-prog-mode-centered-window ()
+                   (progn
+              ;; Ratio by which the left fringe is padded more than the right.
+              ;; Should be a value between 0 and 100
+              (setq cwm-left-fringe-ratio 30)
+              (centered-window-mode t)))
 
-                    :hook 
-            ((text-mode . sync0-text-mode-centered-window)
-             (prog-mode . sync0-prog-mode-centered-window)))
+                      :hook 
+              ((text-mode . sync0-text-mode-centered-window)
+               ;; (mu4e-compose-mode . sync0-text-mode-centered-window)
+               ;; (mu4e-view-mode . sync0-text-mode-centered-window)
+               (prog-mode . sync0-prog-mode-centered-window)))
 
   #+END_SRC 
 

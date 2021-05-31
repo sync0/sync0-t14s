@@ -1,3 +1,12 @@
+* org-recoll
+#+BEGIN_SRC emacs-lisp
+  (use-package org-recoll
+:disabled t
+     :straight (org-recoll :type git
+                         :host github
+                         :repo "alraban/org-recoll"))
+#+END_SRC 
+
 * deft
 #+BEGIN_SRC emacs-lisp
   (use-package el-patch
@@ -20,6 +29,14 @@
       '((noslash . "-")
         (nospace . "_")
         (case-fn . downcase)))
+      (deft-strip-summary-regexp
+  (concat "\\("
+           "[\n\t]" ;; blank
+           "\\|^:[[:ascii:]]+:.*$" ;; org-mode properties string
+            "\\|^#\\+[[:alpha:]_]+.*$" ;; org-mode metadata
+           "\\|^Origin:.*$" ;; Origin string
+           "\\|^\\[\\[file:.*$" ;; org-mode inline-images
+           "\\)"))
     :config/el-patch
     (defun deft-parse-title (file contents)
       "Parse the given FILE and CONTENTS and determine the title.
@@ -33,6 +50,62 @@
                              (funcall deft-parse-title-function
                                       (substring contents begin (match-end 0))))))
                      (org-roam-db--get-title file)))
+
+;;taken from
+;; https://emacs.stackexchange.com/questions/36200/split-line-every-n-characters
+(defun split-string-every (string chars)
+  "Split STRING into substrings of length CHARS characters.
+
+This returns a list of strings."
+  (cond ((string-empty-p string)
+         nil)
+        ((< (length string)
+            chars)
+         (list string))
+    (t (cons (substring string 0 chars)
+             (split-string-every (substring string chars)
+                                 chars)))))
+
+(defun deft-file-widget (file)
+  "Add a line to the file browser for the given FILE."
+  (when file
+    (let* ((key (file-name-nondirectory file))
+           (text (deft-file-contents file))
+           (title (deft-file-title file))
+           (summary (deft-file-summary file))
+           (fixed (replace-regexp-in-string  "\\[\\[[[:alnum:][:space:]-:]+\\]\\[\\([[:graph:][:space:]]+\\)\\]\\]" "\\1" summary)) 
+           (reduced (if (> (length fixed) 500)
+                        (substring-no-properties fixed nil 500)
+                      fixed))
+           (new-string (string-join (split-string-every reduced 70) "\n"))
+           (mtime (when deft-time-format
+                    (format-time-string deft-time-format (deft-file-mtime file))))
+           (mtime-width (deft-string-width mtime))
+           (line-width (- deft-window-width mtime-width))
+           (title-width (min line-width (deft-string-width title)))
+           (summary-width (min (deft-string-width summary)
+                               (- line-width
+                                  (length deft-separator)))))
+      (widget-create 'link
+                      :button-prefix ""
+                      :button-suffix ""
+                      :button-face 'deft-title-face
+                      :format "%[%v%]"
+                      :tag file
+                      :help-echo "Edit this file"
+                      :notify (lambda (widget &rest ignore)
+                                (deft-open-file (widget-get widget :tag)))
+                      (if title (truncate-string-to-width title title-width)
+                        deft-empty-file-title))
+      (when mtime
+        (while (< (current-column) line-width)
+          (widget-insert " "))
+        (widget-insert (propertize mtime 'face 'deft-time-face)))
+      (when (> summary-width 0)
+        (widget-insert "\n")
+        (widget-insert (propertize new-string 
+                                   'face 'deft-summary-face)))
+      (widget-insert "\n"))))
 
     (defhydra sync0-hydra-deft-functions (:color amaranth :hint nil :exit t)
       "

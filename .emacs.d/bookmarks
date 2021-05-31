@@ -63,10 +63,10 @@
  (rear-context-string . "Eles | têm    |\n")
  (position . 1687))
 ("here2"
- (filename . "~/Dropbox/org/notes/references/sep1858-04-15.org")
- (front-context-string . "e sync0-author-l")
- (rear-context-string . "r: (void-variabl")
- (position . 376))
+ (filename . "~/Dropbox/typography/layout_planner-daily.tex")
+ (front-context-string . " \\\\ \\cline{3-3}\n")
+ (rear-context-string . "ntom{mmmmmmmmmm}")
+ (position . 3705))
 ("matonti"
  (filename . "~/Dropbox/notes/matonti2012.org")
  (front-context-string . "\n\n* 無 Conclusion")
@@ -183,8 +183,8 @@
  (rear-context-string . "Jérôme Lallment\n")
  (position . 883))
 ("org-capture-last-stored"
- (filename . "~/Dropbox/org/bibliographies/20210517172757.org")
- (front-context-string . "#+TITLE: Bibliog")
+ (filename . "~/Dropbox/org/fiche/20210530205823.org")
+ (front-context-string . ":PROPERTIES:\n:ID")
  (rear-context-string)
  (position . 1))
 ("carc"
@@ -198,8 +198,8 @@
  (rear-context-string . "\"init.el\"))))))\n")
  (position . 5443))
 ("here"
- (filename . "~/.emacs.d/sync0/sync0-yasnippet-doctorat.el")
- (front-context-string . ")\n\n\n(provide 'sy")
- (rear-context-string . "ies 1 candidate)")
- (position . 1830))
+ (filename . "~/.emacs.d/sync0/sync0-org.org")
+ (front-context-string . "\n\n             ;")
+ (rear-context-string . " %?\")\n\"%?\"))))\n\n")
+ (position . 99666))
 )

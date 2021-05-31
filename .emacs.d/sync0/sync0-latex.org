@@ -67,8 +67,8 @@
       ;; writing completion
       (bibtex-completion-bibliography '("~/Dropbox/bibliographies/bibliography.bib"
                                         "~/Dropbox/bibliographies/doctorat.bib")) 
-      (bibtex-completion-notes-path '"~/Dropbox/org/notes/references")
-      (bibtex-completion-library-path '("~/Dropbox/org/notes/references/"))
+      (bibtex-completion-notes-path '"~/Dropbox/org/reference")
+      (bibtex-completion-library-path '("~/Dropbox/org/reference/"))
       (bibtex-completion-pdf-field "file")
       (bibtex-completion-pdf-symbol "P")
       (bibtex-completion-notes-symbol "N")

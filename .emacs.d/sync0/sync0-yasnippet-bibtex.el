@@ -1,4 +1,4 @@
-(require 'ivy-bibtex)
+(require 'bibtex-completion)
 ;; Variables
 (setq sync0-bibtex-types '("Manual" "Patent" "Report" "Thesis" "Article" "Paper"))
 
@@ -17,14 +17,13 @@
 ;;                  (re-search-backward "cite\\[[[:digit:]]+\\]{\\([[:graph:]]+\\)}" nil t 1))
 ;;                (match-string 1)))))
 
+
 (defun sync0-print-bibtex-key ()
   "Print the bibtex key of the document"
-  (if  (save-excursion 
-               (goto-char (point-min))
-        (re-search-forward "^#\\+ROAM_TAGS: \\([[:graph:]]+\\)[[:blank:]]" nil t 1))
-      (match-string 1)
-    (save-excursion
-             (when 
+  (let ((key (org-entry-get 1 "ROAM_REFS")))
+    (if  (stringp key)
+        key 
+  (org-with-point-at 1
                  (or (re-search-backward "cite:\\([[:graph:]]+\\)\\]\\[[[:digit:]]+\\]\\]" nil t 1)
                  (re-search-backward "cite\\[[[:digit:]]+\\]{\\([[:graph:]]+\\)}" nil t 1))
                (match-string 1)))))
@@ -40,7 +39,7 @@
     (when
         (or (re-search-backward "^#\\+ATTR_LATEX: :options \\[{\\\\cite\\[\\([[:digit:]]+\\)\\]" nil t 1)
             (re-search-backward "(p. \\([[:digit:]]+\\))" nil t 1)
-(re-search-backward "\\[\\[[[:graph:]]+\\]\\[\\([[:digit:]]+\\)\\]\\]" nil t 1))
+            (re-search-backward "\\[\\[[[:graph:]]+\\]\\[\\([[:digit:]]+\\)\\]\\]" nil t 1))
       (match-string 1))))
 
 (defun sync0-last-cited-page ()
