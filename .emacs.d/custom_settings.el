@@ -6,7 +6,7 @@
  '(company-auto-commit nil nil nil "Customized with use-package company")
  '(fringe-mode 0 nil (fringe))
  '(org-agenda-files
-   '("~/Dropbox/org/projects/drafts/20210501174315.org" "/home/sync0/Dropbox/org/projects/todo/20210109224305.org" "/home/sync0/Dropbox/org/projects/todo/20210109224746.org" "/home/sync0/Dropbox/org/projects/todo/20210109225544.org" "/home/sync0/Dropbox/org/projects/todo/20210109231427.org" "/home/sync0/Dropbox/org/projects/todo/20210109232816.org" "/home/sync0/Dropbox/org/projects/todo/20210110215320.org" "/home/sync0/Dropbox/org/projects/todo/20210110223237.org" "/home/sync0/Dropbox/org/projects/todo/20210110230044.org" "/home/sync0/Dropbox/org/projects/todo/20210211234748.org" "/home/sync0/Dropbox/org/projects/todo/emacs_todo.org" "/home/sync0/Dropbox/org/projects/todo/historiography_todo.org" "/home/sync0/Dropbox/org/projects/todo/libreta-militar.org" "/home/sync0/Dropbox/org/projects/todo/todo.org" "/home/sync0/Dropbox/org/projects/todo/utopia-labor_todo.org" "~/Dropbox/org/archived/etc/Gcal.org" "~/Dropbox/org/archived/etc/Events.org" "~/Dropbox/org/archived/etc/Classes.org" "~/Dropbox/org/projects/messages/messages.org" "~/Dropbox/org/archived/etc/menage.org")))
+   '("~/Dropbox/org/fiche/20210514154410.org" "/home/sync0/Dropbox/org/todo/20210109224305.org" "/home/sync0/Dropbox/org/todo/20210109224746.org" "/home/sync0/Dropbox/org/todo/20210109225544.org" "/home/sync0/Dropbox/org/todo/20210109231427.org" "/home/sync0/Dropbox/org/todo/20210109232816.org" "/home/sync0/Dropbox/org/todo/20210110215320.org" "/home/sync0/Dropbox/org/todo/20210110223237.org" "/home/sync0/Dropbox/org/todo/20210110230044.org" "/home/sync0/Dropbox/org/todo/20210211234748.org" "/home/sync0/Dropbox/org/todo/emacs_todo.org" "/home/sync0/Dropbox/org/todo/historiography_todo.org" "/home/sync0/Dropbox/org/todo/libreta-militar.org" "/home/sync0/Dropbox/org/todo/todo.org" "/home/sync0/Dropbox/org/todo/utopia-labor_todo.org" "~/Dropbox/org/etc/Gcal.org" "~/Dropbox/org/etc/Events.org" "~/Dropbox/org/etc/Classes.org" "~/Dropbox/org/etc/menage.org")))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -24,7 +24,7 @@
  '(org-agenda-structure ((t (:family "Minion Pro" :weight normal :height 1.6))))
  '(org-block ((t (:family "Inconsolata" :height 0.95 :inherit fixed-pitch :background nil))))
  '(org-block-begin-line ((t (:family "Inconsolata" :height 0.95 :inherit fixed-pitch :weight bold))))
- '(org-block-end-line ((t (:inherit org-block-begin-line :weight bold))))
+ '(org-block-end-line ((t (:inherit org-block-begin-line))))
  '(org-checkbox ((t (:family "Inconsolata" :weight bold))))
  '(org-date ((t (:family "Inconsolata" :height 0.95))))
  '(org-default ((t (:family "Minion Pro" :weight normal :height 1.0))))

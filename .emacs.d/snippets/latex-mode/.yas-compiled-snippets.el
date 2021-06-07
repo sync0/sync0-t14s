@@ -63,4 +63,4 @@
                        ("beamer" "    :PROPERTIES:\n    :BEAMER_env: alertblock\n    :END:\n    #+BEGIN_EXAMPLE\n    \\begin{alertblock}{${1:Lorem ipsum dolor}}\n    $2\n    \\end{alertblock}\n    #+END_EXAMPLE\n    $0\n" "alert_block_beamer" nil nil nil "/home/sync0/.emacs.d/snippets/latex-mode/beamer_alert_block" nil nil)))
 
 
-;;; Do not edit! File generated at Sun Apr 25 00:05:21 2021
+;;; Do not edit! File generated at Wed Jun  2 23:32:56 2021

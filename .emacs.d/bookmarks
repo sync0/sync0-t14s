@@ -183,7 +183,7 @@
  (rear-context-string . "Jérôme Lallment\n")
  (position . 883))
 ("org-capture-last-stored"
- (filename . "~/Dropbox/org/fiche/20210530205823.org")
+ (filename . "~/Dropbox/org/fiche/20210604232234.org")
  (front-context-string . ":PROPERTIES:\n:ID")
  (rear-context-string)
  (position . 1))
@@ -198,8 +198,8 @@
  (rear-context-string . "\"init.el\"))))))\n")
  (position . 5443))
 ("here"
- (filename . "~/.emacs.d/sync0/sync0-org.org")
- (front-context-string . "\n\n             ;")
- (rear-context-string . " %?\")\n\"%?\"))))\n\n")
- (position . 99666))
+ (filename . "~/Dropbox/org/reference/20210531231926.org")
+ (front-context-string . "\n  . Voir l'arti")
+ (rear-context-string . "is et la fièvre\n")
+ (position . 3234))
 )

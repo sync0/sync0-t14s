@@ -4,7 +4,6 @@
 # Necessary to export code from Emacs org mode to elisp. 
 #+PROPERTY: header-args :tangle yes
 
-
 * Introduction 
 This is my Emacs configuration file. As the sloppy code herein
 attests, I am not a proficient programmer. I use Emacs primarily
@@ -431,7 +430,7 @@ https://stackoverflow.com/questions/23207958/how-to-prevent-emacs-dired-from-spl
 #+BEGIN_SRC emacs-lisp
 
   (defvar sync0-zettelkasten-properties-list
-  '("ZETTEL_TYPE" "BIBLATEX_TYPE" "ZETTEL_FUNCTION" "FICHE_TYPE" "PROJECT_TITLE" "ANNOTATION_REFS" "ROAM_REFS") 
+  '("ZETTEL_TYPE" "BIBLATEX_TYPE" "ZETTEL_FUNCTION" "FICHE_TYPE" "PROJECT_TITLE" "ANNOTATION_REFS" "ROAM_REFS" "DATE") 
   "List of zettel properties")
 
   (defvar sync0-zettelkasten-all-properties-list
@@ -453,11 +452,11 @@ https://stackoverflow.com/questions/23207958/how-to-prevent-emacs-dired-from-spl
   "List of projects")
  
   (defvar sync0-zettelkasten-fiche-types 
-  '("people" "reference" "place" "publication" "concept" "association" nil) 
+  '("people" "reference" "place" "publication" "concept" "association" "institution" "questions" "review" nil) 
   "List of projects")
 
 (defvar sync0-biblatex-fields
-'("title" "subtitle" "date" "origdate" "author" "journal" "booktitle" "booksubtitle" "crossref" "volume" "number" "publisher" "location" "pages" "addendum" "url" "urldate" "language" "langid" "file")
+'("title" "subtitle" "date" "origdate" "author" "journaltitle" "booktitle" "booksubtitle" "crossref" "volume" "number" "publisher" "location" "pages" "addendum" "url" "urldate" "language" "langid" "file")
   "List of BibLaTeX entry fields")
 
   (setq sync0-zettelkasten-directory (concat (getenv "HOME") "/Dropbox/org/")
@@ -486,7 +485,7 @@ https://stackoverflow.com/questions/23207958/how-to-prevent-emacs-dired-from-spl
 (defun sync0-downcase-and-no-whitespace (x)
 "Downcase and replace whitespace by _ in the current string"
     (downcase
-     (replace-regexp-in-string "[[:space:]]+" "_" x)))
+     (replace-regexp-in-string "[[:space:]-]+" "_" x)))
 
       (defun sync0-log-today-timestamp () 
         "Insert today's date in the YYYY/MM/DD format"
@@ -514,53 +513,6 @@ https://stackoverflow.com/questions/23207958/how-to-prevent-emacs-dired-from-spl
                   (date (format-time-string "%Y-%m-%d")))
                (when (re-search-forward regex nil nil 1)
                      (replace-match date nil nil nil 1)))))
-
-              ;; (when (search-forward "Last modified: &" nil nil 1)
-              ;;   (if (progn (forward-char 1)(looking-at regex))
-              ;;       (replace-match date)
-              ;;     (sync0-insert-today-timestamp)))
-
-    ;; (defun sync0-zettelkasten-update-org-properties ()
-    ;;   (interactive)
-    ;;           ;; this functions returns a list of conses whose second
-    ;;           ;; element is the value of the property (each element is a dot list)
-    ;;           ;; or nil when the property has not been defined for the
-    ;;           ;; current zettel
-    ;;   (let*  ((zettel-properties
-    ;;            (let (x)
-    ;;              (dolist (property sync0-zettelkasten-properties-list x)
-    ;;                (push  (org-entry-get 1 property) x))
-    ;;              (delete nil x)))
-    ;;           (type  (org-entry-get 1 "ZETTEL_TYPE"))
-    ;;           (project  (org-entry-get 1 "PROJECT_TITLE"))
-    ;;           (corrected-project
-    ;;            (downcase  
-    ;;             (replace-regexp-in-string "[[:space:]]+" "_"
-    ;;                                       (string-trim
-    ;;                                        (org-entry-get 1 "PROJECT_TITLE") "\"" "\""))))
-    ;;           (path default-directory)
-    ;;           (path-dirs (split-string-and-unquote path "/"))
-    ;;           (zettelkasten-dirs (split-string-and-unquote sync0-zettelkasten-directory "/"))
-    ;;           (current-dir (car (cl-set-difference path-dirs zettelkasten-dirs  :test #'equal)))
-    ;;           (new-elements (list corrected-project current-dir))
-    ;;           (corrected-properties (cl-union new-elements zettel-properties  :test #'equal))                                 
-    ;;           ;; extract the existing tags in the tags line
-    ;;           (tags-line (cadar (org-collect-keywords '("FILETAGS"))))
-    ;;           (tags (split-string-and-unquote tags-line ":"))
-    ;;           (new-tags (cl-union corrected-properties tags :test #'equal))
-    ;;           (new-tags-line
-    ;;            (let (x)
-    ;;              (dolist (element new-tags x)
-    ;;                (setq x (concat  element ":" x)))))
-    ;;           (corrected-tags-line (concat ":" new-tags-line)))
-    ;;   (org-with-point-at 1
-    ;; (re-search-forward "^#\\+FILETAGS:" (point-max) t)
-    ;; (kill-whole-line 1)
-    ;; (insert (concat "#+FILETAGS: " corrected-tags-line "\n"))
-    ;; (unless  (equal project corrected-project)
-    ;;         (org-set-property "PROJECT_TITLE" corrected-project))
-    ;;     (unless (equal type current-dir)
-    ;;         (org-set-property "ZETTEL_TYPE" current-dir)))))
 
   (defun sync0-zettelkasten-update-org-properties ()
     (interactive)
@@ -606,27 +558,10 @@ https://stackoverflow.com/questions/23207958/how-to-prevent-emacs-dired-from-spl
                        (string-match-p "\"[[:print:]]+\"" value))
             (org-set-property property (concat "\""  value "\""))))))))
 
-    ;; (defun sync0-zettelkasten-update-org-properties ()
-    ;; (interactive)
-    ;; (let*  ((path default-directory)
-    ;;          (path-dirs (split-string-and-unquote path "/"))
-    ;;          (zettelkasten-dirs (split-string-and-unquote sync0-zettelkasten-directory "/"))
-    ;;          (current-dir (car (cl-set-difference path-dirs zettelkasten-dirs  :test #'equal)))
-    ;;          (type (org-entry-get 1 "ZETTEL_TYPE"))
-    ;;          (tags-line (cadar (org-collect-keywords '("FILETAGS"))))
-    ;;          (new-tags-line (concat ":" current-dir (cadar (org-collect-keywords '("FILETAGS")))))
-    ;;          (tags (split-string-and-unquote tags-line ":")))
-    ;;   (org-with-point-at 1
-    ;;     (when (not (equal type current-dir))
-    ;;         (org-set-property "ZETTEL_TYPE" current-dir))
-    ;;     (when (not (member current-dir tags))
-    ;;       (re-search-forward "^#\\+FILETAGS:" (point-max) t)
-    ;;       (kill-whole-line 1)
-    ;; (insert (concat "#+FILETAGS: " new-tags-line "\n"))))))
 
         (add-hook 'before-save-hook (lambda ()
       ;; Check whether file is in org-mode and whether it is located in my Zettelkasten directory
-                                      (when (and (eq major-mode 'org-mode)
+                                      (when (and (equal major-mode 'org-mode)
                                             ;;(not (string-prefix-p "archives" (buffer-file-name)))
                                             (string-prefix-p sync0-zettelkasten-directory (buffer-file-name)))
                                                      ;; (equal default-directory (concat (getenv "HOME") "/Dropbox/annotations/"))

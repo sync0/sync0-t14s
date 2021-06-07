@@ -204,7 +204,7 @@
 (global-set-key (kbd "M-l") 'previous-buffer)
 
 (defvar sync0-zettelkasten-properties-list
-  '("ZETTEL_TYPE" "BIBLATEX_TYPE" "ZETTEL_FUNCTION" "FICHE_TYPE" "PROJECT_TITLE" "ANNOTATION_REFS" "ROAM_REFS") 
+  '("ZETTEL_TYPE" "BIBLATEX_TYPE" "ZETTEL_FUNCTION" "FICHE_TYPE" "PROJECT_TITLE" "ANNOTATION_REFS" "ROAM_REFS" "DATE") 
   "List of zettel properties")
 
   (defvar sync0-zettelkasten-all-properties-list
@@ -226,11 +226,11 @@
   "List of projects")
 
   (defvar sync0-zettelkasten-fiche-types 
-  '("people" "reference" "place" "publication" "concept" "association" nil) 
+  '("people" "reference" "place" "publication" "concept" "association" "institution" "questions" "review" nil) 
   "List of projects")
 
 (defvar sync0-biblatex-fields
-'("title" "subtitle" "date" "origdate" "author" "journal" "booktitle" "booksubtitle" "crossref" "volume" "number" "publisher" "location" "pages" "addendum" "url" "urldate" "language" "langid" "file")
+'("title" "subtitle" "date" "origdate" "author" "journaltitle" "booktitle" "booksubtitle" "crossref" "volume" "number" "publisher" "location" "pages" "addendum" "url" "urldate" "language" "langid" "file")
   "List of BibLaTeX entry fields")
 
   (setq sync0-zettelkasten-directory (concat (getenv "HOME") "/Dropbox/org/")
@@ -256,7 +256,7 @@
 (defun sync0-downcase-and-no-whitespace (x)
 "Downcase and replace whitespace by _ in the current string"
     (downcase
-     (replace-regexp-in-string "[[:space:]]+" "_" x)))
+     (replace-regexp-in-string "[[:space:]-]+" "_" x)))
 
       (defun sync0-log-today-timestamp () 
         "Insert today's date in the YYYY/MM/DD format"
@@ -284,53 +284,6 @@
                   (date (format-time-string "%Y-%m-%d")))
                (when (re-search-forward regex nil nil 1)
                      (replace-match date nil nil nil 1)))))
-
-              ;; (when (search-forward "Last modified: &" nil nil 1)
-              ;;   (if (progn (forward-char 1)(looking-at regex))
-              ;;       (replace-match date)
-              ;;     (sync0-insert-today-timestamp)))
-
-    ;; (defun sync0-zettelkasten-update-org-properties ()
-    ;;   (interactive)
-    ;;           ;; this functions returns a list of conses whose second
-    ;;           ;; element is the value of the property (each element is a dot list)
-    ;;           ;; or nil when the property has not been defined for the
-    ;;           ;; current zettel
-    ;;   (let*  ((zettel-properties
-    ;;            (let (x)
-    ;;              (dolist (property sync0-zettelkasten-properties-list x)
-    ;;                (push  (org-entry-get 1 property) x))
-    ;;              (delete nil x)))
-    ;;           (type  (org-entry-get 1 "ZETTEL_TYPE"))
-    ;;           (project  (org-entry-get 1 "PROJECT_TITLE"))
-    ;;           (corrected-project
-    ;;            (downcase  
-    ;;             (replace-regexp-in-string "[[:space:]]+" "_"
-    ;;                                       (string-trim
-    ;;                                        (org-entry-get 1 "PROJECT_TITLE") "\"" "\""))))
-    ;;           (path default-directory)
-    ;;           (path-dirs (split-string-and-unquote path "/"))
-    ;;           (zettelkasten-dirs (split-string-and-unquote sync0-zettelkasten-directory "/"))
-    ;;           (current-dir (car (cl-set-difference path-dirs zettelkasten-dirs  :test #'equal)))
-    ;;           (new-elements (list corrected-project current-dir))
-    ;;           (corrected-properties (cl-union new-elements zettel-properties  :test #'equal))                                 
-    ;;           ;; extract the existing tags in the tags line
-    ;;           (tags-line (cadar (org-collect-keywords '("FILETAGS"))))
-    ;;           (tags (split-string-and-unquote tags-line ":"))
-    ;;           (new-tags (cl-union corrected-properties tags :test #'equal))
-    ;;           (new-tags-line
-    ;;            (let (x)
-    ;;              (dolist (element new-tags x)
-    ;;                (setq x (concat  element ":" x)))))
-    ;;           (corrected-tags-line (concat ":" new-tags-line)))
-    ;;   (org-with-point-at 1
-    ;; (re-search-forward "^#\\+FILETAGS:" (point-max) t)
-    ;; (kill-whole-line 1)
-    ;; (insert (concat "#+FILETAGS: " corrected-tags-line "\n"))
-    ;; (unless  (equal project corrected-project)
-    ;;         (org-set-property "PROJECT_TITLE" corrected-project))
-    ;;     (unless (equal type current-dir)
-    ;;         (org-set-property "ZETTEL_TYPE" current-dir)))))
 
   (defun sync0-zettelkasten-update-org-properties ()
     (interactive)
@@ -376,27 +329,10 @@
                        (string-match-p "\"[[:print:]]+\"" value))
             (org-set-property property (concat "\""  value "\""))))))))
 
-    ;; (defun sync0-zettelkasten-update-org-properties ()
-    ;; (interactive)
-    ;; (let*  ((path default-directory)
-    ;;          (path-dirs (split-string-and-unquote path "/"))
-    ;;          (zettelkasten-dirs (split-string-and-unquote sync0-zettelkasten-directory "/"))
-    ;;          (current-dir (car (cl-set-difference path-dirs zettelkasten-dirs  :test #'equal)))
-    ;;          (type (org-entry-get 1 "ZETTEL_TYPE"))
-    ;;          (tags-line (cadar (org-collect-keywords '("FILETAGS"))))
-    ;;          (new-tags-line (concat ":" current-dir (cadar (org-collect-keywords '("FILETAGS")))))
-    ;;          (tags (split-string-and-unquote tags-line ":")))
-    ;;   (org-with-point-at 1
-    ;;     (when (not (equal type current-dir))
-    ;;         (org-set-property "ZETTEL_TYPE" current-dir))
-    ;;     (when (not (member current-dir tags))
-    ;;       (re-search-forward "^#\\+FILETAGS:" (point-max) t)
-    ;;       (kill-whole-line 1)
-    ;; (insert (concat "#+FILETAGS: " new-tags-line "\n"))))))
 
         (add-hook 'before-save-hook (lambda ()
       ;; Check whether file is in org-mode and whether it is located in my Zettelkasten directory
-                                      (when (and (eq major-mode 'org-mode)
+                                      (when (and (equal major-mode 'org-mode)
                                             ;;(not (string-prefix-p "archives" (buffer-file-name)))
                                             (string-prefix-p sync0-zettelkasten-directory (buffer-file-name)))
                                                      ;; (equal default-directory (concat (getenv "HOME") "/Dropbox/annotations/"))
@@ -2853,6 +2789,44 @@ _k_: kill        _s_: split                   _{_: wrap with { }
 :commands (org-emms-insert-track
            org-emms-insert-track-position))
 
+(use-package org-fc
+:straight (org-fc :type git :host github :repo "l3kn/org-fc" :files (:defaults "awk" "demo.org" "contrib/*.el")) 
+:commands (org-fc-hydra/body
+           org-fc-review
+           org-fc-review-all)
+:custom
+(org-fc-directories sync0-zettelkasten-directory)
+:config
+(require 'org-fc-hydra)
+
+(defhydra sync0-hydra-org-fc-functions (:color amaranth :hint nil :exit t)
+  "
+   ^Flip^       ^Rate^       ^Create card^
+   ^--------------------------------------
+   _f_lip       _e_asy      _d_ouble (no back)
+   _s_uspend    _g_ood      _n_ormal
+   sto_p_       _h_ard      _t_ext input
+   ^ ^          _a_gain     _c_loze
+   _q_uit
+        "
+
+  ("f" org-fc-review-flip)
+  ("s" org-fc-review-suspend-card)
+  ("p" org-fc-review-quit)
+  ("a" org-fc-review-rate-again)
+  ("h" org-fc-review-rate-hard)
+  ("g" org-fc-review-rate-good)
+  ("e" org-fc-review-rate-easy)
+  ("n" org-fc-type-normal-init)
+  ("d" org-fc-type-double-init)
+  ("t" org-fc-type-text-input-init)
+  ("c" org-fc-type-cloze-init)
+  ("q" nil :color blue))
+
+(evil-leader/set-key-for-mode 'org-mode "t" 'sync0-hydra-org-fc-functions/body)
+
+)
+
 (server-start)
 
 (use-package org-protocol
@@ -2883,6 +2857,7 @@ _k_: kill        _s_: split                   _{_: wrap with { }
                   (org-roam-graph-exclude-matcher '("journal" "fiche" "etc" "trash" "todo" "inbox" "project" "vault" "reference"))
 
             :config
+(require 'sync0-functions)
 
 (defun sync0-zettelkasten-set-property ()
   (interactive)
@@ -3405,16 +3380,14 @@ _k_: kill        _s_: split                   _{_: wrap with { }
          (creation (format-time-string "%Y-%m-%d")) 
          (date (read-string "Date (ex. 1890-18-12) : "))
          (origdate (read-string "Origdate (ex. 1890-18-12) : "))
-         (file-date (if (equal origdate "")
-                        date
-                      (concat "(" origdate ")" date)))
          (author (if (equal type "collection")
                      (completing-read "Editeur : "
                                       (delete-dups (mapcar #'(lambda (x) (cdr (assoc "editor" x)))
-                                                             (bibtex-completion-candidates))))
+                                                           (bibtex-completion-candidates))))
                    (completing-read "Auteur : "
                                     (delete-dups (mapcar #'(lambda (x) (cdr (assoc "author" x)))
-                                                           (bibtex-completion-candidates))))))
+                                                         (bibtex-completion-candidates))))))
+         ;; check whether there are multiple authors
          (author-fixed (cond ((string-match " and " author)
                               ;; create a list with parts 
                               (let* ((author-list  (split-string author " and "))
@@ -3430,45 +3403,37 @@ _k_: kill        _s_: split                   _{_: wrap with { }
                                                                   (match-string 1 element))
                                                                 ", "))))))
                                 (substring names 0 -2)))
+                             ;; check when author is an organization
                              ((string-match "^{" author)
                               (string-match "{\\([[:print:]]+\\)}" author)
                               (match-string 1 author))
+                             ;; other cases
                              (t (let* ((author-list (split-string author ", "))
                                        (last-name (nth 0 author-list))
                                        (first-name (nth 1 author-list)))
                                   (concat first-name " " last-name)))))
-         (lastname (cond ((string-match " and " author)
-                          ;; create a list with parts 
-                          (let* ((author-list  (split-string author " and "))
-                                 (last-names (let (x)
-                                               (dolist  (element author-list x)
-                                                 (setq x (concat x
-                                                                 (progn
-                                                                   (string-match "\\([[:graph:]]+\\),"   element)
-                                                                   (match-string 1 element))
-                                                                 ", "))))))
-                            (substring last-names 0 -2)))
-                         ((string-match "^{" author)
-                          (string-match "{\\([[:print:]]+\\)}" author)
-                          (match-string 1 author))
-                         (t (nth 0 (split-string author ", ")))))
-         (language (completing-read "Langage : " sync0-biblatex-languages))
+         (language (completing-read "Langue : " sync0-biblatex-languages))
          (langid language) 
          (journal (when (equal type "article")
-                    (completing-read "Journal title : "
+                    (completing-read "Titre du journal : "
                                      (delete-dups (mapcar #'(lambda (x) (cdr (assoc "journaltitle" x)))
-                                                            (bibtex-completion-candidates))))))
-         (volume (when (equal type "article") (read-string "Tome du journal : ")))
-         (number (when (equal type "article") (read-string "Numero du journal : ")))
+                                                          (bibtex-completion-candidates))))))
+         (volume (when (or (equal type "article")
+                           (equal type "book")
+                           (equal type "inbook")
+                           (equal type "collection")
+                           (equal type "incollection"))
+                   (read-string "Tome : ")))
+         (number (when (equal type "article") (read-string "Numero : ")))
          (publisher (when (or (equal type "book")
                               (equal type "collection"))
                       (completing-read "Maison d'edition : "
                                        (delete-dups (mapcar #'(lambda (x) (cdr (assoc "publisher" x)))
-                                                              (bibtex-completion-candidates))))))
+                                                            (bibtex-completion-candidates))))))
          (location (when (equal type "book")
                      (completing-read "Location : "
                                       (delete-dups (mapcar #'(lambda (x) (cdr (assoc "location" x)))
-                                                             (bibtex-completion-candidates))))))
+                                                           (bibtex-completion-candidates))))))
          (pages (when (or (equal type "article")
                           (equal type "incollection")
                           (equal type "inbook"))
@@ -3477,37 +3442,35 @@ _k_: kill        _s_: split                   _{_: wrap with { }
                              (equal type "inbook"))
                      (let* ((candidates (bibtex-completion-candidates))
                             (key (bibtex-completion-key-at-point))
-                            ;; (preselect (and key
-                            ;;                 (cl-position-if (lambda (cand)
-                            ;;                                   (member (cons "=key=" key)
-                            ;;                                           (cdr cand)))
-                            ;;                                 candidates)))
-                            (selection (ivy-read "BibTeX entries: "
+                            (preselect (and key
+                                            (cl-position-if (lambda (cand)
+                                                              (member (cons "=key=" key)
+                                                                      (cdr cand)))
+                                                            candidates)))
+                            (selection (ivy-read "Crossref : "
                                                  candidates
-                                                 ;; :preselect preselect
+                                                 :preselect preselect
                                                  :caller 'ivy-bibtex
                                                  :history 'ivy-bibtex-history)))
                        (cdr (assoc "=key=" (cdr (assoc selection candidates)))))))
          (booktitle (when (and (or (equal type "incollection")
                                    (equal type "inbook"))
                                (null crossref))
-                      (completing-read "Booktitle : "
+                      (completing-read "Titre du livre (booktitle) : "
                                        (delete-dups (mapcar #'(lambda (x) (cdr (assoc "booktitle" x)))
-                                                              (bibtex-completion-candidates))))))
+                                                            (bibtex-completion-candidates))))))
          (booksubtitle (when (and (or (equal type "incollection")
                                       (equal type "inbook"))
                                   (null crossref))
-                         (read-string "Book subtitle  : ")))
+                         (read-string "Soustitre du livre (booksubtitle)  : ")))
          (addendum (when (equal type "unpublished")
                      (read-string "Addendum (ex. Box, Folder, etc.) : ")))
          (url (when (equal type "online")
                 (read-string "Url : " nil nil nil t)))
          (urldate (when (equal type "online") creation))
-         (title (read-string "Titre : " nil nil nil t))
-         (subtitle (read-string "Sous-titre : " nil nil nil t))
-         (file-title (if (equal subtitle "") title (concat title "_" subtitle)))
-         (file (concat "/home/sync0/Documents/pdfs/" lastname "_" file-date "_" file-title ".pdf"))
-         ;; (file (concat "/home/sync0/Documents/pdfs/" lastname "_" file-date "_" file-title ".pdf"))
+         (title (read-string "Titre du texte : " nil nil nil t))
+         (subtitle (read-string "Sous-titre du texte : " nil nil nil t))
+         (file (concat "/home/sync0/Documents/pdfs/" filename ".pdf"))
          (buffer (buffer-file-name))     
          ;; define list of conses whose first element is a biblatex category and
          ;; the second element is its value, as a string, when previously defined
@@ -3556,6 +3519,9 @@ _k_: kill        _s_: split                   _{_: wrap with { }
      ":PROPERTIES:\n"
      ":ID:      " id "\n"
      ":ROAM_REFS: " filename "\n"
+     (unless (or (null crossref)
+                (equal crossref ""))
+     (concat ":CROSSREF: \"" crossref "\"\n"))
      ":BIBLATEX_TYPE: " type "\n"
      (when (equal type "article") (concat ":JOURNAL_TITLE: \"" journal "\"\n"))
      (when (equal type "online") (concat ":WEBSITE: " url "\n"))
@@ -3570,7 +3536,7 @@ _k_: kill        _s_: split                   _{_: wrap with { }
      "#+TITLE: " title "\n"
      (unless (equal subtitle "") (concat "#+SUBTITLE: " subtitle "\n"))
      "#+AUTHOR: " author-fixed "\n"
-     "#+FILETAGS: :" filename ":" type (format-time-string ":%Y:") "\n"
+     "#+FILETAGS: :" filename ":" type ":" date ":\n"
      "#+INTERLEAVE_PDF: " file "\n\n" 
      "Origin: [[id:"
      (sync0-org-get-id buffer)
@@ -3745,7 +3711,7 @@ _q_uit
        ("q" nil :color blue))
 
     (evil-leader/set-key
-      "t" 'sync0-hydra-org-clock/body))
+      "T" 'sync0-hydra-org-clock/body))
 
 (use-package ox-latex 
     :straight nil
@@ -3998,6 +3964,7 @@ are exported to a filename derived from the headline text."
 
     :config
    (require 'doi-utils)
+   (require 'bibtex-completion)
 
     (setq org-ref-notes-function
           (lambda (thekey)
@@ -4007,8 +3974,21 @@ are exported to a filename derived from the headline text."
 
     (defun sync0-visit-bibliography-in-buffer ()
       (interactive)
+(let ((bib-file
+         (completing-read "Fichier Biblatex : "
+            (f-files "~/Dropbox/bibliographies" (lambda (k) (string-match-p ".bib" k))))))
       (find-file
-       (expand-file-name "~/Dropbox/bibliographies/bibliography.bib")))
+       (expand-file-name bib-file))))
+
+    (defun sync0-org-ref-open-pdf-at-point-zathura ()
+      "Open the pdf for bibtex key under point if it exists."
+      (interactive)
+      (let* ((results (org-ref-get-bibtex-key-and-file))
+             (key (car results))
+             (pdf-file (car (bibtex-completion-find-pdf key))))
+        (if (file-exists-p pdf-file)
+            (call-process "zathura" nil 0 nil pdf-file)
+        (message "No PDF found for %s" key))))
 
     (defhydra sync0-hydra-research-functions (:color amaranth :hint nil :exit t)
       "
@@ -4018,8 +3998,9 @@ are exported to a filename derived from the headline text."
    Orb actions          _Q_uote (Csquotes)  Open _r_oam buffer  _L_ast stored link
    Entry _n_otes          _F_oreign quote     Open _d_eft         Roam _l_ink                     
    Bibtex _e_ntry         Insert _c_itation   _B_uild cache       Link to _h_eadline
-   Open _b_ibliography    ^ ^                 Open inde_x_        _D_elete link at point
+   Open _b_ibliography    _E_xtract field     Open inde_x_        _D_elete link at point
    Open _p_df             ^ ^                 Show _g_raph        _R_emove all links
+   Open in _z_athura      ^ ^
 
    _q_uit
         "
@@ -4042,8 +4023,10 @@ are exported to a filename derived from the headline text."
       ("R" sync0-org-replace-all-links-by-descriptions)
       ("n" ivy-bibtex)
       ("e" org-ref-open-citation-at-point)
+      ("E" sync0-ivy-bibtex-extractor)
       ("b" sync0-visit-bibliography-in-buffer)
       ("p" sync0-org-ref-open-pdf-at-point)
+      ("z" sync0-org-ref-open-pdf-at-point-zathura)
       ("I" org-footnote-new)
       ;; ("r" (progn (yas-expand-snippet (yas-lookup-snippet "org_ref_citation"))))
       ("Q" (progn (yas-expand-snippet (yas-lookup-snippet "csquotes_displayquote"))))
@@ -4659,81 +4642,86 @@ _q_uit
   (display-battery-mode t))
 
 ;; Define a local variable with the total number of lines.
-          (defvar-local sync0-mode-line-buffer-line-count nil)
+            (defvar-local sync0-mode-line-buffer-line-count nil)
 
-          ;; Define a function that counts the number of lines in the
-          ;; current buffer.
-          (defun sync0-mode-line-count-lines ()
-            "Count the number of lines in the current buffer."
-            (setq-local sync0-mode-line-buffer-line-count 
-                        (int-to-string (count-lines (point-min) (point-max)))))
+            ;; Define a function that counts the number of lines in the
+            ;; current buffer.
+            (defun sync0-mode-line-count-lines ()
+              "Count the number of lines in the current buffer."
+              (setq-local sync0-mode-line-buffer-line-count 
+                          (int-to-string (count-lines (point-min) (point-max)))))
 
-          ;; Recalculate the total number of lines using hooks. This is
-          ;; not the best approach, but I have not been able to devise a
-          ;; dynamic way to calculate these that does not result in Emacs
-          ;; "inventing" these results.
-          (add-hook 'find-file-hook 'sync0-mode-line-count-lines)
-          (add-hook 'after-save-hook 'sync0-mode-line-count-lines)
-          (add-hook 'after-revert-hook 'sync0-mode-line-count-lines)
+            ;; Recalculate the total number of lines using hooks. This is
+            ;; not the best approach, but I have not been able to devise a
+            ;; dynamic way to calculate these that does not result in Emacs
+            ;; "inventing" these results.
+            (add-hook 'find-file-hook 'sync0-mode-line-count-lines)
+            (add-hook 'after-save-hook 'sync0-mode-line-count-lines)
+            (add-hook 'after-revert-hook 'sync0-mode-line-count-lines)
 
 
-(setq-default mode-line-format
-                  '(" " 
-                  ;;  mode-line-front-espace 
-                    (:eval (cond 
-                            (buffer-read-only (propertize "🔒"
-                                                          'face '(:family "Noto Color Emoji")
-                                                          'help-echo "buffer is read-only!!!"))
-                            ((buffer-modified-p) (propertize "💾"
-                                                             'face '(:family "Noto Color Emoji")))
-                            (t (propertize "✓"
-                                           'face '(:family "Noto Color Emoji")))))
-                    "  " 
-                    mode-line-buffer-identification 
-                    "  " 
+  (setq-default mode-line-format
+                    '(" " 
+                    ;;  mode-line-front-espace 
+                      (:eval (cond 
+                              (buffer-read-only (propertize "🔒"
+                                                            'face '(:family "Noto Color Emoji")
+                                                            'help-echo "buffer is read-only!!!"))
+                              ((buffer-modified-p) (propertize "💾"
+                                                               'face '(:family "Noto Color Emoji")))
+                              (t (propertize "✓"
+                                             'face '(:family "Noto Color Emoji")))))
+                      "  " 
+                      mode-line-buffer-identification 
+                      "  " 
+                      (:eval 
+                              (if (boundp 'guess-language-current-language) 
+              (cond  ((string-equal guess-language-current-language "en") 
+                              (propertize "EN" 'face '(:height 1.0 :family "Minion Pro" :weight bold)))
+                     ((string-equal guess-language-current-language "de") 
+                              (propertize "DE" 'face '(:height 1.0 :family "Minion Pro" :weight bold)))
+                     ((string-equal guess-language-current-language "pt") 
+                              (propertize "PT" 'face '(:height 1.0 :family "Minion Pro" :weight bold)))
+                   ((string-equal guess-language-current-language "it") 
+                            (propertize "IT" 'face '(:height 1.0 :family "Minion Pro" :weight bold)))
+                     ((string-equal guess-language-current-language "fr") 
+                              (propertize "FR" 'face '(:height 1.0 :family "Minion Pro" :weight bold)))
+                     ((string-equal guess-language-current-language "es") 
+                              (propertize "ES" 'face '(:height 1.0 :family "Minion Pro" :weight bold)))
+                      (t (propertize "NIL" 'face '(:height 1.0 :family "Minion Pro" :weight bold))))
+                                   ;; (upcase (prin1-to-string guess-language-current-language))
+                               (propertize "NIL" 'face '(:height 1.0 :family "Minion Pro" :weight bold))))
+                    ;; evil-mode-line-tag
+                      "  "
                     (:eval 
-                            (if (boundp 'guess-language-current-language) 
-            (cond  ((string-equal guess-language-current-language "en") 
-                            (propertize "EN" 'face '(:height 1.0 :family "Minion Pro" :weight bold)))
-                   ((string-equal guess-language-current-language "de") 
-                            (propertize "DE" 'face '(:height 1.0 :family "Minion Pro" :weight bold)))
-                   ((string-equal guess-language-current-language "pt") 
-                            (propertize "PT" 'face '(:height 1.0 :family "Minion Pro" :weight bold)))
-                 ((string-equal guess-language-current-language "it") 
-                          (propertize "IT" 'face '(:height 1.0 :family "Minion Pro" :weight bold)))
-                   ((string-equal guess-language-current-language "fr") 
-                            (propertize "FR" 'face '(:height 1.0 :family "Minion Pro" :weight bold)))
-                   ((string-equal guess-language-current-language "es") 
-                            (propertize "ES" 'face '(:height 1.0 :family "Minion Pro" :weight bold)))
-                    (t (propertize "NIL" 'face '(:height 1.0 :family "Minion Pro" :weight bold))))
-                                 ;; (upcase (prin1-to-string guess-language-current-language))
-                             (propertize "NIL" 'face '(:height 1.0 :family "Minion Pro" :weight bold))))
-                  ;; evil-mode-line-tag
-                    "  "
-                  (:eval 
-                   (let ((line-string "L:%l"))
-                     (if (and (not (buffer-modified-p))
-                              sync0-mode-line-buffer-line-count)
-                         (setq line-string 
-                               (concat line-string "/" sync0-mode-line-buffer-line-count))
-                       line-string)))
-                   ;; "L:%l"
-                  "                                                               "
-                   (:eval (propertize 
-                           (capitalize 
-                            (s-replace "-mode" "" (format "%s" major-mode)))
-                                'face '(:weight bold)))
-                   " " 
-                   (vc-mode vc-mode)
-                   " " 
-                   (:eval (when (boundp 'org-mode-line-string)
-                            (propertize  org-mode-line-string 'face '(:weight semi-bold))))
-                   (:eval (propertize (format-time-string " %H:%M ")
-                                      'face '(:weight bold))) 
-                   " " 
-                    (:eval  (propertize "⚡" 'face '(:family "Noto Color Emoji")))
-                   mode-line-misc-info
-emacs-mode-line-end-spaces))
+                     (let ((line-string "L:%l"))
+(if (equal major-mode 'pdf-view-mode)
+;; this is necessary so that pdf-view displays the page numbers of the pdf
+;; otherwise, it is very hard to read documents. 
+mode-line-position
+                       (if (and (not (buffer-modified-p))
+                                sync0-mode-line-buffer-line-count)
+                           (setq line-string 
+                                 (concat line-string "/" sync0-mode-line-buffer-line-count))
+                         line-string)
+                         )))
+                     ;; "L:%l"
+                    "                                                               "
+                     (:eval (propertize 
+                             (capitalize 
+                              (s-replace "-mode" "" (format "%s" major-mode)))
+                                  'face '(:weight bold)))
+                     " " 
+                     (vc-mode vc-mode)
+                     " " 
+                     (:eval (when (boundp 'org-mode-line-string)
+                              (propertize  org-mode-line-string 'face '(:weight semi-bold))))
+                     (:eval (propertize (format-time-string " %H:%M ")
+                                        'face '(:weight bold))) 
+                     " " 
+                      (:eval  (propertize "⚡" 'face '(:family "Noto Color Emoji")))
+                     mode-line-misc-info
+  emacs-mode-line-end-spaces))
 
 (use-package mini-modeline
     :disabled t
@@ -5473,81 +5461,92 @@ emacs-mode-line-end-spaces))
   (add-hook 'TeX-mode-hook (lambda () (reftex-isearch-minor-mode))))
 
 (use-package ivy-bibtex 
-;;    :after (ivy bibtex)
-    :custom 
-    ;; writing completion
-    (bibtex-completion-bibliography '("~/Dropbox/bibliographies/bibliography.bib"
-                                      "~/Dropbox/bibliographies/doctorat.bib")) 
-    (bibtex-completion-notes-path '"~/Dropbox/org/reference")
-    (bibtex-completion-library-path '("~/Dropbox/org/reference/"))
-    (bibtex-completion-pdf-field "file")
-    (bibtex-completion-pdf-symbol "P")
-    (bibtex-completion-notes-symbol "N")
-    (ivy-bibtex-default-action 'ivy-bibtex-edit-notes)
-    (bibtex-completion-additional-search-fields '(editor journaltitle origdate subtitle volume booktitle location publisher))
+      :custom 
+      ;; writing completion
+      (bibtex-completion-bibliography '("~/Dropbox/bibliographies/bibliography.bib"
+                                        "~/Dropbox/bibliographies/doctorat.bib")) 
+      (bibtex-completion-notes-path '"~/Dropbox/org/reference")
+      (bibtex-completion-library-path '("~/Dropbox/org/reference/"))
+      (bibtex-completion-pdf-field "file")
+      (bibtex-completion-pdf-symbol "P")
+      (bibtex-completion-notes-symbol "N")
+      (ivy-bibtex-default-action 'ivy-bibtex-edit-notes)
+      (bibtex-completion-additional-search-fields '(editor journaltitle origdate subtitle volume booktitle location publisher))
 
-    :config 
- (setq bibtex-completion-display-formats
-     '((article       . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title}: ${subtitle} @ ${journaltitle} [${=key=}]")
-       (book          . "${=has-pdf=:1}${=has-note=:1}| ${author} [${origdate}](${date:4}) ${title} ${volume}: ${subtitle} [${=key=}]")
-       (inbook        . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title:55} @ ${booktitle} [${=key=}]")
-       (incollection  . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title:55} @ ${booktitle} [${=key=}]")
-       (inproceedings . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title:55} @ ${booktitle} [${=key=}]")
-       (t             . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date}) ${title}: ${subtitle} [${=key=}]")))
+      :config 
+   (setq bibtex-completion-display-formats
+       '((article       . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title}: ${subtitle} @ ${journaltitle} [${=key=}]")
+         (book          . "${=has-pdf=:1}${=has-note=:1}| ${author} [${origdate}](${date:4}) ${title} ${volume}: ${subtitle} [${=key=}]")
+         (inbook        . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title:55} @ ${booktitle} [${=key=}]")
+         (incollection  . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title:55} @ ${booktitle} [${=key=}]")
+         (inproceedings . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title:55} @ ${booktitle} [${=key=}]")
+         (t             . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date}) ${title}: ${subtitle} [${=key=}]")))
 
-    (setq bibtex-completion-notes-template-multiple-files  
-     "
-#+TITLE: ${title}
-#+SUBTITLE: ${subtitle}
-#+AUTHOR: ${author-or-editor}
-#+JOURNAL_TITLE: ${journaltitle}
-#+BOOK_TITLE: ${booktitle}
-#+BOOK_TITLE: ${booksubtitle}
-#+ROAM_KEY: cite:${=key=}
-#+CREATED: 
-#+DATE: 
-#+ROAM_TAGS: ${=key=} ${author-or-editor} 
-#+INTERLEAVE_PDF: ${file}
+      (setq bibtex-completion-notes-template-multiple-files  
+       "
+  #+TITLE: ${title}
+  #+SUBTITLE: ${subtitle}
+  #+AUTHOR: ${author-or-editor}
+  #+JOURNAL_TITLE: ${journaltitle}
+  #+BOOK_TITLE: ${booktitle}
+  #+BOOK_TITLE: ${booksubtitle}
+  #+ROAM_KEY: cite:${=key=}
+  #+CREATED: 
+  #+DATE: 
+  #+ROAM_TAGS: ${=key=} ${author-or-editor} 
+  #+INTERLEAVE_PDF: ${file}
 
 
-")
+  ")
 
-    (defun sync0-bibtex-completion-journaltitle ()
-                       (completing-read "Journal title : "
-                        (delete-dups (mapcar #'(lambda (x) (cdr (assoc "journaltitle" x)))
-                          (bibtex-completion-candidates)))))
+      (defun sync0-bibtex-completion-journaltitle ()
+                         (completing-read "Journal title : "
+                          (delete-dups (mapcar #'(lambda (x) (cdr (assoc "journaltitle" x)))
+                            (bibtex-completion-candidates)))))
 
-    (defun sync0-bibtex-completion-author ()
-                       (completing-read "Auteur : "
-                        (delete-dups (mapcar #'(lambda (x) (cdr (assoc "author" x)))
-                          (bibtex-completion-candidates)))))
+      (defun sync0-bibtex-completion-author ()
+                         (completing-read "Auteur : "
+                          (delete-dups (mapcar #'(lambda (x) (cdr (assoc "author" x)))
+                            (bibtex-completion-candidates)))))
 
 (defun sync0-ivy-bibtex-extractor ()
   (interactive)
- (let*   ((pre-entry   (ivy-completing-read "Select from list: " (bibtex-completion-candidates)))
-           (key   (progn (string-match "[[:blank:]]\\([[:graph:]]+$\\)" pre-entry)
-                  (match-string 1 pre-entry)))
-         (entry (bibtex-completion-get-entry1 key))
-         (entity (ivy-completing-read "Choose one: " '("=key=" "title" "author" "journal" "date" "editor")))
-         (extraction (bibtex-completion-get-value entity entry)))
-       (insert  extraction)))
+  (let* ((candidates (bibtex-completion-candidates))
+         (key (bibtex-completion-key-at-point))
+         (preselect (and key
+                         (cl-position-if (lambda (cand)
+                                           (member (cons "=key=" key)
+                                                   (cdr cand)))
+                                         candidates)))
+         (selection (ivy-read "Crossref : "
+                              candidates
+                              :preselect preselect
+                              :caller 'ivy-bibtex
+                              :history 'ivy-bibtex-history))
+         (chosen-key (cdr (assoc "=key=" (cdr (assoc selection candidates)))))
+         (entry (bibtex-completion-get-entry chosen-key))
+         (bibtex-field (completing-read "Choose one: "
+                                        '("=key=" "title" "author" "journaltitle" "date" "editor" "booktitle"))))
+    (insert (bibtex-completion-get-value bibtex-field entry))))
 
-    (defun sync0-ivy-bibtex ()
-      (interactive)
-      (setq ivy-bibtex-default-action 'ivy-bibtex-insert-key)
-      (bibtex-completion-init)
-      (let* ((candidates (bibtex-completion-candidates))
-             (key (bibtex-completion-key-at-point))
-             (preselect (and key
-                             (cl-position-if (lambda (cand)
-                                               (member (cons "=key=" key)
-                                                       (cdr cand)))
-                                             candidates))))
-        (ivy-read "BibTeX entries%s: "
-                  candidates
-                  :preselect preselect
-                  :caller 'ivy-bibtex
-                  :action ivy-bibtex-default-action))))
+      ;; (defun sync0-ivy-bibtex ()
+      ;;   (interactive)
+      ;;   (setq ivy-bibtex-default-action 'ivy-bibtex-insert-key)
+      ;;   (bibtex-completion-init)
+      ;;   (let* ((candidates (bibtex-completion-candidates))
+      ;;          (key (bibtex-completion-key-at-point))
+      ;;          (preselect (and key
+      ;;                          (cl-position-if (lambda (cand)
+      ;;                                            (member (cons "=key=" key)
+      ;;                                                    (cdr cand)))
+      ;;                                          candidates))))
+      ;;     (ivy-read "BibTeX entries%s: "
+      ;;               candidates
+      ;;               :preselect preselect
+      ;;               :caller 'ivy-bibtex
+      ;;               :action ivy-bibtex-default-action)))
+
+)
 
 (use-package bibtex
    :straight nil
@@ -5577,6 +5576,7 @@ emacs-mode-line-end-spaces))
 ;;   (require 'ivy-bibtex)
    (autoload 'ivy-bibtex "ivy-bibtex" "" t)
 
+       (unbind-key "TAB" bibtex-mode-map)
 
    (defvar sync0-bibtex-reference-keys
      (lazy-completion-table sync0-bibtex-reference-keys

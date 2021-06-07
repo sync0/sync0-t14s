@@ -214,11 +214,16 @@ Display battery information in mode line.
                       "  "
                     (:eval 
                      (let ((line-string "L:%l"))
+(if (equal major-mode 'pdf-view-mode)
+;; this is necessary so that pdf-view displays the page numbers of the pdf
+;; otherwise, it is very hard to read documents. 
+mode-line-position
                        (if (and (not (buffer-modified-p))
                                 sync0-mode-line-buffer-line-count)
                            (setq line-string 
                                  (concat line-string "/" sync0-mode-line-buffer-line-count))
-                         line-string)))
+                         line-string)
+                         )))
                      ;; "L:%l"
                     "                                                               "
                      (:eval (propertize 

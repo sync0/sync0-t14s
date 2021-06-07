@@ -61,82 +61,93 @@
 
 * ivy-bibtex
 #+BEGIN_SRC emacs-lisp
-    (use-package ivy-bibtex 
-  ;;    :after (ivy bibtex)
-      :custom 
-      ;; writing completion
-      (bibtex-completion-bibliography '("~/Dropbox/bibliographies/bibliography.bib"
-                                        "~/Dropbox/bibliographies/doctorat.bib")) 
-      (bibtex-completion-notes-path '"~/Dropbox/org/reference")
-      (bibtex-completion-library-path '("~/Dropbox/org/reference/"))
-      (bibtex-completion-pdf-field "file")
-      (bibtex-completion-pdf-symbol "P")
-      (bibtex-completion-notes-symbol "N")
-      (ivy-bibtex-default-action 'ivy-bibtex-edit-notes)
-      (bibtex-completion-additional-search-fields '(editor journaltitle origdate subtitle volume booktitle location publisher))
+      (use-package ivy-bibtex 
+        :custom 
+        ;; writing completion
+        (bibtex-completion-bibliography '("~/Dropbox/bibliographies/bibliography.bib"
+                                          "~/Dropbox/bibliographies/doctorat.bib")) 
+        (bibtex-completion-notes-path '"~/Dropbox/org/reference")
+        (bibtex-completion-library-path '("~/Dropbox/org/reference/"))
+        (bibtex-completion-pdf-field "file")
+        (bibtex-completion-pdf-symbol "P")
+        (bibtex-completion-notes-symbol "N")
+        (ivy-bibtex-default-action 'ivy-bibtex-edit-notes)
+        (bibtex-completion-additional-search-fields '(editor journaltitle origdate subtitle volume booktitle location publisher))
 
-      :config 
-   (setq bibtex-completion-display-formats
-       '((article       . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title}: ${subtitle} @ ${journaltitle} [${=key=}]")
-         (book          . "${=has-pdf=:1}${=has-note=:1}| ${author} [${origdate}](${date:4}) ${title} ${volume}: ${subtitle} [${=key=}]")
-         (inbook        . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title:55} @ ${booktitle} [${=key=}]")
-         (incollection  . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title:55} @ ${booktitle} [${=key=}]")
-         (inproceedings . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title:55} @ ${booktitle} [${=key=}]")
-         (t             . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date}) ${title}: ${subtitle} [${=key=}]")))
+        :config 
+     (setq bibtex-completion-display-formats
+         '((article       . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title}: ${subtitle} @ ${journaltitle} [${=key=}]")
+           (book          . "${=has-pdf=:1}${=has-note=:1}| ${author} [${origdate}](${date:4}) ${title} ${volume}: ${subtitle} [${=key=}]")
+           (inbook        . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title:55} @ ${booktitle} [${=key=}]")
+           (incollection  . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title:55} @ ${booktitle} [${=key=}]")
+           (inproceedings . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title:55} @ ${booktitle} [${=key=}]")
+           (t             . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date}) ${title}: ${subtitle} [${=key=}]")))
 
-      (setq bibtex-completion-notes-template-multiple-files  
-       "
-  ,#+TITLE: ${title}
-  ,#+SUBTITLE: ${subtitle}
-  ,#+AUTHOR: ${author-or-editor}
-  ,#+JOURNAL_TITLE: ${journaltitle}
-  ,#+BOOK_TITLE: ${booktitle}
-  ,#+BOOK_TITLE: ${booksubtitle}
-  ,#+ROAM_KEY: cite:${=key=}
-  ,#+CREATED: 
-  ,#+DATE: 
-  ,#+ROAM_TAGS: ${=key=} ${author-or-editor} 
-  ,#+INTERLEAVE_PDF: ${file}
+        (setq bibtex-completion-notes-template-multiple-files  
+         "
+    ,#+TITLE: ${title}
+    ,#+SUBTITLE: ${subtitle}
+    ,#+AUTHOR: ${author-or-editor}
+    ,#+JOURNAL_TITLE: ${journaltitle}
+    ,#+BOOK_TITLE: ${booktitle}
+    ,#+BOOK_TITLE: ${booksubtitle}
+    ,#+ROAM_KEY: cite:${=key=}
+    ,#+CREATED: 
+    ,#+DATE: 
+    ,#+ROAM_TAGS: ${=key=} ${author-or-editor} 
+    ,#+INTERLEAVE_PDF: ${file}
 
 
-  ")
+    ")
 
-      (defun sync0-bibtex-completion-journaltitle ()
-                         (completing-read "Journal title : "
-                          (delete-dups (mapcar #'(lambda (x) (cdr (assoc "journaltitle" x)))
-                            (bibtex-completion-candidates)))))
+        (defun sync0-bibtex-completion-journaltitle ()
+                           (completing-read "Journal title : "
+                            (delete-dups (mapcar #'(lambda (x) (cdr (assoc "journaltitle" x)))
+                              (bibtex-completion-candidates)))))
 
-      (defun sync0-bibtex-completion-author ()
-                         (completing-read "Auteur : "
-                          (delete-dups (mapcar #'(lambda (x) (cdr (assoc "author" x)))
-                            (bibtex-completion-candidates)))))
+        (defun sync0-bibtex-completion-author ()
+                           (completing-read "Auteur : "
+                            (delete-dups (mapcar #'(lambda (x) (cdr (assoc "author" x)))
+                              (bibtex-completion-candidates)))))
 
   (defun sync0-ivy-bibtex-extractor ()
     (interactive)
-   (let*   ((pre-entry   (ivy-completing-read "Select from list: " (bibtex-completion-candidates)))
-             (key   (progn (string-match "[[:blank:]]\\([[:graph:]]+$\\)" pre-entry)
-                    (match-string 1 pre-entry)))
-           (entry (bibtex-completion-get-entry1 key))
-           (entity (ivy-completing-read "Choose one: " '("=key=" "title" "author" "journal" "date" "editor")))
-           (extraction (bibtex-completion-get-value entity entry)))
-         (insert  extraction)))
+    (let* ((candidates (bibtex-completion-candidates))
+           (key (bibtex-completion-key-at-point))
+           (preselect (and key
+                           (cl-position-if (lambda (cand)
+                                             (member (cons "=key=" key)
+                                                     (cdr cand)))
+                                           candidates)))
+           (selection (ivy-read "Crossref : "
+                                candidates
+                                :preselect preselect
+                                :caller 'ivy-bibtex
+                                :history 'ivy-bibtex-history))
+           (chosen-key (cdr (assoc "=key=" (cdr (assoc selection candidates)))))
+           (entry (bibtex-completion-get-entry chosen-key))
+           (bibtex-field (completing-read "Choose one: "
+                                          '("=key=" "title" "author" "journaltitle" "date" "editor" "booktitle"))))
+      (insert (bibtex-completion-get-value bibtex-field entry))))
 
-      (defun sync0-ivy-bibtex ()
-        (interactive)
-        (setq ivy-bibtex-default-action 'ivy-bibtex-insert-key)
-        (bibtex-completion-init)
-        (let* ((candidates (bibtex-completion-candidates))
-               (key (bibtex-completion-key-at-point))
-               (preselect (and key
-                               (cl-position-if (lambda (cand)
-                                                 (member (cons "=key=" key)
-                                                         (cdr cand)))
-                                               candidates))))
-          (ivy-read "BibTeX entries%s: "
-                    candidates
-                    :preselect preselect
-                    :caller 'ivy-bibtex
-                    :action ivy-bibtex-default-action))))
+        ;; (defun sync0-ivy-bibtex ()
+        ;;   (interactive)
+        ;;   (setq ivy-bibtex-default-action 'ivy-bibtex-insert-key)
+        ;;   (bibtex-completion-init)
+        ;;   (let* ((candidates (bibtex-completion-candidates))
+        ;;          (key (bibtex-completion-key-at-point))
+        ;;          (preselect (and key
+        ;;                          (cl-position-if (lambda (cand)
+        ;;                                            (member (cons "=key=" key)
+        ;;                                                    (cdr cand)))
+        ;;                                          candidates))))
+        ;;     (ivy-read "BibTeX entries%s: "
+        ;;               candidates
+        ;;               :preselect preselect
+        ;;               :caller 'ivy-bibtex
+        ;;               :action ivy-bibtex-default-action)))
+
+  )
 #+END_SRC 
 
 * bibtex 
@@ -169,6 +180,7 @@
  ;;   (require 'ivy-bibtex)
     (autoload 'ivy-bibtex "ivy-bibtex" "" t)
 
+        (unbind-key "TAB" bibtex-mode-map)
 
     (defvar sync0-bibtex-reference-keys
       (lazy-completion-table sync0-bibtex-reference-keys

@@ -1017,6 +1017,48 @@
            org-emms-insert-track-position))
 #+END_SRC 
 
+* org-fc 
+#+BEGIN_SRC emacs-lisp
+(use-package org-fc
+:straight (org-fc :type git :host github :repo "l3kn/org-fc" :files (:defaults "awk" "demo.org" "contrib/*.el")) 
+:commands (org-fc-hydra/body
+           org-fc-review
+           org-fc-review-all)
+:custom
+(org-fc-directories sync0-zettelkasten-directory)
+:config
+(require 'org-fc-hydra)
+
+(defhydra sync0-hydra-org-fc-functions (:color amaranth :hint nil :exit t)
+  "
+   ^Flip^       ^Rate^       ^Create card^
+   ^--------------------------------------
+   _f_lip       _e_asy      _d_ouble (no back)
+   _s_uspend    _g_ood      _n_ormal
+   sto_p_       _h_ard      _t_ext input
+   ^ ^          _a_gain     _c_loze
+   _q_uit
+        "
+
+  ("f" org-fc-review-flip)
+  ("s" org-fc-review-suspend-card)
+  ("p" org-fc-review-quit)
+  ("a" org-fc-review-rate-again)
+  ("h" org-fc-review-rate-hard)
+  ("g" org-fc-review-rate-good)
+  ("e" org-fc-review-rate-easy)
+  ("n" org-fc-type-normal-init)
+  ("d" org-fc-type-double-init)
+  ("t" org-fc-type-text-input-init)
+  ("c" org-fc-type-cloze-init)
+  ("q" nil :color blue))
+
+(evil-leader/set-key-for-mode 'org-mode "t" 'sync0-hydra-org-fc-functions/body)
+
+)
+
+#+END_SRC 
+
 * org-protocol
 #+BEGIN_SRC emacs-lisp
 (server-start)
@@ -1052,6 +1094,7 @@
                   (org-roam-graph-exclude-matcher '("journal" "fiche" "etc" "trash" "todo" "inbox" "project" "vault" "reference"))
 
             :config
+(require 'sync0-functions)
 
 (defun sync0-zettelkasten-set-property ()
   (interactive)
@@ -1592,16 +1635,14 @@
          (creation (format-time-string "%Y-%m-%d")) 
          (date (read-string "Date (ex. 1890-18-12) : "))
          (origdate (read-string "Origdate (ex. 1890-18-12) : "))
-         (file-date (if (equal origdate "")
-                        date
-                      (concat "(" origdate ")" date)))
          (author (if (equal type "collection")
                      (completing-read "Editeur : "
                                       (delete-dups (mapcar #'(lambda (x) (cdr (assoc "editor" x)))
-                                                             (bibtex-completion-candidates))))
+                                                           (bibtex-completion-candidates))))
                    (completing-read "Auteur : "
                                     (delete-dups (mapcar #'(lambda (x) (cdr (assoc "author" x)))
-                                                           (bibtex-completion-candidates))))))
+                                                         (bibtex-completion-candidates))))))
+         ;; check whether there are multiple authors
          (author-fixed (cond ((string-match " and " author)
                               ;; create a list with parts 
                               (let* ((author-list  (split-string author " and "))
@@ -1617,45 +1658,37 @@
                                                                   (match-string 1 element))
                                                                 ", "))))))
                                 (substring names 0 -2)))
+                             ;; check when author is an organization
                              ((string-match "^{" author)
                               (string-match "{\\([[:print:]]+\\)}" author)
                               (match-string 1 author))
+                             ;; other cases
                              (t (let* ((author-list (split-string author ", "))
                                        (last-name (nth 0 author-list))
                                        (first-name (nth 1 author-list)))
                                   (concat first-name " " last-name)))))
-         (lastname (cond ((string-match " and " author)
-                          ;; create a list with parts 
-                          (let* ((author-list  (split-string author " and "))
-                                 (last-names (let (x)
-                                               (dolist  (element author-list x)
-                                                 (setq x (concat x
-                                                                 (progn
-                                                                   (string-match "\\([[:graph:]]+\\),"   element)
-                                                                   (match-string 1 element))
-                                                                 ", "))))))
-                            (substring last-names 0 -2)))
-                         ((string-match "^{" author)
-                          (string-match "{\\([[:print:]]+\\)}" author)
-                          (match-string 1 author))
-                         (t (nth 0 (split-string author ", ")))))
-         (language (completing-read "Langage : " sync0-biblatex-languages))
+         (language (completing-read "Langue : " sync0-biblatex-languages))
          (langid language) 
          (journal (when (equal type "article")
-                    (completing-read "Journal title : "
+                    (completing-read "Titre du journal : "
                                      (delete-dups (mapcar #'(lambda (x) (cdr (assoc "journaltitle" x)))
-                                                            (bibtex-completion-candidates))))))
-         (volume (when (equal type "article") (read-string "Tome du journal : ")))
-         (number (when (equal type "article") (read-string "Numero du journal : ")))
+                                                          (bibtex-completion-candidates))))))
+         (volume (when (or (equal type "article")
+                           (equal type "book")
+                           (equal type "inbook")
+                           (equal type "collection")
+                           (equal type "incollection"))
+                   (read-string "Tome : ")))
+         (number (when (equal type "article") (read-string "Numero : ")))
          (publisher (when (or (equal type "book")
                               (equal type "collection"))
                       (completing-read "Maison d'edition : "
                                        (delete-dups (mapcar #'(lambda (x) (cdr (assoc "publisher" x)))
-                                                              (bibtex-completion-candidates))))))
+                                                            (bibtex-completion-candidates))))))
          (location (when (equal type "book")
                      (completing-read "Location : "
                                       (delete-dups (mapcar #'(lambda (x) (cdr (assoc "location" x)))
-                                                             (bibtex-completion-candidates))))))
+                                                           (bibtex-completion-candidates))))))
          (pages (when (or (equal type "article")
                           (equal type "incollection")
                           (equal type "inbook"))
@@ -1664,37 +1697,35 @@
                              (equal type "inbook"))
                      (let* ((candidates (bibtex-completion-candidates))
                             (key (bibtex-completion-key-at-point))
-                            ;; (preselect (and key
-                            ;;                 (cl-position-if (lambda (cand)
-                            ;;                                   (member (cons "=key=" key)
-                            ;;                                           (cdr cand)))
-                            ;;                                 candidates)))
-                            (selection (ivy-read "BibTeX entries: "
+                            (preselect (and key
+                                            (cl-position-if (lambda (cand)
+                                                              (member (cons "=key=" key)
+                                                                      (cdr cand)))
+                                                            candidates)))
+                            (selection (ivy-read "Crossref : "
                                                  candidates
-                                                 ;; :preselect preselect
+                                                 :preselect preselect
                                                  :caller 'ivy-bibtex
                                                  :history 'ivy-bibtex-history)))
                        (cdr (assoc "=key=" (cdr (assoc selection candidates)))))))
          (booktitle (when (and (or (equal type "incollection")
                                    (equal type "inbook"))
                                (null crossref))
-                      (completing-read "Booktitle : "
+                      (completing-read "Titre du livre (booktitle) : "
                                        (delete-dups (mapcar #'(lambda (x) (cdr (assoc "booktitle" x)))
-                                                              (bibtex-completion-candidates))))))
+                                                            (bibtex-completion-candidates))))))
          (booksubtitle (when (and (or (equal type "incollection")
                                       (equal type "inbook"))
                                   (null crossref))
-                         (read-string "Book subtitle  : ")))
+                         (read-string "Soustitre du livre (booksubtitle)  : ")))
          (addendum (when (equal type "unpublished")
                      (read-string "Addendum (ex. Box, Folder, etc.) : ")))
          (url (when (equal type "online")
                 (read-string "Url : " nil nil nil t)))
          (urldate (when (equal type "online") creation))
-         (title (read-string "Titre : " nil nil nil t))
-         (subtitle (read-string "Sous-titre : " nil nil nil t))
-         (file-title (if (equal subtitle "") title (concat title "_" subtitle)))
-         (file (concat "/home/sync0/Documents/pdfs/" lastname "_" file-date "_" file-title ".pdf"))
-         ;; (file (concat "/home/sync0/Documents/pdfs/" lastname "_" file-date "_" file-title ".pdf"))
+         (title (read-string "Titre du texte : " nil nil nil t))
+         (subtitle (read-string "Sous-titre du texte : " nil nil nil t))
+         (file (concat "/home/sync0/Documents/pdfs/" filename ".pdf"))
          (buffer (buffer-file-name))     
          ;; define list of conses whose first element is a biblatex category and
          ;; the second element is its value, as a string, when previously defined
@@ -1743,6 +1774,9 @@
      ":PROPERTIES:\n"
      ":ID:      " id "\n"
      ":ROAM_REFS: " filename "\n"
+     (unless (or (null crossref)
+                (equal crossref ""))
+     (concat ":CROSSREF: \"" crossref "\"\n"))
      ":BIBLATEX_TYPE: " type "\n"
      (when (equal type "article") (concat ":JOURNAL_TITLE: \"" journal "\"\n"))
      (when (equal type "online") (concat ":WEBSITE: " url "\n"))
@@ -1757,7 +1791,7 @@
      "#+TITLE: " title "\n"
      (unless (equal subtitle "") (concat "#+SUBTITLE: " subtitle "\n"))
      "#+AUTHOR: " author-fixed "\n"
-     "#+FILETAGS: :" filename ":" type (format-time-string ":%Y:") "\n"
+     "#+FILETAGS: :" filename ":" type ":" date ":\n"
      "#+INTERLEAVE_PDF: " file "\n\n" 
      "Origin: [[id:"
      (sync0-org-get-id buffer)
@@ -1951,7 +1985,7 @@ _q_uit
        ("q" nil :color blue))
 
     (evil-leader/set-key
-      "t" 'sync0-hydra-org-clock/body))
+      "T" 'sync0-hydra-org-clock/body))
   #+END_SRC 
 
 * ox-latex
@@ -2233,6 +2267,7 @@ are exported to a filename derived from the headline text."
 
     :config
    (require 'doi-utils)
+   (require 'bibtex-completion)
 
     (setq org-ref-notes-function
           (lambda (thekey)
@@ -2242,8 +2277,21 @@ are exported to a filename derived from the headline text."
 
     (defun sync0-visit-bibliography-in-buffer ()
       (interactive)
+(let ((bib-file
+         (completing-read "Fichier Biblatex : "
+            (f-files "~/Dropbox/bibliographies" (lambda (k) (string-match-p ".bib" k))))))
       (find-file
-       (expand-file-name "~/Dropbox/bibliographies/bibliography.bib")))
+       (expand-file-name bib-file))))
+
+    (defun sync0-org-ref-open-pdf-at-point-zathura ()
+      "Open the pdf for bibtex key under point if it exists."
+      (interactive)
+      (let* ((results (org-ref-get-bibtex-key-and-file))
+             (key (car results))
+             (pdf-file (car (bibtex-completion-find-pdf key))))
+        (if (file-exists-p pdf-file)
+            (call-process "zathura" nil 0 nil pdf-file)
+        (message "No PDF found for %s" key))))
 
     (defhydra sync0-hydra-research-functions (:color amaranth :hint nil :exit t)
       "
@@ -2253,8 +2301,9 @@ are exported to a filename derived from the headline text."
    Orb actions          _Q_uote (Csquotes)  Open _r_oam buffer  _L_ast stored link
    Entry _n_otes          _F_oreign quote     Open _d_eft         Roam _l_ink                     
    Bibtex _e_ntry         Insert _c_itation   _B_uild cache       Link to _h_eadline
-   Open _b_ibliography    ^ ^                 Open inde_x_        _D_elete link at point
+   Open _b_ibliography    _E_xtract field     Open inde_x_        _D_elete link at point
    Open _p_df             ^ ^                 Show _g_raph        _R_emove all links
+   Open in _z_athura      ^ ^
                                                                      
    _q_uit
         "
@@ -2277,8 +2326,10 @@ are exported to a filename derived from the headline text."
       ("R" sync0-org-replace-all-links-by-descriptions)
       ("n" ivy-bibtex)
       ("e" org-ref-open-citation-at-point)
+      ("E" sync0-ivy-bibtex-extractor)
       ("b" sync0-visit-bibliography-in-buffer)
       ("p" sync0-org-ref-open-pdf-at-point)
+      ("z" sync0-org-ref-open-pdf-at-point-zathura)
       ("I" org-footnote-new)
       ;; ("r" (progn (yas-expand-snippet (yas-lookup-snippet "org_ref_citation"))))
       ("Q" (progn (yas-expand-snippet (yas-lookup-snippet "csquotes_displayquote"))))
