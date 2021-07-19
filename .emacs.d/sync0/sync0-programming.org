@@ -1,0 +1,410 @@
+* rainbow-delimiters
+#+BEGIN_SRC emacs-lisp
+  (use-package rainbow-delimiters
+    :straight (rainbow-delimiters :type git :host github :repo "Fanael/rainbow-delimiters") 
+    :hook 
+    ((text-mode . rainbow-delimiters-mode)
+     (prog-mode . rainbow-delimiters-mode))
+    :custom
+    (rainbow-delimiters-max-face-count 3))
+  #+END_SRC 
+
+* paren
+Configure matching delimiters. Necessary to deal with elisp
+parenthesis.
+
+ #+BEGIN_SRC emacs-lisp
+(use-package paren
+ :straight nil
+:after evil
+:custom
+   (show-paren-delay 0.1)
+         (show-paren-highlight-openparen t)
+         ;; don't blink--too distracting
+         (blink-matching-paren nil)
+         (show-paren-when-point-inside-paren t)
+:config
+   (show-paren-mode 1))
+  #+END_SRC
+
+* smartparens 
+   Auto-close delimiters and blocks as you type
+
+#+BEGIN_SRC emacs-lisp
+(use-package smartparens
+    :straight (smartparens :type git :host github :repo "Fuco1/smartparens") 
+    :after evil
+    :hook 
+    ((emacs-startup . smartparens-global-mode)
+      (emacs-startup . show-smartparens-global-mode)
+     ;; Disable smartparens in evil-mode's replace state; they conflict.
+     (evil-replace-state-entry-hook . turn-off-smartparens-mode)
+     (evil-replace-state-exit-hook  . turn-on-smartparens-mode))
+    :custom
+    (sp-autowrap-region nil) ; let evil-surround handle this
+    (sp-highlight-pair-overlay nil)
+    (sp-cancel-autoskip-on-backward-movement nil)
+    (sp-show-pair-delay 0)
+    (sp-max-pair-length 3)
+    :config
+    (require 'smartparens-config)
+    (require 'smartparens-latex)
+
+;; Make org-mode handle latex quotes without too much hassle
+(sp-local-pair 'org-mode "``" "''"
+                 ;;:trigger nil
+                 :unless '(sp-latex-point-after-backslash)
+                 :post-handlers '(sp-latex-skip-double-quote))
+
+;; Make org-mode handle latex quotes without too much hassle
+(sp-local-pair 'org-mode "`" "'"
+                 ;; :trigger nil
+                 :unless '(sp-latex-point-after-backslash)
+                 :post-handlers '(sp-latex-skip-double-quote))
+
+;; Do not complete the single quote pair at the end of words.
+;; Othwersie, the apostrophe in English becomes caotic.
+(sp-local-pair 'org-mode "'" "'"
+                 ;; :trigger nil
+                 :unless '(sp-point-after-word-p))
+
+
+(defhydra sync0-hydra-smart-parens (:hint nil)
+    "
+Sexps functions (_q_uit)
+^Nav^            ^Barf/Slurp^                 ^Depth^
+^---^------------^----------^-----------------^-----^-----------------
+_f_: forward     _→_:          slurp forward   _R_: splice
+_b_: backward    _←_:          barf forward    _r_: raise
+_u_: backward ↑  _C-<right>_:  slurp backward  _↑_: raise backward
+_d_: forward ↓   _C-<left>_:   barf backward   _↓_: raise forward
+_p_: backward ↓
+_n_: forward ↑
+
+^Kill^           ^Misc^                       ^Wrap^
+^----^-----------^----^-----------------------^----^------------------
+_w_: copy        _j_: join                    _(_: wrap with ( )
+_k_: kill        _s_: split                   _{_: wrap with { }
+^^               _t_: transpose               _'_: wrap with ' '
+^^               _c_: convolute               _\"_: wrap with \" \"
+^^               _i_: indent defun"
+
+    ("q" nil)
+    ;; Wrapping
+    ("(" (lambda (_) (interactive "P") (sp-wrap-with-pair "(")))
+    ("{" (lambda (_) (interactive "P") (sp-wrap-with-pair "{")))
+    ("'" (lambda (_) (interactive "P") (sp-wrap-with-pair "'")))
+    ("\"" (lambda (_) (interactive "P") (sp-wrap-with-pair "\"")))
+    ;; Navigation
+    ("f" sp-forward-sexp )
+    ("b" sp-backward-sexp)
+    ("u" sp-backward-up-sexp)
+    ("d" sp-down-sexp)
+    ("p" sp-backward-down-sexp)
+    ("n" sp-up-sexp)
+    ;; Kill/copy
+    ("w" sp-copy-sexp)
+    ("k" sp-kill-sexp)
+    ;; Misc
+    ("t" sp-transpose-sexp)
+    ("j" sp-join-sexp)
+    ("s" sp-split-sexp)
+    ("c" sp-convolute-sexp)
+    ("i" sp-indent-defun)
+    ;; Depth changing
+    ("R" sp-splice-sexp)
+    ("r" sp-splice-sexp-killing-around)
+    ("<up>" sp-splice-sexp-killing-backward)
+    ("<down>" sp-splice-sexp-killing-forward)
+    ;; Barfing/slurping
+    ("<right>" sp-forward-slurp-sexp)
+    ("<left>" sp-forward-barf-sexp)
+    ("C-<left>" sp-backward-barf-sexp)
+    ("C-<right>" sp-backward-slurp-sexp))
+
+(evil-leader/set-key
+  "S" 'sync0-hydra-smart-parens/body))
+
+#+END_SRC 
+
+* company-jedi
+#+BEGIN_SRC emacs-lisp
+  (use-package company-jedi
+:straight (company-jedi :type git :host github :repo "emacsorphanage/company-jedi") 
+:after company)
+#+END_SRC 
+
+* company-mode
+#+BEGIN_SRC emacs-lisp
+(use-package company
+;;        :straight (company :type git :host github :repo "company-mode/company-mode") 
+        :hook
+        (after-init . global-company-mode)
+        :custom
+                (company-idle-delay 0.1)
+                (company-minimum-prefix-length 2)
+                (company-tooltip-limit 10)
+                (company-tooltip-align-annotations t)
+                (company-require-match 'never)
+                (company-global-modes '(not erc-mode message-mode help-mode gud-mode))
+                (company-frontends '(company-pseudo-tooltip-frontend 
+                            company-echo-metadata-frontend))  
+                (company-backends '(company-capf))
+                (company-auto-complete nil)
+    :config
+;; Disable company-mode in bibtex-mode (clashes with yasnippets)
+ (add-hook 'bibtex-mode-hook (company-mode -1))
+
+(define-key company-active-map (kbd "M-j") 'company-select-next)
+(define-key company-active-map (kbd "M-k") 'company-select-previous)
+
+    (defvar +company-backend-alist
+      '((text-mode company-capf  company-yasnippet)
+      ;; '((text-mode company-capf  company-yasnippet company-org-roam)
+      ;; '((text-mode company-capf  company-yasnippet company-ispell company-org-roam)
+      ;; '((text-mode company-capf company-dabbrev company-yasnippet company-ispell company-org-roam)
+      ;;(text-mode company-capf company-yasnippet company-ispell company-bibtex)
+        (prog-mode company-capf company-yasnippet)
+        (elisp-mode company-elisp company-capf company-yasnippet)
+        (nxml-mode company-capf company-yasnippet company-nxml)
+        (python-mode company-capf company-yasnippet company-jedi)
+        (conf-mode company-capf company-dabbrev-code company-yasnippet))
+      "An alist matching modes to company backends. The backends for any mode is
+    built from this.")
+
+    (defun +company--backends ()
+      (let (backends)
+        (let ((mode major-mode)
+              (modes (list major-mode)))
+          (while (setq mode (get mode 'derived-mode-parent))
+            (push mode modes))
+          (dolist (mode modes)
+            (dolist (backend (append (cdr (assq mode +company-backend-alist))
+                                     (default-value 'company-backends)))
+              (push backend backends)))
+          (delete-dups
+           (append (cl-loop for (mode . backends) in +company-backend-alist
+                            if (or (eq major-mode mode)  ; major modes
+                                   (and (boundp mode)
+                                        (symbol-value mode))) ; minor modes
+                            append backends)
+                   (nreverse backends))))))
+
+    (defun doom-temp-buffer-p (buf)
+      "Returns non-nil if BUF is temporary."
+      (equal (substring (buffer-name buf) 0 1) " "))
+
+    (defun +company-init-backends-h ()
+      "Set `company-backends' for the current buffer."
+      (or (memq major-mode '(fundamental-mode special-mode))
+          buffer-read-only
+          (doom-temp-buffer-p (or (buffer-base-buffer) (current-buffer)))
+          (setq-local company-backends (+company--backends))))
+
+    (put '+company-init-backends-h 'permanent-local-hook t)
+
+    (add-hook 'after-change-major-mode-hook #'+company-init-backends-h 'append)
+
+    (defun sync0-config-prose-completion ()
+      "Make auto-complete less agressive in this buffer."
+      (setq-local company-minimum-prefix-length 4))
+
+    (add-hook 'text-mode-hook #'sync0-config-prose-completion))
+#+END_SRC 
+
+* company-bibtex
+ #+BEGIN_SRC emacs-lisp
+  (use-package company-bibtex
+:straight (company-bibtex :type git :host github :repo "gbgar/company-bibtex") 
+:disabled t
+:custom
+(company-bibtex-key-regex "[[:alnum:]+_]*")
+(company-bibtex-bibliography '("~/Dropbox/notes/bibliography.bib")))
+ #+END_SRC 
+
+* company-box
+#+BEGIN_SRC emacs-lisp
+  (use-package company-box
+    :straight (company-box :type git :host github :repo "sebastiencs/company-box") 
+    :hook (company-mode . company-box-mode)
+    :config
+    (setq company-box-show-single-candidate t
+          company-box-backends-colors nil
+          company-box-max-candidates 10
+          company-box-icons-alist 'company-box-icons-all-the-icons
+          company-box-icons-all-the-icons
+          (let ((all-the-icons-scale-factor 0.8))
+            `((Unknown       . ,(all-the-icons-material "find_in_page"             :face 'all-the-icons-purple))
+              (Text          . ,(all-the-icons-material "text_fields"              :face 'all-the-icons-green))
+              (Method        . ,(all-the-icons-material "functions"                :face 'all-the-icons-red))
+              (Function      . ,(all-the-icons-material "functions"                :face 'all-the-icons-red))
+              (Constructor   . ,(all-the-icons-material "functions"                :face 'all-the-icons-red))
+              (Field         . ,(all-the-icons-material "functions"                :face 'all-the-icons-red))
+              (Variable      . ,(all-the-icons-material "adjust"                   :face 'all-the-icons-blue))
+              (Class         . ,(all-the-icons-material "class"                    :face 'all-the-icons-red))
+              (Interface     . ,(all-the-icons-material "settings_input_component" :face 'all-the-icons-red))
+              (Module        . ,(all-the-icons-material "view_module"              :face 'all-the-icons-red))
+              (Property      . ,(all-the-icons-material "settings"                 :face 'all-the-icons-red))
+              (Unit          . ,(all-the-icons-material "straighten"               :face 'all-the-icons-red))
+              (Value         . ,(all-the-icons-material "filter_1"                 :face 'all-the-icons-red))
+              (Enum          . ,(all-the-icons-material "plus_one"                 :face 'all-the-icons-red))
+              (Keyword       . ,(all-the-icons-material "filter_center_focus"      :face 'all-the-icons-red))
+              (Snippet       . ,(all-the-icons-material "short_text"               :face 'all-the-icons-red))
+              (Color         . ,(all-the-icons-material "color_lens"               :face 'all-the-icons-red))
+              (File          . ,(all-the-icons-material "insert_drive_file"        :face 'all-the-icons-red))
+              (Reference     . ,(all-the-icons-material "collections_bookmark"     :face 'all-the-icons-red))
+              (Folder        . ,(all-the-icons-material "folder"                   :face 'all-the-icons-red))
+              (EnumMember    . ,(all-the-icons-material "people"                   :face 'all-the-icons-red))
+              (Constant      . ,(all-the-icons-material "pause_circle_filled"      :face 'all-the-icons-red))
+              (Struct        . ,(all-the-icons-material "streetview"               :face 'all-the-icons-red))
+              (Event         . ,(all-the-icons-material "event"                    :face 'all-the-icons-red))
+              (Operator      . ,(all-the-icons-material "control_point"            :face 'all-the-icons-red))
+              (TypeParameter . ,(all-the-icons-material "class"                    :face 'all-the-icons-red))
+              (Template      . ,(all-the-icons-material "short_text"               :face 'all-the-icons-green))
+              (ElispFunction . ,(all-the-icons-material "functions"                :face 'all-the-icons-red))
+              (ElispVariable . ,(all-the-icons-material "check_circle"             :face 'all-the-icons-blue))
+              (ElispFeature  . ,(all-the-icons-material "stars"                    :face 'all-the-icons-orange))
+              (ElispFace     . ,(all-the-icons-material "format_paint"            :face 'all-the-icons-pink))))))
+#+END_SRC 
+
+  (add-to-list 'company-box-frame-parameters '(tab-bar-lines . 0))
+
+* nxml
+
+#+BEGIN_SRC emacs-lisp
+(use-package nxml-mode
+:straight nil
+  :config
+  (setq nxml-child-indent 2
+        nxml-attribute-indent 2
+        ;; nxml-auto-insert-xml-declaration-flag nil
+        nxml-auto-insert-xml-declaration-flag t
+        nxml-bind-meta-tab-to-complete-flag t
+        nxml-slash-auto-complete-flag t)
+;;; Taken from
+;;;  https://martinfowler.com/articles/emacs-nxml-completion.html
+(defun sync0-nxml-tag-start ()
+  "returns position of < before point"
+  (save-excursion (search-backward "<" nil t)))
+
+(defun sync0-nxml-at-attribute-name-p ()
+  "truthy if in name of an attribute"
+  (save-excursion (re-search-backward rng-in-attribute-regex (sync0-nxml-tag-start) t)))
+
+(defun sync0-nxml-at-attribute-value-p ()
+  "truthy if in value of an attribute"
+  (save-excursion (re-search-backward rng-in-attribute-value-regex (sync0-nxml-tag-start) t)))
+
+(defun sync0-nxml-completion-at-point ()
+  "completion at point for nxml mode"
+  (interactive)
+  (cond
+   ((sync0-nxml-at-attribute-name-p)
+    (completion-at-point)
+    (insert "=\""))
+   ((sync0-nxml-at-attribute-value-p)
+    (completion-at-point)
+    (insert "\""))
+   (t (completion-at-point))))
+
+
+;;; taken from
+;;; https://www.reddit.com/r/emacs/comments/eji55u/usepackage_ensure_nil_not_working_as_intended/
+
+  ;; Outline hook
+  (add-hook 'nxml-mode-hook
+            (lambda ()
+              (outline-minor-mode)
+              (setq outline-regexp "^[ \t]*\<[a-zA-Z]+")))
+
+  ;; Helper to format
+  (defun sync0-pretty-print-xml-region (begin end)
+    "Pretty format XML markup in region. You need to have nxml-mode
+ http://www.emacswiki.org/cgi-bin/wiki/NxmlMode installed to do
+ this.  The function inserts linebreaks to separate tags that have
+ nothing but whitespace between them.  It then indents the markup
+ by using nxml's indentation rules."
+    (interactive "r")
+    (save-excursion
+      (nxml-mode)
+      (goto-char begin)
+      (while (search-forward-regexp "\>[ \\t]*\<" nil t)
+        (backward-char) (insert "\n"))
+      (indent-region begin end)))
+
+;;; taken from 
+;;; https://www.manueluberti.eu/emacs/2016/12/03/xmllint/
+(defun sync0-xml-format ()
+  "Format an XML buffer with `xmllint'."
+  (interactive)
+  (shell-command-on-region (point-min) (point-max)
+                           "xmllint -format -"
+                           (current-buffer) t
+                           "*Xmllint Error Buffer*" t))
+        )
+#+END_SRC 
+
+* flycheck
+#+BEGIN_SRC emacs-lisp
+(use-package flycheck
+:commands flycheck-mode
+:config
+(setq flycheck-display-errors-function #'flycheck-display-error-messages-unless-error-list)
+)
+#+END_SRC 
+
+* py-autopep
+#+BEGIN_SRC emacs-lisp
+(use-package py-autopep8
+:straight (py-autopep8 :type git :host github :repo "paetzke/py-autopep8.el") 
+:config
+(setq py-autopep8-options '("--max-line-length=100")))
+#+END_SRC 
+
+* python
+#+BEGIN_SRC emacs-lisp
+(use-package python
+:straight nil
+:config
+(setq jedi:setup-keys t)
+(setq jedi:complete-on-dot t)
+(add-hook 'python-mode-hook 'jedi:setup)
+(add-hook 'python-mode-hook 'py-autopep8-enable-on-save)
+(add-hook 'python-mode-hook 'flycheck-mode))
+#+END_SRC 
+
+* yasnippets
+#+BEGIN_SRC emacs-lisp
+    (use-package yasnippet 
+      :straight (yasnippet :type git :host github :repo "joaotavora/yasnippet") 
+      :config
+      (require 'bibtex-completion)
+      (require 'sync0-yasnippet-bibtex)
+      (require 'sync0-yasnippet-doctorat)
+
+  ;; Fix conflict with Yasnippets
+  ;; See https://emacs.stackexchange.com/questions/29758/yasnippets-and-org-mode-yas-next-field-or-maybe-expand-does-not-expand
+  (defun yas-org-very-safe-expand ()
+    (let ((yas-fallback-behavior 'return-nil)) (yas-expand)))
+
+  (add-hook 'org-mode-hook
+        (lambda ()
+          (add-to-list 'org-tab-first-hook 'yas-org-very-safe-expand)
+          (define-key yas-keymap [tab] 'yas-next-field)))
+
+      :hook 
+      ((text-mode . yas-minor-mode)
+       (prog-mode . yas-minor-mode)
+       (bibtex-mode . yas-minor-mode)
+       (mu4e-mode . yas-minor-mode)))
+  #+END_SRC
+* ESS
+#+BEGIN_SRC emacs-lisp
+(use-package ess
+:straight (ess :type git :host github
+          :repo "emacs-ess/ESS")
+  ;; :init (require 'ess-site)
+  :mode (("\\.[rR]\\'" . R-mode)
+         ("\\.Rnw\\'" . Rnw-mode))
+)
+#+END_SRC 

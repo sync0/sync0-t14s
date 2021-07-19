@@ -20,7 +20,8 @@
 
 (defun sync0-print-bibtex-key ()
   "Print the bibtex key of the document"
-  (let ((key (org-entry-get 1 "ROAM_REFS")))
+;; use the substring function to remove the "cite:" part of ROAM_REFS
+  (let ((key (substring (org-entry-get 1 "ROAM_REFS") 5)))
     (if  (stringp key)
         key 
   (org-with-point-at 1

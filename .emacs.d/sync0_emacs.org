@@ -377,6 +377,7 @@ Other settings.
     (setq-default undo-limit 100000
                   ;; Split verticly by default
                   ;; split-width-threshold 0         
+                  ;; split-width-threshold nil
                   split-width-threshold (- (window-width) 10)
                   ;; Split verticly by default
                   split-height-threshold nil        
@@ -429,162 +430,203 @@ https://stackoverflow.com/questions/23207958/how-to-prevent-emacs-dired-from-spl
 ** Definitions
 #+BEGIN_SRC emacs-lisp
 
-  (defvar sync0-zettelkasten-properties-list
-  '("ZETTEL_TYPE" "BIBLATEX_TYPE" "ZETTEL_FUNCTION" "FICHE_TYPE" "PROJECT_TITLE" "ANNOTATION_REFS" "ROAM_REFS" "DATE") 
-  "List of zettel properties")
+    (defvar sync0-zettelkasten-all-properties-list
+    '("ZETTEL_TYPE" "BIBLATEX_TYPE" "ZETTEL_FUNCTION" "FICHE_TYPE" "PROJECT_TITLE" "ANNOTATION_REFS" "ROAM_REFS" "ROAM_ALIASES" "CROSSREF" "PARENT" "WEBSITE") 
+    "List of zettel properties")
 
-  (defvar sync0-zettelkasten-all-properties-list
-  '("ZETTEL_TYPE" "BIBLATEX_TYPE" "ZETTEL_FUNCTION" "FICHE_TYPE" "PROJECT_TITLE" "ANNOTATION_REFS" "ROAM_REFS" "ROAM_ALIASES") 
-  "List of zettel properties")
+    (defvar sync0-zettelkasten-properties-list
+    '("ZETTEL_TYPE" "BIBLATEX_TYPE" "ZETTEL_FUNCTION" "FICHE_TYPE" "PROJECT_TITLE" "DATE" "ORIG_DATE") 
+    "List of zettel properties")
 
-  (defvar sync0-zettelkasten-excluded-candidates
-  '("journal" "fiche" "etc" "project" "todo" "reference"))
+    (defvar sync0-zettelkasten-excluded-candidates
+    '("journal" "fiche" "etc" "project" "todo" "reference"))
 
-  (defvar sync0-zettelkasten-project-directories '("project" "todo"))
+    (defvar sync0-zettelkasten-project-directories '("project" "todo"))
 
-  (defvar sync0-zettelkasten-projects '("doctorat" "sefardi" "study
-  techniques" "zettelkasten" "cahiers de
-  revoltologie" "writing" "programming" "lisp" "python" nil)
-  "List of projects")
+    (defvar sync0-zettelkasten-zettel-types 
+     '()
+    "List of projects in my Zettelkasten.")
 
-  (defvar sync0-zettelkasten-zettel-functions 
-  '("reference" "log" "repository" "todo" "drill" "notes" nil) 
-  "List of projects")
- 
-  (defvar sync0-zettelkasten-fiche-types 
-  '("people" "reference" "place" "publication" "concept" "association" "institution" "questions" "review" nil) 
-  "List of projects")
+    (defvar sync0-zettelkasten-projects 
+     '()
+    "List of projects in my Zettelkasten.")
 
-(defvar sync0-biblatex-fields
-'("title" "subtitle" "date" "origdate" "author" "journaltitle" "booktitle" "booksubtitle" "crossref" "volume" "number" "publisher" "location" "pages" "addendum" "url" "urldate" "language" "langid" "file")
-  "List of BibLaTeX entry fields")
+    (defvar sync0-zettelkasten-zettel-functions 
+    '() 
+    "List of possible functions for a Zettel.")
 
-  (setq sync0-zettelkasten-directory (concat (getenv "HOME") "/Dropbox/org/")
-  sync0-zettelkasten-directory-sans (concat (getenv "HOME") "/Dropbox/org")
-  sync0-default-bibliography (concat (getenv "HOME") "/Dropbox/bibliographies/doctorat.bib")
-  sync0-zettelkasten-directory-references (concat (getenv "HOME") "/Dropbox/org/reference/")
-  sync0-emacs-directory (concat (getenv "HOME") "/.emacs.d/sync0/")
-  sync0-pdfs-folder (concat (getenv "HOME") "/Documents/pdfs/")
-  sync0-current-year (format-time-string "%Y")
-  sync0-current-month (format-time-string "%B")
-  sync0-current-month-downcase (downcase (format-time-string "%B"))
-  sync0-current-day (format-time-string "%d")
-  sync0-biblatex-entry-types '("article" "book" "inbook" "incollection" "collection" "unpublished" "thesis" "proceedings" "inproceedings" "online" "report" "manual")
-  sync0-biblatex-languages '("spanish" "english" "french" "german" "portuguese" "italian" "korean" "japanese" "dutch" "arabic" "hebrew" "latin" "greek" "unknown")
-  sync0-english-parts-speech '("noun" "intransitive verb" "transitive verb" "verb" "conjunction" "adjective" "adverb")
-  sync0-french-parts-speech '("nom féminin" "nom masculin" "verbe intransitif" "verbe transitif" "verbe" "conjonction" "adjectif" "adverbe")
-  sync0-portuguese-parts-speech '("sustantivo femenino" "sustantivo masculino" "verbo intransitivo" "verbo transitivo" "verbo" "conjunção" "adjetivo" "advérbio")
-            sync0-spanish-parts-speech '("sustantivo femenino" "sustantivo masculino" "verbo intransitivo" "verbo transitivo" "verbo" "conjunción" "adjectivo" "adverbio")
-            sync0-zettelkasten-annotations-author  "John Doe"
-;;             sync0-zettelkasten-annotations-roam-key "cite:doe1991"
-            sync0-zettelkasten-annotations-key  "doe1991")
+    (defvar sync0-zettelkasten-fiche-types 
+    '() 
+    "List of fiche types.")
+
+  (defvar sync0-zettelkasten-variables-list
+  '((sync0-zettelkasten-projects . "~/.emacs.d/sync0-vars/projects.txt")
+  (sync0-zettelkasten-zettel-types . "~/.emacs.d/sync0-vars/zettel-types.txt")
+  (sync0-zettelkasten-zettel-functions . "~/.emacs.d/sync0-vars/zettel-functions.txt")
+  (sync0-zettelkasten-fiche-types . "~/.emacs.d/sync0-vars/fiche-types.txt")))
+
+  (defvar sync0-biblatex-entry-types
+    '("article" "book" "inbook" "incollection" "collection" "unpublished" "thesis" "proceedings" "inproceedings" "online" "report" "manual")
+    "List of BibLaTeX entry types")
+
+  (defvar sync0-biblatex-fields
+  '("title" "subtitle" "date" "origdate" "author" "journaltitle" "booktitle" "booksubtitle" "crossref" "volume" "number" "publisher" "location" "pages" "addendum" "url" "urldate" "language" "langid" "file")
+    "List of BibLaTeX entry fields")
+
+    (defvar sync0-bibtex-booktitles 
+     '()
+    "List of bibtex authors")
+
+    (defvar sync0-bibtex-publishers 
+     '()
+    "List of bibtex authors")
+
+    (defvar sync0-bibtex-journals 
+     '()
+    "List of bibtex authors")
+
+    (defvar sync0-bibtex-locations 
+     '()
+    "List of bibtex authors")
+
+    (defvar sync0-bibtex-authors 
+     '()
+    "List of bibtex authors")
+
+  (defvar sync0-bibtex-languages
+  '()
+    "List of BibLaTeX languages")
+
+  (defvar sync0-bibtex-variables-list
+  '((sync0-bibtex-booktitles . "~/.emacs.d/sync0-vars/bibtex-booktitles.txt")
+  (sync0-bibtex-publishers . "~/.emacs.d/sync0-vars/bibtex-publishers.txt")
+  (sync0-bibtex-journals . "~/.emacs.d/sync0-vars/bibtex-journals.txt")
+  (sync0-bibtex-locations . "~/.emacs.d/sync0-vars/bibtex-locations.txt")
+  (sync0-bibtex-authors .  "~/.emacs.d/sync0-vars/bibtex-authors.txt")
+  (sync0-bibtex-languages .  "~/.emacs.d/sync0-vars/languages.txt")))
+
+  ;; define the rest
+    (setq sync0-zettelkasten-directory (concat (getenv "HOME") "/Dropbox/org/")
+    sync0-zettelkasten-directory-sans (concat (getenv "HOME") "/Dropbox/org")
+    sync0-default-bibliography (concat (getenv "HOME") "/Dropbox/bibliographies/doctorat.bib")
+    sync0-zettelkasten-directory-references (concat (getenv "HOME") "/Dropbox/org/reference/")
+    sync0-emacs-directory (concat (getenv "HOME") "/.emacs.d/sync0/")
+    sync0-pdfs-folder (concat (getenv "HOME") "/Documents/pdfs/")
+    sync0-current-year (format-time-string "%Y")
+    sync0-current-month (format-time-string "%B")
+    sync0-current-month-downcase (downcase (format-time-string "%B"))
+    sync0-current-day (format-time-string "%d")
+    sync0-english-parts-speech '("noun" "intransitive verb" "transitive verb" "verb" "conjunction" "adjective" "adverb")
+    sync0-french-parts-speech '("nom féminin" "nom masculin" "verbe intransitif" "verbe transitif" "verbe" "conjonction" "adjectif" "adverbe")
+    sync0-portuguese-parts-speech '("sustantivo femenino" "sustantivo masculino" "verbo intransitivo" "verbo transitivo" "verbo" "conjunção" "adjetivo" "advérbio")
+              sync0-spanish-parts-speech '("sustantivo femenino" "sustantivo masculino" "verbo intransitivo" "verbo transitivo" "verbo" "conjunción" "adjectivo" "adverbio"))
 #+END_SRC
  
-** Functions
+** Macros
 #+BEGIN_SRC emacs-lisp
-(defun sync0-downcase-and-no-whitespace (x)
-"Downcase and replace whitespace by _ in the current string"
-    (downcase
-     (replace-regexp-in-string "[[:space:]-]+" "_" x)))
+(defmacro sync0-redefine (symbol value)
+  `(setf ,symbol ,value))
 
-      (defun sync0-log-today-timestamp () 
-        "Insert today's date in the YYYY/MM/DD format"
-          (insert (format-time-string "%A, %Y/%m/%d")))
+(defmacro sync0-nullify-variable (var)
+  "Make target variable nil"
+  `(setf ,var nil))
+#+END_SRC 
 
-        (defun insert-current-day () 
-          (insert (format-time-string "%d")))
+** Functions
+Define variables from lists
+#+BEGIN_SRC emacs-lisp
+  (defun sync0-set-variable-from-files  (varlist)
+    "From a list of pairs of variable and files, define all of them
+  with a loop"
+    (dolist (element varlist) 
+      (let ((var (car element))
+            (file (cdr element)))
+        ;; (sync0-nullify-variable var)
+        (with-temp-buffer
+          (insert-file-contents file)
+          (goto-char (point-min))
+          ;; (keep-lines "contexts" (point-min) (point-max)) 
+          (while (re-search-forward "^\\([[:print:]]+\\)\n" (point-max) t)
+            (add-to-list var (match-string-no-properties 1)))))))
 
-        (defun insert-current-month () 
-          (insert (format-time-string "%B")))
+(sync0-set-variable-from-files sync0-zettelkasten-variables-list)
+(sync0-set-variable-from-files sync0-bibtex-variables-list)
+#+END_SRC 
 
-        (defun sync0-insert-today-timestamp () 
-          "Insert today's date in the YYYY/MM/DD format"
-          (insert (format-time-string "%Y/%m/%d")))
+#+BEGIN_SRC emacs-lisp
+  (defun sync0-downcase-and-no-whitespace (x)
+  "Downcase and replace whitespace by _ in the current string"
+      (downcase
+       (replace-regexp-in-string "[[:space:]-]+" "_" x)))
 
-        (defun sync0-org-insert-today-timestamp () 
-          "Insert today's date in the YYYY/MM/DD format"
-          (insert (format-time-string "<%Y-%m-%d>")))
+          (defun sync0-insert-today-timestamp () 
+            "Insert today's date in the YYYY/MM/DD format"
+            (insert (format-time-string "%Y/%m/%d")))
 
-        (defun sync0-update-timestamp ()
-          "Update current #+DATE timestamp"
-          (interactive)
-       (org-with-point-at 1
-            (let ((regex ":LAST_MODIFIED: \\(.+\\)")
-                  (date (format-time-string "%Y-%m-%d")))
-               (when (re-search-forward regex nil nil 1)
-                     (replace-match date nil nil nil 1)))))
+          (defun sync0-org-insert-today-timestamp () 
+            "Insert today's date in the YYYY/MM/DD format"
+            (insert (format-time-string "<%Y-%m-%d>")))
 
-  (defun sync0-zettelkasten-update-org-properties ()
-    (interactive)
-    (let*  ((zettel-properties
-             (let (x)
-               (dolist (property sync0-zettelkasten-properties-list x)
-                 (when-let ((value (org-entry-get 1 property)))
-                   (if (string-match-p "\" \"" value)
-                       (let ((elements
-                              (delete " "
-                                      (split-string-and-unquote value "\" \""))))  
-                         (mapcar #'(lambda (y)
-                                     (push
-                                      (sync0-downcase-and-no-whitespace y)
-                                      x)) elements))
-                     (if (string-match "\"\\([[:print:]]+\\)\""  value)
-                         (push
-                          (sync0-downcase-and-no-whitespace (match-string 1 value))
-                          x)
-                       (push (sync0-downcase-and-no-whitespace value)  x)))))
-               x))
-            (path default-directory)
-            (path-dirs (split-string-and-unquote path "/"))
-            (zettelkasten-dirs (split-string-and-unquote sync0-zettelkasten-directory "/"))
-            ;; this produces a list not a string
-            (current-dir  (cl-set-difference path-dirs zettelkasten-dirs  :test #'equal))
-            (corrected-properties (cl-union current-dir zettel-properties  :test #'equal))                                 
-            (tags-line (cadar (org-collect-keywords '("FILETAGS"))))
-            (tags (split-string-and-unquote tags-line ":"))
-            (new-tags (cl-union corrected-properties tags :test #'equal))
-            (new-tags-line
-             (let (x)
-               (dolist (element new-tags x)
-                 (setq x (concat element  ":" x)))))
-            (corrected-tags-line (concat ":" new-tags-line)))
-      (org-with-point-at 1
-        (re-search-forward "^#\\+FILETAGS:" (point-max) t)
-        (kill-whole-line 1)
-        (insert (concat "#+FILETAGS: " corrected-tags-line "\n"))
-  (dolist (property sync0-zettelkasten-properties-list)
-         (when-let ((value (org-entry-get 1 property)))
-           (unless (or (string-match-p "\" \"" value)
-                       (string-match-p "\"[[:print:]]+\"" value))
-            (org-set-property property (concat "\""  value "\""))))))))
+          (defun sync0-update-timestamp ()
+            "Update current #+DATE timestamp"
+         (org-with-point-at 1
+              (let ((regex ":LAST_MODIFIED: \\(.+\\)")
+                    (date (format-time-string "%Y-%m-%d")))
+                 (when (re-search-forward regex nil nil 1)
+                       (replace-match date nil nil nil 1)))))
 
+    (defun sync0-zettelkasten-update-org-properties ()
+      (let*  ((zettel-properties
+               (let (x)
+                 (dolist (property sync0-zettelkasten-properties-list x)
+                   (when-let ((value (org-entry-get 1 property)))
+                     (if (string-match-p "\" \"" value)
+                         (let ((elements
+                                (delete " "
+                                        (split-string-and-unquote value "\" \""))))  
+                           (mapcar #'(lambda (y)
+                                       (push
+                                        (sync0-downcase-and-no-whitespace y)
+                                        x)) elements))
+                       (if (string-match "\"\\([[:print:]]+\\)\""  value)
+                           (push
+                            (sync0-downcase-and-no-whitespace (match-string 1 value))
+                            x)
+                         (push (sync0-downcase-and-no-whitespace value)  x)))))
+                 x))
+              ;; (path default-directory)
+              ;; (path-dirs (split-string-and-unquote path "/"))
+              ;; (zettelkasten-dirs (split-string-and-unquote sync0-zettelkasten-directory "/"))
+              ;; ;; this produces a list not a string
+              ;; (current-dir  (cl-set-difference path-dirs zettelkasten-dirs  :test #'equal))
+              ;; (corrected-properties (cl-union current-dir zettel-properties  :test #'equal))                                 
+              (tags-line (cadar (org-collect-keywords '("FILETAGS"))))
+              (tags (split-string-and-unquote tags-line ":"))
+              ;; (new-tags (cl-union corrected-properties tags :test #'equal))
+              (new-tags (cl-union zettel-properties tags :test #'equal))
+              (new-tags-line
+               (let (x)
+                 (dolist (element new-tags x)
+                   (setq x (concat element  ":" x)))))
+              (corrected-tags-line (concat ":" new-tags-line)))
+        (org-with-point-at 1
+          (re-search-forward "^#\\+FILETAGS:" (point-max) t)
+          (kill-whole-line 1)
+          (insert (concat "#+FILETAGS: " corrected-tags-line "\n"))
+    (dolist (property sync0-zettelkasten-properties-list)
+           (when-let ((value (org-entry-get 1 property)))
+             (unless (or (string-match-p "\" \"" value)
+                         (string-match-p "\"[[:print:]]+\"" value))
+              (org-set-property property (concat "\""  value "\""))))))))
 
-        (add-hook 'before-save-hook (lambda ()
-      ;; Check whether file is in org-mode and whether it is located in my Zettelkasten directory
-                                      (when (and (equal major-mode 'org-mode)
-                                            ;;(not (string-prefix-p "archives" (buffer-file-name)))
-                                            (string-prefix-p sync0-zettelkasten-directory (buffer-file-name)))
-                                                     ;; (equal default-directory (concat (getenv "HOME") "/Dropbox/annotations/"))
-    (sync0-zettelkasten-update-org-properties)
-                                        (sync0-update-timestamp))))
-
-        (defun sync0-zettelkasten-annotations-update-author ()
-          "Save current #+AUTHOR for use later on."
-       (when (equal default-directory sync0-zettelkasten-directory-references)
-      (org-with-point-at 1
-           (setq sync0-zettelkasten-annotations-author (org-entry-get 1 "AUTHOR")))))
-
-        (defun sync0-zettelkasten-annotations-update-roam-key ()
-          "Save current #+ROAM_KEY for use later on."
-       (when (equal default-directory sync0-zettelkasten-directory-references)
-      (org-with-point-at 1
-                   (setq sync0-zettelkasten-annotations-key (org-entry-get 1 "ROAM_REFS")))))
-                   ;; (setq sync0-zettelkasten-annotations-roam-key sync0-zettelkasten-annotations-key)
-
-      (add-hook 'find-file-hook 'sync0-zettelkasten-annotations-update-author)
-      (add-hook 'find-file-hook 'sync0-zettelkasten-annotations-update-roam-key)
-      (add-hook 'buffer-list-update-hook 'sync0-zettelkasten-annotations-update-author)
-      (add-hook 'buffer-list-update-hook 'sync0-zettelkasten-annotations-update-roam-key)
+          (add-hook 'before-save-hook (lambda ()
+        ;; Check whether file is in org-mode and whether it is located in my Zettelkasten directory
+                                        (when (and (equal major-mode 'org-mode)
+                                              ;;(not (string-prefix-p "archives" (buffer-file-name)))
+                                              (string-prefix-p sync0-zettelkasten-directory (buffer-file-name)))
+                                                       ;; (equal default-directory (concat (getenv "HOME") "/Dropbox/annotations/"))
+                                          (sync0-zettelkasten-update-org-properties)
+                                          (sync0-update-timestamp))))
 
 #+END_SRC
 
@@ -657,6 +699,29 @@ With prefix arg, find the previous file."
            (pos (mod (+ (cl-position file files :test 'equal) (if backward -1 1))
                      (length files))))
       (find-file (nth pos files)))))
+#+END_SRC 
+
+Working with lists
+#+BEGIN_SRC emacs-lisp
+(defun sync0-insert-elements-of-list (list)
+  "Print each element of LIST on a line of its own."
+  (while list
+    (insert (concat (car list) "\n"))
+    (setq list (cdr list))))
+
+(defun sync0-update-list (newelt list file)
+  "Saves my projects in my home folder."
+  (if (member newelt list)
+      (message "%s already exists in %s" newelt file)
+    (let ((file-path
+           (concat "~/.emacs.d/sync0-vars/" file ".txt"))
+          (new-list (cons newelt list)))
+      ;; (add-to-list list newelt)
+       (sync0-redefine list new-list)
+      (with-temp-file file-path
+        (sync0-insert-elements-of-list list)
+        (save-buffer)
+        (message "%s added to %s" newelt file)))))
 #+END_SRC 
 
 This is a collection of functions that become problematic when
@@ -1020,6 +1085,16 @@ loaded after packages are declared.
       ;; Start save-place-mode.
       :init (save-place-mode)
       :hook (find-file . sync0-save-place-reposition))
+  #+END_SRC
+
+*** exec-path-from-shell
+Have Emacs use the same aliases as my zsh shell. 
+  #+BEGIN_SRC emacs-lisp
+    (use-package exec-path-from-shell
+    :straight (exec-path-from-shell :type git :host github :repo "purcell/exec-path-from-shell")
+      :config
+(when (memq window-system '(mac ns x))
+  (exec-path-from-shell-initialize)))
   #+END_SRC
 
 ** Include the rest 

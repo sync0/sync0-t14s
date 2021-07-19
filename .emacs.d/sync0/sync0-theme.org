@@ -427,7 +427,7 @@ Cycle between themes.
     (setq cycle-themes-theme-list '(doom-zenburn doom-flatwhite)))
 #+END_SRC 
 
-* 取 emojify
+* 消 emojify
 #+BEGIN_SRC emacs-lisp
 (use-package emojify
 :disabled t
@@ -435,7 +435,7 @@ Cycle between themes.
     :hook (after-init . global-emojify-mode-line-mode))
 #+END_SRC 
 
-* 取 hl-line mode
+* 消 hl-line mode
 
 #+BEGIN_SRC emacs-lisp
   (use-package hl-line 

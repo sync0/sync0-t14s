@@ -53,6 +53,7 @@
   (add-hook 'erc-mode-hook 'sync0-buffer-face-mode-variable)
   (add-hook 'Info-mode-hook 'sync0-buffer-face-mode-variable)
   (add-hook 'text-mode-hook 'sync0-buffer-face-mode-variable)
+;;  (add-hook 'org-roam-mode-hook 'sync0-buffer-face-mode-variable)
  #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -518,7 +519,7 @@ per document.
                ("M-$" . sync0-lookup-conjugation)))
 #+END_SRC 
 
-* 取 festival
+* 消 festival
 This package simply reads aloud text selections. If this functionality
 seems trivial, as an academic writer, it has proven quite useful. Use
 it to improve the /feel/ (cadence and rhythm) of your writing. 

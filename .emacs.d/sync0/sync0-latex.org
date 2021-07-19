@@ -2,7 +2,6 @@
 #+BEGIN_SRC emacs-lisp
   (use-package latex
     :straight nil
-    :defer t
     :mode
     ("\\.tex\\'" . latex-mode)
     :custom
@@ -59,95 +58,59 @@
   (add-hook 'TeX-mode-hook (lambda () (reftex-isearch-minor-mode))))
   #+END_SRC 
 
-* ivy-bibtex
+* bibtex-completion
 #+BEGIN_SRC emacs-lisp
-      (use-package ivy-bibtex 
-        :custom 
-        ;; writing completion
-        (bibtex-completion-bibliography '("~/Dropbox/bibliographies/bibliography.bib"
-                                          "~/Dropbox/bibliographies/doctorat.bib")) 
-        (bibtex-completion-notes-path '"~/Dropbox/org/reference")
-        (bibtex-completion-library-path '("~/Dropbox/org/reference/"))
-        (bibtex-completion-pdf-field "file")
-        (bibtex-completion-pdf-symbol "P")
-        (bibtex-completion-notes-symbol "N")
-        (ivy-bibtex-default-action 'ivy-bibtex-edit-notes)
-        (bibtex-completion-additional-search-fields '(editor journaltitle origdate subtitle volume booktitle location publisher))
+(use-package bibtex-completion
+  :custom 
+  (bibtex-completion-bibliography '("~/Dropbox/bibliographies/bibliography.bib"
+                                    "~/Dropbox/bibliographies/doctorat.bib")) 
+  (bibtex-completion-notes-path '"~/Dropbox/org/reference")
+  (bibtex-completion-library-path '("~/Dropbox/org/reference/"))
+  (bibtex-completion-pdf-field "file")
+  (bibtex-completion-pdf-symbol "P")
+  (bibtex-completion-notes-symbol "N")
+  (bibtex-completion-pdf-extension '(".pdf" ".epub"))
+  (bibtex-completion-additional-search-fields '(editor journaltitle origdate subtitle volume booktitle location publisher))
 
-        :config 
-     (setq bibtex-completion-display-formats
-         '((article       . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title}: ${subtitle} @ ${journaltitle} [${=key=}]")
-           (book          . "${=has-pdf=:1}${=has-note=:1}| ${author} [${origdate}](${date:4}) ${title} ${volume}: ${subtitle} [${=key=}]")
-           (inbook        . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title:55} @ ${booktitle} [${=key=}]")
-           (incollection  . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title:55} @ ${booktitle} [${=key=}]")
-           (inproceedings . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title:55} @ ${booktitle} [${=key=}]")
-           (t             . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date}) ${title}: ${subtitle} [${=key=}]")))
+  :config 
+  (setq bibtex-completion-display-formats
+        '((article       . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title}: ${subtitle} @ ${journaltitle} [${=key=}]")
+          (book          . "${=has-pdf=:1}${=has-note=:1}| ${author} [${origdate}](${date:4}) ${title} ${volume}: ${subtitle} [${=key=}]")
+          (inbook        . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title:55} @ ${booktitle} [${=key=}]")
+          (incollection  . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title:55} @ ${booktitle} [${=key=}]")
+          (collection    . "${=has-pdf=:1}${=has-note=:1}| ${editor} (${date:4}) ${title:55} ${volume}: ${subtitle} [${=key=}]")
+          (inproceedings . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title:55} @ ${booktitle} [${=key=}]")
+          (t             . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date}) ${title}: ${subtitle} [${=key=}]")))
 
-        (setq bibtex-completion-notes-template-multiple-files  
-         "
-    ,#+TITLE: ${title}
-    ,#+SUBTITLE: ${subtitle}
-    ,#+AUTHOR: ${author-or-editor}
-    ,#+JOURNAL_TITLE: ${journaltitle}
-    ,#+BOOK_TITLE: ${booktitle}
-    ,#+BOOK_TITLE: ${booksubtitle}
-    ,#+ROAM_KEY: cite:${=key=}
-    ,#+CREATED: 
-    ,#+DATE: 
-    ,#+ROAM_TAGS: ${=key=} ${author-or-editor} 
-    ,#+INTERLEAVE_PDF: ${file}
+  (setq bibtex-completion-notes-template-multiple-files  
+        ":PROPERTIES:
+:ID:      %(org-id-new) 
+:ROAM_REFS: cite:${=key=}
+:BIBLATEX_TYPE: \"${=type=}\"
+:PARENT: \"${booktitle}\"
+:PARENT: \"${journaltitle}\"
+:AUTHOR: \"%(sync0-bibtex-completion-reverse-author ${=key=})\"
+:CREATED: %(format-time-string \"%Y-%m-%d\")
+:LAST_MODIFIED: %(format-time-string \"%Y-%m-%d\")
+:ZETTEL_TYPE: \"reference\"
+:LANGUAGE: \"${language}\"
+:DATE: \"${date}\"
+:END:
+#+TITLE: ${title}
+#+SUBTITLE: ${subtitle}
+#+AUTHOR: %(sync0-bibtex-completion-reverse-author ${=key=})
+#+FILETAGS: :reference:${=type=}:${=key=}:${date}:
+#+INTERLEAVE_PDF: ${file}
 
 
-    ")
+")
 
-        (defun sync0-bibtex-completion-journaltitle ()
-                           (completing-read "Journal title : "
-                            (delete-dups (mapcar #'(lambda (x) (cdr (assoc "journaltitle" x)))
-                              (bibtex-completion-candidates)))))
+  (use-package ivy-bibtex
+;; :custom
+;; (ivy-bibtex-default-action 'ivy-bibtex-edit-notes)
+    :config
+    (require 'sync0-ivy-bibtex-functions)))
 
-        (defun sync0-bibtex-completion-author ()
-                           (completing-read "Auteur : "
-                            (delete-dups (mapcar #'(lambda (x) (cdr (assoc "author" x)))
-                              (bibtex-completion-candidates)))))
-
-  (defun sync0-ivy-bibtex-extractor ()
-    (interactive)
-    (let* ((candidates (bibtex-completion-candidates))
-           (key (bibtex-completion-key-at-point))
-           (preselect (and key
-                           (cl-position-if (lambda (cand)
-                                             (member (cons "=key=" key)
-                                                     (cdr cand)))
-                                           candidates)))
-           (selection (ivy-read "Crossref : "
-                                candidates
-                                :preselect preselect
-                                :caller 'ivy-bibtex
-                                :history 'ivy-bibtex-history))
-           (chosen-key (cdr (assoc "=key=" (cdr (assoc selection candidates)))))
-           (entry (bibtex-completion-get-entry chosen-key))
-           (bibtex-field (completing-read "Choose one: "
-                                          '("=key=" "title" "author" "journaltitle" "date" "editor" "booktitle"))))
-      (insert (bibtex-completion-get-value bibtex-field entry))))
-
-        ;; (defun sync0-ivy-bibtex ()
-        ;;   (interactive)
-        ;;   (setq ivy-bibtex-default-action 'ivy-bibtex-insert-key)
-        ;;   (bibtex-completion-init)
-        ;;   (let* ((candidates (bibtex-completion-candidates))
-        ;;          (key (bibtex-completion-key-at-point))
-        ;;          (preselect (and key
-        ;;                          (cl-position-if (lambda (cand)
-        ;;                                            (member (cons "=key=" key)
-        ;;                                                    (cdr cand)))
-        ;;                                          candidates))))
-        ;;     (ivy-read "BibTeX entries%s: "
-        ;;               candidates
-        ;;               :preselect preselect
-        ;;               :caller 'ivy-bibtex
-        ;;               :action ivy-bibtex-default-action)))
-
-  )
 #+END_SRC 
 
 * bibtex 
@@ -177,8 +140,8 @@
     ;; (bibtex-entry-format '(opts-or-alts required-fields numerical-fields page-dashes whitespace braces last-comma delimiters sort-fields))
 
     :config
- ;;   (require 'ivy-bibtex)
-    (autoload 'ivy-bibtex "ivy-bibtex" "" t)
+    (require 'bibtex-completion)
+    (require 'sync0-bibtex-functions)
 
         (unbind-key "TAB" bibtex-mode-map)
 
@@ -188,109 +151,9 @@
       "Completion table for BibTeX reference keys.
   The CDRs of the elements are t for header keys and nil for crossref keys.")
 
-    (defun sync0-bibtex-autokey-get-year ()
-      "Return year field contents as a string obeying `bibtex-autokey-year-length'."
-      (let ((yearfield (bibtex-autokey-get-field "date")))
-        (substring yearfield (max 0 (- (length yearfield)
-                                       bibtex-autokey-year-length)))))
-
-    (defun sync0-bibtex-generate-autokey ()
-      "This overwrites the bibtex-generate-autokey function that comes with Emacs.
-            I want my keys to be formatted: authornameYEAR, then a letter
-            if there is already an entry that matches authornameYEAR."
-      (interactive)
-      (let* ((names (bibtex-autokey-get-names))
-             (year (sync0-bibtex-autokey-get-year))
-             (existing-keys (bibtex-parse-keys)) key)
-        (setq key (format "%s%s" names year))
-        (let ((ret key))
-          (cl-loop for c
-                   from ?a to ?z
-                   while (assoc ret existing-keys)
-                   do (setq ret (format "%s%c" key c)))
-          ret)))
-
-    (defun sync0-bibtex-parse-keys (&optional abortable verbose)
-      "Set `bibtex-reference-keys' to the keys used in the whole buffer.
-  Find both entry keys and crossref entries.  If ABORTABLE is non-nil abort
-  on user input.  If VERBOSE is non-nil give messages about progress.
-  Return alist of keys if parsing was completed, `aborted' otherwise.
-  If `bibtex-parse-keys-fast' is non-nil, use fast but simplified algorithm
-  for parsing BibTeX keys.  If parsing fails, try to set this variable to nil."
-      (if (eq major-mode 'bibtex-mode)
-          (let (ref-keys crossref-keys)
-            (save-excursion
-              (save-match-data
-                (if verbose
-                    (bibtex-progress-message
-                     (concat (buffer-name) ": parsing reference keys")))
-                (catch 'userkey
-                  (goto-char (point-min))
-                  (if bibtex-parse-keys-fast
-                      (let ((case-fold-search t)
-                            (re (concat bibtex-entry-head "\\|"
-                                        ",[ \t\n]*crossref[ \t\n]*=[ \t\n]*"
-                                        "\\(\"[^\"]*\"\\|{[^}]*}\\)[ \t\n]*[,})]")))
-                        (while (re-search-forward re nil t)
-                          (if (and abortable (input-pending-p))
-                              ;; user has aborted by typing a key: return `aborted'
-                              (throw 'userkey 'aborted))
-                          (cond ((match-end 3)
-                                 ;; This is a crossref.
-                                 (let ((key (buffer-substring-no-properties
-                                             (1+ (match-beginning 3)) (1- (match-end 3)))))
-                                   (unless (assoc key crossref-keys)
-                                     (push (list key) crossref-keys))))
-                                ;; only keys of known entries
-                                ((assoc-string (bibtex-type-in-head)
-                                               bibtex-entry-alist t)
-                                 ;; This is an entry.
-                                 (let ((key (bibtex-key-in-head)))
-                                   (unless (assoc key ref-keys)
-                                     (push (cons key t) ref-keys)))))))
-
-                    (let (;; ignore @String entries because they are handled
-                          ;; separately by `bibtex-parse-strings'
-                          (bibtex-sort-ignore-string-entries t)
-                          bounds)
-                      (bibtex-map-entries
-                       (lambda (key _beg end)
-                         (if (and abortable
-                                  (input-pending-p))
-                             ;; user has aborted by typing a key: return `aborted'
-                             (throw 'userkey 'aborted))
-                         (if verbose (bibtex-progress-message))
-                         (unless (assoc key ref-keys)
-                           (push (cons key t) ref-keys))
-                         (if (and (setq bounds (bibtex-search-forward-field "crossref" end))
-                                  (setq key (bibtex-text-in-field-bounds bounds t))
-                                  (not (assoc key crossref-keys)))
-                             (push (list key) crossref-keys))))))
-
-                  (dolist (key crossref-keys)
-                    (unless (assoc (car key) ref-keys) (push key ref-keys)))
-                  (if verbose
-                      (bibtex-progress-message 'done))
-                  ;; successful operation --> return `bibtex-reference-keys'
-                  (setq bibtex-reference-keys ref-keys)))))))
-
-    (defun sync0-bibtex-next-key ()
-      "Print the bibtex key of the document"
-      (interactive)
-      (let ((bibtex-key (re-search-forward "@.+{" nil nil 1)))
-        (goto-char bibtex-key)))
-
-    (defun sync0-bibtex-previous-key ()
-      "Print the bibtex key of the document"
-      (interactive)
-      (let ((bibtex-key (re-search-backward "@.+{" nil nil 2)))
-        (goto-char bibtex-key)
-        (re-search-forward "@.+{" nil nil 1)))
-
-    (with-eval-after-load 'evil
       (evil-define-key 'normal bibtex-mode-map
         "K" 'sync0-bibtex-previous-key
-        "J" 'sync0-bibtex-next-key))
+        "J" 'sync0-bibtex-next-key)
 
     ;; Define default fields.
     (setq bibtex-BibTeX-entry-alist '(("Article" "Article in Journal"
@@ -1501,7 +1364,7 @@ oultine of a pdf using ~outline-mode~.
 (interleave-mode interleave-pdf-mode))
 #+END_SRC 
 
-* 取 docview
+* 消 docview
 This package is Emacs' default major mode for viewing DVI, PostScript,
 PDF, OpenDocument, and Microsoft Office documents. This package is, in
 a sense, a poor man's version of ~pdf-tools~; if I keep its
