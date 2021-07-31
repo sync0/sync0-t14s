@@ -20,53 +20,52 @@
 (defun sync0-number-to-month (arg &optional no-abbrev)
   "Helper function to convert a number into the month name"
   (if no-abbrev
-      (cond ((equal 1 arg) "Janvier")
-            ((equal 2 arg) "Février")
-            ((equal 3 arg) "Mars")
-            ((equal 4 arg) "Avril")
-            ((equal 5 arg) "Mai")
-            ((equal 6 arg) "Juin")
-            ((equal 7 arg) "Juillet")
-            ((equal 8 arg) "Août")
-            ((equal 9 arg) "Septembre")
-            ((equal 10 arg) "Octobre")
-            ((equal 11 arg) "Novembre")
-            ((equal 12 arg) "Décembre")
+      (cond ((equal 1 arg) "January")
+            ((equal 2 arg) "February")
+            ((equal 3 arg) "March")
+            ((equal 4 arg) "April")
+            ((equal 5 arg) "May")
+            ((equal 6 arg) "June")
+            ((equal 7 arg) "July")
+            ((equal 8 arg) "August")
+            ((equal 9 arg) "September")
+            ((equal 10 arg) "October")
+            ((equal 11 arg) "November")
+            ((equal 12 arg) "December")
             (t "nil"))
     (cond ((equal 1 arg) "Jan.")
-          ((equal 2 arg) "Fév.")
-          ((equal 3 arg) "Mars")
-          ((equal 4 arg) "Avr.")
-          ((equal 5 arg) "Mai")
-          ((equal 6 arg) "Juin")
+          ((equal 2 arg) "Feb.")
+          ((equal 3 arg) "Mar.")
+          ((equal 4 arg) "Apr.")
+          ((equal 5 arg) "May")
+          ((equal 6 arg) "Jun.")
           ((equal 7 arg) "Jul.")
-          ((equal 8 arg) "Août")
+          ((equal 8 arg) "Aug.")
           ((equal 9 arg) "Sep.")
           ((equal 10 arg) "Oct.")
           ((equal 11 arg) "Nov.")
-          ((equal 12 arg) "Déc.")
+          ((equal 12 arg) "Dec.")
           (t "nil"))))
 
 (defun sync0-number-to-day (arg &optional no-abbrev)
   "Helper function to convert a number into the day name"
   (if no-abbrev
-      (cond ((equal 1 arg) "Dimanche")
-            ((equal 2 arg) "Lundi")
-            ((equal 3 arg) "Mardi")
-            ((equal 4 arg) "Mercredi")
-            ((equal 5 arg) "Jeudi")
-            ((equal 6 arg) "Vendredi")
-            ((equal 7 arg) "Samedi")
+      (cond ((equal 1 arg) "Sunday")
+            ((equal 2 arg) "Monday")
+            ((equal 3 arg) "Tuesday")
+            ((equal 4 arg) "Wednesday")
+            ((equal 5 arg) "Thursday")
+            ((equal 6 arg) "Friday")
+            ((equal 7 arg) "Saturday")
             (t "nil"))
-    (cond ((equal 1 arg) "Dim.")
-          ((equal 2 arg) "Lun.")
-          ((equal 3 arg) "Mar.")
-          ((equal 4 arg) "Mer.")
-          ((equal 5 arg) "Jeu.")
-          ((equal 6 arg) "Ven.")
-          ((equal 7 arg) "Sam.")
+    (cond ((equal 1 arg) "Sun.")
+          ((equal 2 arg) "Mon.")
+          ((equal 3 arg) "Tue.")
+          ((equal 4 arg) "Wed.")
+          ((equal 5 arg) "Thu.")
+          ((equal 6 arg) "Fri.")
+          ((equal 7 arg) "Sat.")
           (t "nil"))))
-
 
 
 (defun sync0-org-agenda-format-date-aligned (date)
@@ -93,7 +92,7 @@
     (format "%-2s %2d %s"
             dayname day monthname)))
 
-(setq org-agenda-format-date 'sync0-org-agenda-format-date-aligned)
+;; (setq org-agenda-format-date 'sync0-org-agenda-format-date-aligned)
 
 ;; Set of functions to have evil bindings in org-agenda.
 (defun sync0-org-agenda-next-header ()
@@ -115,9 +114,9 @@
     (delete-other-windows)))
 
 
-(defun sync0-org-agenda-get-timestamp-time ()
-  "Get timestamp from current org-agenda time"
-  ;; Firs, determine whether the headline has both a schedule and
+(defun sync0-org-agenda-tags-todo-timestamp ()
+  "Get timestamp from current org-agenda item."
+  ;; First, determine whether the headline has both a schedule and
   ;; deadeline?
   ;; 
   ;; NOTE: The first part of the conditional (the "((and ...)"
@@ -126,433 +125,292 @@
   ;; accomplished before the deadline. Therefore, although
   ;; deadlines could occur before schedules, displaying this
   ;; information in the org-agenda would not offer any useful
-  ;; information for planning purpose. In such cases, for real
+  ;; information for planning purposes. In such cases, for real
   ;; tasks the headline would be eventually re-scheduled so as to
   ;; observe the rule that schedules take precedence over
-  ;; deadlines. 
+  ;; deadlines.
   ;;  
   ;;  When both a schedule and a deadline have been defined:
   (cond ((and (org-get-scheduled-time (point))
               (org-get-deadline-time (point)))
          (let* ((schedule (org-get-scheduled-time (point)))
-                (tomorrow-string  (shell-command-to-string "echo -n $(date -d tomorrow +'%Y-%m-%d')"))
-                (org-schedule-string  (format-time-string "%Y-%m-%d" schedule))
-                (month-start-name (capitalize (format-time-string "%b" schedule)))
-                (day-start (format-time-string "%d" schedule))
-                (day-start-name (capitalize (format-time-string "%a" schedule)))
-                (time-start-test (format-time-string "%H:%M" schedule))
-                (time-start (if (string= "00" (format-time-string "%M" schedule)) 
-                                (format-time-string "%Hh" schedule)
-                              (format-time-string "%H:%M" schedule)))
+                (schedule-date  (format-time-string "%Y-%m-%d" schedule))
+                (year-start  (format-time-string "%Y" schedule))
+                (today  (format-time-string "%Y-%m-%d"))
+                (tomorrow (org-read-date nil nil "+1")) 
+                (this-year  (format-time-string "%Y"))
+                (month-start (capitalize (format-time-string "%b." schedule)))
+                (month-start-full (format-time-string "%B" schedule))
+                (time-start (cond
+                             ((string= "00:00" (format-time-string "%H:%M" schedule))
+                              "")
+                             ((string= "00" (format-time-string "%M" schedule)) 
+                              (format-time-string "%Hh" schedule))
+                             (t (format-time-string "%H:%M" schedule))))
+                (day-start (cond
+                            ((string= today schedule-date)
+                             "Today")
+                            ((string= tomorrow schedule-date)
+                             "Tomorrow")
+                            (t (concat
+                                ;; day name
+                                (capitalize (format-time-string "%a." schedule))
+                                " "
+                                ;; number
+                                (format-time-string "%d" schedule)))))
                 (deadline (org-get-deadline-time (point)))
-                (org-deadline-string (format-time-string "%Y-%m-%d" deadline))
+                (deadline-date  (format-time-string "%Y-%m-%d" deadline))
+                (year-end  (format-time-string "%Y" deadline))
+                (month-end (capitalize (format-time-string "%b." deadline)))
                 (day-end-raw (format-time-string "%d" deadline))
+                ;; remove zeroes from the day end for ease of visuals
                 (day-end (if (string-match "0\\([[:digit:]]$\\)" day-end-raw)
-                             (match-string 1 day-end-raw) day-end-raw))
-                ;; (day-end  (format-time-string "%d" deadline))
-                (day-end-name (capitalize (format-time-string "%a" deadline)))
-                (time-end-test (format-time-string "%H:%M" deadline))
-                (time-end (if (string= "00" (format-time-string "%M" deadline)) 
-                              (format-time-string "%Hh" deadline)
-                            (format-time-string "%H:%M" deadline))))
-           ;; Test whether the hour and minute "%H:%M" string is
-           ;; relevant and, thus, should be included in org-agenda
-           ;; views.
-           (cond ((and  (string= "00:00" time-start-test)
-                        (string= "00:00" time-end-test))
-                  (if (or (string= tomorrow-string org-schedule-string)
-                          (string= tomorrow-string org-deadline-string))
-                      (concat "Demain" "-" day-end " " month-start-name)
-                    (concat day-start-name " " day-start "-" day-end " " month-start-name)))
-                 ((or (not (string= "00:00" time-start-test))
-                      (not (string= "00:00" time-end-test)))
-                  (if (or (string= tomorrow-string org-schedule-string)
-                          (string= tomorrow-string org-deadline-string))
-                      (concat "Demain" "-" day-end " " month-start-name ", " time-start "-" time-end)
-                    (concat day-start "-" day-end " " month-start-name ", " time-start "-" time-end))))))
+                             (match-string 1 day-end-raw)
+                           day-end-raw))
+                (time-end (cond
+                           ((string= "00:00" (format-time-string "%H:%M" deadline))
+                            "")
+                           ((string= "00" (format-time-string "%M" deadline)) 
+                            (format-time-string "%Hh" deadline))
+                           (t (format-time-string "%H:%M" deadline))))
+                (fragment-start (if (string= month-start month-end)
+                    day-start
+                   (concat day-start " " month-start)))
+                (fragment-end
+                 (cond ((and (string= schedule-date deadline-date)
+                             (not (string= time-start time-end))
+                             (not (string= time-start ""))
+                             (not (string= time-end "")))
+                        (concat " " month-start-full ", " time-start "-" time-end))
+                       ;; check: same day, start time
+                       ((and (string= schedule-date deadline-date)
+                             (not (string= time-start "")))
+                        (concat " " month-start-full ", " time-start))
+                       ;; check: same day 
+                       ((string= schedule-date deadline-date)
+                        (concat " " month-start-full))
+                       ;; check: same month, start time, end time
+                       ((and (string= month-start month-end)
+                             (not (string= time-start ""))
+                             (not (string= time-end "")))
+                        (concat "-" day-end " " month-start-full ", " time-start "-" time-end))
+                       ;; check: same month, start time 
+                       ((and (string= month-start month-end)
+                             (not (string= time-start "")))
+                        (concat "-" day-end " " month-start-full ", " time-start))
+                       ;; check: same month 
+                       ((string= month-start month-end)
+                        (concat "-" day-end " " month-start-full)) 
+                       ;; check: start-time, end time
+                       ((and (not (string= month-start month-end))
+                             (not (string= time-start ""))
+                             (not (string= time-end "")))
+                        (concat "-" day-end " " month-end ", " time-start "-" time-end)) 
+                       ;; check: start-time
+                       ((and (not (string= month-start month-end))
+                             (not (string= time-start "")))
+                        (concat "-" day-end-string " " month-end ", " time-start)) 
+                       (t (concat " " month-start-full))))
+                 ;; ;; check: schedule date and dealine date equal, end time
+                 ;; (cond ((and (string= schedule-date deadline-date)
+                 ;;             (not (string= time-end "")))
+                 ;;        (concat "-" time-end))
+                 ;; ;; check: month start equal month end, end time
+                 ;;       ((and (string= month-start month-end)
+                 ;;             (not (string= time-end "")))
+                 ;;        (concat "-" day-end month-end ", " time-end))
+                 ;; ;; check: month start equal month end, no end time
+                 ;;       ((and (string= month-start month-end)
+                 ;;             (string= time-end ""))
+                 ;;        (concat "-" day-end month-end))
+                 ;; ;; check: month start different month end, end time
+                 ;;       ((and (not (string= month-start month-end))
+                 ;;             (string= time-end ""))
+                 ;;        (concat "-" day-end month-end ", " time-end))
+                 ;;       (t (concat " " month-start)))
+                (year (cond ((not (string= year-start this-year))
+                             (concat " " year-start))
+                            ((not (string= year-end this-year))
+                             (concat " " year-end))
+                            (t ""))))
+           ;; Stylize the date output
+           (concat fragment-start fragment-end year)))
+
         ;; Second part, when either schedule or deadline have been
         ;; defined:
-        ((or (org-get-scheduled-time (point))
-             (org-get-deadline-time (point)))
-         ;; Follow the convention that schedules take precedence
-         ;; over deadlines. If schedule has been defined:
-         (if (org-get-scheduled-time (point))
-             (let* ((schedule (org-get-scheduled-time (point)))
-                    (tomorrow-string  (shell-command-to-string "echo -n $(date -d tomorrow +'%Y-%m-%d')"))
-                    (org-schedule-string (format-time-string "%Y-%m-%d" schedule))
-                    ;; Define the object "scheduled" containing the date
-                    ;; information from which all the other variables wiil be
-                    ;; defined.
-                    (element (org-element-at-point))
-                    (scheduled (org-element-property :scheduled element))
-                    (year-start (org-element-property :year-start scheduled))
-                    (year-start-string (number-to-string year-start))  
-                    (year-end (org-element-property :year-end scheduled))
-                    (year-end-string (if year-end (number-to-string year-end) year-start-string))
-                    (month-start (org-element-property :month-start scheduled))
-                    (month-start-string (number-to-string month-start))
-                    (month-start-name (sync0-number-to-month month-start))
-                    (month-start-name-full (sync0-number-to-month month-start t))
-                    (month-end (org-element-property :month-end scheduled))
-                    (month-end-string (if month-end (number-to-string month-end) "0"))
-                    (month-end-name (sync0-number-to-month month-end))
-                    (month-end-name-full (sync0-number-to-month month-end t))
-                    (day-start  (org-element-property :day-start scheduled))
-                    (day-start-string (number-to-string day-start)) 
-                    ;; (day-start-string (if (<= day-start 9) 
-                    ;;                       (concat "0" (number-to-string day-start))
-                    ;;                               (number-to-string day-start)))
-                    (day-start-name   (calendar-day-name (list month-start day-start year-start)))
-                    (day-start-name-abbrev   (calendar-day-name (list month-start day-start year-start) t))
-                    (day-end (org-element-property :day-end scheduled))
-                    (day-end-string (when day-end (number-to-string day-end)))
-                    (day-end-name  (calendar-day-name (list month-end day-end year-end)))
-                    (day-end-name-abbrev  (calendar-day-name (list month-end day-end year-end) t))
-                    (hour-start (org-element-property :hour-start scheduled))
-                    (hour-start-string (if hour-start (number-to-string hour-start) "0"))
-                    (hour-end (org-element-property :hour-end scheduled))
-                    (hour-end-string (if hour-end (number-to-string hour-end) "0"))
-                    (minute-start (org-element-property :minute-start scheduled))
-                    (minute-start-string (if minute-start (number-to-string minute-start) "0"))
-                    (minute-end (org-element-property :minute-end scheduled)) 
-                    (minute-end-string (if minute-end (number-to-string minute-end) "0"))
-                    (time-end-test (concat hour-end-string ":" minute-end-string))
-                    (time-end (if (string= "0" minute-end-string) 
-                                  (concat hour-end-string "h")
-                                (concat hour-end-string ":" minute-end-string)))
-                    (time-start-test (concat hour-start-string ":" minute-start-string))
-                    (time-start (if (string= "0" minute-start-string) 
-                                    (if time-end (concat hour-start-string "")
-                                      (concat hour-start-string "h"))
-                                  (concat hour-start-string ":" minute-start-string))))
-               ;; First, let's see what to do when the schedule is not on the same day 
-               (cond 
-                ((and (string= month-start-string month-end-string)
-                      (not (string= day-start-string day-end-string))
-                      (not (string= time-start-test "0:0"))
-                      (not (string= time-end-test "0:0")))
-                 ;; same-month, different-day, time-start, time-end
-                 (if (string= tomorrow-string org-schedule-string)
-                     (concat "Demain, " time-start "-" time-end)
-                   (concat day-start-string "-" day-end-string " " month-start-name ", " time-start "-" time-end)))
-                ((and (string= month-start-string month-end-string)
-                      (not (string= day-start-string day-end-string))
-                      (not (string= time-start-test "0:0"))
-                      (string= time-end-test "0:0"))
-                 (if (string= tomorrow-string org-schedule-string)
-                     (concat "Demain - " day-end-string ", " time-start "-" time-end)
-                   ;; same-month, different-day, time-start
-                   (concat day-start-string "-" day-end-string " " month-start-name ", " time-start "-" time-end)))
-                ((and (string= month-start-string month-end-string)
-                      (not (string= day-start-string day-end-string))
-                      (string= time-start-test "0:0")
-                      (string= time-end-test "0:0"))
-                 ;; same-month, different-day
-                 (if (string= tomorrow-string org-schedule-string)
-                     (concat "Demain - " day-end-string " " month-start-name-full)
-                   (concat day-start-name-abbrev " " day-start-string "-" day-end-string " " month-start-name-full)))
-                ((and (string= month-start-string month-end-string)
-                      (string= day-start-string day-end-string)
-                      (not (string= time-start-test "0:0"))
-                      (not (string= time-end-test "0:0")))
-                 (if (string= tomorrow-string org-schedule-string)
-                     (concat "Demain, " time-start "-" time-end)
-                   ;; same-month, same-day, time-start, time-end 
-                   (concat day-start-name-abbrev " " day-start-string " " month-start-name ", " time-start "-" time-end)))
-                ((and (string= month-start-string month-end-string)
-                      (string= day-start-string day-end-string)
-                      (not (string= time-start-test "0:0"))
-                      (string= time-end-test "0:0"))
-                 (if (string= tomorrow-string org-schedule-string)
-                     (concat "Demain, " time-start)
-                   ;; same-month, same-day, time-start
-                   (concat day-start-name-abbrev " " day-start-string " " month-start-name ", " time-start)))
-                ((and (string= month-start-string month-end-string)
-                      (string= day-start-string day-end-string)
-                      (string= time-start-test "0:0")
-                      (string= time-end-test "0:0"))
-                 (if (string= tomorrow-string org-schedule-string)
-                     (concat "Demain")
-                   ;; same-month, same-day, same-year
-                   (concat day-start-name-abbrev " " day-start-string " " month-start-name-full)))
-                ((and (not (string= month-start-string month-end-string))
-                      (not (string= day-start-string day-end-string))
-                      (not (string= time-start-test "0:0"))
-                      (not (string= time-end-test "0:0")))
-                 (if (string= tomorrow-string org-schedule-string)
-                     (concat "Demain, " time-start " " day-end-string " " month-end-name ", " time-end)
-                   ;; different-month, different-day, time-start, time-end
-                   (concat day-start-string " " month-start-name ", " time-start " - " day-end-string " " month-end-name ", " time-end)))
-                ((and (not (string= month-start-string month-end-string))
-                      (not (string= day-start-string day-end-string))
-                      (not (string= time-start-test "0:0"))
-                      (string= time-end-test "0:0"))
-                 (if (string= tomorrow-string org-schedule-string)
-                     (concat "Demain, " time-start " - " day-end-string " " month-end-name)
-                   ;; different-month, different-day, time-start
-                   (concat day-start-string " " month-start-name ", " time-start " " day-end-string " " month-end-name)))
-                ((and (not (string= month-start-string month-end-string))
-                      (not (string= day-start-string day-end-string))
-                      (string= time-start-test "0:0")
-                      (string= time-end-test "0:0"))
-                 (if (string= tomorrow-string org-schedule-string)
-                     (concat "Demain"  " - " day-end-name-abbrev " " day-end-string " " month-end-name)
-                   ;; different-month, different-day
-                   (concat day-start-name-abbrev " " day-start-string " " month-start-name " - " day-end-name-abbrev " " day-end-string " " month-end-name)))))
-           ;; If deadline has been defined:
-           (let* ((deadline (org-get-deadline-time (point)))
-                  (org-deadline-string  (format-time-string "%Y-%m-%d" deadline))
-                  (tomorrow-string  (shell-command-to-string "echo -n $(date -d tomorrow +'%Y-%m-%d')"))
-                  ;; Eliminate the annoying zeroes at the beginning
-                  (day-end-raw (format-time-string "%d" deadline))
-                  (day-end (if (string-match "0\\([[:digit:]]$\\)" day-end-raw)
-                               (match-string 1 day-end-raw) day-end-raw))
-                  (month-end-name-abbrev  (capitalize (format-time-string "%b" deadline)))
-                  (month-end-name  (capitalize (format-time-string "%B" deadline)))
-                  (day-end-name  (capitalize (format-time-string "%a" deadline)))
-                  (time-end-test (format-time-string "%H:%M" deadline))
-                  (time-end (if (string= "00" (format-time-string "%M" deadline)) 
-                                (format-time-string "%Hh" deadline)
-                              (format-time-string "%H:%M" deadline))))
-             (cond ((and (string= "00:00" time-end-test)
-                         (string= tomorrow-string org-deadline-string))
-                    (concat "Demain")) 
-                   ((and (not (string= "00:00" time-end-test))
-                         (string= tomorrow-string org-deadline-string))
-                    (concat "Demain, " time-end)) 
-                   ((and  (string= "00:00" time-end-test)
-                          (not (string= tomorrow-string org-deadline-string)))
-                    (concat day-end-name " " day-end " " month-end-name)) 
-                   ((and (not (string= "00:00" time-end-test))
-                         (not (string= tomorrow-string org-deadline-string)))
-                    (concat day-end-name " " day-end " " month-end-name ", " time-end))))))
+        ;; If schedule has been defined.
+        ((org-get-scheduled-time (point))
+         (let* ((element (org-element-at-point))
+                (schedule (org-element-property :scheduled element))
+                (this-year  (format-time-string "%Y"))
+                (today  (format-time-string "%Y-%m-%d"))
+                (tomorrow (org-read-date nil nil "+1")) 
+                (year-start (org-element-property :year-start schedule))
+                (year-start-string (number-to-string year-start))
+                (year-end (org-element-property :year-end schedule))
+                (year-end-string (if year-end
+                                     (number-to-string year-end)
+                                   year-start-string))
+                (month-start (org-element-property :month-start schedule))
+                (month-start-string (number-to-string month-start)) 
+                (month-start-name (sync0-number-to-month month-start))
+                (month-start-name-full (sync0-number-to-month month-start t))
+                (month-end (org-element-property :month-end schedule))
+                (month-end-string (if month-end (number-to-string month-end) "00"))
+                (month-end-name (sync0-number-to-month month-end))
+                (day-start-raw (org-element-property :day-start schedule))
+                (day-start-string (number-to-string day-start-raw))
+                (day-start-name   (calendar-day-name (list month-start day-start-raw year-start)))
+                (day-start-name-abbrev   (calendar-day-name (list month-start day-start-raw year-start) t))
+                (day-end-raw (org-element-property :day-end schedule))
+                (day-end-string (when day-end-raw (number-to-string day-end-raw)))
+                (day-end-name  (calendar-day-name (list month-end day-end-raw year-end)))
+                (day-end-name-abbrev  (calendar-day-name (list month-end day-end-raw year-end) t))
+                (schedule-start (concat year-start-string "-" month-start-string "-" day-start-string))
+                (schedule-end (concat year-end-string "-" month-end-string "-" day-end-string))
+                (hour-start (org-element-property :hour-start schedule))
+                (hour-start-string (if hour-start (number-to-string hour-start) "0"))
+                (hour-end (org-element-property :hour-end schedule))
+                (hour-end-string (if hour-end (number-to-string hour-end) "0"))
+                (minute-start (org-element-property :minute-start schedule))
+                (minute-start-string (if minute-start (number-to-string minute-start) "0"))
+                (minute-end (org-element-property :minute-end schedule)) 
+                (minute-end-string (if minute-end (number-to-string minute-end) "0"))
+                (time-start-raw (concat hour-start-string ":" minute-start-string))
+                (time-start (cond
+                             ((string= "0:0" time-start-raw)
+                              "")
+                             ((string= "0" minute-start-string) 
+                              (concat hour-start-string "h"))
+                             (t time-start-raw)))
+                (time-end-raw (concat hour-end-string ":" minute-end-string))
+                (time-end (cond
+                           ((string= "0:0" time-end-raw)
+                            "")
+                           ((string= "0" minute-end-string) 
+                            (concat hour-end-string "h"))
+                           (t time-end-raw)))
+                (fragment-start (cond 
+                                 ((string= today schedule-start)
+                                  "Today")
+                                 ((string= tomorrow schedule-start)
+                                  "Tomorrow")
+                                 ((not (string= month-start-name month-end-name))
+                                  (concat
+                                   day-start-name-abbrev
+                                   " "
+                                   day-start-string)
+                                  " "
+                                  month-start-name)
+                                 (t (concat 
+                                     day-start-name-abbrev
+                                     " "
+                                     day-start-string))))
+                ;; (fragment-start (cond 
+                ;;                  ((string= today schedule-start)
+                ;;                   "Today")
+                ;;                  ((string= tomorrow schedule-start)
+                ;;                   "Tomorrow")
+                ;;                  (t (concat 
+                ;;                      day-start-name-abbrev
+                ;;                      " "
+                ;;                      day-start-string)
+                ;;                     (unless (string= month-start-name month-end-name)
+                ;;                       (concat " " month-start-name)))))
+                (fragment-end
+                 ;; check: same day, start time, end time
+                 (cond ((and (string= schedule-start schedule-end)
+                             (not (string= time-start time-end))
+                             (not (string= time-start ""))
+                             (not (string= time-end "")))
+                        (concat " " month-start-name-full ", " time-start "-" time-end))
+                       ;; check: same day, start time
+                       ((and (string= schedule-start schedule-end)
+                             (not (string= time-start "")))
+                        (concat " " month-start-name-full ", " time-start))
+                       ;; check: same day 
+                       ((string= schedule-start schedule-end)
+                        (concat " " month-start-name-full))
+                       ;; check: same month, start time, end time
+                       ((and (string= month-start-name month-end-name)
+                             (not (string= time-start ""))
+                             (not (string= time-end "")))
+                        (concat "-" day-end-string " " month-start-name-full ", " time-start "-" time-end))
+                       ;; check: same month, start time 
+                       ((and (string= month-start-name month-end-name)
+                             (not (string= time-start "")))
+                        (concat "-" day-end-string " " month-start-name-full ", " time-start))
+                       ;; check: same month 
+                       ((string= month-start-name month-end-name)
+                        (concat "-" day-end-string " " month-start-name-full)) 
+                       ;; check: start-time, end time
+                       ((and (not (string= month-start-name month-end-name))
+                             (not (string= time-start ""))
+                             (not (string= time-end "")))
+                        (concat "-" day-end-string " " month-end-name ", " time-start "-" time-end)) 
+                       ;; check: start-time
+                       ((and (not (string= month-start-name month-end-name))
+                             (not (string= time-start "")))
+                        (concat "-" day-end-string " " month-end-name ", " time-start)) 
+                       (t (concat " " month-start-name-full))))
+                (year (cond ((not (string= year-start-string this-year))
+                             (concat " " year-start-string))
+                            ((not (string= year-end-string this-year))
+                             (concat " " year-end-string))
+                            (t ""))))
+           (concat fragment-start fragment-end year)))
+
+        ;; If deadline has been defined:
+        ((org-get-deadline-time (point))
+         (let* ((deadline (org-get-deadline-time (point)))
+                (deadline-date  (format-time-string "%Y-%m-%d" deadline))
+                (today (format-time-string "%Y-%m-%d")) 
+                (tomorrow (org-read-date nil nil "+1")) 
+                (this-year  (format-time-string "%Y"))
+                (year-end  (format-time-string "%Y" deadline))
+                (month-end (capitalize (format-time-string "%B" deadline)))
+                (day-end-raw (format-time-string "%d" deadline))
+                (day-end (cond
+                            ((string= today deadline-date)
+                             "Today")
+                            ((string= tomorrow deadline-date)
+                             "Tomorrow")
+                            (t (concat
+                                ;; day name
+                                (capitalize (format-time-string "%a." deadline))
+                                " "
+                                ;; number
+                                (format-time-string "%d" deadline)))))
+                (time-end (cond
+                           ((string= "00:00" (format-time-string "%H:%M" deadline))
+                            " ")
+                           ((string= "00" (format-time-string "%M" deadline)) 
+                            (format-time-string ", %Hh" deadline))
+                           (t (format-time-string ", %H:%M" deadline))))
+                (year (if (string= year-end this-year)
+                          ""
+                        (concat " " year-end))))
+           (concat day-end " " month-end time-end year)))
         ;; If neither schedule nor deadline have been defined:
         (t " ")))
 
+;; (defun sync0-org-agenda-get-project-timestamp-time ()
+;;   "Get timestamp from current org-agenda time"
+;;   (let* ((schedule (org-get-scheduled-time (point)))
+;;          (deadline (org-get-deadline-time (point)))
+;;          (schedule-date (when schedule (let ((time (capitalize (format-time-string "%a %d %b (%H:%M) %Y" schedule)))
+;;                                              (hour (format-time-string "%H:%M" schedule))
+;;                                              (time-no-hour (capitalize (format-time-string "%a %d %B %Y" schedule))))
+;;                                          (if (not (string= "00:00" hour)) time time-no-hour))))
+;;          ;; For the second block, I use "if" instead of "when" to print a
+;;          ;; blank when neither "schedules" nor "deadlines" are set.
+;;          (deadline-date (if deadline (let ((time (capitalize (format-time-string "%a %d %b (%H:%M) %Y" deadline)))
+;;                                            (hour (format-time-string "%H:%M" deadline))
+;;                                            (time-no-hour (capitalize (format-time-string "%a %d %B %Y" deadline))))
+;;                                        (if (not (string= "00:00" hour)) time time-no-hour)) "")))
+;;     (if schedule (princ schedule-date) (princ deadline-date))))
 
-(defun sync0-org-agenda-get-project-timestamp-time-today ()
-  "Get timestamp from current org-agenda time"
-  ;; Check whether both schedule and deadline are defined.
-  (cond ((and (org-get-scheduled-time (point))
-              (org-get-deadline-time (point)))
-         (let* ((schedule (org-get-scheduled-time (point)))
-                (month-start-name (capitalize (format-time-string "%b" schedule)))
-                (day-start (capitalize (format-time-string "%d" schedule)))
-                (day-start-name (capitalize (format-time-string "%a" schedule)))
-                (time-start-test (format-time-string "%H:%M" schedule))
-                (time-start (if (string= "00" (format-time-string "%M" schedule)) 
-                                (format-time-string "%Hh" schedule)
-                              (format-time-string "%H:%M" schedule)))
-                (deadline (org-get-deadline-time (point)))
-                (month-end-name (capitalize (format-time-string "%b" deadline)))
-                (day-end (capitalize (format-time-string "%d" deadline)))
-                (day-end-name (capitalize (format-time-string "%a" deadline)))
-                (time-end-test (format-time-string "%H:%M" deadline))
-                (time-end (if (string= "00" (format-time-string "%M" deadline)) 
-                              (format-time-string "%Hh" deadline)
-                            (format-time-string "%H:%M" deadline))))
-           ;; Stylize the date output
-           (cond ((and  (string= "00:00" time-start-test)
-                        (string= "00:00" time-end-test))
-                  (if (equal month-start-name month-end-name)
-                      (concat day-start-name " " day-start "-" day-end " " month-start-name)
-                    (concat day-start " " month-start-name " - " day-end " " month-end-name)))
-                 ((or (not (string= "00:00" time-start-test))
-                      (not (string= "00:00" time-end-test)))
-                  (if (equal month-start-name month-end-name)
-                      (concat day-start "-" day-end " " month-start-name ", " time-start "-" time-end)
-                    (concat day-start " " month-start-name ", " time-start " " day-end " " month-end-name ", "time-end))))))
-        ;; If either schedule or deadline have been defined. 
-        ((or (org-get-scheduled-time (point))
-             (org-get-deadline-time (point)))
-         ;; If schedule has been defined.
-         (if (org-get-scheduled-time (point))
-             (let* ((element (org-element-at-point))
-                    (scheduled (org-element-property :scheduled element))
-                    ;; Get current year (from shell) and convert to number for conditional comparisons
-                    (current-year (string-to-number (shell-command-to-string "echo -n $(date +'%Y')")))
-                    (year-start (org-element-property :year-start scheduled))
-                    (year-start-string (when year-start (number-to-string year-start)))
-                    (year-end (org-element-property :year-end scheduled))
-                    (year-end-string (if year-end (number-to-string year-end) year-start-string))
-                    (month-start (org-element-property :month-start scheduled))
-                    (month-start-string (if month-start (number-to-string month-start) "0"))
-                    (month-start-name (sync0-number-to-month month-start))
-                    (month-start-name-full (sync0-number-to-month month-start t))
-                    (month-end (org-element-property :month-end scheduled))
-                    (month-end-string (if month-end (number-to-string month-end) "0"))
-                    (month-end-name (sync0-number-to-month month-end))
-                    (month-end-name-full (sync0-number-to-month month-end t))
-                    (day-start (org-element-property :day-start scheduled))
-                    (day-start-string (when day-start (number-to-string day-start)))
-                    (day-start-name   (calendar-day-name (list month-start day-start year-start)))
-                    (day-start-name-abbrev   (calendar-day-name (list month-start day-start year-start) t))
-                    (day-end (org-element-property :day-end scheduled))
-                    (day-end-string (when day-end (number-to-string day-end)))
-                    (day-end-name  (calendar-day-name (list month-end day-end year-end)))
-                    (day-end-name-abbrev  (calendar-day-name (list month-end day-end year-end) t))
-                    (hour-start (org-element-property :hour-start scheduled))
-                    (hour-start-string (if hour-start (number-to-string hour-start) "0"))
-                    (hour-end (org-element-property :hour-end scheduled))
-                    (hour-end-string (if hour-end (number-to-string hour-end) "0"))
-                    (minute-start (org-element-property :minute-start scheduled))
-                    (minute-start-string (if minute-start (number-to-string minute-start) "0"))
-                    (minute-end (org-element-property :minute-end scheduled)) 
-                    (minute-end-string (if minute-end (number-to-string minute-end) "0"))
-                    (time-end-test (concat hour-end-string ":" minute-end-string))
-                    (time-end (if (string= "0" minute-end-string) 
-                                  (concat hour-end-string "h")
-                                (concat hour-end-string ":" minute-end-string)))
-                    (time-start-test (concat hour-start-string ":" minute-start-string))
-                    (time-start (if (string= "0" minute-start-string) 
-                                    (if time-end (concat hour-start-string "")
-                                      (concat hour-start-string "h"))
-                                  (concat hour-start-string ":" minute-start-string))))
-
-               ;; First, let's see what to do when the schedule is not on the same day 
-               (cond 
-                ((and (= month-start month-end)
-                      (not (= day-start day-end))
-                      (not (string= time-start-test "0:0"))
-                      (not (string= time-end-test "0:0")))
-                 ;; same-month, different-day, time-start, time-end
-                 (concat day-start-string "-" day-end-string " " month-start-name ", " time-start "-" time-end))
-                ((and (= month-start month-end)
-                      (= current-year year-end)
-                      (not (= day-start day-end))
-                      (not (string= time-start-test "0:0"))
-                      (string= time-end-test "0:0"))
-                 ;; same-month, different-day, time-start, same-year
-                 (concat day-start-string "-" day-end-string " " month-start-name ", " time-start))
-                ((and (= month-start month-end)
-                      (not (= current-year year-end))
-                      (not (= day-start day-end))
-                      (not (string= time-start-test "0:0"))
-                      (string= time-end-test "0:0"))
-                 ;; same-month, different-day, time-start, different-year
-                 (concat day-start-string "-" day-end-string " " month-start-name ", " time-start year-end-string))
-                ((and (= month-start month-end)
-                      (not (= day-start day-end))
-                      (= current-year year-end)
-                      (string= time-start-test "0:0")
-                      (string= time-end-test "0:0"))
-                 ;; same-month, different-day, same-year
-                 (concat day-start-name-abbrev " " day-start-string "-" day-end-string " " month-start-name-full))
-                ((and (= month-start month-end)
-                      (not (= day-start day-end))
-                      (not (= current-year year-end))
-                      (string= time-start-test "0:0")
-                      (string= time-end-test "0:0"))
-                 ;; same-month, different-day, different-year
-                 (concat day-start-name-abbrev " " day-start-string "-" day-end-string " " month-start-name-full " " year-end-string))
-                ((and (= month-start month-end)
-                      (= day-start day-end)
-                      (not (string= time-start-test "0:0"))
-                      (not (string= time-end-test "0:0")))
-                 ;; same-month, same-day, time-start, time-end 
-                 (concat day-start-name-abbrev " " day-start-string " " month-start-name ", " time-start "-" time-end))
-                ((and (= month-start month-end)
-                      (= day-start day-end)
-                      (not (string= time-start-test "0:0"))
-                      (string= time-end-test "0:0"))
-                 ;; same-month, same-day, time-start
-                 (concat day-start-name-abbrev " " day-start-string " " month-start-name ", " time-start))
-                ((and (= month-start month-end)
-                      (= day-start day-end)
-                      (= current-year year-end)
-                      (string= time-start-test "0:0")
-                      (string= time-end-test "0:0"))
-                 ;; same-month, same-day, same-year
-                 (concat day-start-name-abbrev " " day-start-string " " month-start-name-full))
-                ((and (= month-start month-end)
-                      (= day-start day-end)
-                      (not (= current-year year-end))
-                      (string= time-start-test "0:0")
-                      (string= time-end-test "0:0"))
-                 ;; same-month, same-day
-                 (concat day-start-name-abbrev " " day-start-string " " month-start-name-full " " year-end-string))
-                ((and (not (= month-start month-end))
-                      (not (= day-start day-end))
-                      (not (string= time-start-test "0:0"))
-                      (not (string= time-end-test "0:0")))
-                 ;; different-month, different-day, time-start, time-end
-                 (concat day-start-string " " month-start-name ", " time-start " " day-end-string " " month-end-name ", " time-end))
-                ((and (not (= month-start month-end))
-                      (not (= day-start day-end))
-                      (not (string= time-start-test "0:0"))
-                      (string= time-end-test "0:0"))
-                 ;; different-month, different-day, time-start
-                 (concat day-start-string " " month-start-name ", " time-start " " day-end-string " " month-end-name))
-                ((and (not (= month-start month-end))
-                      (not (= day-start day-end))
-                      (string= time-start-test "0:0")
-                      (string= time-end-test "0:0"))
-                 ;; different-month, different-day
-                 (concat day-start-name-abbrev " " day-start-string " " month-start-name " - " day-end-name-abbrev " " day-end-string " " month-end-name))))
-
-           ;; If deadline has been defined
-           (let* ((deadline (org-get-deadline-time (point)))
-                  (element (org-element-at-point))
-                  (deadlined (org-element-property :deadline element))
-                  (day-end (org-element-property :day-end deadlined))
-                  (day-end-string (when day-end (number-to-string day-end)))
-                  (month-end-name-abbrev  (capitalize (format-time-string "%b" deadline)))
-                  (month-end-name  (capitalize (format-time-string "%B" deadline)))
-                  (day-end-name  (capitalize (format-time-string "%a" deadline)))
-                  (time-end-test (format-time-string "%H:%M" deadline))
-                  (time-end (if (string= "00" (format-time-string "%M" deadline)) 
-                                (format-time-string "%Hh" deadline)
-                              (format-time-string "%H:%M" deadline))))
-             (if (string= "00:00" time-end-test)
-                 (concat day-end-name " " day-end-string " " month-end-name) 
-               (concat day-end-name " " day-end-string " " month-end-name ", " time-end)))))
-        (t " ")))
-
-(defun sync0-org-agenda-get-project-timestamp-time ()
-  "Get timestamp from current org-agenda time"
-  (let* ((schedule (org-get-scheduled-time (point)))
-         (deadline (org-get-deadline-time (point)))
-         (schedule-date (when schedule (let ((time (capitalize (format-time-string "%a %d %b (%H:%M) %Y" schedule)))
-                                             (hour (format-time-string "%H:%M" schedule))
-                                             (time-no-hour (capitalize (format-time-string "%a %d %B %Y" schedule))))
-                                         (if (not (string= "00:00" hour)) time time-no-hour))))
-         ;; For the second block, I use "if" instead of "when" to print a
-         ;; blank when neither "schedules" nor "deadlines" are set.
-         (deadline-date (if deadline (let ((time (capitalize (format-time-string "%a %d %b (%H:%M) %Y" deadline)))
-                                           (hour (format-time-string "%H:%M" deadline))
-                                           (time-no-hour (capitalize (format-time-string "%a %d %B %Y" deadline))))
-                                       (if (not (string= "00:00" hour)) time time-no-hour)) "")))
-    (if schedule (princ schedule-date) (princ deadline-date))))
-
-;; This function was borrowed from Sacha Chua's configuration. 
-(defun sync0-org-agenda-new ()
-  "Create a new note or task at the current agenda item. Creates it
-                                                                     at
-                                                                     the
-                                                                     same
-                                                                     level
-                                                                     as
-                                                                     the
-                                                                     previous
-                                                                     task,
-                                                                     so
-                                                                     it's
-                                                                     better
-                                                                     to
-                                                                     use
-                                                                     this
-                                                                     with
-                                                                     to-do
-                                                                     items
-                                                                     than
-                                                                     with
-                                                                     projects
-                                                                     or
-                                                                     headings."
-  (interactive)
-  (org-agenda-switch-to)
-  (org-capture 0))
-
+;; borrowed from emacs-leuven
 ;; necessary function 1
 (defun sync0-org-skip-subtree-if-priority (priority)
   "Skip an agenda subtree if it has a priority of PRIORITY. PRIORITY may be one of the characters ?A, ?B, or ?C."
@@ -570,6 +428,42 @@
     (if (string= (org-entry-get nil "STYLE") "habit")
         subtree-end
       nil)))
+
+;; taken from
+;;; https://github.com/sachac/.emacs.d/blob/gh-pages/Sacha.org
+;; Make it easy to mark a task as done
+
+(defun sync0-org-agenda-done (&optional arg)
+  "Mark current TODO as done.
+       This changes the line at point, all other lines in the agenda referring to
+       the same tree node, and the headline of the tree node in the Org-mode file."
+  (interactive "P")
+  (org-agenda-todo "完"))
+;; Override the key definition for org-exit
+(define-key org-agenda-mode-map "x" 'sync0-org-agenda-done)
+
+;;; Make it easy to mark a task as done and create a follow-up task
+(defun sync0-org-agenda-mark-done-and-add-followup ()
+  "Mark the current TODO as done and add another task after it.
+       Creates it at the same level as the previous task, so it's better to use
+       this with to-do items than with projects or headings."
+  (interactive)
+  (org-agenda-todo "完")
+  (org-agenda-switch-to)
+  (org-capture 0 "t"))
+;; Override the key definition
+(define-key org-agenda-mode-map "F" 'sync0-org-agenda-mark-done-and-add-followup)
+
+;;; Capture something based on the agenda
+(defun sync0-org-agenda-new ()
+  "Create a new note or task at the current agenda item.
+       Creates it at the same level as the previous task, so it's better to use
+       this with to-do items than with projects or headings."
+  (interactive)
+  (org-agenda-switch-to)
+  (org-capture 0))
+;; New key assignment
+(define-key org-agenda-mode-map "N" 'sync0-org-agenda-new)
 
 
 (provide 'sync0-org-agenda-functions)

@@ -9,122 +9,99 @@
 
 * deft
 #+BEGIN_SRC emacs-lisp
-  (use-package el-patch
-     :straight (el-patch :type git
-                         :host github
-                         :repo "raxod502/el-patch"))
+(use-package el-patch
+  :straight (el-patch :type git
+                      :host github
+                      :repo "raxod502/el-patch")
+  :disabled t)
 
-  (eval-when-compile
-    (require 'el-patch))
+;; (eval-when-compile
+;;   (require 'el-patch))
 
-  (use-package deft
-      :straight (deft :type git :host github :repo "jrblevin/deft") 
-      :after (org org-roam)
-      :custom
-      (deft-recursive t)
-      (deft-default-extension "org")
-      (deft-directory sync0-zettelkasten-directory-sans)
-      (deft-new-file-format "%Y%m%d%H%M%S")
-      (deft-file-naming-rules
-      '((noslash . "-")
-        (nospace . "_")
-        (case-fn . downcase)))
-      (deft-strip-summary-regexp
-  (concat "\\("
-           "[\n\t]" ;; blank
-           "\\|^:[[:ascii:]]+:.*$" ;; org-mode properties string
+(use-package deft
+  :straight (deft :type git :host github :repo "jrblevin/deft") 
+  :after (org org-roam)
+  :custom
+  (deft-recursive t)
+  (deft-use-filter-string-for-filename t)
+  (deft-default-extension "org")
+  (deft-directory sync0-zettelkasten-directory-sans)
+  (deft-new-file-format "%Y%m%d%H%M%S")
+  (deft-file-naming-rules
+    '((noslash . "-")
+      (nospace . "_")
+      (case-fn . downcase)))
+  (deft-strip-summary-regexp
+    (concat "\\("
+            "[\n\t]" ;; blank
+            "\\|^:[[:ascii:]]+:.*$" ;; org-mode properties string
             "\\|^#\\+[[:alpha:]_]+.*$" ;; org-mode metadata
-           "\\|^Origin:.*$" ;; Origin string
-           "\\|^\\[\\[file:.*$" ;; org-mode inline-images
-           "\\)"))
-    :config/el-patch
-    (defun deft-parse-title (file contents)
-      "Parse the given FILE and CONTENTS and determine the title.
-  If `deft-use-filename-as-title' is nil, the title is taken to
-  be the first non-empty line of the FILE.  Else the base name of the FILE is
-  used as title."
-      (el-patch-swap (if deft-use-filename-as-title
-                         (deft-base-filename file)
-                       (let ((begin (string-match "^.+$" contents)))
-                         (if begin
-                             (funcall deft-parse-title-function
-                                      (substring contents begin (match-end 0))))))
-                     (org-roam-db--get-title file)))
+            "\\|^Origin:.*$" ;; Origin string
+            "\\|^\\[\\[file:.*$" ;; org-mode inline-images
+            ;; org-mode properties  
+            ;; "\\|:PROPERTIES:\n\\(.+\n\\)+:END:\n" ;; 
+            "\\)"))
+  :config
 
-;;taken from
-;; https://emacs.stackexchange.com/questions/36200/split-line-every-n-characters
-(defun split-string-every (string chars)
-  "Split STRING into substrings of length CHARS characters.
+  (defun deft-file-widget (file)
+    "Add a line to the file browser for the given FILE."
+    (when file
+      (let* ((key (file-name-nondirectory file))
+             (text (deft-file-contents file))
+             (title (deft-file-title file))
+             (summary (deft-file-summary file))
+             (fixed (replace-regexp-in-string  "\\[\\[[[:alnum:][:space:]-:]+\\]\\[\\([[:graph:][:space:]]+\\)\\]\\]" "\\1" summary)) 
+             (reduced (if (> (length fixed) 500)
+                          (substring-no-properties fixed nil 500)
+                        fixed))
+             (new-string (string-join (split-string-every reduced 70) "\n"))
+             (mtime (when deft-time-format
+                      (format-time-string deft-time-format (deft-file-mtime file))))
+             (mtime-width (deft-string-width mtime))
+             (line-width (- deft-window-width mtime-width))
+             (title-width (min line-width (deft-string-width title)))
+             (summary-width (min (deft-string-width summary)
+                                 (- line-width
+                                    (length deft-separator)))))
+        (widget-create 'link
+                       :button-prefix ""
+                       :button-suffix ""
+                       :button-face 'deft-title-face
+                       :format "%[%v%]"
+                       :tag file
+                       :help-echo "Edit this file"
+                       :notify (lambda (widget &rest ignore)
+                                 (deft-open-file (widget-get widget :tag)))
+                       (if title (truncate-string-to-width title title-width)
+                         deft-empty-file-title))
+        (when mtime
+          (while (< (current-column) line-width)
+            (widget-insert " "))
+          (widget-insert (propertize mtime 'face 'deft-time-face)))
+        (when (> summary-width 0)
+          (widget-insert "\n")
+          (widget-insert (propertize new-string 
+                                     'face 'deft-summary-face)))
+        (widget-insert "\n"))))
 
-This returns a list of strings."
-  (cond ((string-empty-p string)
-         nil)
-        ((< (length string)
-            chars)
-         (list string))
-    (t (cons (substring string 0 chars)
-             (split-string-every (substring string chars)
-                                 chars)))))
-
-(defun deft-file-widget (file)
-  "Add a line to the file browser for the given FILE."
-  (when file
-    (let* ((key (file-name-nondirectory file))
-           (text (deft-file-contents file))
-           (title (deft-file-title file))
-           (summary (deft-file-summary file))
-           (fixed (replace-regexp-in-string  "\\[\\[[[:alnum:][:space:]-:]+\\]\\[\\([[:graph:][:space:]]+\\)\\]\\]" "\\1" summary)) 
-           (reduced (if (> (length fixed) 500)
-                        (substring-no-properties fixed nil 500)
-                      fixed))
-           (new-string (string-join (split-string-every reduced 70) "\n"))
-           (mtime (when deft-time-format
-                    (format-time-string deft-time-format (deft-file-mtime file))))
-           (mtime-width (deft-string-width mtime))
-           (line-width (- deft-window-width mtime-width))
-           (title-width (min line-width (deft-string-width title)))
-           (summary-width (min (deft-string-width summary)
-                               (- line-width
-                                  (length deft-separator)))))
-      (widget-create 'link
-                      :button-prefix ""
-                      :button-suffix ""
-                      :button-face 'deft-title-face
-                      :format "%[%v%]"
-                      :tag file
-                      :help-echo "Edit this file"
-                      :notify (lambda (widget &rest ignore)
-                                (deft-open-file (widget-get widget :tag)))
-                      (if title (truncate-string-to-width title title-width)
-                        deft-empty-file-title))
-      (when mtime
-        (while (< (current-column) line-width)
-          (widget-insert " "))
-        (widget-insert (propertize mtime 'face 'deft-time-face)))
-      (when (> summary-width 0)
-        (widget-insert "\n")
-        (widget-insert (propertize new-string 
-                                   'face 'deft-summary-face)))
-      (widget-insert "\n"))))
-
-    (defhydra sync0-hydra-deft-functions (:color amaranth :hint nil :exit t)
-      "
-   ^Deft^
-   ^------------------
-   _n_: New file
-   _f_: Filter
-   _c_: Clear filter
-   _d_: Delete file
+  (defhydra sync0-hydra-deft-functions (:color amaranth :hint nil :exit t)
+    "
+       ^Deft^
+       ^------------------
+       _n_: New file
+       _f_: Filter
+       _c_: Clear filter
+       _d_: Delete file
                                                    
-   [q] Quit
-        "
-      ("f" deft-filter)
-      ("c" deft-filter-clear)
-      ("n" deft-new-file)
-      ("d" deft-delete-file)
-      ("q" nil :color blue))
+       [q] Quit
+            "
+    ("f" deft-filter)
+    ("c" deft-filter-clear)
+    ("n" deft-new-file)
+    ("d" deft-delete-file)
+    ("q" nil :color blue))
 
-(evil-leader/set-key-for-mode 'deft-mode "z" 'sync0-hydra-deft-functions/body))
+  (evil-leader/set-key-for-mode 'deft-mode "z" 'sync0-hydra-deft-functions/body))
 
 #+END_SRC 
 
@@ -572,12 +549,33 @@ _F_: forward | _C-+_: show more   | _A_: mk4actn | _H_: help      | _;_: context
     (european-calendar-style t)
     ;; Week starts on monday.
     (calendar-week-start-day 0)    
+    (calendar-day-name-array     ["Sunday" "Monday" "Tuesday" "Wednesday" "Thursday" "Friday" "Saturday"])
+    (calendar-day-abbrev-array   ["Sun." "Mon." "Tue." "Wed." "Thu." "Fri." "Sat."])
+    (calendar-month-name-array   ["January" "February" "March" "April" "May" "June" "July"
+                                  "August" "September" "October" "November" "December"])
+    (calendar-month-abbrev-array ["Jan." "Feb." "Mar." "Avr." "May" "Jun." "Jul." "Aug" "Sep." "Oct." "Nov." "Dec."]))
+  #+END_SRC 
+
+  (use-package calendar 
+    :custom
+    (calendar-date-style 'european) 
+    (european-calendar-style t)
+    ;; Week starts on monday.
+    (calendar-week-start-day 0)    
     (calendar-day-name-array     ["Dimanche" "Lundi" "Mardi" "Mercredi" "Jeudi" "Vendredi" "Samedi"])
     (calendar-day-abbrev-array   ["Dim." "Lun." "Mar." "Mer." "Jeu." "Ven." "Sam."])
     (calendar-month-name-array   ["Janvier" "Février" "Mars" "Avril" "Mai" "Juin" "Juillet"
                                   "Août" "Septembre" "Octobre" "Novembre" "Décembre"])
     (calendar-month-abbrev-array ["Jan." "Fév." "Mars" "Avr." "Mai" "Juin" "Jul." "Août" "Sep." "Oct." "Nov." "Déc."]))
-  #+END_SRC 
+
+** cal-korea-x
+#+BEGIN_SRC emacs-lisp
+  (use-package cal-korea-x
+    :defer t
+    :straight (cal-korea-x :type git :host github :repo "cinsk/cal-korea-x")
+    :custom
+     (cal-korea-x-use-korean-month-name nil))
+#+END_SRC 
 
 ** holiday
 #+BEGIN_SRC emacs-lisp
@@ -591,25 +589,26 @@ _F_: forward | _C-+_: show more   | _A_: mk4actn | _H_: help      | _;_: context
     (holiday-bahai-holidays nil)
     (holiday-oriental-holidays nil)
     :config
+    (require 'cal-korea-x)
     (defvar holiday-korean-holidays nil "Korean holidays")
     (defvar holiday-french-holidays nil "French holidays")
     (defvar holiday-colombian-holidays nil "Colombian holidays")
 
     (setq holiday-korean-holidays
           '((holiday-fixed 1 1          "신정")
-            ;; (holiday-lunar-ko 1 nil 1   "설날" -1)
-            ;; (holiday-lunar-ko 1 nil 1   "설날")
-            ;; (holiday-lunar-ko 1 nil 1   "설날" 1)
+            (holiday-lunar-ko 1 nil 1   "설날" -1)
+            (holiday-lunar-ko 1 nil 1   "설날")
+            (holiday-lunar-ko 1 nil 1   "설날" 1)
             (holiday-fixed 3 1          "3.1절")
-            ;; (holiday-lunar-ko 4 nil 8   "석가탄신일")
+            (holiday-lunar-ko 4 nil 8   "석가탄신일")
             (holiday-fixed 5 5          "어린이날")
             (holiday-fixed 6 6          "현충일")
             (holiday-fixed 8 15         "광복절")
             (holiday-fixed 10 3         "개천절")
             (holiday-fixed 10 9         "한글날")
-            ;; (holiday-lunar-ko 8 nil 15  "추석" -1)
-            ;; (holiday-lunar-ko 8 nil 15  "추석")
-            ;; (holiday-lunar-ko 8 nil 15  "추석" 1)
+            (holiday-lunar-ko 8 nil 15  "추석" -1)
+            (holiday-lunar-ko 8 nil 15  "추석")
+            (holiday-lunar-ko 8 nil 15  "추석" 1)
             (holiday-fixed 12 25        "성탄절")))
 
     (setq holiday-french-holidays
@@ -689,6 +688,11 @@ _F_: forward | _C-+_: show more   | _A_: mk4actn | _H_: help      | _;_: context
 
     :config 
     (require 'calfw-org)
+    :bind (:map cfw:details-mode-map
+           ("<SPC>"  . cfw:details-kill-buffer-command))
+
+  (evil-leader/set-key
+    "Q" 'cfw:open-org-calendar))
 
     ;; (defun sync0-open-calendar ()
     ;;   (interactive)
@@ -723,8 +727,6 @@ _F_: forward | _C-+_: show more   | _A_: mk4actn | _H_: help      | _;_: context
     ;;                             file date
     ;;                             cfw:org-agenda-schedule-args)))))))
 
-  (evil-leader/set-key
-    "C" 'cfw:open-org-calendar))
 
     ;; :bind (:map cfw:details-mode-map
     ;;        ("SPC"  . cfw:details-kill-buffer-command))
@@ -745,7 +747,7 @@ _F_: forward | _C-+_: show more   | _A_: mk4actn | _H_: help      | _;_: context
            ("C-x M-g" . magit-dispatch)))
 #+END_SRC 
 
-** 取 magithub
+** 消 magithub
 
 #+BEGIN_SRC emacs-lisp
   (use-package magithub
@@ -757,7 +759,7 @@ _F_: forward | _C-+_: show more   | _A_: mk4actn | _H_: help      | _;_: context
     (setq magithub-clone-default-directory "~/github"))
 #+END_SRC 
 
-** 取 magit-todos
+** 消 magit-todos
 #+BEGIN_SRC emacs-lisp
   (use-package magit-todos
     :disabled t
@@ -770,7 +772,7 @@ _F_: forward | _C-+_: show more   | _A_: mk4actn | _H_: help      | _;_: context
     (magit-todos-depth 100))
 #+END_SRC 
 
-** 無 git-gutter 
+** 未 git-gutter 
 The only two reasons to use git-gutter, despite its flaws, are
 that it is easy to customize the icons displayed on the fringe,
 and that there is a very useful hydra I found on the internet to

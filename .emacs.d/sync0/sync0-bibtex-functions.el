@@ -35,5 +35,39 @@ by org-roam files"
 ;; (when (file-exists-p pdf-path)
 ;;   (rename-file pdf-path new-path)))))
 
+(defhydra sync0-hydra-bibtex-functions (:color amaranth :hint nil :exit t)
+  "
+     ^Refs^              ^PDFs^             ^Notes^              
+     ^-----------------------------------------------------
+     Key _u_pdate        Pdf _o_pen         Open _n_otes
+     ^ ^                 Open in _z_athura
+     ^ ^                 Copy to _p_ath  
+     ^----------------------------------------------------
+     ^Bibliographies^ 
+     ^---------------------------------------------------
+     Bibfile _v_isit 
+                                                                     
+     _q_uit
+          "
+
+  ("u" sync0-bibtex-update-key)
+  ("p" sync0-org-ref-copy-pdf-to-path)
+  ("n" sync0-org-ref-open-notes)
+  ("v" sync0-visit-bibliography-in-buffer)
+  ("o" sync0-org-ref-open-pdf-at-point)
+  ("z" sync0-org-ref-open-pdf-at-point-zathura)
+  ("q" nil :color blue))
+
+;; (evil-leader/set-key
+;;   "O" 'org-open-at-point
+;;   "#" 'sync0-org-open-other-frame)
+;; "O" 'sync0-overview-tree-window
+;; "o" 'sync0-overview-jump-to-overview
+;; "I" 'org-insert-link
+;; "z" 'sync0-org-tree-to-indirect-buffer
+;; "z" 'sync0-hydra-org-functions/body
+
+(evil-leader/set-key-for-mode 'bibtex-mode "z" 'sync0-hydra-bibtex-functions/body)
+
 
 (provide 'sync0-bibtex-functions)

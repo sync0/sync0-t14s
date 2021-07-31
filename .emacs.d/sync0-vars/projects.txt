@@ -1,4 +1,5 @@
 
+colfuturo
 ctw2021
 python
 lisp
@@ -12,3 +13,6 @@ study
 sefardi
 doctorat
 nil
+study_techniques
+emacs
+deutsch

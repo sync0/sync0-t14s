@@ -1,127 +1,125 @@
 
-Editorial Sudamericana
-Societé anonyme de l'imprimérie
-Imprenta Cervantes
-A. Pedone
-Seuil
-Imprimerie de A. Davy
-Wiley Blackwell
-Polity
-Imprenta del progreso
-Pedro G. Ramírez
-Prévot
-Michel Lévy, Frères
-Bureau du Nouveau Monde
-C. Marpon et E. Flammarion
-Nota Bene
-Jules Bréauté
-Fundación para el progreso Courcelle-Seneuil
-Rapilly
-Greenwood Press
-Twentieth Century Fund
-Fondo de Cultura Económica
-University of Toronto Press and Routledge {and} Kegan Paul
-Harper \& Brothers
-The University of Michigan Press
-Imprenta Chilena
-\textsc{edhis}
-Ediciones Universidad Diego Portales
-Imprenta i libería del Mercurio de Santos Tornero
-Instituto de Estudios Latinoamericanos - Marcial Pons
-Imprenta del Ferrocaril
-Hergar Ediciones Antema
-Ediciones Universidad Alberto Hurtado
-Institut Coppet
-Dykinson
-Imprenta Nacional
-Hachette
-Bureau de l'encyclopédie du XIXe siècle
-Guillaumin
-Pagnerre
-Sociedad Imprenta i Litografía Universo
-Hombre Nuevo Editores
-Raisons d'agir
-Columbia University Press
-Benjamin/Cummings Publishing Company
-Boitempo
-Penguin Books
-Edelsa Grupo Didascalia
-Montesinos
-Atlas
-Anthem Press
-Éditions Sedes
-New Forums Press
-The University of North Carolina Press
-Points
-Dover Publications
-Librairie philosophique Vrin
-Folio
-Les Editions Ouvrières
-Créaphis
-Presses de l'École des mines
-University of Chicago Press
-La Dispute
-The Glorious Univeristy Publisher
-Rowman & Littlefield
-McGraw Hill
-Brookings Institution Press
-The University of Chicago Press
-Princeton University Press
-Taylor & Francis
-The Rumford Press
-Kulturverlag Kadmos
-Georg & Cie S. A.
-Baudouin
-Renzo Editore
-La Découverte
-MIT Press
-Anchor Books
-The Bodley Head
-Duke University Press
-La Decouverte
-Presses Universitaires de Nancy
-Éditions La Découverte
-Cordula Haux
-Emerald Publishing Limited
-L'Harmattan
-Les éditions sociales
-John Hopkins University Press
-John W. Parker
-Harvard University Press
-Oxford University Press
-Valance Co., Inc.
-University of California Press
-Harcourt Brace Jovanovich, Inc.
-Springer
-Secretariado de publicaciones de la Universidad de Alicante
-Beacon Press
-Éditions du Seuil
-Basic Books, Inc.
-Fordham University Press
-Vintage Books
-McGraw-Hill Book Company, Inc.
-Seuil/Gallimard
-Delaunay
-Cambridge University Press
-Methuen
-Le bord de l'eau
-\textsc{islet} Verlag
-Fayard
-Flammarion
-Routledge
-Vintage
-\textsc{ens} Éditions
-Presses Universitaires de France
-Éditions de l'Université de Bruxelles
-Albin Michel
-\textsc{octares} Éditions
-Gallimard
-Éditions de l'Atelier
-Edward Elgar Publishing Limited
-Paris
-Brooklyn and London
-New York
-nil
-Berlins
-Madrid
+Santiago de Chile
 Marseille
+Madrid
+Berlins
+nil
+New York
+Brooklyn and London
+Paris
+Edward Elgar Publishing Limited
+Éditions de l'Atelier
+Gallimard
+\textsc{octares} Éditions
+Albin Michel
+Éditions de l'Université de Bruxelles
+Presses Universitaires de France
+\textsc{ens} Éditions
+Vintage
+Routledge
+Flammarion
+Fayard
+\textsc{islet} Verlag
+Le bord de l'eau
+Methuen
+Cambridge University Press
+Delaunay
+Seuil/Gallimard
+McGraw-Hill Book Company, Inc.
+Vintage Books
+Fordham University Press
+Basic Books, Inc.
+Beacon Press
+Secretariado de publicaciones de la Universidad de Alicante
+Springer
+Harcourt Brace Jovanovich, Inc.
+University of California Press
+Valance Co., Inc.
+Oxford University Press
+Harvard University Press
+John W. Parker
+John Hopkins University Press
+Les éditions sociales
+L'Harmattan
+Emerald Publishing Limited
+Cordula Haux
+Presses Universitaires de Nancy
+Duke University Press
+The Bodley Head
+Anchor Books
+MIT Press
+La Découverte
+Renzo Editore
+Baudouin
+Georg & Cie S. A.
+Kulturverlag Kadmos
+The Rumford Press
+Taylor & Francis
+Princeton University Press
+The University of Chicago Press
+Brookings Institution Press
+McGraw Hill
+Rowman & Littlefield
+The Glorious Univeristy Publisher
+La Dispute
+University of Chicago Press
+Presses de l'École des mines
+Créaphis
+Les Editions Ouvrières
+Folio
+Librairie philosophique Vrin
+Dover Publications
+Points
+The University of North Carolina Press
+New Forums Press
+Éditions Sedes
+Anthem Press
+Atlas
+Montesinos
+Edelsa Grupo Didascalia
+Penguin Books
+Boitempo
+Benjamin/Cummings Publishing Company
+Columbia University Press
+Raisons d'agir
+Hombre Nuevo Editores
+Sociedad Imprenta i Litografía Universo
+Pagnerre
+Guillaumin
+Bureau de l'encyclopédie du XIXe siècle
+Hachette
+Imprenta Nacional
+Dykinson
+Institut Coppet
+Ediciones Universidad Alberto Hurtado
+Hergar Ediciones Antema
+Imprenta del Ferrocaril
+Instituto de Estudios Latinoamericanos - Marcial Pons
+Imprenta i libería del Mercurio de Santos Tornero
+Ediciones Universidad Diego Portales
+\textsc{edhis}
+Imprenta Chilena
+The University of Michigan Press
+Harper \& Brothers
+University of Toronto Press and Routledge {and} Kegan Paul
+Fondo de Cultura Económica
+Twentieth Century Fund
+Greenwood Press
+Rapilly
+Fundación para el progreso Courcelle-Seneuil
+Jules Bréauté
+Nota Bene
+C. Marpon et E. Flammarion
+Bureau du Nouveau Monde
+Michel Lévy, Frères
+Prévot
+Pedro G. Ramírez
+Imprenta del progreso
+Polity
+Wiley Blackwell
+Imprimerie de A. Davy
+Seuil
+A. Pedone
+Imprenta Cervantes
+Societé anonyme de l'imprimérie
+Editorial Sudamericana

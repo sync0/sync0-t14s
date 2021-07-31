@@ -2090,7 +2090,7 @@ _q_uit
        ("q" nil :color blue))
 
     (evil-leader/set-key
-      "T" 'sync0-hydra-org-clock/body))
+      "t" 'sync0-hydra-org-clock/body))
 
 (use-package ox-latex 
      :straight nil

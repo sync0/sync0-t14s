@@ -17,7 +17,11 @@
           ((equal property "FICHE_TYPE")
            (let ((x (completing-read "Quel type de fiche ?"
                                      sync0-zettelkasten-fiche-types)))
-             (org-set-property property (concat "\"" x "\""))))
+             (org-set-property property x)))
+          ((equal property "ZETTEL_TYPE")
+           (let ((x (completing-read "Quel type de fiche ?"
+                                     sync0-zettelkasten-zettel-types)))
+             (org-set-property property x)))
           ((equal property "ZETTEL_FUNCTION")
            (let* ((x (completing-read-multiple "Quel type de fiche ?"
                                                sync0-zettelkasten-zettel-functions))
@@ -180,33 +184,50 @@
                  (insert entry))))))
   (org-roam-node-insert))
 
-
 (defhydra sync0-hydra-org-roam-insert (:color blue :hint nil)
-  "
-        ^Zettelkasten link insert functions^   
-        ^--------------------
-        ^Org-roam^          ^Org-mode^          ^Org-roam-bibtex^  ^Org-emms^
-        ^----------------------------------------- 
-        _i_nsert roam link  insert org _l_ink   citation link    _t_rack link
-        _r_oam buffer       _s_tore link        note actions     track _p_osition 
-        _b_uild cache       last stored lin_k_        
-        plot graph
-        _d_efine property
-
-        _q_uit
-        "
-  ("i" sync0-org-roam-insert)
-  ("d" sync0-zettelkasten-set-property)
-  ("r" org-roam-buffer-toggle)
-  ("b" org-roam-db-sync)
-  ;; ("g" org-roam-graph)
-  ("l" org-insert-link)
-  ("s" org-store-link)
-  ("k" org-insert-last-stored-link)
-  ("t" org-emms-insert-track)
+"
+^Org-roam^           ^Org-mode^            ^Orb & Org-ref^    ^Org-emms^        ^Etc^ 
+^----------------------------------------------------------------------------------------------------
+_I_nsert roam link   Insert lin_k_         Insert _c_itation  Link _t_rack      Replace _m_arks
+Roam _b_uffer        Store _l_ink          Open _n_otes       Track _p_osition  
+_U_pdate cache       Insert last _s_tored  Note _a_ctions
+Plot _g_raph         New _f_ootnote        Notes _u_pdate
+_S_et property       _Q_uote (display)     _E_xtract field
+_D_elete link        _F_oreign quote       Bibtex _e_ntry
+_R_emove all links   ^ ^                   PDF _o_pen
+Open _d_eft          ^ ^                   PDF in _z_athura
+^ ^                  ^ ^                   _C_opy pdf 
+^ ^                  ^ ^                   _B_ib files
+_q_uit
+"
+  ("a" orb-note-actions)
+  ("B" sync0-visit-bibliography-in-buffer)
+  ("b" org-roam-buffer-toggle)
+  ("c" orb-insert)
+  ("C" sync0-org-ref-copy-pdf-to-path)
+  ("D" sync0-org-replace-link-by-description)
+  ("d" deft)
+  ("m" replace-smart-quotes)
+  ("E" sync0-ivy-bibtex-extractor)
+  ("e" org-ref-open-citation-at-point)
+  ("F" (progn (yas-expand-snippet (yas-lookup-snippet "csquotes_foreign_displayquote"))))
+  ("I" sync0-org-roam-insert)
+  ("f" org-footnote-new)
+  ("U" org-roam-db-sync)
+  ("n" sync0-org-ref-open-notes)
+  ("u" sync0-org-ref-update-notes-file)
+  ("g" org-roam-graph)
+  ("k" org-insert-link)
+  ("l" org-store-link)
+  ("o" sync0-org-ref-open-pdf-at-point)
   ("p" org-emms-insert-track-position)
-  ;; ("c" orb-insert)
-  ;; ("a" orb-note-actions)
+  ("R" sync0-org-replace-all-links-by-descriptions)
+  ("S" sync0-zettelkasten-set-property)
+  ("s" org-insert-last-stored-link)
+  ("t" org-emms-insert-track)
+  ("Q" (progn (yas-expand-snippet (yas-lookup-snippet "csquotes_displayquote"))))
+  ("z" sync0-org-ref-open-pdf-at-point-zathura)
   ("q" nil :color blue))
+
 
 (provide 'sync0-org-roam-functions)

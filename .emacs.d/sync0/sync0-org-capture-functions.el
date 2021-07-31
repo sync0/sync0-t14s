@@ -119,45 +119,56 @@
     ;; output the file name and path
     (concat sync0-zettel-path "/" sync0-zettel-filename ".org")))
 
+(defun sync0-org-capture-permanent-body ()
+  ;; Determine the filter for title completion candidates
+  ;; i.e., do not complete with all files
+  (let* ((orig-buffer
+          (buffer-name (org-capture-get :original-buffer)))
+         (id (org-id-new))
+         (filename (format-time-string "%Y%m%d%H%M%S"))
+         (type "permanent")
+         (path (concat sync0-zettelkasten-directory type))
+         (title (completing-read "Titre du Zettel : "
+                                 (org-roam--get-titles)
+                                 nil nil nil nil nil t))
+         (buffer (buffer-file-name))     
+         (creation  (format-time-string "%Y-%m-%d")))
+    ;; filename
+    (setq  sync0-zettel-filename filename)
+    (setq  sync0-zettel-path path)
+    ;; define string of zettel
+    (concat
+     ":PROPERTIES:\n"
+     ":ID:      " id "\n"
+     ":CREATED: " creation "\n"
+     ":LAST_MODIFIED: " creation "\n"
+     ":ZETTEL_TYPE: "  type "\n"
+     ":END:\n"
+     "#+TITLE: " title "\n"
+     ;; add roam tags according to zettel type
+     "#+FILETAGS:\n\n"
+     "Origin: [[id:" (sync0-org-get-id buffer)
+     "]["
+     (sync0-org-get-file-title-keyword buffer)
+     "]]\n\n%?")))
 
 (defun sync0-org-capture-zettel-body ()
   ;; Determine the filter for title completion candidates
   ;; i.e., do not complete with all files
-  (let* ((key (org-capture-get :key))
-         (orig-buffer (buffer-name (org-capture-get :original-buffer)))
+  (let* ((orig-buffer
+          (buffer-name (org-capture-get :original-buffer)))
          (id (org-id-new))
          (filename (format-time-string "%Y%m%d%H%M%S"))
-         (path (if  (equal key "z")
-                   (completing-read "Dossier de la fiche : "
-                                    (f-directories sync0-zettelkasten-directory
-                                                   ;; exclude hidden directories from completion
-                                                   (lambda (k) (not (string-match-p "\\.+" k))) t))
-                 (concat sync0-zettelkasten-directory
-                         (cond ((equal key "f")  "fiche")
-                               ((equal key "p")  "project")
-                               ((equal key "t") "todo")
-                               ((equal key "a") "annotation")
-                               (t "")))))
-         (last-directory (car (last (split-string-and-unquote path "/"))))
-         (type (if (or (equal last-directory "project")
-                       (equal last-directory "todo"))
-                   "project"
-                 last-directory))
-  ;;; Define the candidates for title completions 
-         ;; (candidates
-         ;;  (cond ((or (equal type "permanent")
-         ;;             (equal type "annotation"))
-         ;;         (f-files sync0-zettelkasten-directory
-         ;;                  (lambda (k) (string-match-p "\\<permanent\\>\\|\\<annotation\\>" k)) t))
-         ;;        ((equal type "project")
-         ;;         (f-files sync0-zettelkasten-directory
-         ;;                  (lambda (k) (string-match-p "\\<todo\\>\\|\\<project\\>" k)) t))
-         ;;        (t (f-files path (lambda (k) (string-match-p ".org$" k)) t))))
-         ;; Determine the type of the zettel for use in org-property
+         (type 
+          (completing-read "Type de Zettel : "
+          sync0-zettelkasten-zettel-types))
+         (path (concat sync0-zettelkasten-directory 
+                       (cond ((equal type "project")  "project")
+                             ((equal type "todo") "todo")
+                             ((equal type "inbox") "inbox")
+                             (t "permanent"))))
          (title (completing-read "Titre du Zettel : "
                                  (org-roam--get-titles)
-                                 ;; (mapcar  #'(lambda (x) (org-roam-db--get-title x))
-                                 ;;          candidates)
                                  nil nil nil nil nil t))
          (alias (let ((x
                        (read-string "Alias (comma separated): "
@@ -210,11 +221,12 @@
                     (format "En la página X de "))
                    ((equal annotation-language "portuguese")
                     (format "Na  página X de "))
-                   (t (format "In page X of ")))))
+                   (t (format "On page X of ")))))
          (creation  (format-time-string "%Y-%m-%d")))
     ;; filename
     (setq  sync0-zettel-filename filename)
     (setq  sync0-zettel-path path)
+;; to loop over these, it is necessary to learn to use macros
     (unless (member project sync0-zettelkasten-projects)
       (add-to-list 'sync0-zettelkasten-projects project)
       (with-temp-file "~/.emacs.d/sync0-vars/projects.txt"
@@ -227,9 +239,6 @@
       (add-to-list 'sync0-zettelkasten-fiche-types fiche-type)
       (with-temp-file "~/.emacs.d/sync0-vars/fiche-types.txt"
         (sync0-insert-elements-of-list sync0-zettelkasten-fiche-types)))
-    ;; (sync0-update-list project sync0-zettelkasten-projects "projects")
-    ;; (sync0-update-list func sync0-zettelkasten-zettel-functions "zettel-functions")
-    ;; (sync0-update-list fiche-type sync0-zettelkasten-fiche-types "fiche-types")
     ;; define string of zettel
     (concat
      ":PROPERTIES:\n"
@@ -249,7 +258,7 @@
                  (equal func ""))
        (concat ":ZETTEL_FUNCTION: " func "\n"))
      (when (equal type "fiche")
-       (concat ":FICHE_TYPE: \"" fiche-type "\"\n"))
+       (concat ":FICHE_TYPE: " fiche-type "\n"))
      (unless (or (null project)
                  (equal project "nil"))
        (concat ":PROJECT_TITLE: \"" project "\"\n"))
@@ -258,7 +267,7 @@
      (unless (or (null subtitle)
                  (equal subtitle ""))
        (concat "#+SUBTITLE: " subtitle "\n"))
-     (when (equal last-directory "todo")
+     (when (equal type "todo")
        (concat "#+CATEGORY: " (upcase project) "\n"))
      ;; add roam tags according to zettel type
      "#+FILETAGS: :" type 
@@ -267,11 +276,10 @@
                     (format-time-string ":%Y:\n")))
            ((equal type "project")
             (concat
-             (when (equal last-directory "todo") ":todo")
+             (when (equal type "todo") ":todo")
              ":" project ":" sync0-current-month-downcase ":"
              (format-time-string ":%Y:\n")))
-           (t (concat ":" sync0-current-month-downcase
-                      (format-time-string ":%Y:\n"))))
+           (t ":\n"))
      "\n"
      "Origin: [[id:" (sync0-org-get-id buffer)
      "]["
@@ -285,11 +293,138 @@
           "]["
           (sync0-org-get-previous-heading-or-title buffer)
           "]], "
-          ;; (sync0-org-get-author-keyword buffer)
           annotation-author
           " %?")
        "%?"))))
 
+(defun sync0-org-capture-quick-reference ()
+  (let* ((type (completing-read "Choose BibLaTex entry type: " sync0-biblatex-entry-types))
+         (id (org-id-new))
+         (filename (format-time-string "%Y%m%d%H%M%S"))
+         (creation (format-time-string "%Y-%m-%d")) 
+         (title (completing-read "Titre du texte : "
+                                 (org-roam--get-titles)
+                                 nil nil nil nil nil t))
+         (subtitle (read-string "Sous-titre du texte : " nil nil nil t))
+         (date (read-string "Date (ex. 1890-18-12) : "))
+         (author (completing-read "Auteur : " sync0-bibtex-authors
+                                    nil nil nil))
+         (author-fixed (cond ((string-match " and " author)
+                              ;; create a list with parts 
+                              (let* ((author-list  (split-string author " and "))
+                                     (names (let (x)
+                                              (dolist  (element author-list x)
+                                                (setq x (concat x
+                                                                (progn
+                                                                  (string-match ", \\([[:graph:]]+\\)$"   element)
+                                                                  (match-string 1 element))
+                                                                " "
+                                                                (progn
+                                                                  (string-match "\\([[:graph:]]+\\),"   element)
+                                                                  (match-string 1 element))
+                                                                ", "))))))
+                                (substring names 0 -2)))
+                             ;; check when author is an organization
+                             ((string-match "^{" author)
+                              (string-match "{\\([[:print:]]+\\)}" author)
+                              (match-string 1 author))
+                             ;; other cases
+                             (t (let* ((author-list (split-string author ", "))
+                                       (last-name (nth 0 author-list))
+                                       (first-name (nth 1 author-list)))
+                                  (concat first-name " " last-name)))))
+         (lastname (cond ((string-match " and " author)
+                          ;; create a list with parts 
+                          (let* ((author-list  (split-string author " and "))
+                                 (last-names (let (x)
+                                               (dolist  (element author-list x)
+                                                 (setq x (concat x
+                                                                 (progn
+                                                                   (string-match "\\([[:graph:]]+\\),"   element)
+                                                                  (downcase (match-string 1 element)))
+                                                                 ":"))))))
+                            (substring last-names 0 -2)))
+                         ((string-match "^{" author)
+                          (string-match "{\\([[:print:]]+\\)}" author)
+                          (downcase (match-string 1 author)))
+                         (t (downcase (nth 0 (split-string author ", "))))))
+         (language (completing-read "Choose language : "
+                                      sync0-bibtex-languages nil nil nil))
+         (langid language) 
+         (addendum (read-string "Addendum (ex. Box, Folder, etc.) : "))
+         (url (read-string "Url : " nil nil nil t))
+         (urldate (unless (equal url "") creation))
+         (file (concat "/home/sync0/Documents/pdfs/" filename ".pdf"))
+         (buffer (buffer-file-name))     
+         (biblatex-definitions (list 
+                                title
+                                subtitle
+                                date
+                                author
+                                addendum
+                                url
+                                urldate
+                                language
+                                langid
+                                file))
+         (biblatex-fields (if (equal type "collection")
+                              (cl-substitute "editor" "author" sync0-biblatex-quick-fields)
+                            sync0-biblatex-quick-fields))
+         (fields (mapcar* #'(lambda (x y) (list x y)) biblatex-fields biblatex-definitions))
+         ;; define the biblatex entries
+         (entries
+          (let (x)
+            (dolist (element fields x) 
+              (unless (or (null (cadr element))
+                          (equal (cadr element) ""))
+                (setq x (concat x (car element) " = {" (cadr element) "},\n"))))))
+         ;; select target bibliography file (.bib)
+         (bib-file (completing-read "Fichier BibLaTeX : "
+                                    (f-files "~/Dropbox/bibliographies" (lambda (k) (string-match-p ".bib" k)))))
+         ;; create string of new biblatex entry
+         (biblatex-entry (concat "\n@" type "{" filename "," "\n" entries "\n}\n")))
+    ;; add biblatex entry to target bibliography file.
+    ;; The entry has to be added this way to prevent a bug
+    ;; that happens with bibtex-completion: unless the entry
+    ;; is added in a different buffer, the template in org-capture
+    ;; won't expand because the last output is not the template but
+    ;; a bibtex-completion message abour bibliography reloading
+    (with-current-buffer
+        (find-file-noselect bib-file)
+      (goto-char (point-max))
+      (insert biblatex-entry))
+    ;; (append-to-file biblatex-entry nil bib-file)
+    ;; define certain varibles to construct the path with another function
+    (setq sync0-zettel-filename filename)
+    (setq sync0-zettel-path (concat sync0-zettelkasten-directory "permanent"))
+(unless (member author sync0-bibtex-authors)
+    (add-to-list 'sync0-bibtex-authors author)
+    (with-temp-file "~/.emacs.d/sync0-vars/bibtex-authors.txt"
+      (sync0-insert-elements-of-list sync0-bibtex-authors)))
+    ;; define the body of the reference zettel
+    (concat
+     ":PROPERTIES:\n"
+     ":ID:      " id "\n"
+     ":ROAM_REFS: cite:" filename "\n"
+     ":BIBLATEX_TYPE: " type "\n"
+     (when (equal type "online") (concat ":WEBSITE: " url "\n"))
+     ":AUTHOR: \"" author-fixed "\"\n"
+     ":CREATED: " creation "\n"
+     ":LAST_MODIFIED: " creation "\n"
+     ":ZETTEL_TYPE: reference\n"
+     ":LANGUAGE: " language "\n"
+     ":DATE: \"" date "\"\n" 
+     ":END:\n"
+     "#+TITLE: " title "\n"
+     (unless (equal subtitle "") (concat "#+SUBTITLE: " subtitle "\n"))
+     "#+AUTHOR: " author-fixed "\n"
+     "#+FILETAGS: :" filename ":" date ":" lastname ":\n"
+     "#+INTERLEAVE_PDF: " file "\n\n" 
+     "Origin: [[id:"
+     (sync0-org-get-id buffer)
+     "]["
+     (sync0-org-get-file-title-keyword buffer)
+     "]]\n\n%?")))
 
 (defun sync0-org-capture-reference ()
   (let* ((type (if (equal (org-capture-get :key) "w")
@@ -305,15 +440,8 @@
          (derivation (yes-or-no-p "Derive entry?"))
          (crossref (when derivation
                      (let* ((candidates (bibtex-completion-candidates))
-                            ;; (key (bibtex-completion-key-at-point))
-                            ;; (preselect (and key
-                            ;;                 (cl-position-if (lambda (cand)
-                            ;;                                   (member (cons "=key=" key)
-                            ;;                                           (cdr cand)))
-                            ;;                                 candidates)))
                             (selection (ivy-read "Crossref : "
                                                  candidates
-                                                 ;; :preselect preselect
                                                  :caller 'ivy-bibtex
                                                  :history 'ivy-bibtex-history)))
                        (cdr (assoc "=key=" (cdr (assoc selection candidates)))))))
@@ -322,7 +450,6 @@
          (date (read-string "Date (ex. 1890-18-12) : " initial-date))
          (initial-author (unless (null derivation)
                            (sync0-org-ref-get-citation-author crossref)))
-         ;; (date (read-string "Date (ex. 1890-18-12) : "))
          (origdate (read-string "Origdate (ex. 1890-18-12) : "))
          (author (completing-read "Auteur : " sync0-bibtex-authors
                                     nil nil initial-author))
@@ -382,7 +509,8 @@
               (read-string "Tome : ")))
          (number (when (equal type "article")
                    (read-string "Numero : ")))
-         (publisher (unless (equal type "unpublished")
+         (publisher (unless (or (equal type "unpublished")
+                                 (equal type "article"))
                       (completing-read "Maison d'edition : " sync0-bibtex-publishers)))
          (location (when (or (equal type "book")
                              (equal type "collection"))
@@ -486,7 +614,7 @@
     ;; (append-to-file biblatex-entry nil bib-file)
     ;; define certain varibles to construct the path with another function
     (setq sync0-zettel-filename filename)
-    (setq sync0-zettel-path (concat sync0-zettelkasten-directory "reference"))
+    (setq sync0-zettel-path (concat sync0-zettelkasten-directory "permanent"))
 (unless (member author sync0-bibtex-authors)
     (add-to-list 'sync0-bibtex-authors author)
     (with-temp-file "~/.emacs.d/sync0-vars/bibtex-authors.txt"
@@ -539,7 +667,7 @@
      "#+TITLE: " title "\n"
      (unless (equal subtitle "") (concat "#+SUBTITLE: " subtitle "\n"))
      "#+AUTHOR: " author-fixed "\n"
-     "#+FILETAGS: :" filename ":" type ":" date ":" lastname ":\n"
+     "#+FILETAGS: :" filename ":" date ":" lastname ":\n"
      "#+INTERLEAVE_PDF: " file "\n\n" 
      "Origin: [[id:"
      (sync0-org-get-id buffer)

@@ -44,7 +44,8 @@
                        ("re" "** `(format-time-string \"%Y%m%d%H%M%S\")`\n$0" "org-roam-notetaking-headline" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/org-roam-notetaking-headline" nil nil)
                        ("inlinecite" "[[parencite:${1:`(sync0-print-bibtex-key)`}][p. ${2:`(sync0-last-cited-page-two)`}]] $0\n" "org-ref_inline_citation" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/org-ref_inline_citation" nil nil)
                        ("dialogue" "#+BEGIN_dialogue\n\\speak\\{${1:Vladimir}\\} ${2:Whare are all these corpses from?}\n\\speak\\{${3:Estragon}\\} ${4:These skeletons.}\n${5:\\direct\\{\nEstragon has exited offstage to right and left and come panting back\nand fallen into Vladimir’s arms\\}}\n$0\n#+END_dialogue" "org-latex-dialogue-environment" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/org-latex-dialogue-environment" nil nil)
-                       ("assddaaa" "((format-time-string \"%Y/%m/%d\"))\n" "org-date" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/org-date" nil nil)
+                       ("abstract" "#+BEGIN_abstract\n$1\n#+END_abstract\n$0" "org-latex-abstract" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/org-latex-abstract" nil nil)
+                       ("assddaaa" "((format-time-string \"%Y-%m-%d\"))\n" "org-date" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/org-date" nil nil)
                        ("comment" "#+BEGIN_COMMENT\n$1\n#+END_COMMENT\n$0" "org-comment" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/org-comment" nil nil)
                        ("date" "(`(sync0-insert-today-timestamp)`) $0" "org-brackets-today-timestamp" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/org-brackets-today-timestamp" nil nil)
                        ("th" "\\nth{$1}$0" "nth" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/nth" nil nil)
@@ -100,7 +101,7 @@
                        ("fcquote" "\\foreignblockcquote{${1:english}}{${2:Cicero45}}{${3:Lorem ipsum dolor sit amet}}$0" "csquotes_foreignblockcquote" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/csquotes_foreignblockcquote" nil nil)
                        ("fquote" "#+ATTR_LATEX: :options {`(yas-choose-value '(\"english\" \"french\"))`}[{\\cite[${2:`(sync0-last-cited-page)`}]{`(sync0-last-cited-author)`}}]\n#+BEGIN_foreigndisplayquote\n$3\n#+END_foreigndisplayquote\n$0" "csquotes_foreignblockquote" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/csquotes_foreign_displayquote" nil nil)
                        ("enquote" "\\\\enquote{${1:Lorem ipsum dolor sit amet}}$0" "latex_csquotes_enquote" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/csquotes_enquote" nil nil)
-                       ("ct" "#+ATTR_LATEX: :options [{\\cite${1:$$(unless yas-modified-p (sync0-last-cited-page))}{`(sync0-last-cited-author)`}}]\n#+BEGIN_displayquote\n$2\n#+END_displayquote\n$0" "csquotes_displayquote" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/csquotes_displayquote" nil nil)
+                       ("quote" "#+ATTR_LATEX: :options [{\\cite${1:$$(unless yas-modified-p (sync0-last-cited-page))}{`(sync0-last-cited-author)`}}]\n#+BEGIN_displayquote\n$2\n#+END_displayquote\n$0" "csquotes_displayquote" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/csquotes_displayquote" nil nil)
                        ("bquote" "\\blockquote[${1:Marcus Tullius Cicero}]{${2:Lorem ipsum dolor sit amet}}$0" "csquotes_blockquote" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/csquotes_blockquote" nil nil)
                        ("cquote" "\\blockcquote{${1:Cicero45}}{${2:Lorem ipsum dolor sit amet}}$0" "csquotes_blockcquote" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/csquotes_blockcquote" nil nil)
                        ("bf" "\\textbf{$1}$0\n" "boldface_text" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/bold_text_function" nil nil)
@@ -109,4 +110,4 @@
                        ("beamer" "    :PROPERTIES:\n    :BEAMER_env: alertblock\n    :END:\n    #+BEGIN_EXAMPLE\n    \\begin{alertblock}{${1:Lorem ipsum dolor}}\n    $2\n    \\end{alertblock}\n    #+END_EXAMPLE\n    $0\n" "alert_block_beamer" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/beamer_alert_block" nil nil)))
 
 
-;;; Do not edit! File generated at Wed Jun  2 23:32:56 2021
+;;; Do not edit! File generated at Sun Jul 25 01:51:30 2021

@@ -1,3 +1,31 @@
+
+;; (defun sync0-org-ref-search-bibkey-in-buffer (buffer)
+;;   "Check the existence of a bibtex in current buffer."
+;; (interactive)
+;; ;; (equal major-mode 'org-mode)
+;; (let ((regex "cite:\\([[:digit:]]+\\)"))
+;; (cond ((and (equal major-mode 'org-mode)
+;;     (search (thing-at-point t) regex))
+;; (equal major-mode 'org-mode)
+;;     (org-with-point-at 1 
+;;       (re-search-forward "cite:\\([[:digit:]]+\\)" nil t 1)
+;;       (match-string-no-properties 1))
+
+(defun sync0-org-ref-search-bibkey-in-buffer ()
+  "Check the existence of a bibtex in current buffer."
+  (interactive)
+  (let ((regex-one "cite:\\([[:digit:]]+\\)")
+        (regex-two "@book{\\([[:digit:]]+\\),"))
+    (cond ((equal major-mode 'org-mode)
+           (org-with-point-at 1 
+             (re-search-forward regex-one nil t 1)
+             (match-string-no-properties 1)))
+          ((equal major-mode 'bibtex-mode)
+           (re-search-forward regex-two nil t 1)
+           (match-string-no-properties 1))
+          (t (re-search-forward regex-one nil t 1)
+             (match-string-no-properties 1)))))
+
 (defun sync0-org-ref-pdf-exist-p ()
   "Check the existence of the pdf for bibtex key under point."
   (interactive)
@@ -20,9 +48,9 @@
   (interactive)
   (let* ((results (org-ref-get-bibtex-key-and-file))
          (key (car results))
-         (pdf-file (car (bibtex-completion-find-pdf key))))
-    (if (file-exists-p pdf-file)
-        (org-open-file pdf-file))
+         (file (car (bibtex-completion-find-pdf key))))
+    (if (file-exists-p file)
+        (org-open-file file))
     (message "No PDF found for %s" key)))
 
 (defun sync0-org-ref-get-citation-date (key)
@@ -70,7 +98,6 @@
 (setq sync0-bibtex-current-language "John Doe")
 (setq sync0-bibtex-current-date "John Doe")
 ;; (setq sync0-bibtex-current-origdate "John Doe")
-
 
 ;; (let* (
 ;;        (key-at-point (org-ref-get-bibtex-key-under-cursor))
@@ -195,18 +222,36 @@
     (find-file
      (expand-file-name bib-file))))
 
+;; (defun sync0-org-ref-open-pdf-at-point-zathura ()
+;;   "Open the pdf for bibtex key under point if it exists."
+;;   (interactive)
+;;   (let* ((bibkey (let* ((candidates (bibtex-completion-candidates))
+;;                         (selection (ivy-read "Choose BibTeX key to extract from : "
+;;                                              candidates
+;;                                              :caller 'ivy-bibtex
+;;                                              :history 'ivy-bibtex-history)))
+;;                    (cdr (assoc "=key=" (cdr (assoc selection candidates))))))
+;;          (pdf-file (car (bibtex-completion-find-pdf bibkey))))
+;;     (if (file-exists-p pdf-file)
+;;         (call-process "zathura" nil 0 nil pdf-file)
+;;       (message "No PDF found for %s" key))))
+
 (defun sync0-org-ref-open-pdf-at-point-zathura ()
   "Open the pdf for bibtex key under point if it exists."
   (interactive)
-  (let* ((key-at-point (org-ref-get-bibtex-key-under-cursor))
-         (bibkey (if  (equal key-at-point "")
-                     (let* ((candidates (bibtex-completion-candidates))
-                            (selection (ivy-read "Choose BibTeX key to extract from : "
-                                                 candidates
-                                                 :caller 'ivy-bibtex
-                                                 :history 'ivy-bibtex-history)))
-                       (cdr (assoc "=key=" (cdr (assoc selection candidates)))))
-                   key-at-point))            
+  (let* ((bibkey (let* ((candidates (bibtex-completion-candidates))
+                        (key-at-point (sync0-org-ref-search-bibkey-in-buffer))
+                        (preselect (and key-at-point
+                                        (cl-position-if (lambda (cand)
+                                                          (member (cons "=key=" key-at-point)
+                                                                  (cdr cand)))
+                                                        candidates)))
+                        (selection (ivy-read "Choose BibTeX key to extract from : "
+                                             candidates
+                                             :preselect preselect
+                                             :caller 'ivy-bibtex
+                                             :history 'ivy-bibtex-history)))
+                   (cdr (assoc "=key=" (cdr (assoc selection candidates))))))
          (pdf-file (car (bibtex-completion-find-pdf bibkey))))
     (if (file-exists-p pdf-file)
         (call-process "zathura" nil 0 nil pdf-file)
@@ -215,32 +260,36 @@
 (defun sync0-org-ref-copy-pdf-to-path ()
   "Open the pdf for bibtex key under point if it exists."
   (interactive)
-  (let* ((key-at-point (org-ref-get-bibtex-key-under-cursor))
-         (bibkey (if  (equal key-at-point "")
-                     (let* ((candidates (bibtex-completion-candidates))
-                            (selection (ivy-read "Choose BibTeX key to extract from : "
-                                                 candidates
-                                                 :caller 'ivy-bibtex
-                                                 :history 'ivy-bibtex-history)))
-                       (cdr (assoc "=key=" (cdr (assoc selection candidates)))))
-                   key-at-point))            
+  (let* ((bibkey (let* ((candidates (bibtex-completion-candidates))
+                        (key-at-point (sync0-org-ref-search-bibkey-in-buffer))
+                        (preselect (and key-at-point
+                                        (cl-position-if (lambda (cand)
+                                                          (member (cons "=key=" key-at-point)
+                                                                  (cdr cand)))
+                                                        candidates)))
+                        (selection (ivy-read "Choose BibTeX key to extract from : "
+                                             candidates
+                                             :preselect preselect
+                                             :caller 'ivy-bibtex
+                                             :history 'ivy-bibtex-history)))
+                   (cdr (assoc "=key=" (cdr (assoc selection candidates))))))
          (results (org-ref-get-bibtex-key-and-file bibkey))
          (bibfile (cdr results))
          (target-path (read-string "Où envoyer ce pdf ? ")))
-  (with-temp-buffer
-    (insert-file-contents bibfile)
-    (bibtex-set-dialect (parsebib-find-bibtex-dialect) t)
-    (bibtex-search-entry bibkey nil 0)
-    (let ((fields (bibtex-parse-entry t)))
-      (setq sync0-bibtex-current-author
-             (replace-regexp-in-string "[[:space:]]+" "\\\\ " 
-                                      (sync0-bibtex-extract-lastname
-                                       (reftex-get-bib-field "author"
-                                                             fields))))
-      (setq sync0-bibtex-current-title
-             (replace-regexp-in-string "[[:space:]]+" "\\\\ " 
-                                      (reftex-get-bib-field "title" fields)))
-      (setq sync0-bibtex-current-file
+    (with-temp-buffer
+      (insert-file-contents bibfile)
+      (bibtex-set-dialect (parsebib-find-bibtex-dialect) t)
+      (bibtex-search-entry bibkey nil 0)
+      (let ((fields (bibtex-parse-entry t)))
+        (setq sync0-bibtex-current-author
+              (replace-regexp-in-string "[[:space:]]+" "\\\\ " 
+                                        (sync0-bibtex-extract-lastname
+                                         (reftex-get-bib-field "author"
+                                                               fields))))
+        (setq sync0-bibtex-current-title
+              (replace-regexp-in-string "[[:space:]]+" "\\\\ " 
+                                        (reftex-get-bib-field "title" fields)))
+        (setq sync0-bibtex-current-file
             (reftex-get-bib-field "file" fields))
       (setq sync0-bibtex-current-date
             (reftex-get-bib-field "date" fields))))
@@ -263,71 +312,66 @@
   "Open the notes for bibtex key under point in a cite link in a
 buffer. Can also be called with key."
   (interactive)
-  (let* ((key-at-point (org-ref-get-bibtex-key-under-cursor))
-         (bibkey (if  (equal key-at-point "")
-                     (let* ((candidates (bibtex-completion-candidates))
-                            (key (bibtex-completion-key-at-point))
-                            (preselect (and key
-                                            (cl-position-if (lambda (cand)
-                                                              (member (cons "=key=" key)
-                                                                      (cdr cand)))
-                                                            candidates)))
-                            (selection (ivy-read "Crossref : "
-                                                 candidates
-                                                 :preselect preselect
-                                                 :caller 'ivy-bibtex
-                                                 :history 'ivy-bibtex-history)))
-                       (cdr (assoc "=key=" (cdr (assoc selection candidates)))))
-                   key-at-point)))            
+  (let ((bibkey (let* ((candidates (bibtex-completion-candidates))
+                       (key-at-point (sync0-org-ref-search-bibkey-in-buffer))
+                       (preselect (and key-at-point
+                                       (cl-position-if (lambda (cand)
+                                                         (member (cons "=key=" key-at-point)
+                                                                 (cdr cand)))
+                                                       candidates)))
+                       (selection (ivy-read "Choose BibTeX key to extract from : "
+                                            candidates
+                                            :preselect preselect
+                                            :caller 'ivy-bibtex
+                                            :history 'ivy-bibtex-history)))
+                  (cdr (assoc "=key=" (cdr (assoc selection candidates)))))))
     (funcall org-ref-notes-function bibkey)))
 
+;; (defhydra sync0-hydra-research-functions (:color amaranth :hint nil :exit t)
+;; "
+;; ^Bibtex functions^   ^References^          ^Roam^                ^Etc^
+;; ^------------------------------------------------------------------------------
+;; Orb _i_nsert           _I_nsert footnote   Find _f_ile        Replace smart quotes
+;; Orb _a_ctions          _Q_uote (Csquotes)  Open _r_oam buffer 
+;; Entry _n_otes          _F_oreign quote     Open _d_eft       
+;; Bibtex _e_ntry         Insert _c_itation   _B_uild cache    
+;; Open _b_ibliography    _E_xtract field     Show _g_raph   
+;; Open _p_df             _U_pdate notes file _S_et property
+;; Open in _z_athura      ^ ^                 
+;; _C_opy pdf to location
 
-(defhydra sync0-hydra-research-functions (:color amaranth :hint nil :exit t)
-  "
-   ^Research functions^   ^References^        ^Roam^              ^Roam link actions^
-   ^------------------------------------------------------------------------------
-   Orb _i_nsert           _I_nsert footnote   Find _f_ile         Link _s_tore 
-   Orb _a_ctions          _Q_uote (Csquotes)  Open _r_oam buffer  _L_ast stored link
-   Entry _n_otes          _F_oreign quote     Open _d_eft         Roam _l_ink                     
-   Bibtex _e_ntry         Insert _c_itation   _B_uild cache       Link to _h_eadline
-   Open _b_ibliography    _E_xtract field     Open index        _D_elete link at point
-   Open _p_df             _U_pdate org file   Show graph        _R_emove all links
-   Open in _z_athura      ^ ^                 _S_et property
-   _C_opy pdf to location
-                                                                     
-   _q_uit
-        "
-  ;; ("C" org-roam-capture)
-  ;;("x" org-roam-jump-to-index)
-  ("s" org-store-link)
-  ("i" orb-insert)
-  ("a" orb-note-actions)
-  ("d" deft)
-  ("r" org-roam-buffer-toggle)
-  ("B" org-roam-db-sync)
-  ("f" org-roam-node-find)
-  ;; ("g" org-roam-graph)
-  ("l" org-roam-node-insert)
-  ("h" org-insert-link)
-  ("L" org-insert-last-stored-link)
-  ;; ("L" org-roam-insert-immediate)
-  ("c" org-ref-ivy-insert-cite-link)
-  ("C" sync0-org-ref-copy-pdf-to-path)
-  ("D" sync0-org-replace-link-by-description)
-  ("S" sync0-zettelkasten-set-property)
-  ("R" sync0-org-replace-all-links-by-descriptions)
-  ("n" sync0-org-ref-open-notes)
-  ("U" sync0-org-ref-update-notes-file)
-  ;; ("n" ivy-bibtex)
-  ("e" org-ref-open-citation-at-point)
-  ("E" sync0-ivy-bibtex-extractor)
-  ("b" sync0-visit-bibliography-in-buffer)
-  ("p" sync0-org-ref-open-pdf-at-point)
-  ("z" sync0-org-ref-open-pdf-at-point-zathura)
-  ("I" org-footnote-new)
-  ;; ("r" (progn (yas-expand-snippet (yas-lookup-snippet "org_ref_citation"))))
-  ("Q" (progn (yas-expand-snippet (yas-lookup-snippet "csquotes_displayquote"))))
-  ("F" (progn (yas-expand-snippet (yas-lookup-snippet "csquotes_foreign_displayquote"))))
-  ("q" nil :color blue))
+;; _q_uit
+;; "
+;;   ("s" org-store-link)
+;;   ("i" orb-insert)
+;;   ("a" orb-note-actions)
+;;   ("d" deft)
+;;   ("r" org-roam-buffer-toggle)
+;;   ("Q" replace-smart-quotes)
+;;   ("B" org-roam-db-sync)
+;;   ("f" org-roam-node-find)
+;;   ("g" org-roam-graph)
+;;   ("l" org-roam-node-insert)
+;;   ("c" org-ref-ivy-insert-cite-link)
+;;   ("C" sync0-org-ref-copy-pdf-to-path)
+;;   ("S" sync0-zettelkasten-set-property)
+;;   ("n" sync0-org-ref-open-notes)
+;;   ("U" sync0-org-ref-update-notes-file)
+;;   ("e" org-ref-open-citation-at-point)
+;;   ("E" sync0-ivy-bibtex-extractor)
+;;   ("b" sync0-visit-bibliography-in-buffer)
+;;   ("p" sync0-org-ref-open-pdf-at-point)
+;;   ("z" sync0-org-ref-open-pdf-at-point-zathura)
+;;   ("I" org-footnote-new)
+;;   ("Q" (progn (yas-expand-snippet (yas-lookup-snippet "csquotes_displayquote"))))
+;;   ("F" (progn (yas-expand-snippet (yas-lookup-snippet "csquotes_foreign_displayquote"))))
+;;   ("q" nil :color blue))
+
+;; (evil-leader/set-key
+;;   "C" 'org-ref-ivy-insert-cite-link
+;;   "R" 'sync0-hydra-research-functions/body)
+
+(evil-leader/set-key
+  "C" 'org-ref-ivy-insert-cite-link)
 
 (provide 'sync0-org-ref-functions)

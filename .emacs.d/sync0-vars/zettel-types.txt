@@ -8,11 +8,13 @@ code
 data
 fiche
 inbox
+index
 long_form
 message
 permanent
 project
 review
 reference
+todo
 trash
 vault

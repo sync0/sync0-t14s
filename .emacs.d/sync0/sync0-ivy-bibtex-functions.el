@@ -52,15 +52,19 @@
   "Extract as a separate pdf the pages within the page rage
   specified by beg and end"
   (interactive)
-  (let* ((key-at-point (org-ref-get-bibtex-key-under-cursor))
-         (bibkey (if  (equal key-at-point "")
-                     (let* ((candidates (bibtex-completion-candidates))
-                            (selection (ivy-read "Choose BibTeX key to extract from : "
-                                                 candidates
-                                                 :caller 'ivy-bibtex
-                                                 :history 'ivy-bibtex-history)))
-                       (cdr (assoc "=key=" (cdr (assoc selection candidates)))))
-                   key-at-point))            
+  (let* ((bibkey (let* ((candidates (bibtex-completion-candidates))
+                        (key-at-point (sync0-org-ref-search-bibkey-in-buffer))
+                        (preselect (and key-at-point
+                                        (cl-position-if (lambda (cand)
+                                                          (member (cons "=key=" key-at-point)
+                                                                  (cdr cand)))
+                                                        candidates)))
+                        (selection (ivy-read "Choose BibTeX key to extract from : "
+                                             candidates
+                                             :preselect preselect
+                                             :caller 'ivy-bibtex
+                                             :history 'ivy-bibtex-history)))
+                   (cdr (assoc "=key=" (cdr (assoc selection candidates))))))
          (input-file (car (bibtex-completion-find-pdf bibkey)))
          (beg (read-string "Première page : "))
          (end (read-string "Dernière page : "))
@@ -100,15 +104,19 @@
 (defun sync0-ivy-bibtex-extractor ()
   "Extract the target field from BibTeX entry"
   (interactive)
-  (let* ((key-at-point (org-ref-get-bibtex-key-under-cursor))
-         (bibkey (if  (equal key-at-point "")
-                     (let* ((candidates (bibtex-completion-candidates))
-                            (selection (ivy-read "Choose BibTeX key to extract from : "
-                                                 candidates
-                                                 :caller 'ivy-bibtex
-                                                 :history 'ivy-bibtex-history)))
-                       (cdr (assoc "=key=" (cdr (assoc selection candidates)))))
-                   key-at-point))            
+  (let* ((bibkey (let* ((candidates (bibtex-completion-candidates))
+                        (key-at-point (sync0-org-ref-search-bibkey-in-buffer))
+                        (preselect (and key-at-point
+                                        (cl-position-if (lambda (cand)
+                                                          (member (cons "=key=" key-at-point)
+                                                                  (cdr cand)))
+                                                        candidates)))
+                        (selection (ivy-read "Choose BibTeX key to extract from : "
+                                             candidates
+                                             :preselect preselect
+                                             :caller 'ivy-bibtex
+                                             :history 'ivy-bibtex-history)))
+                   (cdr (assoc "=key=" (cdr (assoc selection candidates))))))
          (entry (bibtex-completion-get-entry bibkey))
          (bibtex-field
           (completing-read "Choose one: "

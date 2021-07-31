@@ -1,5 +1,5 @@
 # -*- mode: snippet -*-
 # name: org-date
-# key: assddaaa
+# key: assdate
 # --
-((format-time-string "%Y/%m/%d"))
+((format-time-string "%Y-%m-%d"))

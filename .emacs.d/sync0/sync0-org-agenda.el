@@ -31,6 +31,7 @@
                                        ("[Ww]riting" ,(list (all-the-icons-material "create" :height 1.2)) nil nil :ascent center)
                                        ("[Pp]ortuguês" ,(list (all-the-icons-material "translate" :height 1.2)) nil nil :ascent center)
                                        ("[Ff]rançais" ,(list (all-the-icons-material "translate" :height 1.2)) nil nil :ascent center)
+                                       ("[Dd]eutsch" ,(list (all-the-icons-material "translate" :height 1.2)) nil nil :ascent center)
                                        ("[Ee]spañol" ,(list (all-the-icons-material "translate" :height 1.2)) nil nil :ascent center)
                                        ("[Ee]nglish" ,(list (all-the-icons-material "translate" :height 1.2)) nil nil :ascent center)
                                        ("[Bb]log" ,(list (all-the-icons-material "speaker_notes" :height 1.2)) nil nil :ascent center)))
@@ -39,14 +40,8 @@
 (setq  org-agenda-files (list "~/Dropbox/org/todo/"
                               "~/Dropbox/org/etc/Gcal.org"
                               "~/Dropbox/org/etc/Events.org"
+                              "~/Dropbox/org/etc/Habits.org"
                               "~/Dropbox/org/etc/Classes.org"))
-
-;; (setq org-agenda-files (list "~/Dropbox/org/todo/"))
-
-;; (let ((my-agenda-files (list "~/Dropbox/org/etc/Gcal.org"
-;;                              "~/Dropbox/org/etc/Events.org"
-;;                              "~/Dropbox/org/etc/Classes.org")))
-;;   (setq org-agenda-files (append org-agenda-files my-agenda-files)))
 
 (setq org-agenda-custom-commands
       '(("h" "Agenda"
@@ -67,64 +62,66 @@
                                                  "     ⮜" "⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺")))
                    ;; "     ⮜" ""
                    (org-agenda-prefix-format "  %-22t  %-5s  %-3i  %-20c  ")))
-          (tags-todo "TODO​=\"中\"|TODO​=\"來\"|+PRIORITY=\"A\""
+          (tags-todo "PRIORITY=\"A\""
+                     ((org-agenda-overriding-header " Haute priorité \n")
+                      (org-agenda-sorting-strategy '(timestamp-up category-keep tag-up todo-state-up))
+                      (org-agenda-prefix-format "  %-29(sync0-org-agenda-tags-todo-timestamp)  %-3i  %-20c  ")))
+          (todo "中|來"
                      ((org-agenda-overriding-header " Prochaines actions \n")
-                      ;;; Do not show tasks that have been completed or cancelled. 
-                      ;; (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("完" "消")))
-                      ;; (org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "取" "阻"))
-                      ;;                                (org-agenda-skip-entry-if 'scheduled 'deadline)))
+                      (org-agenda-skip-function '(sync0-org-skip-subtree-if-priority ?A))
                       (org-agenda-sorting-strategy '(timestamp-up category-keep tag-up todo-state-up))
-                      (org-agenda-prefix-format "  %-29(sync0-org-agenda-get-timestamp-time)  %-3i  %-20c  ")))
-          (tags-todo "+this_week|DEADLINE>=\"<+2d>\"&DEADLINE<=\"<+7d>\"|SCHEDULED>=\"<+2d>\"&SCHEDULED<=\"<+7d>\""
+                      (org-agenda-prefix-format "  %-29(sync0-org-agenda-tags-todo-timestamp)  %-3i  %-20c  ")))
+          (tags-todo "this_week|DEADLINE>=\"<+2d>\"&DEADLINE<=\"<+7d>\"|SCHEDULED>=\"<+2d>\"&SCHEDULED<=\"<+7d>\""
                      ((org-agenda-overriding-header " Sept jours \n")
-                      (org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "消"))
+                      (org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "消" "推"))
                                                      (sync0-org-skip-subtree-if-priority ?A)))
                       (org-agenda-sorting-strategy '(timestamp-up category-keep tag-up todo-state-up))
-                      (org-agenda-prefix-format "  %-29(sync0-org-agenda-get-timestamp-time)  %-3i  %-20c  ")))
-          (tags-todo "+next_week-this_week|DEADLINE>=\"<+8d>\"&DEADLINE<=\"<+14d>\"|SCHEDULED>=\"<+8d>\"&SCHEDULED<=\"<+14d>\""
+                      (org-agenda-prefix-format "  %-29(sync0-org-agenda-tags-todo-timestamp)  %-3i  %-20c  ")))
+          (tags-todo "next_week|DEADLINE>=\"<+8d>\"&DEADLINE<=\"<+14d>\"|SCHEDULED>=\"<+8d>\"&SCHEDULED<=\"<+14d>\""
                      ((org-agenda-overriding-header " Quatorze jours \n")
-                      (org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "消"))
+                      (org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "消" "推"))
                                                      (sync0-org-skip-subtree-if-priority ?A)))
                       (org-agenda-sorting-strategy '(timestamp-up category-keep tag-up todo-state-up))
-                      (org-agenda-prefix-format "  %-29(sync0-org-agenda-get-timestamp-time)  %-3i  %-20c  ")))
-          (tags-todo "+this_month-this_week-next_week-ignore|DEADLINE>=\"<+15d>\"&DEADLINE<=\"<+29d>\"|SCHEDULED>=\"<+15d>\"&SCHEDULED<=\"<+29d>\""
-                     ((org-agenda-overriding-header " Trente jours \n")
-                      (org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "消"))
-                                                     (sync0-org-skip-subtree-if-priority ?A)))
-                      (org-agenda-sorting-strategy '(timestamp-up category-keep tag-up todo-state-up))
-                      (org-agenda-prefix-format "  %-29(sync0-org-agenda-get-timestamp-time)  %-3i  %-20c  "))))
+                      (org-agenda-prefix-format "  %-29(sync0-org-agenda-tags-todo-timestamp)  %-3i  %-20c  "))))
          ;; list options for block display
          ((org-agenda-remove-tags nil)))
 
         ("p" "Projets"
-         ((tags-todo "TODO​=\"中\"|TODO​=\"來\"|PRIORITY=\"A\""
+          ;; ((tags-todo "PRIORITY=\"A\"/!中|來|未"
+          ;;            ((org-agenda-overriding-header " Prochaines actions \n")
+          ;;             (org-agenda-sorting-strategy '(timestamp-up category-keep tag-up todo-state-up))
+          ;;             (org-agenda-prefix-format "  %-29(sync0-org-agenda-tags-todo-timestamp)  %-3i  %-20c  ")))
+          ((tags-todo "PRIORITY=\"A\""
+                     ((org-agenda-overriding-header " Haute priorité \n")
+                      (org-agenda-sorting-strategy '(timestamp-up category-keep tag-up todo-state-up))
+                      (org-agenda-prefix-format "  %-29(sync0-org-agenda-tags-todo-timestamp)  %-3i  %-20c  ")))
+          (todo "中|來"
                      ((org-agenda-overriding-header " Prochaines actions \n")
-                      ;;; Do not show tasks that have been completed or cancelled. 
-                      ;; (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("完" "消")))
-                      (org-agenda-sorting-strategy '(timestamp-up category-keep tag-up todo-state-up))
-                      (org-agenda-prefix-format "  %-29(sync0-org-agenda-get-timestamp-time)  %-3i  %-20c  ")))
-          (tags-todo "TODO​=\"待\"|TODO​=\"見\""
-                     ((org-agenda-overriding-header " Actions différées \n")
                       (org-agenda-skip-function '(sync0-org-skip-subtree-if-priority ?A))
-                      ;; (org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "消"))
-                      ;;                                ;; (org-agenda-skip-entry-if 'scheduled 'deadline)
-                      ;;                                (sync0-org-skip-subtree-if-priority ?A)))
                       (org-agenda-sorting-strategy '(timestamp-up category-keep tag-up todo-state-up))
-                      (org-agenda-prefix-format "  %-29(sync0-org-agenda-get-project-timestamp-time-today)  %-3i  %-20c  ")))
-          (tags-todo "todo+research|project"
+                      (org-agenda-prefix-format "  %-29(sync0-org-agenda-tags-todo-timestamp)  %-3i  %-20c  ")))
+          (tags-todo "-someday-maybe/!待|見"
+                     ((org-agenda-overriding-header " Actions différées \n")
+                      (org-agenda-sorting-strategy '(category-keep timestamp-up tag-up todo-state-up))
+                      (org-agenda-prefix-format "  %-29(sync0-org-agenda-tags-todo-timestamp)  %-3i  %-20c  ")))
+          (tags-todo "-someday-maybe+research|-someday-maybe+project"
                      ((org-agenda-overriding-header " Projets \n")
-                      (org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "消" "待"))
+                      (org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo '("完" "消" "中" "來" "待" "見" "推"))
                                                      ;; (org-agenda-skip-entry-if 'scheduled 'deadline)
                                                      (sync0-org-skip-subtree-if-priority ?A)))
-                      (org-agenda-sorting-strategy '(timestamp-up category-keep tag-up todo-state-up))
-                      (org-agenda-prefix-format "  %-29(sync0-org-agenda-get-project-timestamp-time-today)  %-3i  %-20c  ")))
-          (tags-todo "-research-project"
+                      (org-agenda-sorting-strategy '(category-keep timestamp-up tag-up todo-state-up))
+                      (org-agenda-prefix-format "  %-29(sync0-org-agenda-tags-todo-timestamp)  %-3i  %-20c  ")))
+          (tags-todo "-research-project-someday-maybe"
                      ((org-agenda-overriding-header " Tâches brutes \n")
                       (org-agenda-skip-function '(or (org-agenda-skip-entry-if 'nottodo '("未"))
-                                                     ;; (org-agenda-skip-entry-if 'scheduled 'deadline)
                                                      (sync0-org-skip-subtree-if-priority ?A)))
-                      (org-agenda-sorting-strategy '(timestamp-up category-keep tag-up todo-state-up))
-                      (org-agenda-prefix-format "  %-29(sync0-org-agenda-get-project-timestamp-time-today)  %-3i  %-20c  "))))
+                      (org-agenda-sorting-strategy '(category-keep timestamp-up tag-up todo-state-up))
+                      (org-agenda-prefix-format "  %-29(sync0-org-agenda-tags-todo-timestamp)  %-3i  %-20c  ")))
+          (tags-todo "TODO=\"推\"|someday|maybe"
+                     ((org-agenda-overriding-header " Un jour lointain \n")
+                      (org-agenda-skip-function '(sync0-org-skip-subtree-if-priority ?A))
+                      (org-agenda-sorting-strategy '(category-keep timestamp-up tag-up todo-state-up))
+                      (org-agenda-prefix-format "  %-29(sync0-org-agenda-tags-todo-timestamp)  %-3i  %-20c  "))))
          ;; list options for block display
          ((org-agenda-remove-tags nil)
           (org-agenda-view-columns-initially nil)))
