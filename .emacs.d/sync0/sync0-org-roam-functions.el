@@ -1,4 +1,3 @@
-
 (defun sync0-zettelkasten-set-property ()
   (interactive)
   (let  ((property
@@ -111,8 +110,8 @@
                (link-end (org-element-property :end elem)))
           (if (and content-begin content-end)
               (let ((content (buffer-substring-no-properties content-begin content-end)))
-                (delete-region link-begin (- link-end 1))
-                (insert content)))))))
+                (delete-region link-begin link-end)
+                (insert (concat content " "))))))))
 
 (defun sync0-org-replace-all-links-by-descriptions ()
   "Remove the link part of an org-mode link at point and keep
@@ -196,8 +195,9 @@ _S_et property       _Q_uote (display)     _E_xtract field
 _D_elete link        _F_oreign quote       Bibtex _e_ntry
 _R_emove all links   ^ ^                   PDF _o_pen
 Open _d_eft          ^ ^                   PDF in _z_athura
-^ ^                  ^ ^                   _C_opy pdf 
-^ ^                  ^ ^                   _B_ib files
+_V_isit corr. PDF    ^ ^                   _C_opy pdf 
+_M_ove headline      ^ ^                   _B_ib files
+^ ^                  ^ ^                   Create _h_eadline
 _q_uit
 "
   ("a" orb-note-actions)
@@ -207,13 +207,15 @@ _q_uit
   ("C" sync0-org-ref-copy-pdf-to-path)
   ("D" sync0-org-replace-link-by-description)
   ("d" deft)
-  ("m" replace-smart-quotes)
   ("E" sync0-ivy-bibtex-extractor)
   ("e" org-ref-open-citation-at-point)
   ("F" (progn (yas-expand-snippet (yas-lookup-snippet "csquotes_foreign_displayquote"))))
-  ("I" sync0-org-roam-insert)
   ("f" org-footnote-new)
+  ("h" sync0-org-ref-create-headline)
+  ("I" sync0-org-roam-insert)
   ("U" org-roam-db-sync)
+  ("M" org-roam-refile)
+  ("m" replace-smart-quotes)
   ("n" sync0-org-ref-open-notes)
   ("u" sync0-org-ref-update-notes-file)
   ("g" org-roam-graph)
@@ -226,6 +228,7 @@ _q_uit
   ("s" org-insert-last-stored-link)
   ("t" org-emms-insert-track)
   ("Q" (progn (yas-expand-snippet (yas-lookup-snippet "csquotes_displayquote"))))
+  ("V" sync0-org-open-corresponding-pdf)
   ("z" sync0-org-ref-open-pdf-at-point-zathura)
   ("q" nil :color blue))
 

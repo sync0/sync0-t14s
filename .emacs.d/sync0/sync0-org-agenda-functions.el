@@ -173,9 +173,11 @@
                            ((string= "00" (format-time-string "%M" deadline)) 
                             (format-time-string "%Hh" deadline))
                            (t (format-time-string "%H:%M" deadline))))
-                (fragment-start (if (string= month-start month-end)
-                    day-start
-                   (concat day-start " " month-start)))
+                (fragment-start (if (or (string= month-start month-end)
+                                        (string= day-start "Today")
+                                        (string= day-start "Tomorrow"))
+                                    day-start
+                                  (concat day-start " " month-start)))
                 (fragment-end
                  (cond ((and (string= schedule-date deadline-date)
                              (not (string= time-start time-end))
@@ -193,24 +195,24 @@
                        ((and (string= month-start month-end)
                              (not (string= time-start ""))
                              (not (string= time-end "")))
-                        (concat "-" day-end " " month-start-full ", " time-start "-" time-end))
+                        (concat " - " day-end " " month-start-full ", " time-start "-" time-end))
                        ;; check: same month, start time 
                        ((and (string= month-start month-end)
                              (not (string= time-start "")))
-                        (concat "-" day-end " " month-start-full ", " time-start))
+                        (concat " - " day-end " " month-start-full ", " time-start))
                        ;; check: same month 
                        ((string= month-start month-end)
-                        (concat "-" day-end " " month-start-full)) 
+                        (concat " - " day-end " " month-start-full)) 
                        ;; check: start-time, end time
                        ((and (not (string= month-start month-end))
                              (not (string= time-start ""))
                              (not (string= time-end "")))
-                        (concat "-" day-end " " month-end ", " time-start "-" time-end)) 
+                        (concat " - " day-end " " month-end ", " time-start "-" time-end)) 
                        ;; check: start-time
                        ((and (not (string= month-start month-end))
                              (not (string= time-start "")))
-                        (concat "-" day-end-string " " month-end ", " time-start)) 
-                       (t (concat " " month-start-full))))
+                        (concat " - " day-end-string " " month-end ", " time-start)) 
+                       (t (concat " - " day-end " " month-end))))
                  ;; ;; check: schedule date and dealine date equal, end time
                  ;; (cond ((and (string= schedule-date deadline-date)
                  ;;             (not (string= time-end "")))
@@ -335,23 +337,23 @@
                        ((and (string= month-start-name month-end-name)
                              (not (string= time-start ""))
                              (not (string= time-end "")))
-                        (concat "-" day-end-string " " month-start-name-full ", " time-start "-" time-end))
+                        (concat " - " day-end-string " " month-start-name-full ", " time-start "-" time-end))
                        ;; check: same month, start time 
                        ((and (string= month-start-name month-end-name)
                              (not (string= time-start "")))
-                        (concat "-" day-end-string " " month-start-name-full ", " time-start))
+                        (concat " - " day-end-string " " month-start-name-full ", " time-start))
                        ;; check: same month 
                        ((string= month-start-name month-end-name)
-                        (concat "-" day-end-string " " month-start-name-full)) 
+                        (concat " - " day-end-string " " month-start-name-full)) 
                        ;; check: start-time, end time
                        ((and (not (string= month-start-name month-end-name))
                              (not (string= time-start ""))
                              (not (string= time-end "")))
-                        (concat "-" day-end-string " " month-end-name ", " time-start "-" time-end)) 
+                        (concat " - " day-end-string " " month-end-name ", " time-start "-" time-end)) 
                        ;; check: start-time
                        ((and (not (string= month-start-name month-end-name))
                              (not (string= time-start "")))
-                        (concat "-" day-end-string " " month-end-name ", " time-start)) 
+                        (concat " - " day-end-string " " month-end-name ", " time-start)) 
                        (t (concat " " month-start-name-full))))
                 (year (cond ((not (string= year-start-string this-year))
                              (concat " " year-start-string))
@@ -465,5 +467,17 @@
 ;; New key assignment
 (define-key org-agenda-mode-map "N" 'sync0-org-agenda-new)
 
+
+(defun sync0-org-agenda-print-parent-node ()
+  "Output parent node in agenda views"
+  (let ((path (car (last (org-get-outline-path nil t)))))
+    (cond ((> (length path) 43) 
+        (let ((start (substring path 0 25))
+              (end (substring path -15 nil)))
+          (concat "[ " start  "..." end " ]")))
+      ((or (null path)
+              (equal path ""))
+"")
+(t (concat "[ " path " ]")))))
 
 (provide 'sync0-org-agenda-functions)

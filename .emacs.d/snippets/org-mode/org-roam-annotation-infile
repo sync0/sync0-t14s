@@ -1,0 +1,14 @@
+# -*- mode: snippet -*-
+# name: org-roam-annotation-infile
+# key: anot
+# --
+** ${1:Titre} 
+:PROPERTIES:
+:ID:    `(org-id-new)`${2:
+:ROAM_ALIASES:   ${3:Aliases}}
+:CREATED:  `(format-time-string "%Y-%m-%d")`
+:LAST_MODIFIED: `(format-time-string "%Y-%m-%d")`
+:ZETTEL_TYPE: annotation
+:END:
+
+$0

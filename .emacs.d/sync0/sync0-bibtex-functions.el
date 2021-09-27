@@ -1,3 +1,9 @@
+(defun sync0-bibtex-create-key ()
+  "Change bibtex key at point with a key using the format provided
+by org-roam files"
+  (interactive)
+  (let* ((new-key (format-time-string "%Y%m%d%H%M%S")))
+    (insert new-key)))
 
 (defun sync0-bibtex-next-key ()
   "Print the bibtex key of the document"

@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: note-taking-citation-pages
+# key: pg
+# --
+(p. ${1:$$(unless yas-modified-p (sync0-reference-last-cited-pages))})$0

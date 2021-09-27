@@ -209,11 +209,11 @@
     "List of BibLaTeX entry types")
 
   (defvar sync0-biblatex-fields
-  '("title" "subtitle" "date" "origdate" "author" "journaltitle" "booktitle" "booksubtitle" "crossref" "volume" "number" "publisher" "location" "pages" "addendum" "url" "urldate" "language" "langid" "file")
+  '("title" "subtitle" "date" "origdate" "author" "journaltitle" "booktitle" "booksubtitle" "crossref" "volume" "number" "publisher" "location" "pages" "addendum" "url" "urldate" "language" "langid" "medium" "trace" "file")
     "List of BibLaTeX entry fields")
 
 (defvar sync0-biblatex-quick-fields
-'("title" "subtitle" "date" "author" "addendum" "url" "urldate" "language" "langid" "file")
+'("title" "subtitle" "date" "author" "addendum" "url" "urldate" "language" "langid" "medium" "trace" "file")
   "List of BibLaTeX entry fields")
 
     (defvar sync0-bibtex-booktitles 
@@ -240,17 +240,28 @@
   '()
     "List of BibLaTeX languages")
 
+  (defvar sync0-bibtex-media
+  '()
+    "List of BibLaTeX media")
+
+  (defvar sync0-bibtex-traces
+  '()
+    "List of BibLaTeX traces")
+
   (defvar sync0-bibtex-variables-list
   '((sync0-bibtex-booktitles . "~/.emacs.d/sync0-vars/bibtex-booktitles.txt")
   (sync0-bibtex-publishers . "~/.emacs.d/sync0-vars/bibtex-publishers.txt")
   (sync0-bibtex-journals . "~/.emacs.d/sync0-vars/bibtex-journals.txt")
   (sync0-bibtex-locations . "~/.emacs.d/sync0-vars/bibtex-locations.txt")
   (sync0-bibtex-authors .  "~/.emacs.d/sync0-vars/bibtex-authors.txt")
+  (sync0-bibtex-traces .  "~/.emacs.d/sync0-vars/bibtex-trace.txt")
+  (sync0-bibtex-media .  "~/.emacs.d/sync0-vars/bibtex-media.txt")
   (sync0-bibtex-languages .  "~/.emacs.d/sync0-vars/languages.txt")))
 
   ;; define the rest
     (setq sync0-zettelkasten-directory (concat (getenv "HOME") "/Dropbox/org/")
     sync0-zettelkasten-directory-sans (concat (getenv "HOME") "/Dropbox/org")
+    sync0-exported-pdfs-directory (concat (getenv "HOME") "/Dropbox/pdfs/")
     sync0-default-bibliography (concat (getenv "HOME") "/Dropbox/bibliographies/doctorat.bib")
     sync0-zettelkasten-directory-references (concat (getenv "HOME") "/Dropbox/org/reference/")
     sync0-emacs-directory (concat (getenv "HOME") "/.emacs.d/sync0/")
@@ -517,8 +528,19 @@ TITLE keyword."
                  (split-string-every (substring string chars)
                                      chars)))))
 
+(defun sync0-split-string-with-separator (string separator)
+  "Check the presence of a separator in current string and split
+when necessary."
+  (interactive)
+;; check for the presence of a separator
+  (if (string-match-p separator string)
+      (string-trim
+       (prin1-to-string
+        (split-string-and-unquote string separator))
+       "(" ")")
+    string))
+
 (use-package undo-tree
-  ;; :straight nil
 :custom
 (undo-tree-enable-undo-in-region nil)
 :config
@@ -622,14 +644,14 @@ TITLE keyword."
               ("C-p"  . evil-multiedit-prev)))
 
 (use-package ivy
-     :hook 
-     (after-init . ivy-mode)
-     :custom
-     (ivy-use-virtual-buffers t)
-     (ivy-count-format "(%d/%d) ")
-:config
-   (evil-leader/set-key
-     "b" 'ivy-switch-buffer))
+  :hook 
+  (after-init . ivy-mode)
+  :custom
+  (ivy-use-virtual-buffers t)
+  (ivy-count-format "(%d/%d) ")
+  :config
+(evil-leader/set-key
+  "b" 'ivy-switch-buffer))
 
 (use-package swiper 
   :after evil
@@ -641,6 +663,7 @@ TITLE keyword."
 (use-package counsel 
     :after evil
     :config
+
     (evil-define-key 'normal global-map "gb" 'counsel-bookmark)
 
     (defhydra sync0-hydra-help (:color amaranth :hint nil :exit t)
@@ -680,99 +703,97 @@ TITLE keyword."
      ("C-x C-f" . counsel-find-file)))
 
 (use-package evil  
-  ;; :straight (evil :type git :host github :repo "emacs-evil/evil") 
-  :hook (after-init . evil-mode)
-  :custom
-  ;; Make horizontal movement cross lines                                    
-  (evil-cross-lines t)
-  ;; turn off auto-indent 
-  (evil-auto-indent nil)
-  :bind (("M-H" . next-buffer)
-         ("M-L" . previous-buffer)
-         (:map evil-normal-state-map
-               :map minibuffer-local-map
-               ("ESC" . minibuffer-keyboard-quit)
-               :map minibuffer-local-ns-map
-               ("ESC" . minibuffer-keyboard-quit)
-               :map minibuffer-local-completion-map
-               ("ESC" . minibuffer-keyboard-quit)
-               :map minibuffer-local-must-match-map
-               ("ESC" . minibuffer-keyboard-quit)
-               :map minibuffer-local-isearch-map
-               ("ESC" . minibuffer-keyboard-quit)))
+        ;; :straight (evil :type git :host github :repo "emacs-evil/evil") 
+        :custom
+        ;; Make horizontal movement cross lines                                    
+        (evil-cross-lines t)
+        ;; turn off auto-indent 
+        (evil-auto-indent nil)
+        :bind (("M-H" . next-buffer)
+               ("M-L" . previous-buffer)
+               (:map evil-normal-state-map
+                     :map minibuffer-local-map
+                     ("ESC" . minibuffer-keyboard-quit)
+                     :map minibuffer-local-ns-map
+                     ("ESC" . minibuffer-keyboard-quit)
+                     :map minibuffer-local-completion-map
+                     ("ESC" . minibuffer-keyboard-quit)
+                     :map minibuffer-local-must-match-map
+                     ("ESC" . minibuffer-keyboard-quit)
+                     :map minibuffer-local-isearch-map
+                     ("ESC" . minibuffer-keyboard-quit)))
 
-  :config 
-  (defun sync0-insert-line-below ()
-    "Insert an empty line below the current line."
-    (interactive)
-    (save-excursion
-      (end-of-line)
-      ;; To insert the line above
-      ;; (end-of-line 0)
-      (open-line 1)))
+        :config 
+        (defun sync0-insert-line-below ()
+          "Insert an empty line below the current line."
+          (interactive)
+          (save-excursion
+            (end-of-line)
+            ;; To insert the line above
+            ;; (end-of-line 0)
+            (open-line 1)))
 
-  ;; insert whitespace
-  (defun sync0-insert-whitespace ()
-    " Add a whitespace"
-    (interactive)
-    (insert " "))
+        ;; insert whitespace
+        (defun sync0-insert-whitespace ()
+          " Add a whitespace"
+          (interactive)
+          (insert " "))
 
-  (defun sync0-delete-text-block ()
-    "Delete selection or current or next text block and also copy to `kill-ring'.
-     URL `http://ergoemacs.org/emacs/emacs_delete_block.html'
-     Version 2016-08-13"
-    (interactive)
-    (if (use-region-p)
-        (kill-region (region-beginning) (region-end))
-      (progn
-        (beginning-of-line)
-        (if (search-forward-regexp "[[:graph:]]" (line-end-position) 'NOERROR )
-            (sync0-delete-current-text-block)
-          (when (search-forward-regexp "[[:graph:]]" )
-            (sync0-delete-current-text-block))))))
+        (defun sync0-delete-text-block ()
+          "Delete selection or current or next text block and also copy to `kill-ring'.
+           URL `http://ergoemacs.org/emacs/emacs_delete_block.html'
+           Version 2016-08-13"
+          (interactive)
+          (if (use-region-p)
+              (kill-region (region-beginning) (region-end))
+            (progn
+              (beginning-of-line)
+              (if (search-forward-regexp "[[:graph:]]" (line-end-position) 'NOERROR )
+                  (sync0-delete-current-text-block)
+                (when (search-forward-regexp "[[:graph:]]" )
+                  (sync0-delete-current-text-block))))))
 
-  ;; Turn on evil mode when enabled.
-  (evil-mode 1)
-  ;; Turn on evil-escape mode when enabled.
-  (evil-escape-mode 1)
+        ;; Turn on evil mode when enabled.
+        (evil-mode 1)
+        ;; Turn on evil-escape mode when enabled.
+        (evil-escape-mode 1)
+;; prevent conflict with calf bindings. 
+        (add-to-list 'evil-emacs-state-modes 'cfw:details-mode)
 
-  (add-to-list 'evil-emacs-state-modes 'cfw:details-mode)
+        ;; Change global key bindings
+        (unbind-key "C-m" evil-normal-state-map)
+        (unbind-key "M-." evil-normal-state-map)
+        (unbind-key "C-d" evil-motion-state-map)
+       ;; (unbind-key "<SPC>" evil-motion-state-map)
 
-  ;; Change global key bindings
-  (unbind-key "C-m" evil-normal-state-map)
-  (unbind-key "M-." evil-normal-state-map)
-  (unbind-key "C-d" evil-motion-state-map)
- ;; (unbind-key "<SPC>" evil-motion-state-map)
+        (evil-define-key 'normal global-map
+          "U" 'undo-tree-redo
+          "s" 'fill-paragraph
+          "S" 'sync0-insert-line-below
+          "M" 'bookmark-set
+          "zc" 'transpose-chars
+          "zb" 'sync0-delete-text-block
+          "zl" 'transpose-lines
+          "zw" 'transpose-words
+          "zj" 'evil-join
+          "zp" 'transpose-paragraphs
+          "zs" 'transpose-sentences)
 
-  (evil-define-key 'normal global-map
-     "U" 'undo-tree-redo
-    "s" 'fill-paragraph
-    "S" 'sync0-insert-line-below
-    "M" 'bookmark-set
-    "zc" 'transpose-chars
-    "zb" 'sync0-delete-text-block
-    "zl" 'transpose-lines
-    "zw" 'transpose-words
-    "zj" 'evil-join
-    "zp" 'transpose-paragraphs
-    "zs" 'transpose-sentences)
+       (evil-leader/set-key
+           "<SPC>" 'sync0-insert-whitespace
+           "<ESC>" 'keyboard-quit)
 
- (evil-leader/set-key
-     "<SPC>" 'sync0-insert-whitespace
-     "<ESC>" 'keyboard-quit)
-
-  ;; Improve EVIL behavior with visual lines (visual-line-mode).
-  (define-key evil-normal-state-map (kbd "<remap> <evil-next-line>") 'evil-next-visual-line)
-  (define-key evil-normal-state-map (kbd "<remap> <evil-previous-line>") 'evil-previous-visual-line)
-  (define-key evil-motion-state-map (kbd "<remap> <evil-next-line>") 'evil-next-visual-line)
-  (define-key evil-motion-state-map (kbd "<remap> <evil-previous-line>") 'evil-previous-visual-line))
+        ;; Improve EVIL behavior with visual lines (visual-line-mode).
+        (define-key evil-normal-state-map (kbd "<remap> <evil-next-line>") 'evil-next-visual-line)
+        (define-key evil-normal-state-map (kbd "<remap> <evil-previous-line>") 'evil-previous-visual-line)
+        (define-key evil-motion-state-map (kbd "<remap> <evil-next-line>") 'evil-next-visual-line)
+        (define-key evil-motion-state-map (kbd "<remap> <evil-previous-line>") 'evil-previous-visual-line))
 
 (use-package s)
 
 (use-package simple-secrets
 :straight nil
     :load-path "~/.emacs.d/sync0/" 
-    :after s
     :config 
     (setq secret-password-file "~/.emacs.d/sync0_secrets.gpg")
      (secret-load-keys))
@@ -789,20 +810,20 @@ TITLE keyword."
   :config (epa-file-enable))
 
 (use-package recentf
-:straight nil
-    :custom
-    (recentf-max-saved-items 100)
-    (recentf-max-menu-items 10)
-    :config 
-    (recentf-mode +1)
-    (require 'dired-x)
-    :bind (:map recentf-dialog-mode-map
-                ("j"  . next-line)
-                ("k"  . previous-line)))
+  :straight nil
+  :custom
+  (recentf-max-saved-items 100)
+  (recentf-max-menu-items 10)
+  :config 
+  (recentf-mode +1)
+  (require 'dired-x)
+  :bind (:map recentf-dialog-mode-map
+              ("j"  . next-line)
+              ("k"  . previous-line)))
 
 (use-package saveplace
 :straight nil
-    :preface
+    :init
     (defun sync0-save-place-reposition ()
       "Force windows to recenter current line (with saved position)."
       (run-with-timer 0 nil
@@ -812,7 +833,7 @@ TITLE keyword."
                             (with-selected-window win (recenter)))))
                       (current-buffer)))
     ;; Start save-place-mode.
-    :init (save-place-mode)
+    :config (save-place-mode)
     :hook (find-file . sync0-save-place-reposition))
 
 (use-package exec-path-from-shell
@@ -959,8 +980,8 @@ _q_uit
              (org-keyword-title-p))
         (let*  ((title (cadar (org-collect-keywords '("TITLE")))) 
                 (fixed-title (if (> (length title) 60) 
-                                 (let ((start (substring test 0 35))
-                                       (end (substring test -20 nil)))
+                                 (let ((start (substring title 0 35))
+                                       (end (substring title -20 nil)))
                                    (concat start  "..." end))
                                title)))
           (propertize fixed-title 'face '(:height 1.0 :family "Myriad Pro" :weight normal) 'help-echo (buffer-file-name)))
@@ -1084,7 +1105,7 @@ _q_uit
               inhibit-compacting-font-caches t)
 
 (use-package dashboard
-  :after all-the-icons
+  :after (all-the-icons org)
   :straight (dashboard :type git :host github :repo "emacs-dashboard/emacs-dashboard") 
   :config
   (setq dashboard-items '(
@@ -1191,7 +1212,7 @@ _q_uit
 
  (use-package deft
    :straight (deft :type git :host github :repo "jrblevin/deft") 
-   :after (org org-roam)
+   :after org
    :commands deft
    :custom
    (deft-recursive t)
@@ -1245,7 +1266,6 @@ _q_uit
 (use-package google-this 
   :straight (google-this :type git :host github :repo "Malabarba/emacs-google-this") 
   :commands (google-this-search google-this)
-  :after evil
   :bind 
          (:map evil-visual-state-map ("g"  . google-this)))
 
@@ -1467,10 +1487,6 @@ _q_uit
   ;;        :contents-sources
   ;;        (list (cfw:org-create-source "#c0c5ce")) :view 'week))))
 
-  ;; (setq sync0-org-agenda-files 
-  ;;       (let ((agenda-files   (org-agenda-files nil 'ifmode)))
-  ;;         (delete "~/Dropbox/org/etc/Habits.org"  agenda-files)
-  ;;         (delete "~/Dropbox/org/messages"  agenda-files)))
 
   ;; Redefinition
   ;; (eval-after-load "calfw-org"
@@ -1527,11 +1543,6 @@ _q_uit
 (use-package git-gutter 
       :straight (git-gutter :type git :host github :repo "emacsorphanage/git-gutter") 
       :commands git-gutter-mode
-      ;; :init
-      ;; (global-git-gutter-mode +1)
-      ;; :hook 
-      ;; (text-mode . git-gutter-mode)
-      ;; (prog-mode . git-gutter-mode)
       :custom
       (git-gutter:hide-gutter nil)
       (git-gutter:window-width 1)
@@ -1577,7 +1588,6 @@ _q_uit
 (use-package git-timemachine
 :straight (git-timemachine :type git :host gitlab :repo "pidu/git-timemachine") 
     :defer t
-    :after evil
     :commands 
     (git-timemachine git-timemachine-toggle)
     :custom
@@ -1676,65 +1686,96 @@ _q_uit
            ("C-c C-s" . org-schedule)))
 
 (use-package org-agenda 
+     :straight nil
+     :after org
+     ;; :after (org all-the-icons)
+     ;;  :commands       (sync0-pop-to-org-agenda org-agenda)
+     :custom
+     (org-agenda-todo-keyword-format "%-1s ")
+     (org-agenda-include-diary t)
+     (org-agenda-inhibit-startup t)
+     (org-agenda-dim-blocked-tasks nil)
+     (org-cycle-separator-lines 0)
+     ;; Choose the placement of org tags in org files.
+     (org-tags-column 80)
+     ;; Place org agenda tags in the same place as org tags.
+     (org-agenda-tags-column 0)
+     ;; Make org-agenda the only window by default.
+     (org-agenda-window-setup 'only-window)
+     (org-agenda-block-separator (string-to-char " "))
+     ;; Build agenda manually (to update press "r").
+     (org-agenda-sticky t)
+     ;; Compact the block agenda view. This deletes the section separators.
+     (org-agenda-compact-blocks nil)
+     ;; Allow one-key todo selection.
+     (org-use-fast-todo-selection t)
+     ;; Include the todo keywords in fast tag selection buffer.
+     (org-fast-tag-selection-include-todo t)
+     ;; Allow one-key tag selection.
+     (org-fast-tag-selection-single-key t)
+     ;; each habit to show up when it is next scheduled, but no further repetitions
+     (org-agenda-repeating-timestamp-show-all nil)
+     ;; This variable may be set to nil, t, or a number which will then
+     ;; give the number of days before the actual deadline when the
+     ;; prewarnings should resume.
+     ;; (org-agenda-skip-deadline-prewarning-if-scheduled 'post-deadline)
+     (org-agenda-skip-scheduled-if-deadline-is-shown t)
+     ;; (org-agenda-skip-scheduled-if-deadline-is-shown t)
+     ;; Add appointments duration to column view's effort estimates.
+     (org-agenda-columns-add-appointments-to-effort-sum t)
+     (org-agenda-ignore-drawer-properties '(effort appt category))
+     (org-agenda-deadline-leaders (quote ("今日" "%-1d日後" "%-1d日前")))
+     (org-agenda-scheduled-leaders (quote ("今日" "以前")))
+
+     :config
+;; Set org-agenda files
+(setq  org-agenda-files (list "~/Dropbox/org/todo/"
+                              "~/Dropbox/org/etc/Gcal.org"
+                              "~/Dropbox/org/etc/Events.org"
+                              "~/Dropbox/org/etc/Habits.org"
+                              "~/Dropbox/org/etc/Classes.org"))
+
+     (require 'cal-iso)
+     (require 'sync0-org-agenda-functions)
+     (require 'sync0-org-agenda)
+
+     ;; workaround developed by some smart user to circumvent
+     ;; org-agenda's slow performance (run-with-idle-timer 5 nil
+     ;; (lambda () (org-agenda-list) (delete-window)))
+
+(evil-leader/set-key
+  "A" 'org-agenda
+  "a" 'sync0-pop-to-org-agenda)
+
+     :bind 
+     (([f6] . sync0-pop-to-org-agenda)
+      :map org-agenda-mode-map
+      ("S" . org-agenda-schedule)
+      ("D" . org-agenda-deadline)
+      ("j" . org-agenda-next-item)
+      ("k" . org-agenda-previous-item)
+      ("J" . sync0-org-agenda-next-header)
+      ("K" . sync0-org-agenda-previous-header)
+      ("N" . sync0-org-agenda-new)))
+
+(use-package org-expiry 
   :straight nil
-  :after (org all-the-icons)
-  ;;  :commands       (sync0-pop-to-org-agenda org-agenda)
+  :load-path "~/.emacs.d/sync0/org-expiry.el" 
+  :after org
   :custom
-  (org-agenda-todo-keyword-format "%-1s ")
-  (org-agenda-include-diary t)
-  (org-agenda-inhibit-startup t)
-  (org-agenda-dim-blocked-tasks nil)
-  (org-cycle-separator-lines 0)
-  ;; Choose the placement of org tags in org files.
-  (org-tags-column 80)
-  ;; Place org agenda tags in the same place as org tags.
-  (org-agenda-tags-column 0)
-  ;; Make org-agenda the only window by default.
-  (org-agenda-window-setup 'only-window)
-  (org-agenda-block-separator (string-to-char " "))
-  ;; Build agenda manually (to update press "r").
-  (org-agenda-sticky t)
-  ;; Compact the block agenda view. This deletes the section separators.
-  (org-agenda-compact-blocks nil)
-  ;; Allow one-key todo selection.
-  (org-use-fast-todo-selection t)
-  ;; Include the todo keywords in fast tag selection buffer.
-  (org-fast-tag-selection-include-todo t)
-  ;; Allow one-key tag selection.
-  (org-fast-tag-selection-single-key t)
-  ;; each habit to show up when it is next scheduled, but no further repetitions
-  (org-agenda-repeating-timestamp-show-all nil)
-  ;; This variable may be set to nil, t, or a number which will then
-  ;; give the number of days before the actual deadline when the
-  ;; prewarnings should resume.
-  ;; (org-agenda-skip-deadline-prewarning-if-scheduled 'post-deadline)
-  (org-agenda-skip-scheduled-if-deadline-is-shown t)
-  ;; (org-agenda-skip-scheduled-if-deadline-is-shown t)
-  ;; Add appointments duration to column view's effort estimates.
-  (org-agenda-columns-add-appointments-to-effort-sum t)
-  (org-agenda-ignore-drawer-properties '(effort appt category))
-  (org-agenda-deadline-leaders (quote ("今日" "%-1d日後" "%-1d日前")))
-  (org-agenda-scheduled-leaders (quote ("今日" "以前")))
-
+  ;; Name of property when an item is created
+    (org-expiry-created-property-name "CREATED") 
+  ;; Don't have everything in the agenda view
+    (org-expiry-inactive-timestamps   t)         
   :config
+  (defun sync0-insert-created-timestamp()
+    "Insert a CREATED property using org-expiry.el for TODO entries"
+    (org-expiry-insert-created)
+    (org-back-to-heading)
+    (org-end-of-line)
+    (insert " "))
 
-  (require 'cal-iso)
-  (require 'sync0-org-agenda-functions)
-  (require 'sync0-org-agenda)
-
-  ;; workaround developed by some smart user to circumvent org-agenda's slow performance
-  ;; (run-with-idle-timer 5 nil (lambda () (org-agenda-list) (delete-window)))
-
-  :bind 
-  (([f6] . sync0-pop-to-org-agenda)
-   :map org-agenda-mode-map
-   ("S" . org-agenda-schedule)
-   ("D" . org-agenda-deadline)
-   ("j" . org-agenda-next-item)
-   ("k" . org-agenda-previous-item)
-   ("J" . sync0-org-agenda-next-header)
-   ("K" . sync0-org-agenda-previous-header)
-   ("N" . sync0-org-agenda-new)))
+(add-hook 'org-insert-todo-heading-hook #'org-expiry-insert-created))
 
 (use-package emms)
 
@@ -1811,7 +1852,7 @@ _q_uit
           ("C-c [" . org-ref-ivy-insert-cite-link)))
 
 (use-package org-roam
-  :after evil-leader
+  ;; :after evil-leader
   :straight (org-roam :type git :host github :repo "org-roam/org-roam") 
   :init 
   (require 'org-id)
@@ -1904,7 +1945,7 @@ _q_uit
 
 (use-package org-capture 
   :straight nil
-  :after (org evil-leader)
+  :after org 
   :preface 
   (defun org-journal-find-location ()
     ;; Open today's journal, but specify a non-nil prefix argument in order to
@@ -1928,22 +1969,6 @@ _q_uit
            "* %(format-time-string org-journal-time-format)\n\n%?"
            ;; "* %(format-time-string org-journal-time-format)\n\n%?"
            :jump-to-captured t :immediate-finish t)
-          ;; ("f" "Fiche" plain 
-          ;;  (file sync0-org-capture-zettel-path)
-          ;;  (function sync0-org-capture-zettel-body)
-          ;;  :unnarrowed t)
-          ;; ("p" "Note de projet" plain 
-          ;;  (file sync0-org-capture-zettel-path)
-          ;;  (function sync0-org-capture-zettel-body)
-          ;;  :unnarrowed t)
-          ;; ("t" "Liste de tâches" plain
-          ;;  (file sync0-org-capture-zettel-path)
-          ;;  (function sync0-org-capture-zettel-body)
-          ;;  :unnarrowed t)
-          ;; ("a" "Annotation" plain 
-          ;;  (file sync0-org-capture-zettel-path)
-          ;;  (function sync0-org-capture-zettel-body)
-          ;;  :unnarrowed t)
           ("n" "Note permanente (capture rapide)" plain 
            (file sync0-org-capture-zettel-path)
            (function sync0-org-capture-permanent-body)
@@ -1957,7 +1982,8 @@ _q_uit
            (function sync0-org-capture-reference)
            :unnarrowed t)
           ("t" "Tâche" entry
-           (file+headline "~/Dropbox/org/todo/todo.org" "Autres")
+           ;; (file+headline "~/Dropbox/org/todo/todo.org" "Autres")
+           (file "~/Dropbox/org/todo/todo.org")
            "* 未 %^{Task}\n:PROPERTIES:\n:CREATED: %U\n:END:\n"
            :immediate-finish t)
           ("w" "Référence web" plain 
@@ -1986,14 +2012,11 @@ _q_uit
 
 (use-package org-habit 
   :straight nil
-  :after (org org-agenda)
+  :after org 
   ;; :commands org-bullets-mode
   :config
   (setq org-habit-graph-column 80
         org-habit-show-habits-only-for-today nil))
-
-(setq
-org-agenda-hide-tags-regexp "projects\\|research\\|project\\|important\\|short_term\\|long_term\\|no_export\\|this_month\\|this_week\\|next_week\\|next_moth\\|todo\\|etc\\|doctorat\\|menage")
 
 (use-package org-clock 
         :straight nil
@@ -2125,6 +2148,10 @@ _q_uit
      (:map org-mode-map 
            ("M-p" . sync0-org-export-latex-and-beamer)))
 
+(use-package ox-epub
+  :straight (ox-epub :type git :host github :repo "ofosos/ox-epub")
+  :after org)
+
 (use-package org-bullets 
   :straight (org-bullets :type git :host github :repo "sabof/org-bullets") 
   :custom
@@ -2141,7 +2168,7 @@ _q_uit
 
 (use-package nov
     :straight nil
-    :after (org-noter evil)
+    :after org-noter
     :load-path "~/.emacs.d/sync0/nov.el" 
 ;; :custom
 ;; (nov-text-width 66)
@@ -2268,16 +2295,6 @@ _q_uit
              ;; Hide inherited tags from Org's agenda view.
              ;; org-agenda-show-inherited-tags nil
              ;; Define todo keywords.
-             (org-todo-keywords '((sequence "未(1)" "來(2)" "中(3)" "見(4)" "待(5)" "推(6)" "|" "完(7)" "消(8)")))
-             ;; Set faces for org-todo-keywords
-             (org-todo-keyword-faces '(("未" . (:foreground "#dc322f" :weight semi-bold :height 0.9))
-                                       ("來" . (:foreground "#d33682" :weight semi-bold :height 0.9))
-                                       ("完" . (:foreground "#859900" :weight semi-bold :height 0.9))   
-                                       ("待" . (:foreground "#268bd2" :weight semi-bold :height 0.9))
-                                       ("消" . (:foreground "#6c71c4" :weight semi-bold :height 0.9)) 
-                                       ("見" . (:foreground "#2aa198" :weight semi-bold :height 0.9)) 
-                                       ("推" . (:foreground "#859900" :weight semi-bold :height 0.9)) 
-                                       ("中" . (:foreground "#b58900" :weight semi-bold :height 0.9))))
              (org-blank-before-new-entry '((heading . nil)(plain-list-item . nil)))
              ;; Stop emacs asking for confirmation
              (org-confirm-babel-evaluate nil)
@@ -2301,6 +2318,8 @@ _q_uit
              (org-pretty-entities-include-sub-superscripts nil)
              ;; Limit inheritance for certain tags. 
              (org-tags-exclude-from-inheritance (quote ("crypt" "ignore")))
+             ;; Automatically add closing time when changing to DONE states. 
+             (org-log-done 'time)
 
              :config 
 (require 'sync0-org)

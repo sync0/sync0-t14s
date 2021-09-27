@@ -1,13 +1,13 @@
 
-doctorat
-sefardi
-study
-blogs
-techniques
-zettelkasten
-cahiers_revoltologie
-writing
-programming
-lisp
-python
 nil
+python
+lisp
+programming
+writing
+cahiers_revoltologie
+zettelkasten
+techniques
+blogs
+study
+sefardi
+doctorat

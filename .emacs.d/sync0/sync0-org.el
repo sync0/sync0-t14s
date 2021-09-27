@@ -1,11 +1,71 @@
+(setq org-todo-keywords '((sequence "未(1)" "|" "完(2)" "消(3)")))
+
+;; (setq org-todo-keywords '((sequence "未(1)" "來(2)" "中(3)" "見(4)" "待(5)" "推(6)" "|" "完(7)" "消(8)")
+;;                           (sequence "失" "買" "|" "有")
+;;                           (sequence "確"  "讀" "解" "|" "無")))
+
+;; First sequence:
+;; "未(1)" Undone
+;; "來(2)" Next (like :next:)
+;; "中(3)" In process
+;; "見(4)" Review or look again at
+;; "待(5)" Wait for something else 
+;; "推(6)" On hold until further advice (like :maybe: or :someday:)
+;; "|"
+;; "完(7)" Done
+;; "消(8)" Cancelled
+
+;; Second sequence:
+;; "失(l)" Unobtained or lost
+;; "買(b)" Buy or procure
+;; "|"
+;; "有(h)" Obtained
+
+;; Third sequence:
+;; "確(r)" Review or skim
+;; "讀(c)" Close read
+;; "解(t)" Transfer notes to Zettelkasten
+;; "|"
+;; "無(i)" Ignore
+
+;; Set faces for org-todo-keywords
+(setq org-todo-keyword-faces '(("未" . (:foreground "#dc322f" :weight semi-bold :height 0.9))
+                               ("失" . (:foreground "#dc322f" :weight semi-bold :height 0.9))
+                               ("確" . (:foreground "#dc322f" :weight semi-bold :height 0.9))
+                               ("買" . (:foreground "#d33682" :weight semi-bold :height 0.9))
+                               ("來" . (:foreground "#d33682" :weight semi-bold :height 0.9))
+                               ("完" . (:foreground "#859900" :weight semi-bold :height 0.9))   
+                               ("有" . (:foreground "#859900" :weight semi-bold :height 0.9))   
+                               ("解" . (:foreground "#268bd2" :weight semi-bold :height 0.9))
+                               ("待" . (:foreground "#268bd2" :weight semi-bold :height 0.9))
+                               ("無" . (:foreground "#6c71c4" :weight semi-bold :height 0.9)) 
+                               ("消" . (:foreground "#6c71c4" :weight semi-bold :height 0.9)) 
+                               ("確" . (:foreground "#2aa198" :weight semi-bold :height 0.9)) 
+                               ("讀" . (:foreground "#2aa198" :weight semi-bold :height 0.9)) 
+                               ("見" . (:foreground "#2aa198" :weight semi-bold :height 0.9)) 
+                               ("推" . (:foreground "#859900" :weight semi-bold :height 0.9)) 
+                               ("中" . (:foreground "#b58900" :weight semi-bold :height 0.9))))
+
 
 ;; (require 'org-pdftools)
 (require 'org-journal)
 (require 'org-download)
 (require 'org-ref)
+(require 'cl-lib)
+
+
 ;; Free this keybinding for cycle-themes
 (unbind-key "C-c C-t" org-mode-map)
 (unbind-key "M-h" org-mode-map)
+
+
+;; Predicate for org-mode titles in org files. 
+
+(defun org-keyword-title-p ()
+  "Check whether current buffer is an org-mode file with a non-null
+  TITLE keyword."
+  (and (equal major-mode 'org-mode)
+       (cadar (org-collect-keywords '("TITLE")))))
 
 (defun sync0-org-tangle-initfile ()
   (interactive)
@@ -19,8 +79,7 @@
          (tangled-file (car (org-babel-tangle-file orgfile))))
     (with-temp-buffer 
       (insert-file-contents tangled-file)
-      (write-file "init.el"))
-    (load initfile)))
+      (write-file initfile))))
 
 ;; taken from https://stackoverflow.com/questions/8881649/how-to-force-org-mode-to-open-a-link-in-another-frame
 (defun sync0-org-open-other-frame ()
@@ -29,6 +88,16 @@
   (let ((org-link-frame-setup (acons 'file 'find-file-other-window
                                      org-link-frame-setup)))
     (org-open-at-point)))
+
+(defun sync0-org-format-export-keyword ()
+  "Open corresponding pdf file for current org file."
+  (interactive)
+  (let* ((file-path (buffer-file-name))
+         (file-name 
+          (progn
+            (string-match "\\([[:digit:]]+\\)\\.org$"   file-path)
+            (match-string 1 file-path))))
+    (concat sync0-exported-pdfs-directory file-name ".pdf")))
 
 (defun sync0-overview-tree-window ()
   "Open a clone of the current buffer to the left, resize it to 30 columns, and bind <mouse-1> to jump to the same position in the base buffer."
@@ -76,34 +145,56 @@
   (org-tree-to-indirect-buffer)
   (windmove-right))
 
+(defun sync0-org-open-corresponding-pdf ()
+  "Open corresponding pdf file for current org file."
+  (interactive)
+  (let* ((file-path (buffer-file-name))
+         (file-name 
+          (progn
+            (string-match "\\([[:digit:]]+\\)\\.org$"   file-path)
+            (match-string 1 file-path)))
+         (pdf-path (concat sync0-exported-pdfs-directory file-name ".pdf")))
+    (if (file-exists-p pdf-path)
+        (org-open-file pdf-path)
+      (message "No PDF found for %s.org" file-name))))
+
 (defhydra sync0-hydra-org-functions (:color amaranth :hint nil :exit t)
-  "
-        ^Links^             ^Footnotes^          ^Trees^              ^Export^           ^Etc.^
-        ^---------------------------------------------------------------------------------------------------
-        Link _i_nsert       New _f_ootnote       Indirect _b_uffer    Latex _e_xport     Insert _d_rawer
-        Link _s_tore        Footnote _a_ctions   Open _o_verview      Export _t_rees     New local _a_bbrev
-        Last stored lin_k_  ^ ^                  Overview _j_ump      _T_angle init file
+"
+^Links^             ^Footnotes^          ^Trees^              ^Export^           ^Etc.^
+^---------------------------------------------------------------------------------------------------
+Link _i_nsert       New _f_ootnote       _I_ndirect buffer    Latex _e_xport     Insert _d_rawer
+Link _s_tore        Footnote _a_ctions   Open _o_verview      _E_xport trees     New local _a_bbrev
+Last stored lin_k_  ^ ^                  Overview _j_ump      _V_isit corr. PDF  _T_angle init file
+^ ^                 ^ ^                  Show sparse _t_ree   Export to epu_b_
                                                                      
-        _q_uit
-             "
+_q_uit
+"
+  ("b" org-epub-export-to-epub)
   ("s" org-store-link)
   ("i" org-insert-link)
   ("k" org-insert-last-stored-link)
   ("f" org-footnote-new)
   ("a" org-footnote-action)
-  ("b" sync0-org-tree-to-indirect-buffer)
+  ("I" sync0-org-tree-to-indirect-buffer)
   ("j" sync0-overview-jump-to-overview)
   ("o" sync0-overview-tree-window)
   ("e" sync0-org-export-latex-and-beamer)
-  ("t" sync0-org-export-headlines-to-latex)
+  ("T" sync0-org-tangle-initfile)
+  ("t" org-sparse-tree)
+  ("E" sync0-org-export-headlines-to-latex)
   ("a" sync0-define-local-abbrev)
   ("d" org-insert-drawer)
+  ("V" sync0-org-open-corresponding-pdf)
   ("q" nil :color blue))
 
-(evil-leader/set-key
-  "O" 'org-open-at-point
-  "T" 'sync0-org-tangle-initfile
-  "#" 'sync0-org-open-other-frame)
+
+(evil-leader/set-key-for-mode 'org-mode "O" 'org-open-at-point)
+(evil-leader/set-key-for-mode 'org-mode "#" 'sync0-org-open-other-frame)
+
+;; (evil-leader/set-key
+;;   "O" 'org-open-at-point
+;;   "#" 'sync0-org-open-other-frame)
+
 ;; "O" 'sync0-overview-tree-window
 ;; "o" 'sync0-overview-jump-to-overview
 ;; "I" 'org-insert-link
@@ -155,12 +246,12 @@
 ;; font lock keywords 
 ;; org footnotes should look like real footnotes
 (add-to-list 'font-lock-extra-managed-props 'display)
+
 (font-lock-add-keywords 'org-mode
                         '(("\\(\\[fn:\\)[[:digit:]]+\\]" 1 '(face nil display ""))))
+
 (font-lock-add-keywords 'org-mode
                         '(("\\[fn:[[:digit:]]+\\(\\]\\)" 1 '(face nil display ""))))
-
-(require 'cl-lib)
 
 ;; Taken from https://emacs.stackexchange.com/questions/13514/how-to-obtain-the-statistic-of-the-the-frequency-of-words-in-a-buffer
 (defvar sync0-punctuation-marks '(","

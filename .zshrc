@@ -4,6 +4,9 @@
 # Path to your oh-my-zsh installation.
 export ZSH="/home/sync0/.oh-my-zsh"
 
+# Add more variables to the PATH
+# PATH=$HOME/.luarocks/bin/digestif:$PATH
+
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
@@ -270,4 +273,9 @@ pdfpextr() {
        -dLastPage=${2} \
        -sOutputFile=${3%.pdf}_p${1}-p${2}.pdf \
        ${3}
+}
+
+ver() {
+    # this function opens a file from my pdf folder in zathura
+    zathura /home/sync0/Documents/pdfs/$1.pdf
 }

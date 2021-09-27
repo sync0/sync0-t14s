@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: bibtex-field-url
+# key: url
+# --
+url = {$1},$0

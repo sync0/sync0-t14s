@@ -1,3 +1,5 @@
+Hickey, James
+Friot, Bernard
 Jocelyn-Holt, Alfredon
 Jocelyn-Holt, Alfredo and Rengifo, Francisco and Briones, Ignacio and Kaiser, Axel
 nilnil
@@ -308,3 +310,6 @@ Poivret, Cédric
 Oczapowski, Joseph
 Pichot, Amédée
 {Biographies et Histoire de la Marine française}
+Acollas, Réne
+{Institut Coppet}
+{Archives nationales de la France}

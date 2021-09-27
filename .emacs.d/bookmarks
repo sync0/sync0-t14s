@@ -2,7 +2,22 @@
 ;;; This format is meant to be slightly human-readable;
 ;;; nevertheless, you probably don't want to edit it.
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
-(("sefardi"
+(("font"
+ (filename . "~/Dropbox/obsidian/.obsidian/themes/sync0.css")
+ (front-context-string . "/* 1. Font */\nbo")
+ (rear-context-string . "r(--yellow);\n}\n\n")
+ (position . 6300))
+("articles_courcelle-seneuil"
+ (filename . "~/Dropbox/obsidian/20210323022910.md")
+ (front-context-string . "[[file:~/Dropbox")
+ (rear-context-string . " ] (1853/03/15) ")
+ (position . 511))
+("test"
+ (filename . "~/Dropbox/2910562839589283.org")
+ (front-context-string)
+ (rear-context-string . "de la société]]\n")
+ (position . 1038))
+("sefardi"
  (filename . "~/Dropbox/org/projects/20210121083612.org")
  (front-context-string . ":\n\nhttps://www.f")
  (rear-context-string . "por\nFamilySearch")
@@ -63,10 +78,10 @@
  (rear-context-string . "Eles | têm    |\n")
  (position . 1687))
 ("here2"
- (filename . "~/.emacs.d/sync0/sync0-org-agenda-functions.el")
- (front-context-string . "nd ((and (string")
- (rear-context-string . "             (co")
- (position . 18170))
+ (filename . "~/Dropbox/obsidian/.obsidian/themes/minimal.css")
+ (front-context-string . "h1,h2,h3,h4,h5,h")
+ (rear-context-string . "             }\n\n")
+ (position . 37703))
 ("matonti"
  (filename . "~/Dropbox/notes/matonti2012.org")
  (front-context-string . "\n\n* 無 Conclusion")
@@ -183,7 +198,7 @@
  (rear-context-string . "Jérôme Lallment\n")
  (position . 883))
 ("org-capture-last-stored"
- (filename . "~/Dropbox/org/permanent/20210728204042.org")
+ (filename . "~/Dropbox/org/permanent/20210926230843.org")
  (front-context-string . ":PROPERTIES:\n:ID")
  (rear-context-string)
  (position . 1))
@@ -198,8 +213,8 @@
  (rear-context-string . "\"init.el\"))))))\n")
  (position . 5443))
 ("here"
- (filename . "~/.emacs.d/sync0/sync0-org-agenda-functions.el")
- (front-context-string . ")\n              ")
- (rear-context-string . "ar-start-string)")
- (position . 23256))
+ (filename . "~/Dropbox/obsidian/.obsidian/themes/test.css")
+ (front-context-string . ".side-dock-colla")
+ (rear-context-string . "text-normal);\n}\n")
+ (position . 32657))
 )

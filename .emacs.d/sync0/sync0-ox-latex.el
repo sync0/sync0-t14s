@@ -136,21 +136,68 @@
                                   ("\\subsubsection{%s}" . "\\subsubsection*{%s}")))
 
 
+(defun sync0-org-export-headline-replace (backend)
+  "Remove all headlines in the current buffer.
+BACKEND is the export back-end being used, as a symbol."
+  (org-map-entries
+   (lambda ()
+     (when-let ((new-title
+                 (org-element-property :EXPORT_TITLE (org-element-at-point))))
+       (org-edit-headline new-title))))) 
+
+
+;;      (delete-region (point) (line-beginning-position 2)))))
+
+;; (org-element-map (org-element-parse-buffer)
+;;                        'headline
+;;                      (lambda (hl)
+;;                        (when (org-element-property :EXPORT_TITLE hl)
+;;                          (goto-char (org-element-property :begin hl))
+;;                          (org-edit-headline (org-element-property :EXPORT_TITLE hl)))))
+
+(add-hook 'org-export-before-parsing-hook 'sync0-org-export-headline-replace)
+
 (defun sync0-org-export-latex-and-beamer ()
   "Export current org file with beamer if it has beamer as latex class."
   (interactive)
   (cond ((equal major-mode 'org-mode) 
-         (if (string-match "^\\#\\+SETUPFILE: .*beamer\\.org.*" (buffer-string))
+           (if (string-match "^\\#\\+SETUPFILE: .*beamer\\.org.*" (buffer-string))
+               (progn
+                 (setq org-latex-pdf-process '("latexmk -xelatex -bibtex -output-directory=%o -f %f"))
+                 (org-beamer-export-to-pdf))
              (progn
-               (setq org-latex-pdf-process '("latexmk -xelatex -bibtex -output-directory=%o -f %f"))
-               (org-beamer-export-to-pdf))
-           (progn
-             (setq org-latex-pdf-process '("latexmk -lualatex -bibtex -output-directory=%o -f %f"))
-             (org-latex-export-to-pdf))))
-        ((or (equal major-mode 'tex-mode) 
-             (equal major-mode 'latex-mode)) 
-         (tex-compile))
-        (t  (message "Impossible de produire un pdf à partir de ce fichier"))))
+               (setq org-latex-pdf-process '("latexmk -lualatex -bibtex -output-directory=%o -f %f"))
+               (org-latex-export-to-pdf))))
+         ((or (equal major-mode 'tex-mode) 
+              (equal major-mode 'latex-mode)) 
+          (tex-compile))
+         (t  (message "Impossible de produire un pdf à partir de ce fichier"))))
+
+;; (defun sync0-org-export-latex-and-beamer ()
+;;   "Export current org file with beamer if it has beamer as latex class."
+;;   (interactive)
+;;   (cond ((equal major-mode 'org-mode) 
+;;          ;; Replace headlines by EXPORT_T
+;;          ;; https://emacs.stackexchange.com/questions/44497/org-latex-export-name-sections-according-to-custom-id-rather-than-headline-s
+;;          (let ((org-export-before-parsing-hook
+;;                 '(lambda (_)
+;;                    (org-element-map (org-element-parse-buffer)
+;;                        'headline
+;;                      (lambda (hl)
+;;                        (when (org-element-property :EXPORT_TITLE hl)
+;;                          (goto-char (org-element-property :begin hl))
+;;                          (org-edit-headline (org-element-property :EXPORT_TITLE hl))))))))
+;;            (if (string-match "^\\#\\+SETUPFILE: .*beamer\\.org.*" (buffer-string))
+;;                (progn
+;;                  (setq org-latex-pdf-process '("latexmk -xelatex -bibtex -output-directory=%o -f %f"))
+;;                  (org-beamer-export-to-pdf))
+;;              (progn
+;;                (setq org-latex-pdf-process '("latexmk -lualatex -bibtex -output-directory=%o -f %f"))
+;;                (org-latex-export-to-pdf)))))
+;;          ((or (equal major-mode 'tex-mode) 
+;;               (equal major-mode 'latex-mode)) 
+;;           (tex-compile))
+;;          (t  (message "Impossible de produire un pdf à partir de ce fichier"))))
 
 ;; export headlines to separate files
 ;; http://emacs.stackexchange.com/questions/2259/how-to-export-top-level-headings-of-org-mode-buffer-to-separate-files

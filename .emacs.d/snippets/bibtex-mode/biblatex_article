@@ -2,7 +2,7 @@
 # name: biblatex_article
 # key: article
 # --
-@article\{${28:$$(unless yas-modified-p (sync0-bibtex-generate-autokey))},
+@Article\{${28:$$(unless yas-modified-p (sync0-bibtex-generate-autokey))},
 author = \{${5:$$(unless yas-modified-p (sync0-bibtex-completion-author))}\},
 date = \{${1:2001}\},
 title = \{${2:Artificial Intelligence}\},${3:

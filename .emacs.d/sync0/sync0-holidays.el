@@ -1,25 +1,25 @@
 
-(require 'cal-korea-x)
-(defvar holiday-korean-holidays nil "Korean holidays")
+;; (require 'cal-korea-x)
+;; (defvar holiday-korean-holidays nil "Korean holidays")
 (defvar holiday-french-holidays nil "French holidays")
 (defvar holiday-colombian-holidays nil "Colombian holidays")
 
-(setq holiday-korean-holidays
-      '((holiday-fixed 1 1          "신정")
-        (holiday-lunar-ko 1 nil 1   "설날" -1)
-        (holiday-lunar-ko 1 nil 1   "설날")
-        (holiday-lunar-ko 1 nil 1   "설날" 1)
-        (holiday-fixed 3 1          "3.1절")
-        (holiday-lunar-ko 4 nil 8   "석가탄신일")
-        (holiday-fixed 5 5          "어린이날")
-        (holiday-fixed 6 6          "현충일")
-        (holiday-fixed 8 15         "광복절")
-        (holiday-fixed 10 3         "개천절")
-        (holiday-fixed 10 9         "한글날")
-        (holiday-lunar-ko 8 nil 15  "추석" -1)
-        (holiday-lunar-ko 8 nil 15  "추석")
-        (holiday-lunar-ko 8 nil 15  "추석" 1)
-        (holiday-fixed 12 25        "성탄절")))
+;; (setq holiday-korean-holidays
+;;       '((holiday-fixed 1 1          "신정")
+;;         (holiday-lunar-ko 1 nil 1   "설날" -1)
+;;         (holiday-lunar-ko 1 nil 1   "설날")
+;;         (holiday-lunar-ko 1 nil 1   "설날" 1)
+;;         (holiday-fixed 3 1          "3.1절")
+;;         (holiday-lunar-ko 4 nil 8   "석가탄신일")
+;;         (holiday-fixed 5 5          "어린이날")
+;;         (holiday-fixed 6 6          "현충일")
+;;         (holiday-fixed 8 15         "광복절")
+;;         (holiday-fixed 10 3         "개천절")
+;;         (holiday-fixed 10 9         "한글날")
+;;         (holiday-lunar-ko 8 nil 15  "추석" -1)
+;;         (holiday-lunar-ko 8 nil 15  "추석")
+;;         (holiday-lunar-ko 8 nil 15  "추석" 1)
+;;         (holiday-fixed 12 25        "성탄절")))
 
 (setq holiday-french-holidays
       '((holiday-fixed 1 1 "Jour de l'an")
@@ -71,8 +71,11 @@
         (holiday-fixed 12 25 "Navidad")
         (holiday-fixed 12 8 "Inmaculada concepción")))
 
+;; (setq holiday-other-holidays
+;;       (append holiday-colombian-holidays holiday-french-holidays holiday-korean-holidays))
+
 (setq holiday-other-holidays
-      (append holiday-colombian-holidays holiday-french-holidays holiday-korean-holidays))
+      (append holiday-colombian-holidays holiday-french-holidays))
 
 (setq calendar-holidays
       (append holiday-general-holidays holiday-other-holidays))

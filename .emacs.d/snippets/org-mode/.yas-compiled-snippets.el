@@ -45,9 +45,11 @@
                        ("inlinecite" "[[parencite:${1:`(sync0-print-bibtex-key)`}][p. ${2:`(sync0-last-cited-page-two)`}]] $0\n" "org-ref_inline_citation" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/org-ref_inline_citation" nil nil)
                        ("dialogue" "#+BEGIN_dialogue\n\\speak\\{${1:Vladimir}\\} ${2:Whare are all these corpses from?}\n\\speak\\{${3:Estragon}\\} ${4:These skeletons.}\n${5:\\direct\\{\nEstragon has exited offstage to right and left and come panting back\nand fallen into Vladimir’s arms\\}}\n$0\n#+END_dialogue" "org-latex-dialogue-environment" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/org-latex-dialogue-environment" nil nil)
                        ("abstract" "#+BEGIN_abstract\n$1\n#+END_abstract\n$0" "org-latex-abstract" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/org-latex-abstract" nil nil)
-                       ("assddaaa" "((format-time-string \"%Y-%m-%d\"))\n" "org-date" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/org-date" nil nil)
+                       ("export" "#+EXPORT_FILE_NAME: `(sync0-org-format-export-keyword)`" "org-export-keyword" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/org-export-keyword" nil nil)
+                       ("info" ":INFO:\n:AUTHOR: \n:PARENT: \n:NOTES: \n:END:" "org-drawer-info" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/org-drawer-info" nil nil)
+                       ("assdate" "((format-time-string \"%Y-%m-%d\"))\n" "org-date" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/org-date" nil nil)
                        ("comment" "#+BEGIN_COMMENT\n$1\n#+END_COMMENT\n$0" "org-comment" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/org-comment" nil nil)
-                       ("date" "(`(sync0-insert-today-timestamp)`) $0" "org-brackets-today-timestamp" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/org-brackets-today-timestamp" nil nil)
+                       ("date" "(`(format-time-string \"%Y-%m-%d\")`) $0" "org-brackets-today-timestamp" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/org-brackets-today-timestamp" nil nil)
                        ("th" "\\nth{$1}$0" "nth" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/nth" nil nil)
                        ("pg" "(p. ${1:$$(unless yas-modified-p (sync0-reference-last-cited-pages))})$0" "note-taking-citation-pages" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/note-taking-citation-pages" nil nil)
                        ("math" "\\$${1:}\\$$0\n" "math_text" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/math_mode" nil nil)
@@ -110,4 +112,4 @@
                        ("beamer" "    :PROPERTIES:\n    :BEAMER_env: alertblock\n    :END:\n    #+BEGIN_EXAMPLE\n    \\begin{alertblock}{${1:Lorem ipsum dolor}}\n    $2\n    \\end{alertblock}\n    #+END_EXAMPLE\n    $0\n" "alert_block_beamer" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/beamer_alert_block" nil nil)))
 
 
-;;; Do not edit! File generated at Sun Jul 25 01:51:30 2021
+;;; Do not edit! File generated at Sat Aug 21 17:53:28 2021

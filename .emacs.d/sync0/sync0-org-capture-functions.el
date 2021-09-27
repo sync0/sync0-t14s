@@ -6,15 +6,22 @@
 
 ;; The following two functions are necessary to replicate the functionality of org-roam into org-capture.
 ;; https://emacs.stackexchange.com/questions/27620/orgmode-capturing-original-document-title
-(defun sync0-org-get-file-title-keyword (file)
-  (let (title)
-    (when file
-      (with-current-buffer
-          (get-file-buffer file)
-        (pcase (org-collect-keywords '("TITLE"))
-          (`(("TITLE" . ,val))
-           (setq title (car val)))))
-      title)))
+
+;; (defun sync0-org-get-title-keyword (file)
+;;   (let (title)
+;;     (when file
+;;       (with-current-buffer
+;;           (get-file-buffer file)
+;;         (pcase (org-collect-keywords '("TITLE"))
+;;           (`(("TITLE" . ,val))
+;;            (setq title (car val)))))
+;;       title)))
+
+(defun sync0-org-get-title-keyword (file)
+(interactive)
+  (with-temp-buffer
+    (insert-file-contents file)
+    (cadar (org-collect-keywords '("TITLE")))))
 
 ;; Adapted from: 
 ;; https://kitchingroup.cheme.cmu.edu/blog/2013/05/05/Getting-keyword-options-in-org-files/
@@ -52,17 +59,53 @@
 
 (defun sync0-org-get-id (file)
   (interactive)
-  (when file
-    (with-current-buffer
-        (get-file-buffer file)
-      (org-entry-get 1 "ID"))))
+  (with-temp-buffer
+    (insert-file-contents file)
+    (org-entry-get 1 "ID")))
 
-(defun sync0-org-capture-get-language (file)
+;; (defun sync0-org-get-id (file)
+;;   (interactive)
+;;   (when file
+;;     (with-current-buffer
+;;         (get-file-buffer file)
+;;       (org-entry-get 1 "ID"))))
+
+(defun sync0-org-get-language (file)
   (interactive)
-  (when file
-    (with-current-buffer
-        (get-file-buffer file)
-      (org-entry-get 1 "LANGUAGE"))))
+  (with-temp-buffer
+    (insert-file-contents file)
+    (org-entry-get 1 "LANGUAGE")))
+
+(defun sync0-org-capture-annotation-body ()
+  ;; Determine the filter for title completion candidates
+  ;; i.e., do not complete with all files
+  (let* ((id (org-id-new))
+         (title (completing-read "Titre du Zettel : "
+                                 (org-roam--get-titles)
+                                 nil nil nil nil nil t))
+         (alias (let ((x
+                       (read-string "Alias (comma separated): "
+                                    nil nil nil t)))
+                  (if (string-match-p "," x)
+
+                      (string-trim
+                       (prin1-to-string
+                        (split-string-and-unquote x ","))
+                       "(" ")")
+                    (concat "\"" x "\""))))
+         (creation  (format-time-string "%Y-%m-%d")))
+    ;; define string of zettel
+    (concat
+     "** " title "\n"
+     ":PROPERTIES:\n"
+     ":ID:      " id "\n"
+     (unless (or (null alias)
+                 (equal alias "\"\""))
+       (concat ":ROAM_ALIASES: "  alias "\n"))
+     ":CREATED: " creation "\n"
+     ":LAST_MODIFIED: " creation "\n"
+     ":ZETTEL_TYPE: annotation\n"
+     ":END:\n\n%?")))
 
 (defun sync0-org-capture-zettel-path ()
   "Output the path where the new zettel will be created"
@@ -149,7 +192,7 @@
      "#+FILETAGS:\n\n"
      "Origin: [[id:" (sync0-org-get-id buffer)
      "]["
-     (sync0-org-get-file-title-keyword buffer)
+     (sync0-org-get-title-keyword buffer)
      "]]\n\n%?")))
 
 (defun sync0-org-capture-zettel-body ()
@@ -268,7 +311,7 @@
                  (equal subtitle ""))
        (concat "#+SUBTITLE: " subtitle "\n"))
      (when (equal type "todo")
-       (concat "#+CATEGORY: " (upcase project) "\n"))
+       (concat "#+CATEGORY: " (upcase project) "\n#+TAGS: today(t) this_week(w) next_week(n) this_month(m)\n"))
      ;; add roam tags according to zettel type
      "#+FILETAGS: :" type 
      (cond ((equal type "annotation")
@@ -283,7 +326,7 @@
      "\n"
      "Origin: [[id:" (sync0-org-get-id buffer)
      "]["
-     (sync0-org-get-file-title-keyword buffer)
+     (sync0-org-get-title-keyword buffer)
      "]]\n\n"
      (if (equal type "annotation")
          (concat
@@ -298,7 +341,8 @@
        "%?"))))
 
 (defun sync0-org-capture-quick-reference ()
-  (let* ((type (completing-read "Choose BibLaTex entry type: " sync0-biblatex-entry-types))
+  (let* ((type (completing-read "Choose Bibtex entry type: " sync0-bibtex-entry-types))
+         (type-downcase (downcase type))
          (id (org-id-new))
          (filename (format-time-string "%Y%m%d%H%M%S"))
          (creation (format-time-string "%Y-%m-%d")) 
@@ -306,6 +350,9 @@
                                  (org-roam--get-titles)
                                  nil nil nil nil nil t))
          (subtitle (read-string "Sous-titre du texte : " nil nil nil t))
+         (title-fixed (if (equal subtitle "")
+                          title
+                        (concat title " : " subtitle)))
          (date (read-string "Date (ex. 1890-18-12) : "))
          (author (completing-read "Auteur : " sync0-bibtex-authors
                                     nil nil nil))
@@ -341,22 +388,43 @@
                                                  (setq x (concat x
                                                                  (progn
                                                                    (string-match "\\([[:graph:]]+\\),"   element)
-                                                                  (downcase (match-string 1 element)))
+                                                                   (match-string 1 element))
                                                                  ":"))))))
                             (substring last-names 0 -2)))
                          ((string-match "^{" author)
                           (string-match "{\\([[:print:]]+\\)}" author)
-                          (downcase (match-string 1 author)))
-                         (t (downcase (nth 0 (split-string author ", "))))))
+                          (match-string 1 author))
+                         (t (nth 0 (split-string author ", ")))))
+         (lastname-downcase (downcase lastname))
          (language (completing-read "Choose language : "
                                       sync0-bibtex-languages nil nil nil))
          (langid language) 
+         (lang (cond ((equal language "english")
+                      "en")
+                     ((equal language "french")
+                      "fr")
+                     ((equal language "spanish")
+                      "es")
+                     ((equal language "portuguese")
+                      "pt")
+                     ((equal language "german")
+                      "de")
+                     ((equal language "italian")
+                      "it")
+                     (t "en")))
+         ;; (medium (string-trim
+         ;;          (prin1-to-string
+         ;;           (completing-read-multiple "Quel support ?"
+         ;;                                     sync0-bibtex-media)) "(" ")"))
+         ;; (trace (completing-read "Choose location to trace back: "
+         ;;                              sync0-bibtex-traces nil nil nil))
          (addendum (read-string "Addendum (ex. Box, Folder, etc.) : "))
          (url (read-string "Url : " nil nil nil t))
          (urldate (unless (equal url "") creation))
-         (file (concat "/home/sync0/Documents/pdfs/" filename ".pdf"))
+         ;; (file-epub (concat "/home/sync0/Dropbox/pdfs/" filename ".epub"))
+         (file-pdf (concat "/home/sync0/Documents/pdfs/" filename ".pdf"))
          (buffer (buffer-file-name))     
-         (biblatex-definitions (list 
+         (bibtex-definitions (list 
                                 title
                                 subtitle
                                 date
@@ -366,12 +434,13 @@
                                 urldate
                                 language
                                 langid
-                                file))
-         (biblatex-fields (if (equal type "collection")
-                              (cl-substitute "editor" "author" sync0-biblatex-quick-fields)
-                            sync0-biblatex-quick-fields))
-         (fields (mapcar* #'(lambda (x y) (list x y)) biblatex-fields biblatex-definitions))
-         ;; define the biblatex entries
+                                ;; file-epub
+                                file-pdf))
+         (bibtex-fields (if (equal type "Collection")
+                              (cl-substitute "editor" "author" sync0-bibtex-quick-fields)
+                            sync0-bibtex-quick-fields))
+         (fields (mapcar* #'(lambda (x y) (list x y)) bibtex-fields bibtex-definitions))
+         ;; define the bibtex entries
          (entries
           (let (x)
             (dolist (element fields x) 
@@ -379,21 +448,51 @@
                           (equal (cadr element) ""))
                 (setq x (concat x (car element) " = {" (cadr element) "},\n"))))))
          ;; select target bibliography file (.bib)
-         (bib-file (completing-read "Fichier BibLaTeX : "
-                                    (f-files "~/Dropbox/bibliographies" (lambda (k) (string-match-p ".bib" k)))))
-         ;; create string of new biblatex entry
-         (biblatex-entry (concat "\n@" type "{" filename "," "\n" entries "\n}\n")))
+         (bib-file sync0-default-bibliography) 
+         ;; (bib-file (completing-read "Fichier Bibtex : "
+         ;;                            (f-files "~/Dropbox/bibliographies" (lambda (k) (string-match-p ".bib" k)))))
+         ;; create string of new bibtex entry
+         (obsidian-file (concat sync0-obsidian-directory filename ".md")) 
+         (obsidian-entry (concat "---\n"
+                                 "citekey: " filename "\n"
+                                 "created: " (format-time-string "%Y-%m-%d") "\n"
+                                 "biblatex_type: " type-downcase "\n"
+                                 "title: " title "\n"
+                                 (unless (equal subtitle "")
+                                   (concat "subtitle: " subtitle "\n"))
+                                 "authors: [" author-fixed "]\n"
+                                 "parent:\n" 
+                                 "aliases: [\""  lastname " " date  " " title-fixed "\"]\n"
+                                 "url: " url "\n"
+                                 "origdate:\n"
+                                 "date: (" date ")\n"
+                                 "media:\n"
+                                 "trace:\n"
+                                 "tags: [reference/" type-downcase ",r" filename "," lastname-downcase "]\n"
+                                 "---\n" 
+                                 "# " lastname " (" date ") " title-fixed "\n" 
+                                 "## Description\n\n" 
+                                 "## Progrès de la lecture\n\n" 
+                                 "## Annotations\n\n"))
+         (bibtex-entry (concat "\n@" type "{" filename "," "\n" entries "\n}\n")))
     ;; add biblatex entry to target bibliography file.
     ;; The entry has to be added this way to prevent a bug
-    ;; that happens with bibtex-completion: unless the entry
+    ;; that happens with biblatex-completion: unless the entry
     ;; is added in a different buffer, the template in org-capture
     ;; won't expand because the last output is not the template but
-    ;; a bibtex-completion message abour bibliography reloading
-    (with-current-buffer
-        (find-file-noselect bib-file)
+    ;; a biblatex-completion message abour bibliography reloading
+    (with-temp-buffer 
+      (insert obsidian-entry)
+      (write-file obsidian-file))
+    (with-temp-file bib-file
+      (insert-file-contents bib-file)
       (goto-char (point-max))
-      (insert biblatex-entry))
-    ;; (append-to-file biblatex-entry nil bib-file)
+      (insert bibtex-entry))
+    ;; (with-current-buffer
+    ;;     (find-file-noselect bib-file)
+    ;;   (goto-char (point-max))
+    ;;   (insert bibtex-entry))
+    ;; (append-to-file bibtex-entry nil bib-file)
     ;; define certain varibles to construct the path with another function
     (setq sync0-zettel-filename filename)
     (setq sync0-zettel-path (concat sync0-zettelkasten-directory "permanent"))
@@ -406,30 +505,35 @@
      ":PROPERTIES:\n"
      ":ID:      " id "\n"
      ":ROAM_REFS: cite:" filename "\n"
-     ":BIBLATEX_TYPE: " type "\n"
-     (when (equal type "online") (concat ":WEBSITE: " url "\n"))
+     ":BIBLATEX_TYPE: " type-downcase "\n"
+     (when (equal type "Online") (concat ":WEBSITE: " url "\n"))
      ":AUTHOR: \"" author-fixed "\"\n"
      ":CREATED: " creation "\n"
      ":LAST_MODIFIED: " creation "\n"
      ":ZETTEL_TYPE: reference\n"
+     ;; ":MEDIUM: " medium "\n"
+     ;; ":TRACE: \"" trace "\"\n"
      ":LANGUAGE: " language "\n"
-     ":DATE: \"" date "\"\n" 
+     ":DATE: " date "\n" 
+     ":END:\n:INFO:\n"
+     ":AUTHOR: \"" author-fixed "\"\n"
      ":END:\n"
+     "#+UID: " filename "\n"
      "#+TITLE: " title "\n"
      (unless (equal subtitle "") (concat "#+SUBTITLE: " subtitle "\n"))
      "#+AUTHOR: " author-fixed "\n"
-     "#+FILETAGS: :" filename ":" date ":" lastname ":\n"
-     "#+INTERLEAVE_PDF: " file "\n\n" 
-     "Origin: [[id:"
-     (sync0-org-get-id buffer)
-     "]["
-     (sync0-org-get-file-title-keyword buffer)
-     "]]\n\n%?")))
+     "#+DATE: " creation "\n"
+     "#+FILETAGS: :" filename ":" date ":" lastname-downcase ":\n"
+     ;; "#+EXPORT_FILE_NAME: /home/sync0/Dropbox/pdfs/" filename ".epub\n"
+     "#+LANGUAGE: " lang "\n"
+     "#+INTERLEAVE_PDF: " file-pdf "\n"
+     "#+OPTIONS: tex:dvipng broken-links:t todo:nil pri:nil\n\n* Annotations\n%?")))
 
 (defun sync0-org-capture-reference ()
   (let* ((type (if (equal (org-capture-get :key) "w")
                    "online"
-                 (completing-read "Choose BibLaTex entry type: " sync0-biblatex-entry-types)))
+                 (completing-read "Choose Bibtex entry type: " sync0-bibtex-entry-types)))
+         (type-downcase (downcase type))
          (id (org-id-new))
          (filename (format-time-string "%Y%m%d%H%M%S"))
          (creation (format-time-string "%Y-%m-%d")) 
@@ -437,6 +541,9 @@
                                  (org-roam--get-titles)
                                  nil nil nil nil nil t))
          (subtitle (read-string "Sous-titre du texte : " nil nil nil t))
+         (title-fixed (if (equal subtitle "")
+                          title
+                        (concat title " : " subtitle)))
          (derivation (yes-or-no-p "Derive entry?"))
          (crossref (when derivation
                      (let* ((candidates (bibtex-completion-candidates))
@@ -451,6 +558,9 @@
          (initial-author (unless (null derivation)
                            (sync0-org-ref-get-citation-author crossref)))
          (origdate (read-string "Origdate (ex. 1890-18-12) : "))
+         (date-fixed (if (equal date origdate)
+                         (concat "(" date ")")
+                       (concat "(" origdate ") (" date ")")))
          (author (completing-read "Auteur : " sync0-bibtex-authors
                                     nil nil initial-author))
          (author-fixed (cond ((string-match " and " author)
@@ -485,62 +595,83 @@
                                                  (setq x (concat x
                                                                  (progn
                                                                    (string-match "\\([[:graph:]]+\\),"   element)
-                                                                  (downcase (match-string 1 element)))
+                                                                   (match-string 1 element))
                                                                  ":"))))))
                             (substring last-names 0 -2)))
                          ((string-match "^{" author)
                           (string-match "{\\([[:print:]]+\\)}" author)
-                          (downcase (match-string 1 author)))
-                         (t (downcase (nth 0 (split-string author ", "))))))
+                          (match-string 1 author))
+                         (t (nth 0 (split-string author ", ")))))
+         (lastname-downcase (downcase lastname))
          (initial-language (unless (null derivation)
                              (sync0-org-ref-get-citation-language crossref)))
          (language (completing-read "Choose language : "
                                       sync0-bibtex-languages nil nil initial-language))
          (langid language) 
-         (journal (when (or (equal type "article")
-                        (equal type "incollection"))
+         (lang (cond ((equal language "english")
+                      "en")
+                     ((equal language "french")
+                      "fr")
+                     ((equal language "spanish")
+                      "es")
+                     ((equal language "portuguese")
+                      "pt")
+                     ((equal language "german")
+                      "de")
+                     ((equal language "italian")
+                      "it")
+                     (t "en")))
+         (journal (when (or (equal type "Article")
+                        (equal type "InCollection"))
                     (completing-read "Titre du journal : " sync0-bibtex-journals)))
          (volume
-            (when (or (equal type "article")
-                      (equal type "book")
-                      (equal type "inbook")
-                      (equal type "collection")
-                      (equal type "incollection"))
+            (when (or (equal type "Article")
+                      (equal type "Book")
+                      (equal type "InBook")
+                      (equal type "Collection")
+                      (equal type "InCollection"))
               (read-string "Tome : ")))
-         (number (when (equal type "article")
+         (number (when (equal type "Article")
                    (read-string "Numero : ")))
-         (publisher (unless (or (equal type "unpublished")
-                                 (equal type "article"))
+         (publisher (unless (or (equal type "Unpublished")
+                                 (equal type "Article"))
                       (completing-read "Maison d'edition : " sync0-bibtex-publishers)))
-         (location (when (or (equal type "book")
-                             (equal type "collection"))
+         (location (when (or (equal type "Book")
+                             (equal type "Collection"))
                      (completing-read "Location : " sync0-bibtex-locations)))
-         (pages (when (or (equal type "article")
-                          (equal type "incollection")
-                          (equal type "inbook"))
+         (pages (when (or (equal type "Article")
+                          (equal type "InCollection")
+                          (equal type "InBook"))
                   (read-string "Pages (ex. : 90-180) : ")))
-         (booktitle (when (and (or (equal type "inbook")
-                                   (equal type "incollection"))
+         (booktitle (when (and (or (equal type "InBook")
+                                   (equal type "InCollection"))
                                (null derivation))
                       (completing-read "Book title: " sync0-bibtex-booktitles)))
-         (booksubtitle (when (and (or (equal type "inbook")
-                                      (equal type "incollection"))
+         (booksubtitle (when (and (or (equal type "InBook")
+                                      (equal type "InCollection"))
                                   (null derivation))
                          (read-string "Book subtitle: " nil nil nil t)))
          (parent
           (cond ((and (null derivation)
-                      (equal type "article"))
+                      (equal type "Article"))
                  journal)
                 ((not (null booktitle))
                  booktitle)
                 ((not (null derivation))
                  (sync0-org-ref-get-citation-title crossref))
                 (t nil)))
-         (addendum (when (equal type "unpublished")
+         (medium (string-trim
+                  (prin1-to-string
+                   (completing-read-multiple "Quel support ?"
+                                             sync0-bibtex-media)) "(\"" "\")"))
+         (trace (completing-read "Choose location to trace back: "
+                                      sync0-bibtex-traces nil nil nil))
+         (addendum (when (equal type "Unpublished")
                      (read-string "Addendum (ex. Box, Folder, etc.) : ")))
          (url (read-string "Url : " nil nil nil t))
          (urldate (unless (equal url "") creation))
-         (file (concat "/home/sync0/Documents/pdfs/" filename ".pdf"))
+         (file-pdf (concat "/home/sync0/Documents/pdfs/" filename ".pdf"))
+         ;; (file-epub (concat "/home/sync0/Dropbox/pdfs/annotations/" filename ".epub"))
          (buffer (buffer-file-name))     
          ;; in case of extraction define these
          (extraction (unless (null derivation)
@@ -561,10 +692,10 @@
                      end
                      " -sOutputFile="
                      sync0-pdfs-folder filename ".pdf " origfile)))
-         ;; define list of conses whose first element is a biblatex category and
+         ;; define list of conses whose first element is a bibtex category and
          ;; the second element is its value, as a string, when previously defined
          ;; by this fucntion
-         (biblatex-definitions (list 
+         (bibtex-definitions (list 
                                 title
                                 subtitle
                                 date
@@ -584,12 +715,15 @@
                                 urldate
                                 language
                                 langid
-                                file))
-         (biblatex-fields (if (equal type "collection")
-                              (cl-substitute "editor" "author" sync0-biblatex-fields)
-                            sync0-biblatex-fields))
-         (fields (mapcar* #'(lambda (x y) (list x y)) biblatex-fields biblatex-definitions))
-         ;; define the biblatex entries
+                                medium
+                                trace
+                                ;; file-epub
+                                file-pdf))
+         (bibtex-fields (if (equal type "Collection")
+                              (cl-substitute "editor" "author" sync0-bibtex-fields)
+                            sync0-bibtex-fields))
+         (fields (mapcar* #'(lambda (x y) (list x y)) bibtex-fields bibtex-definitions))
+         ;; define the bibtex entries
          (entries
           (let (x)
             (dolist (element fields x) 
@@ -597,21 +731,52 @@
                           (equal (cadr element) ""))
                 (setq x (concat x (car element) " = {" (cadr element) "},\n"))))))
          ;; select target bibliography file (.bib)
-         (bib-file (completing-read "Fichier BibLaTeX : "
-                                    (f-files "~/Dropbox/bibliographies" (lambda (k) (string-match-p ".bib" k)))))
+         (obsidian-file (concat sync0-obsidian-directory filename ".md")) 
+         (obsidian-entry (concat "---\n"
+                                 "citekey: " filename "\n"
+                                 "created: " (format-time-string "%Y-%m-%d") "\n"
+                                 "biblatex_type: " type-downcase "\n"
+                                 "title: " title "\n"
+                                 (unless (equal subtitle "")
+                                   (concat "subtitle: " subtitle "\n"))
+                                 "authors: [" author-fixed "]\n"
+                                 "crossref: " crossref "\n"
+                                 "parent: " parent "\n" 
+                                 "aliases: [\"" lastname " " date-fixed  " " title-fixed "\"]\n"
+                                 "url: " url "\n"
+                                 "origdate: " origdate "\n"
+                                 "date: " date "\n"
+                                 "media: " medium "\n"
+                                 "trace: " trace "\n"
+                                 "tags: [reference/" type-downcase ",r" filename "," lastname-downcase "]\n"
+                                 "---\n" 
+                                 "# " lastname " " date-fixed " " title-fixed "\n" 
+                                 "## Description\n\n" 
+                                 "## Progrès de la lecture\n\n" 
+                                 "## Annotations\n\n"))
+         (bib-file sync0-default-bibliography)
+         ;; (bib-file (completing-read "Fichier BibLaTeX : "
+         ;;                            (f-files "~/Dropbox/bibliographies" (lambda (k) (string-match-p ".bib" k)))))
          ;; create string of new biblatex entry
-         (biblatex-entry (concat "\n@" type "{" filename "," "\n" entries "\n}\n")))
+         (bibtex-entry (concat "\n@" type "{" filename "," "\n" entries "\n}\n")))
     ;; add biblatex entry to target bibliography file.
     ;; The entry has to be added this way to prevent a bug
-    ;; that happens with bibtex-completion: unless the entry
+    ;; that happens with biblatex-completion: unless the entry
     ;; is added in a different buffer, the template in org-capture
     ;; won't expand because the last output is not the template but
-    ;; a bibtex-completion message abour bibliography reloading
-    (with-current-buffer
-        (find-file-noselect bib-file)
+    ;; a biblatex-completion message abour bibliography reloading
+    (with-temp-buffer 
+      (insert obsidian-entry)
+      (write-file obsidian-file))
+    (with-temp-file bib-file
+      (insert-file-contents bib-file)
       (goto-char (point-max))
-      (insert biblatex-entry))
-    ;; (append-to-file biblatex-entry nil bib-file)
+      (insert bibtex-entry))
+    ;; (with-current-buffer
+    ;;     (find-file-noselect bib-file)
+    ;;   (goto-char (point-max))
+    ;;   (insert bibtex-entry))
+    ;; (append-to-file bibtex-entry nil bib-file)
     ;; define certain varibles to construct the path with another function
     (setq sync0-zettel-filename filename)
     (setq sync0-zettel-path (concat sync0-zettelkasten-directory "permanent"))
@@ -627,6 +792,14 @@
     (add-to-list 'sync0-bibtex-locations location)
     (with-temp-file "~/.emacs.d/sync0-vars/bibtex-locations.txt"
       (sync0-insert-elements-of-list sync0-bibtex-locations)))
+(unless (member trace sync0-bibtex-traces)
+    (add-to-list 'sync0-bibtex-traces trace)
+    (with-temp-file "~/.emacs.d/sync0-vars/bibtex-traces.txt"
+      (sync0-insert-elements-of-list sync0-bibtex-traces)))
+(unless (member medium sync0-bibtex-media)
+    (add-to-list 'sync0-bibtex-media medium)
+    (with-temp-file "~/.emacs.d/sync0-vars/bibtex-media.txt"
+      (sync0-insert-elements-of-list sync0-bibtex-media)))
 (unless (member publisher sync0-bibtex-publishers)
     (add-to-list 'sync0-bibtex-publishers location)
     (with-temp-file "~/.emacs.d/sync0-vars/bibtex-publishers.txt"
@@ -651,29 +824,39 @@
      (unless (or (null crossref)
                  (equal crossref ""))
        (concat ":CROSSREF: cite:" crossref "\n"))
-     ":BIBLATEX_TYPE: " type "\n"
+     ":BIBLATEX_TYPE: " type-downcase "\n"
      (unless (or (null parent)
                  (equal parent ""))
        (concat ":PARENT: \"" parent "\"\n"))
-     (when (equal type "online") (concat ":WEBSITE: " url "\n"))
+     (when (equal type "Online") (concat ":WEBSITE: " url "\n"))
      ":AUTHOR: \"" author-fixed "\"\n"
      ":CREATED: " creation "\n"
      ":LAST_MODIFIED: " creation "\n"
      ":ZETTEL_TYPE: reference\n"
      ":LANGUAGE: " language "\n"
-     ":DATE: \"" date "\"\n" 
-     (unless (equal origdate "") (concat ":ORIG_DATE: \"" origdate "\"\n"))
+     ":MEDIUM: " medium "\n"
+     ":TRACE: \"" trace "\"\n"
+     ":DATE: " date "\n" 
+     (unless (equal origdate "") (concat ":ORIG_DATE: " origdate "\n"))
+     ":END:\n:INFO:\n:"
+     ":AUTHOR: \"" author-fixed "\"\n"
+     (unless (or (null parent)
+                 (equal parent ""))
+       (concat ":PARENT: \"" parent "\"\n"))
+     (unless (or (null crossref)
+                 (equal crossref ""))
+       (concat ":CROSSREF: cite:" crossref "\n"))
      ":END:\n"
+     "#+UID: " filename "\n"
      "#+TITLE: " title "\n"
      (unless (equal subtitle "") (concat "#+SUBTITLE: " subtitle "\n"))
      "#+AUTHOR: " author-fixed "\n"
-     "#+FILETAGS: :" filename ":" date ":" lastname ":\n"
-     "#+INTERLEAVE_PDF: " file "\n\n" 
-     "Origin: [[id:"
-     (sync0-org-get-id buffer)
-     "]["
-     (sync0-org-get-file-title-keyword buffer)
-     "]]\n\n%?")))
+     "#+DATE: " creation "\n"
+     "#+FILETAGS: :" filename ":" date ":" lastname-downcase ":\n"
+     ;; "#+EXPORT_FILE_NAME: /home/sync0/Dropbox/pdfs/annotations/" filename ".epub\n"
+     "#+LANGUAGE: " lang "\n"
+     "#+INTERLEAVE_PDF: " file-pdf "\n"
+     "#+OPTIONS: tex:dvipng broken-links:t todo:nil pri:nil\n\n* Annotations%?")))
 
 ;; (when (equal type "online") "%:initial%?")
 

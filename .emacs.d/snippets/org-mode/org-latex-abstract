@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: org-latex-abstract
+# key: abstract
+# --
+#+BEGIN_abstract
+$1
+#+END_abstract
+$0
