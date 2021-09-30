@@ -87,15 +87,24 @@
       (bibtex-search-entry key nil 0)
       (prog1 (reftex-get-bib-field "title" (bibtex-parse-entry t))))))
 
+;; (defun sync0-org-ref-get-citation-author (key)
+;;   "Get the year of an entry with KEY.  Return year as a string."
+;;   (let* ((results (org-ref-get-bibtex-key-and-file key))
+;;          (bibfile (cdr results)))
+;;     (with-temp-buffer
+;;       (insert-file-contents bibfile)
+;;       (bibtex-set-dialect (parsebib-find-bibtex-dialect) t)
+;;       (bibtex-search-entry key nil 0)
+;;       (prog1 (reftex-get-bib-field "author" (bibtex-parse-entry t))))))
+
 (defun sync0-org-ref-get-citation-author (key)
   "Get the year of an entry with KEY.  Return year as a string."
-  (let* ((results (org-ref-get-bibtex-key-and-file key))
-         (bibfile (cdr results)))
-    (with-temp-buffer
-      (insert-file-contents bibfile)
-      (bibtex-set-dialect (parsebib-find-bibtex-dialect) t)
-      (bibtex-search-entry key nil 0)
-      (prog1 (reftex-get-bib-field "author" (bibtex-parse-entry t))))))
+  (let* ((entry (bibtex-completion-get-entry key))
+         (type (cdr (assoc "=type=" entry))))
+    (if (or (equal type "collection")
+            (equal type "Collection"))
+        (cdr (assoc "editor" entry))
+      (cdr (assoc "author" entry)))))
 
 (setq sync0-bibtex-current-author "John Doe")
 (setq sync0-bibtex-current-zettel-type "John Doe")

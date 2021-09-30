@@ -42,11 +42,12 @@
                        ("lt" "| Eu   | ${1:sou}   |\n| Tu   | ${2:es}    |\n| Ele  | ${3:é}     |\n| Nós  | ${4:somos} |\n| Vós  | ${5:sois}  |\n| Eles | ${6:são}   |\n\n$0" "org-table-conjugation" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/org-table-conjugation" nil nil)
                        ("straight" ":straight (${1:the-package} :type git :host github :repo \"${2:john-doe/awesome-package}\") $0" "org-straight" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/org-straight" nil nil)
                        ("re" "** `(format-time-string \"%Y%m%d%H%M%S\")`\n$0" "org-roam-notetaking-headline" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/org-roam-notetaking-headline" nil nil)
+                       ("anot" "** ${1:Titre} \n:PROPERTIES:\n:ID:    `(org-id-new)`${2:\n:ROAM_ALIASES:   ${3:Aliases}}\n:CREATED:  `(format-time-string \"%Y-%m-%d\")`\n:LAST_MODIFIED: `(format-time-string \"%Y-%m-%d\")`\n:ZETTEL_TYPE: annotation\n:END:\n\n$0" "org-roam-annotation-infile" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/org-roam-annotation-infile" nil nil)
                        ("inlinecite" "[[parencite:${1:`(sync0-print-bibtex-key)`}][p. ${2:`(sync0-last-cited-page-two)`}]] $0\n" "org-ref_inline_citation" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/org-ref_inline_citation" nil nil)
                        ("dialogue" "#+BEGIN_dialogue\n\\speak\\{${1:Vladimir}\\} ${2:Whare are all these corpses from?}\n\\speak\\{${3:Estragon}\\} ${4:These skeletons.}\n${5:\\direct\\{\nEstragon has exited offstage to right and left and come panting back\nand fallen into Vladimir’s arms\\}}\n$0\n#+END_dialogue" "org-latex-dialogue-environment" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/org-latex-dialogue-environment" nil nil)
                        ("abstract" "#+BEGIN_abstract\n$1\n#+END_abstract\n$0" "org-latex-abstract" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/org-latex-abstract" nil nil)
                        ("export" "#+EXPORT_FILE_NAME: `(sync0-org-format-export-keyword)`" "org-export-keyword" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/org-export-keyword" nil nil)
-                       ("info" ":INFO:\n:AUTHOR: \n:PARENT: \n:NOTES: \n:END:" "org-drawer-info" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/org-drawer-info" nil nil)
+                       ("info" ":INFO:\n:AUTHOR: \n:CROSSREF: \n:PARENT: \n:NOTES: `(sync0-org-insert-link-to-notes-from-bibkey)` \n:END:" "org-drawer-info" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/org-drawer-info" nil nil)
                        ("assdate" "((format-time-string \"%Y-%m-%d\"))\n" "org-date" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/org-date" nil nil)
                        ("comment" "#+BEGIN_COMMENT\n$1\n#+END_COMMENT\n$0" "org-comment" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/org-comment" nil nil)
                        ("date" "(`(format-time-string \"%Y-%m-%d\")`) $0" "org-brackets-today-timestamp" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/org-brackets-today-timestamp" nil nil)
@@ -112,4 +113,4 @@
                        ("beamer" "    :PROPERTIES:\n    :BEAMER_env: alertblock\n    :END:\n    #+BEGIN_EXAMPLE\n    \\begin{alertblock}{${1:Lorem ipsum dolor}}\n    $2\n    \\end{alertblock}\n    #+END_EXAMPLE\n    $0\n" "alert_block_beamer" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/beamer_alert_block" nil nil)))
 
 
-;;; Do not edit! File generated at Sat Aug 21 17:53:28 2021
+;;; Do not edit! File generated at Tue Sep 28 20:47:52 2021

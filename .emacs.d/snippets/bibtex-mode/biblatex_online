@@ -2,19 +2,16 @@
 # name: biblatex_online
 # key: online
 # --
-@online\{${19:$$(unless yas-modified-p (sync0-bibtex-generate-autokey))},
-`(yas-choose-value '("author" "editor"))` = \{$5\},
-date = \{${1:2001}\},
-title = \{${2:Artificial Intelligence}\},${3:
-subtitle = \{${4:The New Era}\},}${6:
+@Online\{`(sync0-bibtex-new-key)`,
+author = \{${1:$$(yas-choose-value sync0-bibtex-authors)}\},
+date = \{${2:2001-12-01}\},
+title = \{${3:Artificial Intelligence}\},${4:
+subtitle = \{${5:The New Era}\},}${6:
 organization = \{${7:24}\},}${8:
-crossref = \{${9:$$(unless yas-modified-p (yas-choose-value bibtex-reference-keys))}\},}${10:
-version = \{${11:2}\},}
-url = \{$12\},
-urldate = \{${13:$$(unless yas-modified-p (insert (shell-command-to-string "echo -n $(date +'%Y-%m-%d')")))}\},${14:
-doi = \{${15:http://doi.library.cmu.edu/10.1184/pmc/simon/box00071/fld05501/bdl0001/doc0001}\},}
-language = \{${16:$$(yas-choose-value '("english" "french" "italian" "spanish" "german"))}\},
-langid = \{$16\},${17:
-langidopts = \{${18:$$(unless yas-modified-p (save-excursion (if (search-backward "english" nil t 1) "variant=american" (match-string 1))))}\},}
-keywords = \{${20:$$(unless yas-modified-p (sync0-bibtex-extract-lastnames-lowercase))}\},
-\} $0
+version = \{${9:2}\},}
+url = \{$10\},
+urldate = \{${11:$$(unless yas-modified-p (format-time-string "%Y-%m-%d"))}\},${12:
+language = \{${13:$$(yas-choose-value sync0-bibtex-languages)}\},
+langid = \{$13\},
+keywords = \{${14:$$(unless yas-modified-p (sync0-bibtex-extract-lastnames-lowercase))}\},
+\}$0`(sync0-bibtex-update-sync0-variables)`

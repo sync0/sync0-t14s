@@ -1,4 +1,5 @@
-print,digital
-print
-online
 digital
+online
+print
+print,digital
+

@@ -222,7 +222,11 @@
     "List of Bibtex entry types")
 
   (defvar sync0-bibtex-fields
-    '("title" "subtitle" "date" "origdate" "author" "journaltitle" "booktitle" "booksubtitle" "crossref" "volume" "number" "publisher" "location" "pages" "addendum" "url" "urldate" "language" "langid" "medium" "trace" "file")
+    '("title" "subtitle" "date" "origdate" "author" "journaltitle" "booktitle" "booksubtitle" "crossref" "volume" "number" "publisher" "location" "pages" "addendum" "url" "urldate" "language" "langid" "medium" "library" "file")
+    "List of Bibtex entry fields")
+
+  (defvar sync0-bibtex-full-fields
+    '("title" "subtitle" "date" "origdate" "author" "journaltitle" "booktitle" "booksubtitle" "translator" "crossref"  "eventdate" "eventtitle" "venue" "volume" "number" "chapter" "edition" "pages" "publisher" "location" "pages" "addendum" "url" "urldate" "language" "langid" "library" "file")
     "List of Bibtex entry fields")
 
   (defvar sync0-bibtex-quick-fields
@@ -541,7 +545,7 @@ when necessary."
        "(" ")")
     string))
 
-;; (require 'sync0-test-functions)
+(require 'sync0-test-functions)
 
 (use-package undo-tree
   :custom
@@ -856,22 +860,17 @@ when necessary."
   (evil-leader/set-key  "P" 'projectile-commander))
 
 (setq initial-scratch-message ";; 
- ;;
- ;;   Man should not be ready to show that he can live like a
- ;;   badly-fed animal. He should decline to live like that, and
- ;;   should either steal or go on the rates, which is considered by
- ;;   many to be a form of stealing. As for begging, it is safer to
- ;;   beg than to take, but it is finer to take than to beg. No: a
- ;;   poor man who is ungrateful, unthrifty, discontented, and
- ;;   rebellious, is probably a real personality, and has much in him.
- ;;   He is at any rate a healthy protest. As for the virtuous poor,
- ;;   one can pity them, of course, but one cannot possibly admire
- ;;   them. They have made private terms with the enemy, and sold
- ;;   their birthright for very bad pottage.
- ;;
- ;;   Oscar Wilde
- ;;   The Soul of Man under Socialism (1891)
- ;; ")
+;; « Ces bonnes gens qui dorment tranquilles, c'est drôle!
+;; Patience! un nouveau 89 se prépare! On est las de constitutions,
+;; de chartes, de subtilités, de mensonges! Ah! si j'avais un
+;; journal ou une tribune, comme je vous secouerais tout cela! Mais,
+;; pour entreprendre n'importe quoi, il faut de l'argent! Quelle
+;; malédiction que d'être le fils d'un cabaretier et de perdre sa
+;; jeunesse à la quête de son pain! »
+;;
+;; Gustave Flaubert
+;; L'éducation sentimentale (1885)
+;; ")
 
      (defun sync0-toggle-mode-line () 
        "toggles the modeline on and off"
@@ -1095,7 +1094,7 @@ when necessary."
                                  :family "Inconsolata"
                                  :height 150)
              ;;:height 175
-             (setq line-spacing 0.5))
+             (setq line-spacing 1))
     ;; low resolution font size
     (progn (set-face-attribute 'default nil 
                                :family "Inconsolata"
@@ -2797,7 +2796,9 @@ when necessary."
   ;; (add-to-list 'lsp-enabled-clients 'digestif)
   :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
          (python-mode . lsp-deferred)
-         (js2-mode . lsp-deferred)
+         (typescript-mode . lsp)
+         (js2-mode . lsp)
+         (js-mode . lsp)
          (LaTeX-mode . lsp-deferred)
          ;; (tex-mode . lsp-deferred)
          (nxml-mode . lsp-deferred)
@@ -2822,6 +2823,7 @@ when necessary."
   :config
   (add-hook 'js2-mode-hook #'skewer-mode)
   (add-hook 'css-mode-hook #'skewer-css-mode)
+  (add-hook 'web-mode-hook #'skewer-mode)
   (add-hook 'html-mode-hook #'skewer-html-mode))
 
 (use-package browse-url
@@ -2832,15 +2834,29 @@ when necessary."
 
 (use-package web-mode
   :straight (web-mode :type git :host github :repo "fxbois/web-mode") 
+  :mode
+  (("\\.phtml\\'" . web-mode)
+  ;; ("\\.jsx\\'" . web-mode)
+  ("\\.tpl\\.php\\'" . web-mode)
+  ("\\.[agj]sp\\'" . web-mode)
+  ("\\.as[cp]x\\'" . web-mode)
+  ("\\.erb\\'" . web-mode)
+  ("\\.mustache\\'" . web-mode)
+  ("\\.djhtml\\'" . web-mode)
+  ("\\.html?\\'" . web-mode)))
+
+(use-package multi-web-mode
+  :straight (multi-web-mode :type git :host github :repo "fgallina/multi-web-mode") 
+:disabled t
+:custom
+(mweb-default-major-mode 'web-mode)
+(mweb-filename-extensions '("php" "htm" "html" "ctp" "phtml" "php4" "php5"))
   :config
-  (add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.[agj]sp\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode)))
+(setq mweb-tags '((php-mode "<\\?php\\|<\\? \\|<\\?=" "\\?>")
+                  (js2-mode "<script +\\(type=\"text/javascript\"\\|language=\"javascript\"\\)[^>]*>" "</script>")
+                  (js2-mode  "<script[^>]*>" "</script>")
+                  (css-mode "<style +type=\"text/css\"[^>]*>" "</style>")))
+(multi-web-global-mode 1))
 
 (use-package emmet-mode
   :straight (emmet-mode :type git :host github :repo "smihica/emmet-mode") 
@@ -2982,6 +2998,20 @@ when necessary."
                (ElispVariable . ,(all-the-icons-material "check_circle"             :face 'all-the-icons-blue))
                (ElispFeature  . ,(all-the-icons-material "stars"                    :face 'all-the-icons-orange))
                (ElispFace     . ,(all-the-icons-material "format_paint"            :face 'all-the-icons-pink))))))
+
+(use-package company-lsp
+  :after lsp
+  :straight (company-lsp :type git :host github :repo "tigersoldier/company-lsp") 
+  :config
+  (setq company-lsp-cache-candidates 'auto
+        company-lsp-async t
+        company-lsp-enable-snippet nil
+        company-lsp-enable-recompletion t))
+
+(use-package typescript-mode
+  :straight (typescript-mode :type git :host github :repo "emacs-typescript/typescript.el")
+  :mode (("\\.ts\\'" . typescript-mode)
+         ("\\.tsx\\'" . typescript-mode)))
 
 (use-package nxml-mode
   :straight nil
@@ -3290,53 +3320,53 @@ _q_uit
      :config
      (require 'sync0-ivy-bibtex-functions)))
 
-   (use-package bibtex
-     :straight nil
-     :custom
-     (bibtex-dialect 'biblatex) ;; biblatex as default bib format
-     (bibtex-maintain-sorted-entries t)
-     (bibtex-field-delimiters 'braces)
-     (bibtex-entry-delimiters 'braces)
-     (bibtex-comma-after-last-field t)
-     (bibtex-align-at-equal-sign t)
-     (bibtex-text-indentation 0)
-     (bibtex-autokey-names 1)
-     (bibtex-autokey-names-stretch 1)
-     ;; (bibtex-autokey-additional-names "_et_al")
-     (bibtex-autokey-name-separator "_")
-     (bibtex-autokey-name-year-separator "")
-     (bibtex-autokey-name-length t)
-     (bibtex-autokey-year-title-separator "")
-     (bibtex-autokey-titleword-length 0)
-     (bibtex-autokey-year-length 4)
-     (bibtex-autokey-titleword-case-convert "uppercase")
-     (bibtex-autokey-titlewords 0)
-     (bibtex-align-at-equal-sign t)
-     (bibtex-text-indentation 22)
-     (bibtex-entry-format '(opts-or-alts page-dashes whitespace braces last-comma delimiters sort-fields realign))
-     ;; (bibtex-entry-format '(opts-or-alts numerical-fields page-dashes whitespace braces last-comma delimiters sort-fields))
-     ;; (bibtex-entry-format '(opts-or-alts required-fields numerical-fields page-dashes whitespace braces last-comma delimiters sort-fields))
+(use-package bibtex
+  :straight nil
+  :custom
+  (bibtex-dialect 'biblatex) ;; biblatex as default bib format
+  (bibtex-maintain-sorted-entries t)
+  (bibtex-field-delimiters 'braces)
+  (bibtex-entry-delimiters 'braces)
+  (bibtex-comma-after-last-field t)
+  (bibtex-text-indentation 0)
+  (bibtex-autokey-names 0)
+  ;; (bibtex-autokey-names-stretch 1)
+  ;; (bibtex-autokey-additional-names "_et_al")
+  ;; (bibtex-autokey-name-separator "_")
+  ;; (bibtex-autokey-name-year-separator "")
+  (bibtex-autokey-name-length 0)
+  (bibtex-autokey-year-title-separator "")
+  (bibtex-autokey-titleword-length 0)
+  (bibtex-autokey-year-length 0)
+  ;; (bibtex-autokey-titleword-case-convert "uppercase")
+  (bibtex-autokey-titlewords 0)
+  (bibtex-align-at-equal-sign t)
+  (bibtex-text-indentation 22)
+  (bibtex-entry-format '(opts-or-alts page-dashes whitespace braces last-comma delimiters sort-fields realign))
+  ;; (bibtex-entry-format '(opts-or-alts numerical-fields page-dashes whitespace braces last-comma delimiters sort-fields))
+  ;; (bibtex-entry-format '(opts-or-alts required-fields numerical-fields page-dashes whitespace braces last-comma delimiters sort-fields))
+  :init
+  (defun sync0-bibtex-set-fill-column ()
+    (setq-local fill-column 999999))
+  :hook
+    (bibtex-mode . sync0-bibtex-set-fill-column)
+  :config
+    (require 'bibtex-completion)
+    (require 'sync0-bibtex-functions)
+    (require 'sync0-bibtex-fields)
 
-     :config
-(add-hook 'bibtex-mode-hook
-             (lambda () (setq fill-column 999999)))
+    (unbind-key "TAB" bibtex-mode-map)
 
-     (require 'bibtex-completion)
-     (require 'sync0-bibtex-functions)
-     (require 'sync0-bibtex-fields)
-
-         (unbind-key "TAB" bibtex-mode-map)
-
-     (defvar sync0-bibtex-reference-keys
-       (lazy-completion-table sync0-bibtex-reference-keys
-                              (lambda () (sync0-bibtex-parse-keys nil t)))
-       "Completion table for BibTeX reference keys.
+    (defvar sync0-bibtex-reference-keys
+      (lazy-completion-table sync0-bibtex-reference-keys
+                             (lambda () (sync0-bibtex-parse-keys nil t)))
+      "Completion table for BibTeX reference keys.
    The CDRs of the elements are t for header keys and nil for crossref keys.")
 
 
-       (evil-define-key 'normal bibtex-mode-map
-         "K" 'sync0-bibtex-previous-key
-         "J" 'sync0-bibtex-next-key))
+    (evil-define-key 'normal bibtex-mode-map
+      "K" 'sync0-bibtex-previous-key
+      "J" 'sync0-bibtex-next-key))
 
    (use-package pdf-tools
      ;; :straight (pdf-tools :type git :host github :repo "politza/pdf-tools") 

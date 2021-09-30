@@ -2,32 +2,26 @@
 # name: biblatex_incollection
 # key: incollection
 # --
-@incollection\{${39:$$(unless yas-modified-p (sync0-bibtex-generate-autokey))},
-author = \{${5:Simon, Herbert}\},
-date = \{${1:2001}\},
-title = \{${2:Artificial Intelligence}\},${3:
-subtitle = \{${4:The New Era}\},}${6:
-crossref = \{${7:$$(unless yas-modified-p (yas-choose-value bibtex-reference-keys))}\},}${8:
+@InCollection\{`(sync0-bibtex-new-key)`,
+author = \{${1:$$(yas-choose-value sync0-bibtex-authors)}\},
+date = \{${2:2001-12-01}\},
+title = \{${3:Artificial Intelligence}\},${4:
+subtitle = \{${5:The New Era}\},}${6:
+crossref = \{${7:$$(unless yas-modified-p (sync0-bibtex-pick-crossref))}\},}${8:
 booktitle = \{${9:Artificial Intelligence}\},}${10:
 booksubtitle = \{${11:Artificial Intelligence}\},}${12:
 series = \{${13:The Great Economists}\},}${14:
 volume = \{${15:24}\},}${16:
 chapter = \{${17:9}\},}
-pages = \{${18:45--28}\},
-edition = \{${19:1}\},
-publisher = \{${20:Routledge}\},
-editor = \{${21:Johnes, Bobby}\},${22:
-translator = \{${23:Willson, Stephen}\},}
-location = \{${24:Chicago, New York}\},${25:
-url = \{$26\},
-urldate = \{${27:$$(unless yas-modified-p (insert (shell-command-to-string "echo -n $(date +'%Y-%m-%d')")))}\},}${28:
-doi = \{${29:http://doi.library.cmu.edu/10.1184/pmc/simon/box00071/fld05501/bdl0001/doc0001}\},}
-library = \{${30:Personal Collection}\},
-isbn = \{${31:???}\},${32:
-origlanguage = \{${33:$$(yas-choose-value '("english" "french" "italian" "spanish" "german"))}\},}
-language = \{${34:$$(yas-choose-value '("english" "french" "italian" "spanish" "german"))}\},
-langid = \{$34\},${35:
-langidopts = \{${36:$$(unless yas-modified-p (save-excursion (if (search-backward "english" nil t 1) "variant=american" (match-string 1))))}\},}
-file = \{/home/sync0/Documents/pdfs/${37:$$(unless yas-modified-p (sync0-bibtex-extract-lastnames))}_$1_$2${38:_$4}.pdf\},
-keywords = \{${40:$$(unless yas-modified-p (sync0-bibtex-extract-lastnames-lowercase))}\},
-\} $0
+pages = \{${18:45--28}\},${19:
+publisher = \{${20:$$(yas-choose-value sync0-bibtex-publishers)}\},}${21:
+editor = \{${22:$$(yas-choose-value sync0-bibtex-authors)}\},}
+location = \{${23:$$(yas-choose-value sync0-bibtex-locations)}\},${24:
+url = \{$25\},
+urldate = \{${26:$$(unless yas-modified-p (format-time-string "%Y-%m-%d"))}\},}${27:
+library = \{${28:$$(yas-choose-value sync0-bibtex-traces)}\},}
+language = \{${29:$$(yas-choose-value sync0-bibtex-languages)}\},
+langid = \{$29\},
+file = \{/home/sync0/Documents/pdfs/`(insert sync0-bibtex-new-key)`.pdf\},
+keywords = \{${30:$$(unless yas-modified-p (sync0-bibtex-extract-lastnames-lowercase))}\},
+\}$0`(sync0-bibtex-update-sync0-variables)`

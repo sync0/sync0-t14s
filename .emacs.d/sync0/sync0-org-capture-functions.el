@@ -416,7 +416,7 @@
          ;;          (prin1-to-string
          ;;           (completing-read-multiple "Quel support ?"
          ;;                                     sync0-bibtex-media)) "(" ")"))
-         ;; (trace (completing-read "Choose location to trace back: "
+         ;; (library (completing-read "Choose location to trace back: "
          ;;                              sync0-bibtex-traces nil nil nil))
          (addendum (read-string "Addendum (ex. Box, Folder, etc.) : "))
          (url (read-string "Url : " nil nil nil t))
@@ -454,20 +454,21 @@
          ;; create string of new bibtex entry
          (obsidian-file (concat sync0-obsidian-directory filename ".md")) 
          (obsidian-entry (concat "---\n"
+                                 "zettel_type: reference\n"
                                  "citekey: " filename "\n"
                                  "created: " (format-time-string "%Y-%m-%d") "\n"
                                  "biblatex_type: " type-downcase "\n"
                                  "title: " title "\n"
                                  (unless (equal subtitle "")
                                    (concat "subtitle: " subtitle "\n"))
-                                 "authors: [" author-fixed "]\n"
+                                 "author: [" author-fixed "]\n"
                                  "parent:\n" 
                                  "aliases: [\""  lastname " " date  " " title-fixed "\"]\n"
                                  "url: " url "\n"
                                  "origdate:\n"
                                  "date: (" date ")\n"
                                  "media:\n"
-                                 "trace:\n"
+                                 "library:\n"
                                  "tags: [reference/" type-downcase ",r" filename "," lastname-downcase "]\n"
                                  "---\n" 
                                  "# " lastname " (" date ") " title-fixed "\n" 
@@ -512,7 +513,7 @@
      ":LAST_MODIFIED: " creation "\n"
      ":ZETTEL_TYPE: reference\n"
      ;; ":MEDIUM: " medium "\n"
-     ;; ":TRACE: \"" trace "\"\n"
+     ;; ":LIBRARY: \"" library "\"\n"
      ":LANGUAGE: " language "\n"
      ":DATE: " date "\n" 
      ":END:\n:INFO:\n"
@@ -664,7 +665,7 @@
                   (prin1-to-string
                    (completing-read-multiple "Quel support ?"
                                              sync0-bibtex-media)) "(\"" "\")"))
-         (trace (completing-read "Choose location to trace back: "
+         (library (completing-read "Choose location to trace back: "
                                       sync0-bibtex-traces nil nil nil))
          (addendum (when (equal type "Unpublished")
                      (read-string "Addendum (ex. Box, Folder, etc.) : ")))
@@ -716,7 +717,7 @@
                                 language
                                 langid
                                 medium
-                                trace
+                                library
                                 ;; file-epub
                                 file-pdf))
          (bibtex-fields (if (equal type "Collection")
@@ -733,13 +734,14 @@
          ;; select target bibliography file (.bib)
          (obsidian-file (concat sync0-obsidian-directory filename ".md")) 
          (obsidian-entry (concat "---\n"
+                                 "zettel_type: reference\n"
                                  "citekey: " filename "\n"
                                  "created: " (format-time-string "%Y-%m-%d") "\n"
                                  "biblatex_type: " type-downcase "\n"
                                  "title: " title "\n"
                                  (unless (equal subtitle "")
                                    (concat "subtitle: " subtitle "\n"))
-                                 "authors: [" author-fixed "]\n"
+                                 "author: [" author-fixed "]\n"
                                  "crossref: " crossref "\n"
                                  "parent: " parent "\n" 
                                  "aliases: [\"" lastname " " date-fixed  " " title-fixed "\"]\n"
@@ -747,7 +749,7 @@
                                  "origdate: " origdate "\n"
                                  "date: " date "\n"
                                  "media: " medium "\n"
-                                 "trace: " trace "\n"
+                                 "library: " library "\n"
                                  "tags: [reference/" type-downcase ",r" filename "," lastname-downcase "]\n"
                                  "---\n" 
                                  "# " lastname " " date-fixed " " title-fixed "\n" 
@@ -792,8 +794,8 @@
     (add-to-list 'sync0-bibtex-locations location)
     (with-temp-file "~/.emacs.d/sync0-vars/bibtex-locations.txt"
       (sync0-insert-elements-of-list sync0-bibtex-locations)))
-(unless (member trace sync0-bibtex-traces)
-    (add-to-list 'sync0-bibtex-traces trace)
+(unless (member library sync0-bibtex-traces)
+    (add-to-list 'sync0-bibtex-traces library)
     (with-temp-file "~/.emacs.d/sync0-vars/bibtex-traces.txt"
       (sync0-insert-elements-of-list sync0-bibtex-traces)))
 (unless (member medium sync0-bibtex-media)
@@ -835,7 +837,7 @@
      ":ZETTEL_TYPE: reference\n"
      ":LANGUAGE: " language "\n"
      ":MEDIUM: " medium "\n"
-     ":TRACE: \"" trace "\"\n"
+     ":LIBRARY: \"" library "\"\n"
      ":DATE: " date "\n" 
      (unless (equal origdate "") (concat ":ORIG_DATE: " origdate "\n"))
      ":END:\n:INFO:\n:"

@@ -1,3 +1,149 @@
+(defun sync0-obsidian-import-reference ()
+  "Import target markdown note into our bibtex file."
+  (interactive)
+  (let* ((key (read-string "Input existing key: "))
+         (contents 
+          (with-temp-buffer 
+            (insert-file-contents (concat sync0-obsidian-directory key ".md"))
+            (buffer-string)))
+         (end (string-match  "^# .+\n" contents))
+         (yaml (substring contents 0 end))
+         (author (when
+                     (or (string-match  "^author: \\[\"\\(.+\\)\"\\]\n" yaml)
+                     (string-match  "^editor: \\[\"\\(.+\\)\"\\]\n" yaml))
+                   (match-string 1 yaml)))
+         (translator (when
+                         (string-match  "^translator: \\[\"\\(.+\\)\"\\]\n" yaml)
+                       (match-string 1 yaml)))
+         (type (when
+                   (string-match  "^biblatex_type: \\(.+\\)\n" yaml)
+                 (match-string 1 yaml)))
+         (url (when
+                  (string-match  "^url: \\(.+\\)\n" yaml)
+                (match-string 1 yaml)))
+         (pages (when
+                    (string-match  "^pages: \\(.+\\)\n" yaml)
+                  (match-string 1 yaml)))
+         (chapter (when
+                    (string-match  "^pages: \\(.+\\)\n" yaml)
+                  (match-string 1 yaml)))
+         (edition (when
+                    (string-match  "^edition: \\(.+\\)\n" yaml)
+                  (match-string 1 yaml)))
+         (language (when
+                       (string-match  "^language: \\(.+\\)\n" yaml)
+                     (match-string 1 yaml)))
+         (langid language)
+         (journaltitle (when
+                           (string-match  "^journaltitle: \"?\\(.+\\)\"?\n" yaml)
+                         (match-string 1 yaml)))
+         (number (when
+                     (string-match  "^number: \\(.+\\)\n" yaml)
+                   (match-string 1 yaml)))
+         (volume (when
+                     (string-match  "^volume: \\(.+\\)\n" yaml)
+                   (match-string 1 yaml)))
+         (crossref (when
+                       (string-match  "^crossref: \\(.+\\)\n" yaml)
+                     (match-string 1 yaml)))
+         (eventdate (when
+                        (string-match  "^eventdate: \\(.+\\)\n" yaml)
+                      (match-string 1 yaml)))
+         (venue (when
+                    (string-match  "^venue: \"?\\(.+\\)\"?\n" yaml)
+                  (match-string 1 yaml)))
+         (eventtitle (when
+                         (string-match  "^eventtitle: \"?\\(.+\\)\"?\n" yaml)
+                       (match-string 1 yaml)))
+         (booktitle (when
+                    (string-match  "^booktitle: \"?\\(.+\\)\"?\n" yaml)
+                  (match-string 1 yaml)))
+         (booksubtitle (when
+                    (string-match  "^booksubtitle: \"?\\(.+\\)\"?\n" yaml)
+                  (match-string 1 yaml)))
+         (title (when
+                    (string-match  "^title: \"?\\(.+\\)\"?\n" yaml)
+                  (match-string 1 yaml)))
+         (subtitle (when
+                       (string-match  "^subtitle: \"?\\(.+\\)\"?\n" yaml)
+                     (match-string 1 yaml)))
+         (date (when
+                   (string-match  "^date: \\(.+\\)\n" yaml)
+                 (match-string 1 yaml)))
+         (urldate (if
+                      (string-match  "^urldate: \\(.+\\)\n" yaml)
+                      (match-string 1 yaml)
+                    (format-time-string "%Y-%m-%d")))
+         (addendum (when
+                       (string-match  "^addendum: \"?\\(.+\\)\"?\n" yaml)
+                     (match-string 1 yaml)))
+         (library (when
+                      (string-match  "^library: \"?\\(.+\\)\"?\n" yaml)
+                    (match-string 1 yaml)))
+         (location (when
+                       (string-match  "^location: \"?\\(.+\\)\"?\n" yaml)
+                     (match-string 1 yaml)))
+         (publisher (when
+                        (string-match  "^publisher: \"?\\(.+\\)\"?\n" yaml)
+                      (match-string 1 yaml)))
+         (file-pdf (concat "/home/sync0/Documents/pdfs/" key ".pdf"))
+         (origdate (when
+                       (string-match  "^origdate: \\(.+\\)\n" yaml)
+                     (match-string 1 yaml)))
+         (bibtex-definitions (list 
+                              title
+                              subtitle
+                              date
+                              origdate
+                              author
+                              journaltitle
+                              booktitle
+                              booksubtitle
+                              translator
+                              crossref
+                              eventdate
+                              eventtitle
+                              venue
+                              volume
+                              number
+                              chapter
+                              edition
+                              pages
+                              publisher
+                              location
+                              pages
+                              addendum
+                              url
+                              urldate
+                              language
+                              langid
+                              library
+                              file-pdf))
+         (bibtex-fields (if (equal type "collection")
+                            (cl-substitute "editor" "author" sync0-bibtex-full-fields)
+                          sync0-bibtex-full-fields))
+         (fields (mapcar* #'(lambda (x y) (list x y)) bibtex-fields bibtex-definitions))
+         (entries
+          (let (x)
+            (dolist (element fields x) 
+              (unless (or (null (cadr element))
+                          (equal (cadr element) ""))
+                (setq x (concat x (car element) " = {" (cadr element) "},\n"))))))
+         (bib-file sync0-default-bibliography)
+         (bib-contents
+          (with-temp-buffer 
+            (insert-file-contents bib-file)
+            (buffer-string)))
+         (bibtex-entry (concat "\n@" (upcase-initials type) "{" key "," "\n" entries "\n}\n")))
+    (if (string-match key bib-contents)
+        (error "%s key already present in bibliography." key)
+      (progn 
+        (with-temp-file bib-file
+          (insert-file-contents bib-file)
+          (goto-char (point-max))
+          (insert bibtex-entry))
+        (message "File %s has been transcoded into bibliography." key)))))
+
 ;; (defun sync0-obsidian-zettel-migrate ()
 ;; "Convert the text open in the present buffer from Org-roam format
 ;; to Obsian markdown using my custom Zettel format."
@@ -136,16 +282,35 @@
     (kill-whole-line 1)
     (insert new-tags-string)))
 
-;; (defun sync0-obsidian-correct-tags ()
-;;   "Delete duplicate tags in YAML preamble."
-;;   (interactive)
-;;   (when-let* ((tags (when (re-search-forward "^tags: \\[\\(.+\\)\\]" nil t 1)               
-;;                          (match-string-no-properties 1)))
-;;               (new-tags (replace-regexp-in-string "references" "reference" tags)))
-;;     (goto-char (point-min))
-;;     (re-search-forward "^tags: .+" nil t 1)               
-;;     (kill-whole-line 1)
-;;     (insert (concat "tags: [" new-tags "]\n"))))
+(defun sync0-obsidian-correct-bibkeys ()
+  "Delete duplicate tags in YAML preamble."
+  (interactive)
+  (when-let* ((tags (when (re-search-forward "^tags: \\[\\(.+\\)\\]" nil t 1)               
+                      (match-string-no-properties 1)))
+              (key (when (string-match "[\\[,]r?\\([0-9]\\{14\\}\\)[,\\]]" tags)
+                     (match-string-no-properties 1 tags)))
+              (new-key (concat "bibkey/" key))
+              (new-tags (replace-regexp-in-string key new-key tags))
+              (tags-string (concat "tags: [" new-tags "]\n")))
+    (goto-char (point-min))
+    (re-search-forward "^tags: .+" nil t 1)               
+    (kill-whole-line 1)
+    (insert tags-string)))
+
+(defun sync0-obsidian-correct-biblatex ()
+  "Delete duplicate tags in YAML preamble."
+  (interactive)
+  (when-let* ((tags (when (re-search-forward "^tags: \\[\\(.+\\)\\]" nil t 1)               
+                      (match-string-no-properties 1)))
+              (key (when (string-match "[,\\[]\\(thesis\\)[,\\]]" tags)
+                     (match-string-no-properties 1 tags)))
+              (new-key (concat "reference/" key))
+              (new-tags (replace-regexp-in-string key new-key tags))
+              (tags-string (concat "tags: [" new-tags "]\n")))
+    (goto-char (point-min))
+    (re-search-forward "^tags: .+" nil t 1)               
+    (kill-whole-line 1)
+    (insert tags-string)))
 
 ;; (defun sync0-obsidian-correct-tags ()
 ;;   "Delete duplicate tags in YAML preamble."
@@ -159,7 +324,7 @@
     ;; (insert (concat "aliases: [" new-aliases "]\n"))))
 
 (defun sync0-obsidian-correct-authors ()
-  "Delete duplicate tags in YAML preamble."
+  "Have authors in the YAML preamble have correct formating."
   (interactive)
   (when-let* ((authors (when (re-search-forward "^authors: \\[\\(.+\\)\\]" nil t 1)               
                          (match-string-no-properties 1))))
@@ -167,6 +332,35 @@
     (re-search-forward "^authors: .+" nil t 1)               
     (kill-whole-line 1)
     (insert (concat "author: [" authors "]\n"))))
+
+(defun sync0-obsidian-correct-author-field ()
+  "Have authors in the YAML preamble have correct formating."
+  (interactive)
+  (when (re-search-forward "^zettel_type: reference" nil t 1)
+    (when-let* ((buffer (buffer-file-name))
+           (key (when (string-match "\\([0-9]+\\).md$" buffer)
+                  (match-string-no-properties 1 buffer)))
+           (author  (when (stringp key)
+                      (sync0-org-ref-get-citation-author key)))
+           (author-fixed (when (stringp author)
+            (cond ((string-match " and " author)
+                                ;; create a list with parts 
+                                (let* ((author-list  (split-string author " and "))
+                                       (names (let (x)
+                                                (dolist  (element author-list x)
+                                                  (setq x (concat x element "\",\""))))))
+                                  (concat "\"" (substring names 0 -2))))
+                               ;; check when author is an organization
+                               ((string-match "^{" author)
+                                (concat "\"" (substring author 1 -1) "\""))
+                               ;; other cases
+                               (t (concat "\"" author "\"")))))
+           (new-author (when (stringp author-fixed)
+            (concat "author: [" author-fixed "]\n"))))
+      (goto-char (point-min))
+      (re-search-forward "^author: .+" nil t 1)               
+      (kill-whole-line 1)
+      (insert new-author))))
 
 (defun sync0-obsidian-correct-aliases ()
   "Delete duplicate tags in YAML preamble."
@@ -608,11 +802,16 @@ to Obsian markdown using my custom Zettel format."
 ;; (dolist (f (f-files sync0-obsidian-directory
 ;;                     (lambda (k) (string-match-p ".md" k)) t))
 ;;   (with-current-buffer (find-file-noselect f)
-;;     (sync0-obsidian-correct-authors)))
+;;     (sync0-obsidian-correct-biblatex)))
 
+;; (dolist (f (f-files sync0-obsidian-directory
+;;                     (lambda (k) (string-match-p ".md" k)) t))
+;;   (with-current-buffer (find-file-noselect f)
+;;     (sync0-obsidian-correct-bibkeys)))
 
 ;; (dolist (f (f-files sync0-zettelkasten-directory
 ;;                     (lambda (k) (string-match-p "permanent" k)) t))
 ;;   (with-current-buffer (find-file-noselect f)
 ;;     (sync0-obsidian-migrate-reference)))
 
+(provide 'sync0-test-funcitions)

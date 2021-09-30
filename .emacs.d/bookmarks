@@ -198,7 +198,7 @@
  (rear-context-string . "Jérôme Lallment\n")
  (position . 883))
 ("org-capture-last-stored"
- (filename . "~/Dropbox/org/permanent/20210926230843.org")
+ (filename . "~/Dropbox/org/permanent/20210927132130.org")
  (front-context-string . ":PROPERTIES:\n:ID")
  (rear-context-string)
  (position . 1))
