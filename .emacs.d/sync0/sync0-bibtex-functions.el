@@ -5,7 +5,7 @@
          (filename (format-time-string "%Y%m%d%H%M%S"))
          (creation (format-time-string "%Y-%m-%d")) 
          (title (let* ((candidates (bibtex-completion-candidates))
-                       (selection (ivy-read "Choose BibTeX key to extract from : "
+                       (selection (ivy-read "Input title : "
                                             candidates
                                             :caller 'ivy-bibtex
                                             :require-match nil
@@ -28,6 +28,8 @@
          (initial-date (unless (null derivation)
                          (sync0-org-ref-get-citation-date crossref)))
          (date (read-string "Date (ex. 1890-18-12) : " initial-date))
+         (date-tag
+          (replace-regexp-in-string "-" "/" date))
          (initial-author (unless (null derivation)
                            (sync0-org-ref-get-citation-author crossref)))
          (origdate (read-string "Origdate (ex. 1890-18-12) : "))
@@ -58,14 +60,29 @@
                                                                  (progn
                                                                    (string-match "\\([[:graph:]]+\\),"   element)
                                                                    (match-string 1 element))
-                                                                 ":"))))))
+                                                                 ", "))))))
                             (substring last-names 0 -2)))
                          ((string-match "^{" author)
                           (string-match "{\\([[:print:]]+\\)}" author)
                           (match-string 1 author))
                          (t (nth 0 (split-string author ", ")))))
-         (lastname-downcase
-          (replace-regexp-in-string "[[:space:]]+" "_" (downcase lastname)))
+         (lastname-raw (cond ((string-match " and " author)
+                          ;; create a list with parts 
+                          (let* ((author-list  (split-string author " and "))
+                                 (last-names (let (x)
+                                               (dolist  (element author-list x)
+                                                 (setq x (concat x
+                                                                 (progn
+                                                                   (string-match "\\([[:graph:]]+\\),"   element)
+                                                                   (match-string 1 element))
+                                                                 ",author/"))))))
+                            (substring last-names 0 -7)))
+                         ((string-match "^{" author)
+                          (string-match "{\\([[:print:]]+\\)}" author)
+                          (match-string 1 author))
+                         (t (nth 0 (split-string author ", ")))))
+         (lastname-tag
+          (replace-regexp-in-string "[[:space:]]+" "_" (downcase lastname-raw)))
          (initial-language (unless (null derivation)
                              (sync0-org-ref-get-citation-language crossref)))
          (language (completing-read "Choose language : "
@@ -195,7 +212,8 @@
                                  (unless (or (null parent)
                                           (equal parent ""))
                                    (concat "parent: \"" parent "\"\n"))
-                                 "aliases: [\"" lastname " " date-fixed  " " title-fixed "\"]\n"
+                                 "aliases: [\"" lastname " " date-fixed  " " title-fixed "\","
+                                 "\"" lastname " " date-fixed  " " title "\"]\n"
                                  (unless (or (null url)
                                           (equal url ""))
                                    (concat "url: \"" url "\"\n"))
@@ -206,8 +224,9 @@
                                  (unless (or (null medium)
                                           (equal medium ""))
                                    (concat "medium: [\"" medium "\"]\n"))
+                                 "language: " language "\n"
                                  "library: \"" library "\"\n"
-                                 "tags: [reference/" type-downcase ",bibkey/" filename ",date/" date "," lastname-downcase "]\n"
+                                 "tags: [reference/" type-downcase ",bibkey/" filename ",date/" date-tag ",author/" lastname-tag ",language/" language "]\n"
                                  "---\n" 
                                  "# " lastname " " date-fixed " " title-fixed "\n\n" 
                                  "## Description\n\n" 
@@ -282,6 +301,8 @@
                           title
                         (concat title " : " subtitle)))
          (date (read-string "Date (ex. 1890-18-12) : "))
+         (date-tag
+          (replace-regexp-in-string "-" "/" date))
          (author (completing-read "Auteur : " sync0-bibtex-authors
                                   nil nil nil))
      (author-fixed (cond ((string-match " and " author)
@@ -305,14 +326,30 @@
                                                                  (progn
                                                                    (string-match "\\([[:graph:]]+\\),"   element)
                                                                    (match-string 1 element))
-                                                                 ":"))))))
+                                                                 ", "))))))
                             (substring last-names 0 -2)))
                          ((string-match "^{" author)
                           (string-match "{\\([[:print:]]+\\)}" author)
                           (match-string 1 author))
                          (t (nth 0 (split-string author ", ")))))
-         (lastname-downcase
-          (replace-regexp-in-string "[[:space:]]+" "_" (downcase lastname)))
+         (lastname-raw (cond ((string-match " and " author)
+                          ;; create a list with parts 
+                          (let* ((author-list  (split-string author " and "))
+                                 (last-names (let (x)
+                                               (dolist  (element author-list x)
+                                                 (setq x (concat x
+                                                                 (progn
+                                                                   (string-match "\\([[:graph:]]+\\),"   element)
+                                                                   (match-string 1 element))
+                                                                 ",author/"))))))
+                            ;; (substring last-names 0 -2)))
+                            (substring last-names 0 -7)))
+                         ((string-match "^{" author)
+                          (string-match "{\\([[:print:]]+\\)}" author)
+                          (match-string 1 author))
+                         (t (nth 0 (split-string author ", ")))))
+         (lastname-tag
+          (replace-regexp-in-string "[[:space:]]+" "_" (downcase lastname-raw)))
          (language (completing-read "Choose language : "
                                     sync0-bibtex-languages nil nil nil))
          (langid language) 
@@ -365,13 +402,15 @@
                                  (unless (equal subtitle "")
                                    (concat "subtitle: \"" subtitle "\"\n"))
                                  "author: [" author-fixed "]\n"
-                                 "aliases: [\""  lastname " " date  " " title-fixed "\"]\n"
+                                 "aliases: [\""  lastname " (" date  ") " title-fixed "\","
+                                 "\"" lastname " " date-fixed  " " title "\"]\n"
                                  (unless (or (null url)
                                           (equal url ""))
                                    (concat "url: \"" url "\"\n"))
-                                 "date: (" date ")\n"
+                                 "date: " date "\n"
+                                 "language: " language "\n"
                                  "library: \"" library "\"\n"
-                                 "tags: [reference/" type-downcase ",bibkey/" filename ",date/" date "," lastname-downcase "]\n"
+                                 "tags: [reference/" type-downcase ",bibkey/" filename ",date/" date-tag ",author/" lastname-tag ",language/" language "]\n"
                                  "---\n" 
                                  "# " lastname " (" date ") " title-fixed "\n\n" 
                                  "## Description\n\n" 

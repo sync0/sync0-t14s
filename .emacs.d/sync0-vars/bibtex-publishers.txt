@@ -1,4 +1,3 @@
-
 Santiago de Chile
 Marseille
 Madrid
@@ -161,3 +160,5 @@ Agone
 Alfred A. Knopf
 Grand Central Publishing
 Johns Hopkins University Press
+France
+Indianapolis

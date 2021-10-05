@@ -1,3 +1,4 @@
+Bitbol, Michel and Gayon, Jean
 Vito Paredes, Jaime
 Heyck, Hunter
 Simon, Herbert and Newell, Allen
@@ -340,3 +341,6 @@ Jocelyn-Holt, Alfredo and Rengifo, Francisco and Briones, Ignacio and Kaiser, Ax
 Jocelyn-Holt, Alfredon
 Friot, Bernard
 Hickey, James
+Elbow, Peter
+Chevallier, Stéphane and Chauviré, Christiane
+Duckett, John

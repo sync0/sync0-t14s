@@ -213,8 +213,8 @@
  (rear-context-string . "\"init.el\"))))))\n")
  (position . 5443))
 ("here"
- (filename . "~/Dropbox/obsidian/.obsidian/themes/test.css")
- (front-context-string . ".side-dock-colla")
- (rear-context-string . "text-normal);\n}\n")
- (position . 32657))
+ (filename . "~/Dropbox/obsidian/20210911082421.md")
+ (front-context-string . "La biographie de")
+ (rear-context-string . "5823.md). \n\n### ")
+ (position . 4916))
 )

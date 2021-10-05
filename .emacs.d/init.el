@@ -54,25 +54,35 @@
      ;; Default settings for all themes.
      (custom-theme-set-faces 'user
                               ;; `(org-default ((t (:family "Minion Pro" :style display :height 1.0))))
-                             `(markdown-header-face ((t (:family "Myriad Pro" :weight light :inherit variable-pitch))))
-                             `(markdown-metadata-key-face ((t (:family "Inconsolata" :weight bold :height 0.95 :slant normal :spacing monospace :inherit fixed-pitch)))) 
-                             `(markdown-metadata-value-face ((t (:family "Inconsolata" :height 0.95 :slant normal :spacing monospace :inherit fixed-pitch)))) 
+                              `(markdown-header-face ((t (:family "Helvetica Neue LT Std" :weight light :width condensed :background nil :inherit variable-pitch))))
+                             ;; `(markdown-header-face ((t (:family "Gill Sans MT Pro" :weight medium :inherit variable-pitch ))))
+                             ;; `(markdown-header-face ((t (:family "Myriad Pro" :weight light :inherit variable-pitch))))
+                             `(markdown-metadata-key-face ((t (:family "Inconsolata" :weight bold :height 0.9 :slant normal :spacing monospace :background nil :inherit fixed-pitch)))) 
+                             `(markdown-metadata-value-face ((t (:family "Inconsolata" :height 0.9 :slant normal :spacing monospace :inherit fixed-pitch)))) 
                              `(markdown-gfm-checkbox-face ((t (:family "Inconsolata" :weight bold :spacing monospace))))
                              `(markdown-footnote-marker-face ((t (:family "Sitka" :style small :weight bold :height 0.7))))
-                             `(markdown-link-face ((t (:family "Sitka" :style text :underline t :height 1.0 :inherit variable-pitch))))
+                             `(markdown-link-face ((t (:family "Sitka" :style text :underline t :background nil :height 1.0 :inherit variable-pitch))))
                              `(org-default ((t (:family "Sitka" :style text :inherit variable-pitch))))
                              `(org-link ((t (:inherit org-default :underline t))))
                              `(org-ref-cite-face ((t (:inherit org-link)))) 
                              `(org-footnote ((t (:family "Sitka" :style small :weight bold :height 0.7))))
                              `(org-checkbox ((t (:family "Inconsolata" :weight bold :spacing monospace))))
-                             `(org-document-title ((t (:family "Myriad Pro" :weight light :height 1.5 :inherit variable-pitch))))
-                             `(org-document-info ((t (:family "Myriad Pro" :weight medium :height 1.2 :inherit variable-pitch))))
-                             `(org-level-1 ((t (:family "Myriad Pro" :weight light :height 1.3 :inherit variable-pitch))))
-                             `(org-level-2 ((t (:family "Myriad Pro" :weight light :height 1.3 :slant italic :inherit variable-pitch))))
-                             `(org-level-3 ((t (:family "Myriad Pro" :weight medium :height 1.1 :inherit variable-pitch)))) 
-                             `(org-level-4 ((t (:family "Myriad Pro" :weight medium :height 1.1 :slant italic :inherit variable-pitch)))) 
-                             `(org-level-5 ((t (:family "Myriad Pro" :weight demibold :height 1.0 :inherit variable-pitch)))) 
-                             `(org-level-6 ((t (:family "Myriad Pro" :weight demibold :height 1.0 :slant italic :inherit variable-pitch)))) 
+                             ;; `(org-document-title ((t (:family "Myriad Pro" :weight light :height 1.5 :inherit variable-pitch))))
+                              `(org-document-title ((t (:family "Helvetica Neue LT Std" :height 1.953  :weight light :width condensed :inherit variable-pitch))))
+                              `(org-document-info ((t (:family "Helvetica Neue LT Std" :height 1.563  :weight light :width condensed :inherit variable-pitch))))
+                             ;; `(org-document-info ((t (:family "Myriad Pro" :weight medium :height 1.2 :inherit variable-pitch))))
+                             ;; `(org-level-1 ((t (:family "Myriad Pro" :weight light :height 1.3 :inherit variable-pitch))))
+                              `(org-level-1 ((t (:family "Helvetica Neue LT Std" :height 1.953  :weight light :width condensed :inherit variable-pitch))))
+                              `(org-level-2 ((t (:family "Helvetica Neue LT Std" :height 1.563  :weight light :width condensed :inherit variable-pitch))))
+                             ;; `(org-level-2 ((t (:family "Myriad Pro" :weight light :height 1.3 :slant italic :inherit variable-pitch))))
+                              `(org-level-3 ((t (:family "Helvetica Neue LT Std" :height 1.25  :weight light :width condensed :inherit variable-pitch))))
+                             ;; `(org-level-3 ((t (:family "Myriad Pro" :weight medium :height 1.1 :inherit variable-pitch)))) 
+                              `(org-level-4 ((t (:family "Helvetica Neue LT Std" :height 1.0  :weight medium :width condensed :inherit variable-pitch))))
+                             ;; `(org-level-4 ((t (:family "Myriad Pro" :weight medium :height 1.1 :slant italic :inherit variable-pitch)))) 
+                              `(org-level-5 ((t (:family "Helvetica Neue LT Std" :height 0.8  :weight medium :width condensed :inherit variable-pitch))))
+                             ;; `(org-level-5 ((t (:family "Myriad Pro" :weight demibold :height 1.0 :inherit variable-pitch)))) 
+                              `(org-level-6 ((t (:family "Helvetica Neue LT Std" :height 0.64  :weight medium :width condensed :inherit variable-pitch))))
+                             ;;`(org-level-6 ((t (:family "Myriad Pro" :weight demibold :height 1.0 :slant italic :inherit variable-pitch)))) 
                              `(org-meta-line ((t (:family "Inconsolata" :height 0.95 :slant normal :spacing monospace :inherit fixed-pitch)))) 
                              `(org-document-info-keyword ((t (:inherit org-meta-line))))
                              `(org-special-keywords ((t (:inherit org-meta-line))))
@@ -82,10 +92,14 @@
                              ;; `(org-hide ((t (:family "Symbola" :weight bold)))) 
                              ;; `(org-indent ((t (:inherit org-hide)))) 
                              `(org-date ((t (:family "Inconsolata" :height 0.95 :spacing monospace :inherit fixed-pitch))))
-                             `(org-agenda-date ((t (:family "Myriad Pro" :weight light :height 1.5))))
-                             `(org-agenda-date-weekend ((t (:family "Myriad Pro" :weight light :height 1.5))))
-                             `(org-agenda-date-today ((t (:family "Myriad Pro" :weight medium :height 1.5))))
-                             `(org-agenda-structure ((t (:family "Myriad Pro" :weight light  :height 2.0 ))))
+                              `(org-agenda-date ((t (:family "Helvetica Neue LT Std" :height 1.563  :weight light :width condensed :inherit variable-pitch))))
+                             ;; `(org-agenda-date ((t (:family "Myriad Pro" :weight light :height 1.5))))
+                             ;; `(org-agenda-date-weekend ((t (:family "Myriad Pro" :weight light :height 1.5))))
+                              `(org-agenda-date-weekend ((t (:family "Helvetica Neue LT Std" :height 1.563  :weight light :width condensed :inherit variable-pitch))))
+                              `(org-agenda-date-today ((t (:family "Helvetica Neue LT Std" :height 1.563  :weight light :width condensed :inherit variable-pitch))))
+                            ;;  `(org-agenda-date-today ((t (:family "Myriad Pro" :weight medium :height 1.5))))
+                             ;; `(org-agenda-structure ((t (:family "Myriad Pro" :weight light  :height 2.0 ))))
+                              `(org-agenda-structure ((t (:family "Helvetica Neue LT Std" :height 1.953  :weight light :width condensed :inherit variable-pitch))))
                              `(org-scheduled ((t (:weight medium :slant normal))))
                              `(org-scheduled-today ((t (:family "Inconsolata" :weight medium :slant normal :spacing monospace :inherit fixed-pitch))))
                              `(org-scheduled-previously ((t (:family "Inconsolata" :weight normal :slant normal :spacing monospace :inherit fixed-pitch))))
@@ -141,7 +155,7 @@
               ;; split-width-threshold nil
               split-width-threshold (- (window-width) 10)
               ;; Split vertically by default
-              split-height-threshold nil        
+              ;; split-height-threshold nil        
               ;; hide cursors in other windows
               cursor-in-non-selected-windows nil  
               ;; Don't resize frames implicitly.
@@ -230,7 +244,7 @@
     "List of Bibtex entry fields")
 
   (defvar sync0-bibtex-quick-fields
-    '("title" "subtitle" "date" "author" "addendum" "url" "urldate" "language" "langid" "file")
+    '("title" "subtitle" "date" "author" "addendum" "url" "urldate" "language" "langid" "library" "file")
     "List of Bibtex entry fields")
 
   (defvar sync0-bibtex-booktitles 
@@ -925,6 +939,7 @@ when necessary."
            ;; Avoid ugly problemes with git-gutter.
            fringes-outside-margins t
            left-margin-width 2
+           left-margin 2
            ;; left-margin-width 2
            right-margin-width 0
            ;; left-fringe-width 0
@@ -1015,7 +1030,8 @@ when necessary."
                                         (end (substring title -20 nil)))
                                     (concat start  "..." end))
                                 title)))
-           (propertize fixed-title 'face '(:height 1.0 :family "Myriad Pro" :weight medium) 'help-echo (buffer-file-name)))
+           (propertize fixed-title 'face '(:height 1.0 :family "Helvetica Neue LT Std" :width condensed :weight medium) 'help-echo (buffer-file-name)))
+           ;; (propertize fixed-title 'face '(:height 1.0 :family "Myriad Pro" :weight medium) 'help-echo (buffer-file-name)))
        (propertize (buffer-name) 'face '(:weight bold) 'help-echo (buffer-file-name))))
 
 
@@ -1073,8 +1089,7 @@ when necessary."
 
                  " " 
                  (:eval (propertize 
-                         (capitalize 
-                          (s-replace "-mode" "" (format "%s" major-mode)))
+                          (s-replace "-mode" "" (format "%s" major-mode))
                          'face '(:weight bold)))
                  " " 
                  (vc-mode vc-mode)
@@ -1870,7 +1885,7 @@ when necessary."
   :custom
   (org-roam-directory "~/Dropbox/org/")
   (org-id-extra-files (find-lisp-find-files org-roam-directory "\.org$"))
-  (org-roam-file-extensions '("org"))
+  (org-roam-file-extensions '("org" "md"))
   ;; disable warning
   (org-roam-v2-ack t) 
   ;; exclude useless files from my org directory 
@@ -2618,7 +2633,6 @@ when necessary."
      :commands focus-mode)
 
 (use-package centered-window
-  :disabled t
   :straight (centered-window :type git :host github :repo "anler/centered-window-mode") 
   :commands centered-window-mode
   :config
@@ -2641,16 +2655,22 @@ when necessary."
       ;; Ratio by which the left fringe is padded more than the right.
       ;; Should be a value between 0 and 100
       (setq cwm-left-fringe-ratio 30)
-      (centered-window-mode t)))
+      (centered-window-mode t))))
 
-     (add-hook 'markdown-mode-hook (lambda () (centered-window-mode 0)))
+     ;; (add-hook 'markdown-mode-hook (lambda () (centered-window-mode 0)))
 
-  :hook 
-  ((org-mode . sync0-text-mode-centered-window)
-   (tex-mode . sync0-text-mode-centered-window)
-   (prog-mode . sync0-text-mode-centered-window)))
+  ;; :hook 
+  ;; ((org-mode . sync0-text-mode-centered-window)
+  ;;  (tex-mode . sync0-text-mode-centered-window)
+  ;;  (prog-mode . sync0-text-mode-centered-window)))
 ;; (mu4e-compose-mode . sync0-text-mode-centered-window)
 ;; (mu4e-view-mode . sync0-text-mode-centered-window)
+
+(use-package writeroom-mode
+  :commands writeroom-mode
+  :straight (writeroom-mode :type git :host github :repo "joostkremers/writeroom-mode")
+:custom
+(writeroom-width 66))
 
 (use-package olivetti
   :commands olivetti-mode
@@ -2795,18 +2815,18 @@ when necessary."
   ;; :config
   ;; (add-to-list 'lsp-enabled-clients 'digestif)
   :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
-         (python-mode . lsp-deferred)
+         (python-mode . lsp)
          (typescript-mode . lsp)
          (js2-mode . lsp)
          (js-mode . lsp)
-         (LaTeX-mode . lsp-deferred)
+         (LaTeX-mode . lsp)
          ;; (tex-mode . lsp-deferred)
-         (nxml-mode . lsp-deferred)
+         (nxml-mode . lsp)
          ;; (emacs-lisp-mode . lsp-deferred)
          (web-mode . lsp)
          ;; if you want which-key integration
          (lsp-mode . lsp-enable-which-key-integration))
-  :commands (lsp lsp-deferred))
+  :commands (lsp))
 
 ;; optionally
 (use-package lsp-ui :commands lsp-ui-mode)
@@ -2829,21 +2849,31 @@ when necessary."
 (use-package browse-url
 :straight nil
 :custom
-(browse-url-browser-function 'browse-url-generic)
+(browse-url-browser-function 'browse-url-default-browser)
+ (browse-url-chrome-program "google-chrome-stable")
  (browse-url-generic-program "google-chrome-stable"))
 
 (use-package web-mode
   :straight (web-mode :type git :host github :repo "fxbois/web-mode") 
   :mode
   (("\\.phtml\\'" . web-mode)
-  ;; ("\\.jsx\\'" . web-mode)
-  ("\\.tpl\\.php\\'" . web-mode)
-  ("\\.[agj]sp\\'" . web-mode)
-  ("\\.as[cp]x\\'" . web-mode)
-  ("\\.erb\\'" . web-mode)
-  ("\\.mustache\\'" . web-mode)
-  ("\\.djhtml\\'" . web-mode)
-  ("\\.html?\\'" . web-mode)))
+   ;; ("\\.jsx\\'" . web-mode)
+   ("\\.tpl\\.php\\'" . web-mode)
+   ("\\.[agj]sp\\'" . web-mode)
+   ("\\.as[cp]x\\'" . web-mode)
+   ("\\.erb\\'" . web-mode)
+   ("\\.mustache\\'" . web-mode)
+   ("\\.djhtml\\'" . web-mode)
+   ("\\.html?\\'" . web-mode))
+  :config
+  (require 'sync0-web-mode-functions))
+
+(use-package palette
+  :straight nil
+:init
+   (require 'hexrgb)
+  :commands palette
+  :load-path "~/.emacs.d/sync0/")
 
 (use-package multi-web-mode
   :straight (multi-web-mode :type git :host github :repo "fgallina/multi-web-mode") 
@@ -3113,14 +3143,14 @@ when necessary."
   (markdown-enable-math t)
   (markdown-coding-system 'utf-8)
   (markdown-asymmetric-header t)
-  (markdown-hide-markup nil)
+  (markdown-hide-markup t)
+  ;; (markdown-hide-markup nil)
   (markdown-header-scaling t)
-  (markdown-header-scaling-values '(1.6 1.4 1.2 1.0 1.0 1.0))
+  ;; (markdown-header-scaling-values '(1.953 1.563 1.25 1.0 0.8 0.64))
+  (markdown-header-scaling-values '(2.074 1.728 1.44 1.2 1.0 0.833))
   :mode (("README\\.md\\'" . gfm-mode)
          ("\\.md\\'" . markdown-mode)
          ("\\.markdown\\'" . markdown-mode))
-  :init
-  (setq markdown-command "pandoc")
 
   :config
 (defhydra sync0-hydra-markdown-functions (:color amaranth :hint nil :exit t)
@@ -3128,8 +3158,12 @@ when necessary."
 ^Links^             ^Footnotes^          ^Trees^              ^Export^           ^Etc.^
 ^---------------------------------------------------------------------------------------------------
 Wiki link _i_nsert   New _f_ootnote       Indirect _b_uffer    Latex export     Insert drawer
-Lin_k_ insert        ^ ^                  Export trees         ^ ^                New local _a_bbrev
+Lin_k_ insert        ^ ^                  Export trees         ^ ^              New local _a_bbrev
 _I_mage insert       ^ ^                  ^ ^      
+^---------------------------------------------------------------------------------------------------
+^Citations^         ^Visibility^
+^---------------------------------------------------------------------------------------------------
+Insert _c_itation    Toggle _m_arkup
 ^ ^                  ^ ^                  ^ ^   
 _q_uit
 "
@@ -3140,6 +3174,8 @@ _q_uit
   ("I" markdown-insert-image)
   ("f" markdown-insert-footnote)
   ("b" markdown-narrow-to-subtree)
+  ("c" ivy-bibtex)
+  ("m" markdown-toggle-markup-hiding)
   ;; ("e" sync0-org-export-latex-and-beamer)
   ;; ("E" sync0-org-export-headlines-to-latex)
   ("a" sync0-define-local-abbrev)
@@ -3273,15 +3309,23 @@ _q_uit
    :custom 
    (bibtex-completion-bibliography '("~/Dropbox/bibliographies/bibliography.bib"
                                      "~/Dropbox/bibliographies/doctorat.bib")) 
-   (bibtex-completion-notes-path '"~/Dropbox/org/permanent")
+   (bibtex-completion-notes-path '"~/Dropbox/obsidian")
+   ;; (bibtex-completion-notes-path '"~/Dropbox/org/permanent")
    (bibtex-completion-library-path '("~/Documents/pdfs/"))
    (bibtex-completion-pdf-field "file")
    (bibtex-completion-pdf-symbol "P")
    (bibtex-completion-notes-symbol "N")
+   (bibtex-completion-notes-extensión ".md")
+   ;; (bibtex-completion-notes-extensión ".org")
    (bibtex-completion-pdf-extension '(".pdf" ".epub"))
    (bibtex-completion-additional-search-fields '(editor journaltitle origdate subtitle volume booktitle location publisher))
 
    :config 
+;; (setq ivy-bibtex-default-action 'ivy-bibtex-insert-key)
+;; (setq ivy-bibtex-default-multi-action 'ivy-bibtex-insert-key)
+(setq ivy-bibtex-default-action 'ivy-bibtex-insert-citation)
+(setq ivy-bibtex-default-multi-action 'ivy-bibtex-insert-citation)
+
    (setq bibtex-completion-display-formats
          '((article       . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title}: ${subtitle} @ ${journaltitle} [${=key=}]")
            (book          . "${=has-pdf=:1}${=has-note=:1}| ${author} [${origdate}](${date:4}) ${title} ${volume}: ${subtitle} [${=key=}]")
@@ -3290,6 +3334,12 @@ _q_uit
            (collection    . "${=has-pdf=:1}${=has-note=:1}| ${editor} (${date:4}) ${title:55} ${volume}: ${subtitle} [${=key=}]")
            (inproceedings . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title:55} @ ${booktitle} [${=key=}]")
            (t             . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date}) ${title}: ${subtitle} [${=key=}]")))
+
+(setq bibtex-completion-format-citation-functions
+  '((org-mode      . bibtex-completion-format-citation-org-link-to-PDF)
+    (latex-mode    . bibtex-completion-format-citation-cite)
+    (markdown-mode . bibtex-completion-format-citation-pandoc-citeproc)
+    (default       . bibtex-completion-format-citation-default)))
 
    (setq bibtex-completion-notes-template-multiple-files  
          ":PROPERTIES:
@@ -3342,7 +3392,8 @@ _q_uit
   (bibtex-autokey-titlewords 0)
   (bibtex-align-at-equal-sign t)
   (bibtex-text-indentation 22)
-  (bibtex-entry-format '(opts-or-alts page-dashes whitespace braces last-comma delimiters sort-fields realign))
+  (bibtex-entry-format '(opts-or-alts page-dashes whitespace braces last-comma inherit-booktitle delimiters sort-fields realign))
+  ;; (bibtex-entry-format '(opts-or-alts page-dashes whitespace braces last-comma inherit-booktitle delimiters sort-fields realign))
   ;; (bibtex-entry-format '(opts-or-alts numerical-fields page-dashes whitespace braces last-comma delimiters sort-fields))
   ;; (bibtex-entry-format '(opts-or-alts required-fields numerical-fields page-dashes whitespace braces last-comma delimiters sort-fields))
   :init
@@ -3354,6 +3405,8 @@ _q_uit
     (require 'bibtex-completion)
     (require 'sync0-bibtex-functions)
     (require 'sync0-bibtex-fields)
+
+  (setq bibtex-autokey-prefix-string (format-time-string "%Y%m%d%H%M%S"))
 
     (unbind-key "TAB" bibtex-mode-map)
 
