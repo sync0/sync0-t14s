@@ -1,7 +1,5 @@
-annotation
 archive
 bibliography
-blog
 certificate
 chart
 code
@@ -9,12 +7,12 @@ data
 fiche
 inbox
 index
-long_form
-message
+kanban
 permanent
 project
 review
 reference
-todo
+task
 trash
 vault
+writing

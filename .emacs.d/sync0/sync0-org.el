@@ -1,56 +1,16 @@
 (setq org-todo-keywords '((sequence "未(1)" "|" "完(2)" "消(3)")))
 
-;; (setq org-todo-keywords '((sequence "未(1)" "來(2)" "中(3)" "見(4)" "待(5)" "推(6)" "|" "完(7)" "消(8)")
-;;                           (sequence "失" "買" "|" "有")
-;;                           (sequence "確"  "讀" "解" "|" "無")))
-
-;; First sequence:
-;; "未(1)" Undone
-;; "來(2)" Next (like :next:)
-;; "中(3)" In process
-;; "見(4)" Review or look again at
-;; "待(5)" Wait for something else 
-;; "推(6)" On hold until further advice (like :maybe: or :someday:)
-;; "|"
-;; "完(7)" Done
-;; "消(8)" Cancelled
-
-;; Second sequence:
-;; "失(l)" Unobtained or lost
-;; "買(b)" Buy or procure
-;; "|"
-;; "有(h)" Obtained
-
-;; Third sequence:
-;; "確(r)" Review or skim
-;; "讀(c)" Close read
-;; "解(t)" Transfer notes to Zettelkasten
-;; "|"
-;; "無(i)" Ignore
-
 ;; Set faces for org-todo-keywords
-(setq org-todo-keyword-faces '(("未" . (:foreground "#dc322f" :weight semi-bold :height 0.9))
-                               ("失" . (:foreground "#dc322f" :weight semi-bold :height 0.9))
-                               ("確" . (:foreground "#dc322f" :weight semi-bold :height 0.9))
-                               ("買" . (:foreground "#d33682" :weight semi-bold :height 0.9))
-                               ("來" . (:foreground "#d33682" :weight semi-bold :height 0.9))
-                               ("完" . (:foreground "#859900" :weight semi-bold :height 0.9))   
-                               ("有" . (:foreground "#859900" :weight semi-bold :height 0.9))   
-                               ("解" . (:foreground "#268bd2" :weight semi-bold :height 0.9))
-                               ("待" . (:foreground "#268bd2" :weight semi-bold :height 0.9))
-                               ("無" . (:foreground "#6c71c4" :weight semi-bold :height 0.9)) 
-                               ("消" . (:foreground "#6c71c4" :weight semi-bold :height 0.9)) 
-                               ("確" . (:foreground "#2aa198" :weight semi-bold :height 0.9)) 
-                               ("讀" . (:foreground "#2aa198" :weight semi-bold :height 0.9)) 
-                               ("見" . (:foreground "#2aa198" :weight semi-bold :height 0.9)) 
-                               ("推" . (:foreground "#859900" :weight semi-bold :height 0.9)) 
-                               ("中" . (:foreground "#b58900" :weight semi-bold :height 0.9))))
+;; (setq org-todo-keyword-faces '(("未" . (:foreground "#dc322f" :weight semi-bold :height 0.9))
+;;                                ("完" . (:foreground "#859900" :weight semi-bold :height 0.9))   
+;;                                ("消" . (:foreground "#6c71c4" :weight semi-bold :height 0.9)) 
+;;                                ("中" . (:foreground "#b58900" :weight semi-bold :height 0.9))))
 
 
 ;; (require 'org-pdftools)
-(require 'org-journal)
-(require 'org-download)
-(require 'org-ref)
+;; (require 'org-journal)
+;; (require 'org-download)
+;; (require 'org-ref)
 (require 'cl-lib)
 
 
@@ -165,11 +125,11 @@
 Link _i_nsert       New _f_ootnote       _I_ndirect buffer    Latex _e_xport     Insert _d_rawer
 Link _s_tore        Footnote _a_ctions   Open _o_verview      _E_xport trees     New local _a_bbrev
 Last stored lin_k_  ^ ^                  Overview _j_ump      _V_isit corr. PDF  _T_angle init file
-^ ^                 ^ ^                  Show sparse _t_ree   Export to epu_b_
+^ ^                 ^ ^                  Show sparse _t_ree   Export to epub
                                                                      
 _q_uit
 "
-  ("b" org-epub-export-to-epub)
+  ;; ("b" org-epub-export-to-epub)
   ("s" org-store-link)
   ("i" org-insert-link)
   ("k" org-insert-last-stored-link)
@@ -187,7 +147,6 @@ _q_uit
   ("V" sync0-org-open-corresponding-pdf)
   ("q" nil :color blue))
 
-
 (evil-leader/set-key-for-mode 'org-mode "O" 'org-open-at-point)
 (evil-leader/set-key-for-mode 'org-mode "#" 'sync0-org-open-other-frame)
 
@@ -203,45 +162,6 @@ _q_uit
 
 (evil-leader/set-key-for-mode 'org-mode "z" 'sync0-hydra-org-functions/body)
 
-(defhydra sync0-hydra-file-access (:color amaranth :hint nil :exit t)
-  "
-              ^Windows^                ^Buffers^             ^Search^
-           ^^^^^^---------------------------------------------------------------
-           _1_: Delete others       _w_: Write           _r_: Recent
-           _2_: Split horizontally  _a_: Write as        _f_: Find
-           _3_: Split vertically    _b_: Open           
-           ^ ^                      _k_: Kill
-           ^ ^                      
-           ^^^^^^---------------------------------------------------------------
-              ^Bookmarks^           ^Planning^ 
-           ^^^^^^---------------------------------------------------------------
-           _j_: Jump to bookmark    _h_: Today
-           _g_: Bookmark o. window  
-           _m_: Set bookmark        
-           _l_: List bookmarks      _J_: org-journal
-           ^ ^                      
-           [q] Quit                 ^ ^
-           "
-  ("1" delete-other-windows)
-  ("2" sync0-split-and-follow-horizontally)
-  ("3" sync0-split-and-follow-vertically)
-  ("b" ivy-switch-buffer)
-  ;; Quickly save
-  ("w" save-buffer)
-  ("a" write-file)
-  ;; Kill current buffer and window
-  ("k" kill-buffer-and-window)
-  ;; ("o" ivy-switch-buffer-other-window)
-  ("r" counsel-recentf)
-  ("f" counsel-find-file)
-  ("m" bookmark-set)
-  ("j" counsel-bookmark)
-  ("g" bookmark-jump-other-window)
-  ("l" bookmark-bmenu-list)
-  ;; ("A" org-agenda)
-  ("J" sync0-org-journal-new-scheduled-entry)
-  ("h" sync0-pop-to-org-agenda)
-  ("q" nil :color blue))
 
 ;; font lock keywords 
 ;; org footnotes should look like real footnotes
@@ -371,9 +291,5 @@ _q_uit
         ("\\.pdf\\'" . emacs)))
 
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
-
-;; (setq org-src-block-faces    '(("emacs-lisp" (:family "Fira Code"  :height 0.75))
-;;                                ("python" (:family "Fira Code"  :height 0.75))
-;;                                ("latex" (:family "Fira Code"  :height 0.75))))
 
 (provide 'sync0-org)

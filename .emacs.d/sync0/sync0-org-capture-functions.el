@@ -4,19 +4,6 @@
 (defvar sync0-zettel-path
   "Dummy variable for Zettel paths")
 
-;; The following two functions are necessary to replicate the functionality of org-roam into org-capture.
-;; https://emacs.stackexchange.com/questions/27620/orgmode-capturing-original-document-title
-
-;; (defun sync0-org-get-title-keyword (file)
-;;   (let (title)
-;;     (when file
-;;       (with-current-buffer
-;;           (get-file-buffer file)
-;;         (pcase (org-collect-keywords '("TITLE"))
-;;           (`(("TITLE" . ,val))
-;;            (setq title (car val)))))
-;;       title)))
-
 (defun sync0-org-get-title-keyword (file)
 (interactive)
   (with-temp-buffer
@@ -62,13 +49,6 @@
   (with-temp-buffer
     (insert-file-contents file)
     (org-entry-get 1 "ID")))
-
-;; (defun sync0-org-get-id (file)
-;;   (interactive)
-;;   (when file
-;;     (with-current-buffer
-;;         (get-file-buffer file)
-;;       (org-entry-get 1 "ID"))))
 
 (defun sync0-org-get-language (file)
   (interactive)

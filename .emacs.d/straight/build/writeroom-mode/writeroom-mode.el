@@ -1,0 +1,1 @@
+/home/sync0/.emacs.d/straight/repos/writeroom-mode/writeroom-mode.el

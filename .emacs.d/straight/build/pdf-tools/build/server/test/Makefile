@@ -1,0 +1,1 @@
+/home/sync0/.emacs.d/straight/repos/pdf-tools/server/test/Makefile

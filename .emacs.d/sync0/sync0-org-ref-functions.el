@@ -1,16 +1,4 @@
 
-;; (defun sync0-org-ref-search-bibkey-in-buffer (buffer)
-;;   "Check the existence of a bibtex in current buffer."
-;; (interactive)
-;; ;; (equal major-mode 'org-mode)
-;; (let ((regex "cite:\\([[:digit:]]+\\)"))
-;; (cond ((and (equal major-mode 'org-mode)
-;;     (search (thing-at-point t) regex))
-;; (equal major-mode 'org-mode)
-;;     (org-with-point-at 1 
-;;       (re-search-forward "cite:\\([[:digit:]]+\\)" nil t 1)
-;;       (match-string-no-properties 1))
-
 (defun sync0-org-ref-search-bibkey-in-buffer ()
   "Check the existence of a bibtex in current buffer."
   (interactive)
@@ -555,50 +543,6 @@ buffer. Can also be called with key."
          (title (sync0-org-get-title-keyword file)))
     (insert
      (concat "[[id:" id "][" title "]]\n"))))
-
-;; (defhydra sync0-hydra-research-functions (:color amaranth :hint nil :exit t)
-;; "
-;; ^Bibtex functions^   ^References^          ^Roam^                ^Etc^
-;; ^------------------------------------------------------------------------------
-;; Orb _i_nsert           _I_nsert footnote   Find _f_ile        Replace smart quotes
-;; Orb _a_ctions          _Q_uote (Csquotes)  Open _r_oam buffer 
-;; Entry _n_otes          _F_oreign quote     Open _d_eft       
-;; Bibtex _e_ntry         Insert _c_itation   _B_uild cache    
-;; Open _b_ibliography    _E_xtract field     Show _g_raph   
-;; Open _p_df             _U_pdate notes file _S_et property
-;; Open in _z_athura      ^ ^                 
-;; _C_opy pdf to location
-
-;; _q_uit
-;; "
-;;   ("s" org-store-link)
-;;   ("i" orb-insert)
-;;   ("a" orb-note-actions)
-;;   ("d" deft)
-;;   ("r" org-roam-buffer-toggle)
-;;   ("Q" replace-smart-quotes)
-;;   ("B" org-roam-db-sync)
-;;   ("f" org-roam-node-find)
-;;   ("g" org-roam-graph)
-;;   ("l" org-roam-node-insert)
-;;   ("c" org-ref-ivy-insert-cite-link)
-;;   ("C" sync0-org-ref-copy-pdf-to-path)
-;;   ("S" sync0-zettelkasten-set-property)
-;;   ("n" sync0-org-ref-open-notes)
-;;   ("U" sync0-org-ref-update-notes-file)
-;;   ("e" org-ref-open-citation-at-point)
-;;   ("E" sync0-ivy-bibtex-extractor)
-;;   ("b" sync0-visit-bibliography-in-buffer)
-;;   ("p" sync0-org-ref-open-pdf-at-point)
-;;   ("z" sync0-org-ref-open-pdf-at-point-zathura)
-;;   ("I" org-footnote-new)
-;;   ("Q" (progn (yas-expand-snippet (yas-lookup-snippet "csquotes_displayquote"))))
-;;   ("F" (progn (yas-expand-snippet (yas-lookup-snippet "csquotes_foreign_displayquote"))))
-;;   ("q" nil :color blue))
-
-;; (evil-leader/set-key
-;;   "C" 'org-ref-ivy-insert-cite-link
-;;   "R" 'sync0-hydra-research-functions/body)
 
 (evil-leader/set-key
   "C" 'org-ref-ivy-insert-cite-link)
