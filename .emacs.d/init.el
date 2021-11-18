@@ -58,6 +58,9 @@
                              `(markdown-gfm-checkbox-face ((t (:family "Inconsolata" :weight bold :spacing monospace))))
                              `(markdown-footnote-marker-face ((t (:family "Sitka Text" :style small :weight bold :height 0.7))))
                              `(markdown-link-face ((t (:family "Sitka Text"  :underline t :background nil :height 1.0 :inherit variable-pitch))))
+                             `(markdown-markup-face ((t (:family "Sitka Text"  :underline nil :background nil :height 1.0 :inherit variable-pitch))))
+                             `(markdown-url-face ((t (:family "Sitka Text"  :underline nil :background nil :height 1.0 :inherit variable-pitch))))
+                             `(markdown-plain-url-face ((t (:inherit markdown-url-face))))
                              `(markdown-code-face ((t (:family "Inconsolata"  :height 1.0 :spacing monospace :inherit fixed-pitch))))
                              `(markdown-reference-face ((t (:inherit markdown-code-face))))
                              `(org-default ((t (:family "Sitka Text"  :inherit variable-pitch))))
@@ -380,8 +383,8 @@
 
 (add-hook 'before-save-hook #'sync0-before-save-actions)
 
-(defun sync0-show-file-path ()
-  "Show the full path file name in the minibuffer."
+(defun sync0-copy-file-path-in-clipboard ()
+  "Copy absolute path of file visited in current buffer into the clipboard and kill ring."
   (interactive)
   (kill-new (buffer-file-name)))
 
@@ -432,7 +435,7 @@ With prefix arg, find the previous file."
     (let* ((file (expand-file-name buffer-file-name))
            (files (cl-remove-if (lambda (file) (cl-first (file-attributes file)))
                                 (sort (directory-files (file-name-directory file) t nil t) 'string<)))
-           (pos (mod (+ (cl-position file files :test 'equal) (if backward -1 1))
+           (pos (mod (+ (cl-position file files :test #'equal) (if backward -1 1))
                      (length files))))
       (find-file (nth pos files)))))
 
@@ -587,7 +590,7 @@ when necessary."
   :commands evil-escape-mode
   :custom
   (evil-escape-excluded-states '(normal visual multiedit emacs motion))
-  ;;(evil-escape-excluded-major-modes '(neotree-mode))
+  (evil-escape-excluded-major-modes '(neotree-mode))
   (evil-escape-key-sequence "fd")
   (evil-escape-unordered-key-sequence t)
   (evil-escape-delay 0.25)
@@ -764,8 +767,14 @@ when necessary."
     :config
     (projectile-mode +1)
     (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
-
+ 
     (evil-leader/set-key  "P" 'projectile-commander))
+
+(use-package exec-path-from-shell
+  :straight (exec-path-from-shell :type git :host github :repo "purcell/exec-path-from-shell")
+  :config
+  (when (memq window-system '(mac ns x))
+    (exec-path-from-shell-initialize)))
 
 (setq initial-scratch-message ";; 
 ;; « Ces bonnes gens qui dorment tranquilles, c'est drôle!
@@ -834,12 +843,8 @@ when necessary."
            ;; Avoid ugly problemes with git-gutter.
            fringes-outside-margins t
            left-margin-width 2
-           left-margin 2
-           ;; left-margin-width 2
+           ;; left-margin 2
            right-margin-width 0
-           ;; left-fringe-width 0
-           ;; left-fringe-width 1
-           ;; right-fringe-width 0
            ;; Remove continuation arrow on right fringe.
            ;; fringe-indicator-alist (delq (assq 'continuation fringe-indicator-alist)
            ;;                              fringe-indicator-alist)
@@ -852,11 +857,8 @@ when necessary."
            ;; Avoid ugly problemes with git-gutter.
            fringes-outside-margins t
            left-margin-width 1
-           ;; left-margin-width 2
            right-margin-width 0
            left-fringe-width 0
-           ;; create a function to restore the fringe value when using git-gutter-fringe
-           ;; left-fringe-width 1
            right-fringe-width 0
            ;; Remove continuation arrow on right fringe.
            fringe-indicator-alist (delq (assq 'continuation fringe-indicator-alist)
@@ -1004,7 +1006,7 @@ when necessary."
                                  :family "Inconsolata"
                                  :height 150)
              ;;:height 175
-             (setq line-spacing 1.25))
+             (setq line-spacing 1.5))
     ;; low resolution font size
     (progn (set-face-attribute 'default nil 
                                :family "Inconsolata"
@@ -1016,8 +1018,8 @@ when necessary."
     (if (> (display-pixel-width) 1900)
         ;; high resolution font size (t14s)
         (progn
-          (setq buffer-face-mode-face '(:family "Sitka Text" :height 170))
-          (setq line-spacing 0.4))
+          (setq buffer-face-mode-face '(:family "Sitka Text" :height 165))
+          (setq line-spacing 0.5))
       ;; low resolution font size
       (progn
         ;; (setq buffer-face-mode-face '(:family "Minion Pro" :height 155 :spacing proportional))
@@ -1046,6 +1048,39 @@ when necessary."
                  ;; Help with displaying fonts
                  inhibit-compacting-font-caches t)
 
+(require 'display-line-numbers)
+
+(defcustom display-line-numbers-exempt-modes
+  '(vterm-mode eshell-mode shell-mode term-mode ansi-term-mode org-mode neotree-mode markdown-mode deft-mode help-mode)
+  "Major modes on which to disable line numbers."
+  :group 'display-line-numbers
+  :type 'list
+  :version "green")
+
+(defun display-line-numbers--turn-on ()
+  "Turn on line numbers except for certain major modes.
+Exempt major modes are defined in `display-line-numbers-exempt-modes'."
+  (unless (or (minibufferp)
+              (member major-mode display-line-numbers-exempt-modes))
+    (display-line-numbers-mode)))
+
+(global-display-line-numbers-mode)
+
+(defun sync0-set-margins ()
+  "Set margins in current buffer."
+  (setq left-margin-width 0)
+  (setq right-margin-width 0))
+
+(defun sync0-set-neotree-margins ()
+  "Set margins in current buffer."
+  (setq left-margin-width 0)
+  (setq left-fringe-width 0)
+  (setq right-margin-width 0))
+
+(add-hook 'prog-mode-hook #'sync0-set-margins)
+(add-hook 'bibtex-mode-hook #'sync0-set-margins)
+(add-hook 'neotree-mode-hook #'sync0-set-neotree-margins)
+
    (use-package all-the-icons 
      :straight (all-the-icons :type git :host github :repo "domtronn/all-the-icons.el") 
      ;; improve performance 
@@ -1067,6 +1102,8 @@ when necessary."
   :config
   ;; Enable flashing mode-line on errors
   ;; (doom-themes-visual-bell-config)
+  ;; Enable custom neotree theme (all-the-icons must be installed!)
+  (doom-themes-neotree-config)
   ;; Correct org-mode's native fontification.
   (doom-themes-org-config))
 
@@ -1078,6 +1115,16 @@ when necessary."
   (evil-leader/set-key
     "T" 'cycle-themes)
   (setq cycle-themes-theme-list '(doom-zenburn doom-flatwhite)))
+
+(use-package hl-line 
+  :straight nil
+  :hook (prog-mode . hl-line-mode)
+  ;; :hook ((conf-mode prog-mode) . hl-line-mode)
+  :custom
+  ;; I don't need hl-line showing in other windows. This also offers a small
+  ;; speed boost when buffer is displayed in multiple windows.
+  (hl-line-sticky-flag nil)
+  (global-hl-line-sticky-flag nil))
 
    (use-package smooth-scrolling 
      :straight (smooth-scrolling :type git :host github :repo "aspiers/smooth-scrolling") 
@@ -1143,35 +1190,37 @@ when necessary."
      :config
      (require 'sync0-holidays))
 
-  (use-package magit
-    :straight (magit :type git :host github :repo "magit/magit") 
-    :commands (magit-status magit-blame)
-    :custom
-    (magit-branch-arguments nil)
-    (magit-push-always-verify nil)
-    ;; Get rid of the previous advice to go into fullscreen
-    (magit-restore-window-configuration t)
-    :bind (("C-x g" . magit-status)
-           ("C-x M-g" . magit-dispatch)))
+(use-package magit
+  :straight (magit :type git :host github :repo "magit/magit") 
+  ;; :commands (magit-status magit-blame)
+  :custom
+  (magit-branch-arguments nil)
+  (magit-push-always-verify nil)
+  ;; Get rid of the previous advice to go into fullscreen
+  (magit-restore-window-configuration t)
+  :config
+  (evil-leader/set-key  "g" 'magit-status))
 
-  (use-package git-timemachine
-    :straight (git-timemachine :type git :host gitlab :repo "pidu/git-timemachine") 
-    :commands 
-    (git-timemachine git-timemachine-toggle)
-    :custom
-    (git-timemachine-show-minibuffer-details nil)
-    :config
-    (require 'magit-blame)
+(use-package git-timemachine
+  :straight (git-timemachine :type git :host gitlab :repo "pidu/git-timemachine") 
+  :commands 
+  (git-timemachine git-timemachine-toggle)
+  :custom
+  (git-timemachine-show-minibuffer-details nil)
+  :config
+  (require 'magit-blame)
 
-    ;; Sometimes I forget `git-timemachine' is enabled in a buffer, so instead of
-    ;; showing revision details in the minibuffer, show them in
-    ;; `header-line-format', which has better visibility.
+  ;; Sometimes I forget `git-timemachine' is enabled in a buffer, so instead of
+  ;; showing revision details in the minibuffer, show them in
+  ;; `header-line-format', which has better visibility.
 
-    ;; (add-hook 'git-timemachine-mode-hook #'+vcs|init-header-line)
-    ;; (advice-add #'git-timemachine-show-revision :after #'+vcs*update-header-line)
+  ;; (add-hook 'git-timemachine-mode-hook #'+vcs|init-header-line)
+  ;; (advice-add #'git-timemachine-show-revision :after #'+vcs*update-header-line)
 
-    ;; Force evil to rehash keybindings for the current state
-    (add-hook 'git-timemachine-mode-hook #'evil-force-normal-state))
+  (evil-leader/set-key  "G" 'git-timemachine)
+
+  ;; Force evil to rehash keybindings for the current state
+  (add-hook 'git-timemachine-mode-hook #'evil-force-normal-state))
 
   (use-package ediff
     :straight nil
@@ -1181,6 +1230,17 @@ when necessary."
     (ediff-window-setup-function #'ediff-setup-windows-plain)
     ;; Split windows horizontally in ediff (instead of vertically)
     (ediff-split-window-function #'split-window-vertically))
+
+(use-package org-id
+  :straight nil
+  :custom
+  (org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id)
+  (org-id-track-globally t)
+  :init
+  (require 'find-lisp)
+  :config
+  ;; Update ID file on startup
+  (org-id-update-id-locations))
 
 (use-package org-ref
   ;; :straight (org-ref :type git :host github :repo "jkitchin/org-ref") 
@@ -1204,6 +1264,125 @@ when necessary."
   :bind 
   (:map org-mode-map
         ("C-c [" . org-ref-ivy-insert-cite-link)))
+
+;; disable warning
+(setq org-roam-v2-ack t) 
+
+(use-package org-roam
+  :straight (org-roam :type git :host github :repo "org-roam/org-roam") 
+  :init 
+  (require 'org-id)
+  :custom
+  (org-roam-directory "~/Dropbox/obsidian/")
+  (org-roam-file-exclude-regexp "\(task\|img\|doctorat\|templates\)/[[:graph:]]+.md")
+  (org-roam-file-extensions '("org" "md"))
+  ;; exclude useless files from my org directory 
+  ;; (org-roam-file-exclude-regexp "etc/[[:graph:]]+.org")
+  :config
+  (setq org-id-extra-files (find-lisp-find-files org-roam-directory "\.md"))
+  ;; (org-roam-setup)
+
+  (require 'org-ref)
+  ;; (require 'md-roam)
+  ;; (require 'org-emms)
+  ;; (require 'deft)
+  (require 'sync0-org-roam-functions)
+
+  ;; (cl-defmethod org-roam-node-zettel-type ((node org-roam-node))
+  ;;   (cdr
+  ;;    (assoc "ZETTEL_TYPE" (org-roam-node-properties node)))) 
+
+  ;; (cl-defmethod org-roam-node-fiche-type ((node org-roam-node))
+  ;;   (cdr
+  ;;    (assoc "FICHE_TYPE" (org-roam-node-properties node)))) 
+
+  ;; (cl-defmethod org-roam-node-zettel-function ((node org-roam-node))
+  ;;   (cdr
+  ;;    (assoc "ZETTEL_FUNCTION" (org-roam-node-properties node)))) 
+
+  ;; (cl-defmethod org-roam-node-biblatex-type ((node org-roam-node))
+  ;;   (cdr
+  ;;    (assoc "BIBLATEX_TYPE" (org-roam-node-properties node)))) 
+
+  ;; (setq org-roam-node-display-template "${title:80}  ${tags:50} ${zettel-type} : ${biblatex-type}${fiche-type}${zettel-function}")
+
+  ;; add the possiblity to follow links in the org-roam buffer
+  (define-key org-roam-mode-map [mouse-1] #'org-roam-visit-thing)
+
+(evil-leader/set-key-for-mode 'org-mode "B" 'org-roam-buffer-toggle)
+(evil-leader/set-key-for-mode 'org-mode "i" 'sync0-org-roam-insert)
+(evil-leader/set-key-for-mode 'org-mode "I" 'sync0-hydra-org-roam-insert/body)
+
+  (evil-leader/set-key
+    "F" 'org-roam-node-find))
+
+(use-package md-roam
+  :straight '(md-roam :type git :host github :repo "nobiot/md-roam")
+  :custom
+  ;; default "md". Specify an extension such as "markdown"
+  (md-roam-file-extension "md") 
+  :config
+  (md-roam-mode 1) ; md-roam-mode must be active before org-roam-db-sync
+  (org-roam-db-autosync-mode 1) ; autosync-mode triggers db-sync. md-roam-mode must be already active
+
+  (setq md-roam-regex-aliases
+        ;; Assumed to be case insensitive
+        "\\(^.*aliases:[ \t]*\\)\\(.*\\)")
+
+  (setq md-roam-ref-keys
+        ;; Assumed to be case insensitive
+        "\\(^.*citekey:[ \t]*\\)\\(.*\\)")
+
+(cl-defun md-roam-node-insert (&optional filter-fn &key templates info)
+  "Find an Org-roam node and insert (where the point is) an \"id:\" link to it.
+FILTER-FN is a function to filter out nodes: it takes an `org-roam-node',
+and when nil is returned the node will be filtered out.
+The TEMPLATES, if provided, override the list of capture templates (see
+`org-roam-capture-'.)
+The INFO, if provided, is passed to the underlying `org-roam-capture-'."
+  (when (md-roam--markdown-file-p (buffer-file-name (buffer-base-buffer)))
+    (unwind-protect
+        ;; Group functions together to avoid inconsistent state on quit
+        (atomic-change-group
+          (let* (region-text
+                 beg end
+                 (_ (when (region-active-p)
+                      (setq beg (set-marker (make-marker) (region-beginning)))
+                      (setq end (set-marker (make-marker) (region-end)))
+                      (setq region-text (org-link-display-format (buffer-substring-no-properties beg end)))))
+                 (node (org-roam-node-read region-text filter-fn))
+                 (description (or region-text
+                                  (org-roam-node-formatted node))))
+            (if (org-roam-node-id node)
+                (progn
+                  (when region-text
+                    (delete-region beg end)
+                    (set-marker beg nil)
+                    (set-marker end nil))
+                  (insert (concat "["
+                                  (cond
+                                   ((eq md-roam-node-insert-type 'id)
+                                    (concat description "](" (org-roam-node-id node) ".md)" ))
+                                   ((eq md-roam-node-insert-type 'title-or-alias)
+                                    (concat  (org-roam-node-title node) "](" (org-roam-node-id node) ".md)")))))
+                  ;; for advice
+                  t)
+              (org-roam-capture-
+               :node node
+               :info info
+               :templates templates
+               :props (append
+                       (when (and beg end)
+                         (list :region (cons beg end)))
+                       (list :insert-at (point-marker)
+                             :link-description description
+                             :finalize 'insert-link)))
+              ;; for advice
+              t)))
+      (deactivate-mark)
+      ;; for advice
+      t)))
+  )
 
 (use-package org-capture 
   :straight nil
@@ -1273,6 +1452,24 @@ when necessary."
     ;; Hide all bullets:
     (org-bullets-bullet-list '(" ")))
 
+(use-package org-noter
+  :straight (org-noter :type git :host github :repo "weirdNox/org-noter") 
+  :after (:any org pdf-view)
+  :config
+  (setq
+   ;; The WM can handle splits
+   org-noter-notes-window-location 'horizontal-split
+   ;; Please stop opening frames
+   org-noter-always-create-frame nil
+   ;; I want to see the whole file
+   org-noter-hide-other nil
+   ;; Use interleave properties 
+   org-noter-property-doc-file "INTERLEAVE_PDF"
+   ;; 
+   org-noter-default-heading-title (format-time-string "%Y%m%d%H%M%S")
+   ;; Everything is relative to the main notes file
+   org-noter-notes-search-path (list sync0-zettelkasten-directory)))
+
   (use-package ox-latex 
     :straight nil
     :after org
@@ -1300,12 +1497,43 @@ when necessary."
     (org-export-odt-preferred-output-format "doc")
     (org-odt-preferred-output-format "doc")
     (org-latex-logfiles-extensions '("aux" "lof" "lot" "tex~" "idx" "out" "toc" "nav" "snm" "vrb" "dvi" "fdb_latexmk" "blg" "brf" "fls" "entoc" "ps" "spl" "run.xml"))
-
     :config
     (require 'sync0-ox-latex)
     :bind 
     (:map org-mode-map 
           ("M-p" . sync0-org-export-latex-and-beamer)))
+
+(use-package ox-epub
+  :straight (ox-epub :type git :host github :repo "ofosos/ox-epub")
+  :after org)
+
+(use-package org-download
+  :straight (org-download :type git :host github :repo "abo-abo/org-download") 
+  :after org
+  :hook (dired-mode . org-download-enable)
+  :custom
+  (org-download-image-dir "~/Pictures/org")
+  (org-download-screenshot-method "spectacle")
+  ;; (org-download-screenshot-method "xfce4-screenshooter")
+
+  :config
+  (defhydra sync0-hydra-org-download-functions (:color amaranth :hint nil :exit t)
+    "
+    ^Download functions^   
+    ^--------------------
+    _c_lipboard
+    _y_ank
+    _s_creenshot
+                                                                     
+    _q_uit
+         "
+    ("c" org-download-clipboard)
+    ("y" org-download-yank)
+    ("s" org-download-screenshot)
+    ("q" nil :color blue))
+  
+  (evil-leader/set-key
+    "D" 'sync0-hydra-org-download-functions/body))
 
   (use-package org 
     :after evil
@@ -1591,7 +1819,7 @@ when necessary."
         ;; high resolution (t14s)
         (progn
           (face-remap-add-relative 'variable-pitch
-                                   :family "Minion Pro"
+                                   :family "Sitka Text"
                                    ;; :height 200
                                    ;; :height 220
                                    :height 250)
@@ -1601,7 +1829,7 @@ when necessary."
       ;; low resolution 
       (progn
         (face-remap-add-relative 'variable-pitch
-                                 :family "Minion Pro"
+                                 :family "Sitka Text"
                                  ;; :height 200
                                  ;; :height 155
                                  ;; :height 130
@@ -1613,9 +1841,150 @@ when necessary."
 
 (require 'sync0-obsidian)
 
+(use-package deft
+  :custom
+  (deft-recursive t)
+  (deft-use-filename-as-title t)
+  ;; (deft-use-filter-string-for-filename t)
+  (deft-default-extension "md")
+  ;; (deft-default-extension "org")
+  (deft-directory sync0-obsidian-directory)
+  (deft-new-file-format "%Y%m%d%H%M%S")
+  :config
+  (require 'sync0-deft)
+  (evil-leader/set-key "d" 'deft))
+
+ (use-package follow-mode
+  :straight nil
+  :commands follow-mode
+  :custom (follow-auto t))
+
+(use-package graphviz-dot-mode
+  :straight (graphviz-dot-mode :type git :host github :repo "ppareit/graphviz-dot-mode") 
+  :custom
+  (graphviz-dot-indent-width 4))
+;; (use-package company-graphviz-dot
+;;   :straight (company-graphviz-dot :type git :host github :repo "ppareit/graphviz-dot-mode"))
+
+  (use-package yaml-mode
+    :init
+    (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode))
+    (add-to-list 'auto-mode-alist '("\\.yaml\\'" . yaml-mode)))
+
+  (use-package markdown-mode
+    :commands (markdown-mode gfm-mode)
+    :custom
+    (markdown-enable-wiki-links t)
+    (markdown-enable-math t)
+    (markdown-coding-system 'utf-8)
+    (markdown-asymmetric-header t)
+    (markdown-hide-markup t)
+    ;; (markdown-hide-markup nil)
+    (markdown-header-scaling t)
+    ;; (markdown-header-scaling-values '(1.953 1.563 1.25 1.0 0.8 0.64))
+    (markdown-header-scaling-values '(2.074 1.728 1.44 1.2 1.0 0.833))
+    :mode (("README\\.md\\'" . gfm-mode)
+           ("\\.md\\'" . markdown-mode)
+           ("\\.markdown\\'" . markdown-mode))
+
+    :config
+    (require 'sync0-markdown)
+
+    (evil-define-key 'visual markdown-mode-map
+      "z" 'markdown-insert-italic)
+
+    (evil-leader/set-key-for-mode 'markdown-mode "O" 'markdown-follow-link-at-point)
+    ;; (evil-leader/set-key-for-mode 'markdown-mode "i" 'markdown-insert-wiki-link)
+;; (evil-leader/set-key-for-mode 'markdown-mode "B" 'org-roam-buffer-toggle)
+(evil-leader/set-key-for-mode 'markdown-mode "i" 'sync0-org-roam-insert)
+
+    (evil-define-key 'normal markdown-mode-map
+      (kbd "<tab>") 'markdown-cycle
+      "<" 'markdown-backward-same-level
+      ">" 'markdown-forward-same-level
+      (kbd "C->") 'markdown-forward-same-level
+      (kbd "C-<") 'markdown-backward-same-level
+      "H" 'markdown-promote
+      "L" 'markdown-demote
+      "K" 'markdown-move-up
+      "J" 'markdown-move-down
+      "k" 'evil-previous-visual-line
+      "j" 'evil-next-visual-line
+      ;; "o" '(lambda () (interactive) (sync0-evil-org-eol-call 'sync0-clever-insert-item))
+      ;; "O" '(lambda () (interactive) (sync0-evil-org-eol-call 'org-insert-heading))
+      "$" 'evil-end-of-visual-line
+      "^" 'evil-beginning-of-visual-line
+      "[" 'evil-backward-sentence-begin
+      "]" 'evil-forward-sentence-begin
+      "{" 'markdown-backward-paragraph
+      "}" 'markdown-forward-paragraph)
+
+    :bind ((:map markdown-mode-map
+                 ("M-<right>" . markdown-demote)
+                 ("M-<left>" . markdown-promote))))
+
+(use-package web-mode
+  :straight (web-mode :type git :host github :repo "fxbois/web-mode") 
+  :mode
+  (("\\.phtml\\'" . web-mode)
+   ;; ("\\.jsx\\'" . web-mode)
+   ("\\.tpl\\.php\\'" . web-mode)
+   ("\\.[agj]sp\\'" . web-mode)
+   ("\\.as[cp]x\\'" . web-mode)
+   ("\\.erb\\'" . web-mode)
+   ("\\.mustache\\'" . web-mode)
+   ("\\.djhtml\\'" . web-mode)
+   ("\\.html?\\'" . web-mode))
+  :config
+  (require 'sync0-web-mode-functions))
+
+(use-package emmet-mode
+  :custom
+  (emmet-move-cursor-between-quotes t)
+  :config
+  ;; Auto-start on any markup modes
+  (add-hook 'sgml-mode-hook #'emmet-mode) 
+  ;; Auto-start on web mode
+  (add-hook 'web-mode-hook #'emmet-mode) 
+  ;; enable Emmet's css abbreviation.
+  (add-hook 'css-mode-hook  #'emmet-mode))
+
+(use-package neotree
+  :config
+  (setq neo-theme (if (display-graphic-p) 'icons 'arrow))
+  (setq neo-smart-open t)
+  (setq projectile-switch-project-action 'neotree-projectile-action)
+
+  (defun neotree-project-dir ()
+    "Open NeoTree using the git root."
+    (interactive)
+    (let ((project-dir (projectile-project-root))
+          (file-name (buffer-file-name)))
+      (neotree-toggle)
+      (if project-dir
+          (if (neo-global--window-exists-p)
+              (progn
+                (neotree-dir project-dir)
+                (neotree-find file-name)))
+        (message "Could not find git project root."))))
+
+  (evil-leader/set-key
+    "t" 'neotree-project-dir)
+  
+  (evil-define-key 'normal neotree-mode-map
+    "q" 'neotree-hide
+    "I" 'neotree-hidden-file-toggle
+    "z" 'neotree-stretch-toggle
+    "R" 'neotree-refresh
+    "m" 'neotree-rename-node
+    "c" 'neotree-create-node
+    "d" 'neotree-delete-node
+    "s" 'neotree-enter-vertical-split
+    "S" 'neotree-enter-horizontal-split
+    (kbd "RET") 'neotree-enter))
+
   (use-package paren
     :straight nil
-    :after evil
     :custom
     (show-paren-delay 0.1)
     (show-paren-highlight-openparen t)
@@ -1625,10 +1994,181 @@ when necessary."
     :config
     (show-paren-mode 1))
 
+(use-package smartparens
+  :straight (smartparens :type git :host github :repo "Fuco1/smartparens") 
+  :hook 
+  ((emacs-startup . smartparens-global-mode)
+   (emacs-startup . show-smartparens-global-mode)
+   ;; Disable smartparens in evil-mode's replace state; they conflict.
+   (evil-replace-state-entry-hook . turn-off-smartparens-mode)
+   (evil-replace-state-exit-hook  . turn-on-smartparens-mode))
+  :custom
+  (sp-autowrap-region nil) ; let evil-surround handle this
+  (sp-highlight-pair-overlay nil)
+  (sp-cancel-autoskip-on-backward-movement nil)
+  (sp-show-pair-delay 0)
+  (sp-max-pair-length 3)
+  :config
+  (require 'smartparens-config)
+  (require 'smartparens-latex)
+
+  ;; Make org-mode handle latex quotes without too much hassle
+  (sp-local-pair 'org-mode "``" "''"
+                 ;;:trigger nil
+                 :unless '(sp-latex-point-after-backslash)
+                 :post-handlers '(sp-latex-skip-double-quote))
+
+  ;; Make org-mode handle latex quotes without too much hassle
+  (sp-local-pair 'org-mode "`" "'"
+                 ;; :trigger nil
+                 :unless '(sp-latex-point-after-backslash)
+                 :post-handlers '(sp-latex-skip-double-quote))
+
+  ;; Do not complete the single quote pair at the end of words.
+  ;; Othwersie, the apostrophe in English becomes caotic.
+  (sp-local-pair 'org-mode "'" "'"
+                 ;; :trigger nil
+                 :unless '(sp-point-after-word-p))
+
+
+  (defhydra sync0-hydra-smart-parens (:hint nil)
+    "
+ Sexps functions (_q_uit)
+ ^Nav^            ^Barf/Slurp^                 ^Depth^
+ ^---^------------^----------^-----------------^-----^-----------------
+ _f_: forward     _→_:          slurp forward   _R_: splice
+ _b_: backward    _←_:          barf forward    _r_: raise
+ _u_: backward ↑  _C-<right>_:  slurp backward  _↑_: raise backward
+ _d_: forward ↓   _C-<left>_:   barf backward   _↓_: raise forward
+ _p_: backward ↓
+ _n_: forward ↑
+
+ ^Kill^           ^Misc^                       ^Wrap^
+ ^----^-----------^----^-----------------------^----^------------------
+ _w_: copy        _j_: join                    _(_: wrap with ( )
+ _k_: kill        _s_: split                   _{_: wrap with { }
+ ^^               _t_: transpose               _'_: wrap with ' '
+ ^^               _c_: convolute               _\"_: wrap with \" \"
+ ^^               _i_: indent defun"
+
+    ("q" nil)
+    ;; Wrapping
+    ("(" (lambda (_) (interactive "P") (sp-wrap-with-pair "(")))
+    ("{" (lambda (_) (interactive "P") (sp-wrap-with-pair "{")))
+    ("'" (lambda (_) (interactive "P") (sp-wrap-with-pair "'")))
+    ("\"" (lambda (_) (interactive "P") (sp-wrap-with-pair "\"")))
+    ;; Navigation
+    ("f" sp-forward-sexp )
+    ("b" sp-backward-sexp)
+    ("u" sp-backward-up-sexp)
+    ("d" sp-down-sexp)
+    ("p" sp-backward-down-sexp)
+    ("n" sp-up-sexp)
+    ;; Kill/copy
+    ("w" sp-copy-sexp)
+    ("k" sp-kill-sexp)
+    ;; Misc
+    ("t" sp-transpose-sexp)
+    ("j" sp-join-sexp)
+    ("s" sp-split-sexp)
+    ("c" sp-convolute-sexp)
+    ("i" sp-indent-defun)
+    ;; Depth changing
+    ("R" sp-splice-sexp)
+    ("r" sp-splice-sexp-killing-around)
+    ("<up>" sp-splice-sexp-killing-backward)
+    ("<down>" sp-splice-sexp-killing-forward)
+    ;; Barfing/slurping
+    ("<right>" sp-forward-slurp-sexp)
+    ("<left>" sp-forward-barf-sexp)
+    ("C-<left>" sp-backward-barf-sexp)
+    ("C-<right>" sp-backward-slurp-sexp))
+
+  (evil-leader/set-key
+    "S" 'sync0-hydra-smart-parens/body))
+
   (use-package flycheck
     :commands flycheck-mode
     :config
     (setq flycheck-display-errors-function #'flycheck-display-error-messages-unless-error-list))
+
+(use-package lsp-mode
+  :commands lsp
+  :init
+  ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
+  (setq lsp-keymap-prefix "C-c l")
+  (setq lsp-tex-server 'digestif)
+  :hook ((python-mode . lsp)
+         ;; (typescript-mode . lsp)
+         ;; (js2-mode . lsp)
+         (js-mode . lsp)
+         (LaTeX-mode . lsp)
+         ;; (tex-mode . lsp-deferred)
+         ;; (nxml-mode . lsp)
+         ;; (emacs-lisp-mode . lsp-deferred)
+         (web-mode . lsp)
+         ;; if you want which-key integration
+         (lsp-mode . lsp-enable-which-key-integration)))
+
+;; optionally
+(use-package lsp-ui :commands lsp-ui-mode)
+;; if you are ivy user
+(use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
+(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
+
+;; optionally if you want to use debugger
+(use-package dap-mode)
+;; (use-package dap-LANGUAGE) to load the dap adapter for your language
+
+(use-package company-lsp
+  :after company-mode
+  :config
+  (setq company-lsp-cache-candidates 'auto
+        company-lsp-async t
+        company-lsp-enable-snippet nil
+        company-lsp-enable-recompletion t))
+
+  (use-package company-box
+    :straight (company-box :type git :host github :repo "sebastiencs/company-box") 
+    :hook (company-mode . company-box-mode)
+    :config
+    (setq company-box-show-single-candidate t
+          company-box-backends-colors nil
+          company-box-max-candidates 10
+          company-box-icons-alist 'company-box-icons-all-the-icons
+          company-box-icons-all-the-icons
+          (let ((all-the-icons-scale-factor 0.8))
+            `((Unknown       . ,(all-the-icons-material "find_in_page"             :face 'all-the-icons-purple))
+              (Text          . ,(all-the-icons-material "text_fields"              :face 'all-the-icons-green))
+              (Method        . ,(all-the-icons-material "functions"                :face 'all-the-icons-red))
+              (Function      . ,(all-the-icons-material "functions"                :face 'all-the-icons-red))
+              (Constructor   . ,(all-the-icons-material "functions"                :face 'all-the-icons-red))
+              (Field         . ,(all-the-icons-material "functions"                :face 'all-the-icons-red))
+              (Variable      . ,(all-the-icons-material "adjust"                   :face 'all-the-icons-blue))
+              (Class         . ,(all-the-icons-material "class"                    :face 'all-the-icons-red))
+              (Interface     . ,(all-the-icons-material "settings_input_component" :face 'all-the-icons-red))
+              (Module        . ,(all-the-icons-material "view_module"              :face 'all-the-icons-red))
+              (Property      . ,(all-the-icons-material "settings"                 :face 'all-the-icons-red))
+              (Unit          . ,(all-the-icons-material "straighten"               :face 'all-the-icons-red))
+              (Value         . ,(all-the-icons-material "filter_1"                 :face 'all-the-icons-red))
+              (Enum          . ,(all-the-icons-material "plus_one"                 :face 'all-the-icons-red))
+              (Keyword       . ,(all-the-icons-material "filter_center_focus"      :face 'all-the-icons-red))
+              (Snippet       . ,(all-the-icons-material "short_text"               :face 'all-the-icons-red))
+              (Color         . ,(all-the-icons-material "color_lens"               :face 'all-the-icons-red))
+              (File          . ,(all-the-icons-material "insert_drive_file"        :face 'all-the-icons-red))
+              (Reference     . ,(all-the-icons-material "collections_bookmark"     :face 'all-the-icons-red))
+              (Folder        . ,(all-the-icons-material "folder"                   :face 'all-the-icons-red))
+              (EnumMember    . ,(all-the-icons-material "people"                   :face 'all-the-icons-red))
+              (Constant      . ,(all-the-icons-material "pause_circle_filled"      :face 'all-the-icons-red))
+              (Struct        . ,(all-the-icons-material "streetview"               :face 'all-the-icons-red))
+              (Event         . ,(all-the-icons-material "event"                    :face 'all-the-icons-red))
+              (Operator      . ,(all-the-icons-material "control_point"            :face 'all-the-icons-red))
+              (TypeParameter . ,(all-the-icons-material "class"                    :face 'all-the-icons-red))
+              (Template      . ,(all-the-icons-material "short_text"               :face 'all-the-icons-green))
+              (ElispFunction . ,(all-the-icons-material "functions"                :face 'all-the-icons-red))
+              (ElispVariable . ,(all-the-icons-material "check_circle"             :face 'all-the-icons-blue))
+              (ElispFeature  . ,(all-the-icons-material "stars"                    :face 'all-the-icons-orange))
+              (ElispFace     . ,(all-the-icons-material "format_paint"            :face 'all-the-icons-pink))))))
 
   (use-package company
     :hook
@@ -1639,9 +2179,9 @@ when necessary."
     (company-tooltip-limit 10)
     (company-tooltip-align-annotations t)
     (company-require-match 'never)
-    (company-global-modes '(not erc-mode message-mode help-mode gud-mode))
-    (company-frontends '(company-pseudo-tooltip-frontend 
-                         company-echo-metadata-frontend))  
+    (company-global-modes '(not erc-mode message-mode deft-mode help-mode gud-mode neotree-mode))
+    ;; (company-frontends '(company-pseudo-tooltip-frontend 
+    ;;                      company-echo-metadata-frontend))  
     (company-backends '(company-capf))
     (company-auto-complete nil)
     :config
@@ -1652,14 +2192,17 @@ when necessary."
     (define-key company-active-map (kbd "M-k") 'company-select-previous)
 
     (defvar +company-backend-alist
-      '((text-mode company-capf  company-yasnippet)
+      '((text-mode company-capf company-yasnippet)
+        (markdown-mode company-capf company-yasnippet company-ispell)
+        (org-mode company-capf company-yasnippet company-elisp company-ispell)
         ;; '((text-mode company-capf  company-yasnippet company-org-roam)
         ;; '((text-mode company-capf  company-yasnippet company-ispell company-org-roam)
         ;; '((text-mode company-capf company-dabbrev company-yasnippet company-ispell company-org-roam)
         ;;(text-mode company-capf company-yasnippet company-ispell company-bibtex)
-        (prog-mode company-capf company-yasnippet)
+        (graphviz-dot-mode company-capf company-graphviz-dot-backend company-yasnippet)
+        (prog-mode company-capf company-lsp company-yasnippet)
         (elisp-mode company-elisp company-capf company-yasnippet)
-        (nxml-mode company-capf company-yasnippet company-nxml)
+        ;; (nxml-mode company-capf company-yasnippet company-nxml)
         ;; (python-mode company-capf company-yasnippet company-jedi)
         (conf-mode company-capf company-dabbrev-code company-yasnippet))
       "An alist matching modes to company backends. The backends for any mode is
@@ -1704,62 +2247,12 @@ when necessary."
 
     (add-hook 'text-mode-hook #'sync0-config-prose-completion))
 
-  (use-package company-box
-    :straight (company-box :type git :host github :repo "sebastiencs/company-box") 
-    :hook (company-mode . company-box-mode)
-    :config
-    (setq company-box-show-single-candidate t
-          company-box-backends-colors nil
-          company-box-max-candidates 10
-          company-box-icons-alist 'company-box-icons-all-the-icons
-          company-box-icons-all-the-icons
-          (let ((all-the-icons-scale-factor 0.8))
-            `((Unknown       . ,(all-the-icons-material "find_in_page"             :face 'all-the-icons-purple))
-              (Text          . ,(all-the-icons-material "text_fields"              :face 'all-the-icons-green))
-              (Method        . ,(all-the-icons-material "functions"                :face 'all-the-icons-red))
-              (Function      . ,(all-the-icons-material "functions"                :face 'all-the-icons-red))
-              (Constructor   . ,(all-the-icons-material "functions"                :face 'all-the-icons-red))
-              (Field         . ,(all-the-icons-material "functions"                :face 'all-the-icons-red))
-              (Variable      . ,(all-the-icons-material "adjust"                   :face 'all-the-icons-blue))
-              (Class         . ,(all-the-icons-material "class"                    :face 'all-the-icons-red))
-              (Interface     . ,(all-the-icons-material "settings_input_component" :face 'all-the-icons-red))
-              (Module        . ,(all-the-icons-material "view_module"              :face 'all-the-icons-red))
-              (Property      . ,(all-the-icons-material "settings"                 :face 'all-the-icons-red))
-              (Unit          . ,(all-the-icons-material "straighten"               :face 'all-the-icons-red))
-              (Value         . ,(all-the-icons-material "filter_1"                 :face 'all-the-icons-red))
-              (Enum          . ,(all-the-icons-material "plus_one"                 :face 'all-the-icons-red))
-              (Keyword       . ,(all-the-icons-material "filter_center_focus"      :face 'all-the-icons-red))
-              (Snippet       . ,(all-the-icons-material "short_text"               :face 'all-the-icons-red))
-              (Color         . ,(all-the-icons-material "color_lens"               :face 'all-the-icons-red))
-              (File          . ,(all-the-icons-material "insert_drive_file"        :face 'all-the-icons-red))
-              (Reference     . ,(all-the-icons-material "collections_bookmark"     :face 'all-the-icons-red))
-              (Folder        . ,(all-the-icons-material "folder"                   :face 'all-the-icons-red))
-              (EnumMember    . ,(all-the-icons-material "people"                   :face 'all-the-icons-red))
-              (Constant      . ,(all-the-icons-material "pause_circle_filled"      :face 'all-the-icons-red))
-              (Struct        . ,(all-the-icons-material "streetview"               :face 'all-the-icons-red))
-              (Event         . ,(all-the-icons-material "event"                    :face 'all-the-icons-red))
-              (Operator      . ,(all-the-icons-material "control_point"            :face 'all-the-icons-red))
-              (TypeParameter . ,(all-the-icons-material "class"                    :face 'all-the-icons-red))
-              (Template      . ,(all-the-icons-material "short_text"               :face 'all-the-icons-green))
-              (ElispFunction . ,(all-the-icons-material "functions"                :face 'all-the-icons-red))
-              (ElispVariable . ,(all-the-icons-material "check_circle"             :face 'all-the-icons-blue))
-              (ElispFeature  . ,(all-the-icons-material "stars"                    :face 'all-the-icons-orange))
-              (ElispFace     . ,(all-the-icons-material "format_paint"            :face 'all-the-icons-pink))))))
-
-(use-package web-mode
-  :straight (web-mode :type git :host github :repo "fxbois/web-mode") 
-  :mode
-  (("\\.phtml\\'" . web-mode)
-   ;; ("\\.jsx\\'" . web-mode)
-   ("\\.tpl\\.php\\'" . web-mode)
-   ("\\.[agj]sp\\'" . web-mode)
-   ("\\.as[cp]x\\'" . web-mode)
-   ("\\.erb\\'" . web-mode)
-   ("\\.mustache\\'" . web-mode)
-   ("\\.djhtml\\'" . web-mode)
-   ("\\.html?\\'" . web-mode))
-  :config
-  (require 'sync0-web-mode-functions))
+(use-package browse-url
+  :straight nil
+  :custom
+  (browse-url-browser-function 'browse-url-default-browser)
+  (browse-url-chrome-program "google-chrome-stable")
+  (browse-url-generic-program "google-chrome-stable"))
 
 (use-package palette
   :straight nil
@@ -1768,86 +2261,27 @@ when necessary."
   :commands palette
   :load-path "~/.emacs.d/sync0/")
 
-  (use-package markdown-mode
-    :commands (markdown-mode gfm-mode)
-    :custom
-    (markdown-enable-wiki-links t)
-    (markdown-enable-math t)
-    (markdown-coding-system 'utf-8)
-    (markdown-asymmetric-header t)
-    (markdown-hide-markup t)
-    ;; (markdown-hide-markup nil)
-    (markdown-header-scaling t)
-    ;; (markdown-header-scaling-values '(1.953 1.563 1.25 1.0 0.8 0.64))
-    (markdown-header-scaling-values '(2.074 1.728 1.44 1.2 1.0 0.833))
-    :mode (("README\\.md\\'" . gfm-mode)
-           ("\\.md\\'" . markdown-mode)
-           ("\\.markdown\\'" . markdown-mode))
+(use-package lsp-jedi
+  :straight (lsp-jedi :type git :host github :repo "fredcamps/lsp-jedi")
+  :config
+  (with-eval-after-load "lsp-mode"
+    ;; (add-to-list 'lsp-enabled-clients 'jedi)
+    (add-to-list 'lsp-disabled-clients 'pyls)))
 
-    :config
-    (defhydra sync0-hydra-markdown-functions (:color amaranth :hint nil :exit t)
-      "
-  ^Links^             ^Footnotes^          ^Trees^              ^Export^           ^Etc.^
-  ^---------------------------------------------------------------------------------------------------
-  Wiki link _i_nsert   New _f_ootnote       Indirect _b_uffer    Latex export     Insert drawer
-  Lin_k_ insert        ^ ^                  Export trees         ^ ^              New local _a_bbrev
-  _I_mage insert       ^ ^                  ^ ^      
-  ^---------------------------------------------------------------------------------------------------
-  ^Citations^         ^Visibility^
-  ^---------------------------------------------------------------------------------------------------
-  Insert _c_itation    Toggle _m_arkup
-  ^ ^                  ^ ^                  ^ ^   
-  _q_uit
-  "
-      ;; ("b" org-epub-export-to-epub)
-      ;; ("s" org-store-link)
-      ("i" markdown-insert-wiki-link)
-      ("k" markdown-insert-link)
-      ("I" markdown-insert-image)
-      ("f" markdown-insert-footnote)
-      ("b" markdown-narrow-to-subtree)
-      ("c" ivy-bibtex)
-      ("m" markdown-toggle-markup-hiding)
-      ;; ("e" sync0-org-export-latex-and-beamer)
-      ;; ("E" sync0-org-export-headlines-to-latex)
-      ("a" sync0-define-local-abbrev)
-      ;; ("d" org-insert-drawer)
-      ("q" nil :color blue))
+(use-package py-autopep8
+  :straight (py-autopep8 :type git :host github :repo "paetzke/py-autopep8.el") 
+  :config
+  (setq py-autopep8-options '("--max-line-length=100")))
 
-    (evil-define-key 'visual markdown-mode-map
-      "z" 'markdown-insert-italic)
-
-    (evil-leader/set-key-for-mode 'markdown-mode "z" 'sync0-hydra-markdown-functions/body)
-
-    (evil-leader/set-key-for-mode 'markdown-mode "O" 'markdown-follow-link-at-point)
-    (evil-leader/set-key-for-mode 'markdown-mode "i" 'markdown-insert-wiki-link)
-
-    (evil-define-key 'normal markdown-mode-map
-      (kbd "<tab>") 'markdown-cycle
-      "<" 'markdown-backward-same-level
-      ">" 'markdown-forward-same-level
-      (kbd "C->") 'markdown-forward-same-level
-      (kbd "C-<") 'markdown-backward-same-level
-      "H" 'markdown-promote
-      "L" 'markdown-demote
-      "K" 'markdown-move-up
-      "J" 'markdown-move-down
-      "k" 'evil-previous-visual-line
-      "j" 'evil-next-visual-line
-      ;; "o" '(lambda () (interactive) (sync0-evil-org-eol-call 'sync0-clever-insert-item))
-      ;; "O" '(lambda () (interactive) (sync0-evil-org-eol-call 'org-insert-heading))
-      "$" 'evil-end-of-visual-line
-      "^" 'evil-beginning-of-visual-line
-      "[" 'evil-backward-sentence-begin
-      "]" 'evil-forward-sentence-begin
-      "{" 'markdown-backward-paragraph
-      "}" 'markdown-forward-paragraph)
-
-    (require 'sync0-markdown)
-
-    :bind ((:map markdown-mode-map
-                 ("M-<right>" . markdown-demote)
-                 ("M-<left>" . markdown-promote))))
+(use-package python
+  :straight nil
+  :custom 
+  (jedi:setup-keys t)
+  (jedi:complete-on-dot t)
+  :config
+  (add-hook 'python-mode-hook 'jedi:setup)
+  (add-hook 'python-mode-hook 'py-autopep8-enable-on-save)
+  (add-hook 'python-mode-hook 'flycheck-mode))
 
   (use-package yasnippet 
     :straight (yasnippet :type git :host github :repo "joaotavora/yasnippet") 
@@ -1928,73 +2362,112 @@ when necessary."
     ;; Add standard Sweave file extensions to the list of files recognized  by AuCTeX.
     (add-hook 'TeX-mode-hook (lambda () (reftex-isearch-minor-mode))))
 
-    (use-package bibtex-completion
-      :custom 
-      (bibtex-completion-bibliography '("~/Dropbox/bibliographies/bibliography.bib"
-					"~/Dropbox/bibliographies/doctorat.bib")) 
-      (bibtex-completion-notes-path '"~/Dropbox/obsidian")
-      ;; (bibtex-completion-notes-path '"~/Dropbox/org/permanent")
-      (bibtex-completion-library-path '("~/Documents/pdfs/"))
-      (bibtex-completion-pdf-field "file")
-      (bibtex-completion-pdf-symbol "P")
-      (bibtex-completion-notes-symbol "N")
-      (bibtex-completion-notes-extensión ".md")
-      ;; (bibtex-completion-notes-extensión ".org")
-      (bibtex-completion-pdf-extension '(".pdf" ".epub"))
-      (bibtex-completion-additional-search-fields '(editor journaltitle origdate subtitle volume booktitle location publisher))
+(use-package bibtex
+  :straight nil
+  :custom
+  ;; (bibtex-dialect 'biblatex) ;; biblatex as default bib format
+  (bibtex-maintain-sorted-entries t)
+  (bibtex-field-delimiters 'braces)
+  (bibtex-entry-delimiters 'braces)
+  ;; This line is necessary to prevent strange problem
+  ;; caused by lack of support for my bibtex key naming scheme
+  ;; (bibtex-entry-maybe-empty-head t)
+  (bibtex-comma-after-last-field t)
+  (bibtex-text-indentation 0)
+  (bibtex-autokey-names 0)
+  (bibtex-autokey-name-length 0)
+  (bibtex-autokey-year-title-separator "")
+  (bibtex-autokey-titleword-length 0)
+  (bibtex-autokey-year-length 0)
+  (bibtex-autokey-titlewords 0)
+  (bibtex-align-at-equal-sign t)
+  (bibtex-text-indentation 22)
+  (bibtex-entry-format '(opts-or-alts page-dashes whitespace braces last-comma inherit-booktitle delimiters sort-fields realign))
+  :init
+  (add-hook 'bibtex-mode-hook (lambda () (set-fill-column 9999)))
+  :config
+  (bibtex-set-dialect 'biblatex)
+  (require 'bibtex-completion)
+  (require 'sync0-bibtex-functions)
+  (require 'sync0-bibtex-fields)
 
-      :config 
-   ;; (setq ivy-bibtex-default-action 'ivy-bibtex-insert-key)
-   ;; (setq ivy-bibtex-default-multi-action 'ivy-bibtex-insert-key)
-   (setq ivy-bibtex-default-action 'ivy-bibtex-insert-citation)
-   (setq ivy-bibtex-default-multi-action 'ivy-bibtex-insert-citation)
+  (setq bibtex-autokey-prefix-string (format-time-string "%Y%m%d%H%M%S"))
 
-      (setq bibtex-completion-display-formats
-	    '((article       . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title}: ${subtitle} @ ${journaltitle} [${=key=}]")
-	      (book          . "${=has-pdf=:1}${=has-note=:1}| ${author} [${origdate}](${date:4}) ${title} ${volume}: ${subtitle} [${=key=}]")
-	      (inbook        . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title:55} @ ${booktitle} [${=key=}]")
-	      (incollection  . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title:55} @ ${booktitle} [${=key=}]")
-	      (collection    . "${=has-pdf=:1}${=has-note=:1}| ${editor} (${date:4}) ${title:55} ${volume}: ${subtitle} [${=key=}]")
-	      (inproceedings . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title:55} @ ${booktitle} [${=key=}]")
-	      (t             . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date}) ${title}: ${subtitle} [${=key=}]")))
+  (unbind-key "TAB" bibtex-mode-map)
 
-   (setq bibtex-completion-format-citation-functions
-     '((org-mode      . bibtex-completion-format-citation-org-link-to-PDF)
-       (latex-mode    . bibtex-completion-format-citation-cite)
-       (markdown-mode . bibtex-completion-format-citation-pandoc-citeproc)
-       (default       . bibtex-completion-format-citation-default)))
+  ;; (defvar sync0-bibtex-reference-keys
+  ;;   (lazy-completion-table sync0-bibtex-reference-keys
+  ;;                          (lambda () (sync0-bibtex-parse-keys nil t)))
+  ;;   "Completion table for BibTeX reference keys.
+  ;;  The CDRs of the elements are t for header keys and nil for crossref keys.")
 
-      (setq bibtex-completion-notes-template-multiple-files  
-	    ":PROPERTIES:
-    :ID:      %(org-id-new) 
-    :ROAM_REFS: cite:${=key=}
-    :BIBLATEX_TYPE: ${=type=}
-    :PARENT: \"${booktitle}\"
-    :PARENT: \"${journaltitle}\"
-    :AUTHOR: \"%(sync0-bibtex-completion-reverse-author ${=key=})\"
-    :CREATED: %(format-time-string \"%Y-%m-%d\")
-    :LAST_MODIFIED: %(format-time-string \"%Y-%m-%d\")
-    :ZETTEL_TYPE: reference
-    :LANGUAGE: ${language}
-    :DATE: \"${date}\"
-    :END:
-    #+TITLE: ${title}
-    #+SUBTITLE: ${subtitle}
-    #+AUTHOR: %(sync0-bibtex-completion-reverse-author ${=key=})
-    #+FILETAGS: :${=type=}:${=key=}:${date}:
-    #+INTERLEAVE_PDF: ${file}
+  (evil-define-key 'normal bibtex-mode-map
+    "K" 'sync0-bibtex-previous-key
+    "J" 'sync0-bibtex-next-key))
 
+(use-package bibtex-completion
+  :custom 
+  (bibtex-completion-bibliography '("~/Dropbox/bibliographies/bibliography.bib"
+				    "~/Dropbox/bibliographies/doctorat.bib")) 
+  (bibtex-completion-notes-path '"~/Dropbox/obsidian")
+  ;; (bibtex-completion-notes-path '"~/Dropbox/org/permanent")
+  (bibtex-completion-library-path '("~/Documents/pdfs/"))
+  (bibtex-completion-pdf-field "file")
+  (bibtex-completion-pdf-symbol "P")
+  (bibtex-completion-notes-symbol "N")
+  (bibtex-completion-notes-extension ".md")
+  ;; (bibtex-completion-notes-extension ".org")
+  (bibtex-completion-pdf-extension '(".pdf" ".epub"))
+  (bibtex-completion-additional-search-fields '(editor journaltitle origdate subtitle volume booktitle location publisher))
 
-    ")
+  :config 
+  ;; (setq ivy-bibtex-default-action 'ivy-bibtex-insert-key)
+  ;; (setq ivy-bibtex-default-multi-action 'ivy-bibtex-insert-key)
+  (setq bibtex-completion-display-formats
+	'((article       . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title}: ${subtitle} @ ${journaltitle} [${=key=}]")
+	  (book          . "${=has-pdf=:1}${=has-note=:1}| ${author} [${origdate}](${date:4}) ${title} ${volume}: ${subtitle} [${=key=}]")
+	  (inbook        . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title:55} @ ${booktitle} [${=key=}]")
+	  (incollection  . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title:55} @ ${booktitle} [${=key=}]")
+	  (collection    . "${=has-pdf=:1}${=has-note=:1}| ${editor} (${date:4}) ${title:55} ${volume}: ${subtitle} [${=key=}]")
+	  (inproceedings . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title:55} @ ${booktitle} [${=key=}]")
+	  (t             . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date}) ${title}: ${subtitle} [${=key=}]")))
 
-      (use-package ivy-bibtex
+  (setq bibtex-completion-format-citation-functions
+        '((org-mode      . bibtex-completion-format-citation-org-link-to-PDF)
+          (latex-mode    . bibtex-completion-format-citation-cite)
+          (markdown-mode . bibtex-completion-format-citation-pandoc-citeproc)
+          (default       . bibtex-completion-format-citation-default)))
+
+  (setq bibtex-completion-notes-template-multiple-files  
+        (concat 
+	   "---\n"
+         "citekey: ${=key=}\n"
+         "biblatex_type: ${=type=}\n"
+         "zettel_type: reference\n"
+         "aliases: [\"%(sync0-bibtex-extract-lastname (sync0-bibtex-completion-reverse-author ${=key=})) (${date}) ${title} : ${subtitle}\"]\n"
+         "created: %(format-time-string \"%Y-%m-%d\")\n"
+         "parent: \"${booktitle}\"\n" 
+         "parent: \"${journaltitle}\"\n"
+         "author: \"${author-or-editor}\"\n"
+         "language: ${language}\n"
+         "date: ${date}\n"
+         "tags: [reference/${=type=},bibkey/${=key=},author,language/${language},date/${date}]\n"
+         "---\n"
+         "# %(sync0-bibtex-extract-lastname (sync0-bibtex-completion-reverse-author ${=key=})) (${date}) ${title} : ${subtitle}\n\n"
+         "## Description\n\n"
+         "## Progrès de la lecture\n\n"
+         "## Annotations\n\n"
+         "## Références\n\n"))
+
+  (use-package ivy-bibtex
     ;; :custom
     ;; (ivy-bibtex-default-action 'ivy-bibtex-edit-notes)
-	:config
-	(require 'sync0-ivy-bibtex-functions)))
+    :config
+    (setq ivy-bibtex-default-action 'ivy-bibtex-insert-citation)
+    (setq ivy-bibtex-default-multi-action 'ivy-bibtex-insert-citation)
+    (require 'sync0-ivy-bibtex-functions)))
 
    (use-package pdf-tools
-     :after evil
      :magic ("%PDF" . pdf-view-mode)
      :custom
      ;; automatically annotate highlights

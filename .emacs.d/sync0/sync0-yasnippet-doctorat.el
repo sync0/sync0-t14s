@@ -126,8 +126,8 @@ Courcelle Seneuil does to other authors"
       ("r" sync0-doctorat-add-courcelle-reference)
       ("q" nil :color blue))
 
-(evil-leader/set-key
-  "D" 'sync0-hydra-doctorat-functions/body)
+;; (evil-leader/set-key
+;;   "D" 'sync0-hydra-doctorat-functions/body)
 
 
 (provide 'sync0-yasnippet-doctorat)

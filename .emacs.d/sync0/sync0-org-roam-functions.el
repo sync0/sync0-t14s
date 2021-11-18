@@ -144,7 +144,7 @@
 ;;            :file-name "journal/%<%Y%m%d>"
 ;;            :head "#+TITLE: %<%A, %d %B %Y>\n#+CREATED: %<%Y/%m/%d>\n#+DATE: %<%Y/%m/%d>\n#+ROAM_TAGS: journal %<%Y> %<%B>\n\n")))
 
-(require 'org-journal)
+;; (require 'org-journal)
 ;;   (require 'org-roam-protocol)                
 
 (defun sync0-org-roam-insert ()
@@ -187,8 +187,8 @@
 "
 ^Org-roam^           ^Org-mode^            ^Orb & Org-ref^    ^Org-emms^        ^Etc^ 
 ^----------------------------------------------------------------------------------------------------
-_I_nsert roam link   Insert lin_k_         Insert _c_itation  Link _t_rack      Replace _m_arks
-Roam _b_uffer        Store _l_ink          Open _n_otes       Track _p_osition  
+_I_nsert roam link   Insert lin_k_         Insert _c_itation  Link track      Replace marks
+Roam _b_uffer        Store _l_ink          Open _n_otes       Track position  
 _U_pdate cache       Insert last _s_tored  Note _a_ctions
 Plot _g_raph         New _f_ootnote        Notes _u_pdate
 _S_et property       _Q_uote (display)     _E_xtract field
@@ -215,18 +215,18 @@ _q_uit
   ("I" sync0-org-roam-insert)
   ("U" org-roam-db-sync)
   ("M" org-roam-refile)
-  ("m" replace-smart-quotes)
+  ;; ("m" replace-smart-quotes)
   ("n" sync0-org-ref-open-notes)
   ("u" sync0-org-ref-update-notes-file)
   ("g" org-roam-graph)
   ("k" org-insert-link)
   ("l" org-store-link)
   ("o" sync0-org-ref-open-pdf-at-point)
-  ("p" org-emms-insert-track-position)
+  ;; ("p" org-emms-insert-track-position)
   ("R" sync0-org-replace-all-links-by-descriptions)
   ("S" sync0-zettelkasten-set-property)
   ("s" org-insert-last-stored-link)
-  ("t" org-emms-insert-track)
+  ;; ("t" org-emms-insert-track)
   ("Q" (progn (yas-expand-snippet (yas-lookup-snippet "csquotes_displayquote"))))
   ("V" sync0-org-open-corresponding-pdf)
   ("z" sync0-org-ref-open-pdf-at-point-zathura)

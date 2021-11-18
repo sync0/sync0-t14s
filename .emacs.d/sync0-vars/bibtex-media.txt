@@ -1,5 +1,5 @@
-digital
-online
-print
+pri
 print,digital
-
+print
+online
+digital

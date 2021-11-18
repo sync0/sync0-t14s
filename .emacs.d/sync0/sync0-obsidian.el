@@ -6,6 +6,7 @@
          (title (read-string "Titre du texte : " nil nil nil t))
          (obsidian-file (concat sync0-obsidian-directory filename ".md")) 
          (obsidian-entry (concat "---\n"
+                                 "id: " filename "\n"
                                  "zettel_type: " type "\n"
                                  "created: " creation "\n"
                                  "title: \"" title "\"\n"
@@ -27,11 +28,12 @@
          (day (format-time-string "%d")) 
          (obsidian-file (concat sync0-obsidian-directory filename ".md")) 
          (obsidian-entry (concat "---\n"
+                                 "id: " filename "\n"
                                  "zettel_type: writing\n"
                                  "created: " creation "\n"
                                  "title: \"Écriture libre, " creation "\"\n"
                                  "aliases: [\"Écriture libre, " creation "\"]\n"
-                                 "tags: [writing/freewriting,date/" year "/" month "/" day "]\n"
+                                 "tags: [writing/freewriting, date/" year "/" month "/" day "]\n"
                                  "---\n" 
                                  "# Écriture libre, " creation "\n"
                                  "[Index de l’écriture libre](20211004120832.md)\n")))

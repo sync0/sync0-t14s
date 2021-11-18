@@ -123,4 +123,55 @@
                            '("=key=" "title" "author" "journaltitle" "date" "editor" "booktitle"))))
     (insert (bibtex-completion-get-value bibtex-field entry))))
 
+(defun sync0-ivy-bibtex-open-notes ()
+  "Open the notes for bibtex key under point in a cite link in a
+buffer. Can also be called with key."
+  (interactive)
+  (let ((bibkey (let* ((candidates (bibtex-completion-candidates))
+                       (key-at-point (org-ref-get-bibtex-key-under-cursor))
+                       ;; (key-at-point (sync0-org-ref-search-bibkey-in-buffer))
+                       (preselect (and key-at-point
+                                       (cl-position-if (lambda (cand)
+                                                         (member (cons "=key=" key-at-point)
+                                                                 (cdr cand)))
+                                                       candidates)))
+                       (selection (ivy-read "Choose BibTeX key to extract from : "
+                                            candidates
+                                            :preselect preselect
+                                            :caller 'ivy-bibtex
+                                            :history 'ivy-bibtex-history)))
+                  (cdr (assoc "=key=" (cdr (assoc selection candidates)))))))
+    (find-file (concat sync0-obsidian-directory bibkey ".md"))))
+
+(defhydra sync0-hydra-ivy-bibtex-functions (:color blue :hint nil)
+"
+^BibLaTeX^           ^Etc.^    
+^--------------------------------------
+Open _n_otes         Open _d_eft
+_E_xtract field      _Q_uote (display)     
+PDF _o_pen           _F_oreign quote       
+PDF in _z_athura
+_V_isit corr. PDF
+_C_opy pdf
+_B_ib files
+Open _i_vy bibtex
+
+_q_uit
+"
+  ("B" sync0-visit-bibliography-in-buffer)
+  ("C" sync0-org-ref-copy-pdf-to-path)
+  ("d" deft)
+  ("i" ivy-bibtex)
+  ("n" sync0-ivy-bibtex-open-notes)
+  ("E" sync0-ivy-bibtex-extractor)
+  ("o" sync0-org-ref-open-pdf-at-point)
+  ("F" (progn (yas-expand-snippet (yas-lookup-snippet "csquotes_foreign_displayquote"))))
+  ("Q" (progn (yas-expand-snippet (yas-lookup-snippet "csquotes_displayquote"))))
+  ("V" sync0-org-open-corresponding-pdf)
+  ("z" sync0-org-ref-open-pdf-at-point-zathura)
+  ("q" nil :color blue))
+
+(evil-leader/set-key
+  "i" 'sync0-hydra-ivy-bibtex-functions/body)
+
 (provide 'sync0-ivy-bibtex-functions)

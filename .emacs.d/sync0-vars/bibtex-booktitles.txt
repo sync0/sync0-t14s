@@ -1,137 +1,138 @@
 
-La Nouvelle revue
-L'intervention des pouvoirs publics dans le contrat de travail
-Las utopías sociales en América Latina en el siglo XIX
-Jean-Gustave Courcelle-Seneuil
-Le Parti Républicain au coup d'état et sous le Second Empire
-1848, ou l'apprentissage de la République
-Études sur la science sociale
-La Banque libre
-Liberté et socialisme
-L'Héritage de la révolution
-Précis de morale rationnelle
-Préparation à l'étude du droit
-Courcelle-Seneuil
-La Société moderne
-Chile: The Making of a Republic, 1830--1865
-A Companion to Intellectuel History
-What is Intellectual History?
-Charles Fourier
-Gramática de la lengua castellana
-Proyecto de Código Civil
-Organisation du travail
-La révolution de février au Luxembourg
-Pages d'histoire de la révolution de février 1848
-Histoire de la Révolution de 1848
-Un jeudi à l'Assemblée
-Quand les socialistes inventaient l'avenir
-Le crédit et la banque
-Conduite de la vie civilisée
-Money Doctors
-El balanceador
-Cours complet d'économie politique pratique
-Historical Dictionary of France from the 1815 Restoration to the Second Empire
-Journeys Toward Progress
-Andrés Bello
-Historia política de Chile, 1810-2010
-The Cambridge History of Nineteenth-Century Political Thought
-The Collected Works of John Stuart Mill
-Traité théorique et pratique des opérations de banque
-What Social Classes Owe to Each Other
-The Street Porter and the Philosopher
-The 1848 Revolutions and European Political Thought
-Revue du progrès
-Le crédit et les banques
-Histoire des journaux
-Cabet
-Fiscalidad, integración social y política exterior en el pensamiento liberal atlántico (1810-1930)
-Conferencias sobre historia económica de Colombia
-Financiers, philanthropes
-How to Take Smart Notes
-Getting Things Done
-Soy profesor/a, Aprender a enseñar
-Design for a Brain
-Memory Machines
-L'art de la thèse
-The Machinery Question and the Making of Political Economy 1815--1848
-Les Socialismes français, 1796-1866
-Professors as Writers
-Turing's Man
-Conjurer la peur
-The History of the Calculus and its Conceptual Development
-L'utopie de la communication
-Histoire des idées socialistes en France
-Les métamorphoses de la question sociale
-Un journal d'ouvriers
-Gouverner par les nombres
-Pour une sociologie historique de la quantification
-L'institution du travail
-The Mechanization of the World Picture
-The Glorious Book
-Homo aequalis I
-The Radical Legacies of the French Revolution
-The Closed World
-The Official Guide to the \textsc{gre} General Test
-Creating the Computer
-Naissance de la biopolitique
-Essays in Positive Economics
-Mechanization Takes Command
-Note-taking for Consecutive Interpreting
-The Computer
-1848 la révolution oubliée
-The Interpreter's Handbook
-La modernité désenchantée
-A Treatise on Money
-Paper Machines
-``Raw Data'' Is an Oxymoron
-History of Socialism
-Bird by Bird
-Another Aesthetics is Possible
-La science en action
-Histoire du travail et des travailleurs
-Les uns et les autres
-Méthodes quantitatives pour l'historien
-Histoire des idées sociales en France
-Universität als Milieu
-William Stanley Jevons and the Making of Modern Economics
-Including a Symposium on the Historical Epistemology of Economics
-Le débat sur l'organisation du travail en France
-Le Capital
-Authority, Liberty \& Automatic Machinery in Early Modern Europe
-Principles of Political Economy
-More Heat than Light
-Natural Images in Economic Thought
-Machine Dreams
-Science-Mart
-The Road from Mont Pelèrin
-Interaction and Market Structure
-The Knowledge We Have Lost in Information
-Seven Deadly Innocent Frauds of Economic Policy
-The Origins of the French Labor Movement
-The Myth of the Machine
-La religion industrielle
-The Quest for Artificial Intelligence
-Aprendizaje de segundas lenguas
-The Great Transformation
-Douze leçons sur l'histoire
-The Human Motor
-Representations of the Intellectual
-Economics
-Securité, territoire, population
-Work and Revolution in France
-Nouveaux principes d'économie politique
-Visions of Politics
-An Inquiry into the Nature and Causes of the Wealth of Nations
-Louis Blanc
-La Gouvernance par les nombres
-The Political Ideas of the Utopian Socialists
-The Making of the English Working Class
-Des mots sur la grève
-Le travail
-Le travail et ses valeurs
-Traite de sociologie du travail
-La Condition ouvrière
-La France ouvrière
-Understanding Modern Money
-Handbook of Theory and Research for the Sociology of Education
 Soziale Ungleichheiten
+Handbook of Theory and Research for the Sociology of Education
+Understanding Modern Money
+La France ouvrière
+La Condition ouvrière
+Traite de sociologie du travail
+Le travail et ses valeurs
+Le travail
+Des mots sur la grève
+The Making of the English Working Class
+The Political Ideas of the Utopian Socialists
+La Gouvernance par les nombres
+Louis Blanc
+An Inquiry into the Nature and Causes of the Wealth of Nations
+Visions of Politics
+Nouveaux principes d'économie politique
+Work and Revolution in France
+Securité, territoire, population
+Economics
+Representations of the Intellectual
+The Human Motor
+Douze leçons sur l'histoire
+The Great Transformation
+Aprendizaje de segundas lenguas
+The Quest for Artificial Intelligence
+La religion industrielle
+The Myth of the Machine
+The Origins of the French Labor Movement
+Seven Deadly Innocent Frauds of Economic Policy
+The Knowledge We Have Lost in Information
+Interaction and Market Structure
+The Road from Mont Pelèrin
+Science-Mart
+Machine Dreams
+Natural Images in Economic Thought
+More Heat than Light
+Principles of Political Economy
+Authority, Liberty \& Automatic Machinery in Early Modern Europe
+Le Capital
+Le débat sur l'organisation du travail en France
+Including a Symposium on the Historical Epistemology of Economics
+William Stanley Jevons and the Making of Modern Economics
+Universität als Milieu
+Histoire des idées sociales en France
+Méthodes quantitatives pour l'historien
+Les uns et les autres
+Histoire du travail et des travailleurs
+La science en action
+Another Aesthetics is Possible
+Bird by Bird
+History of Socialism
+``Raw Data'' Is an Oxymoron
+Paper Machines
+A Treatise on Money
+La modernité désenchantée
+The Interpreter's Handbook
+1848 la révolution oubliée
+The Computer
+Note-taking for Consecutive Interpreting
+Mechanization Takes Command
+Essays in Positive Economics
+Naissance de la biopolitique
+Creating the Computer
+The Official Guide to the \textsc{gre} General Test
+The Closed World
+The Radical Legacies of the French Revolution
+Homo aequalis I
+The Glorious Book
+The Mechanization of the World Picture
+L'institution du travail
+Pour une sociologie historique de la quantification
+Gouverner par les nombres
+Un journal d'ouvriers
+Les métamorphoses de la question sociale
+Histoire des idées socialistes en France
+L'utopie de la communication
+The History of the Calculus and its Conceptual Development
+Conjurer la peur
+Turing's Man
+Professors as Writers
+Les Socialismes français, 1796-1866
+The Machinery Question and the Making of Political Economy 1815--1848
+L'art de la thèse
+Memory Machines
+Design for a Brain
+Soy profesor/a, Aprender a enseñar
+Getting Things Done
+How to Take Smart Notes
+Financiers, philanthropes
+Conferencias sobre historia económica de Colombia
+Fiscalidad, integración social y política exterior en el pensamiento liberal atlántico (1810-1930)
+Cabet
+Histoire des journaux
+Le crédit et les banques
+Revue du progrès
+The 1848 Revolutions and European Political Thought
+The Street Porter and the Philosopher
+What Social Classes Owe to Each Other
+Traité théorique et pratique des opérations de banque
+The Collected Works of John Stuart Mill
+The Cambridge History of Nineteenth-Century Political Thought
+Historia política de Chile, 1810-2010
+Andrés Bello
+Journeys Toward Progress
+Historical Dictionary of France from the 1815 Restoration to the Second Empire
+Cours complet d'économie politique pratique
+El balanceador
+Money Doctors
+Conduite de la vie civilisée
+Le crédit et la banque
+Quand les socialistes inventaient l'avenir
+Un jeudi à l'Assemblée
+Histoire de la Révolution de 1848
+Pages d'histoire de la révolution de février 1848
+La révolution de février au Luxembourg
+Organisation du travail
+Proyecto de Código Civil
+Gramática de la lengua castellana
+Charles Fourier
+What is Intellectual History?
+A Companion to Intellectuel History
+Chile: The Making of a Republic, 1830--1865
+La Société moderne
+Courcelle-Seneuil
+Préparation à l'étude du droit
+Précis de morale rationnelle
+L'Héritage de la révolution
+Liberté et socialisme
+La Banque libre
+Études sur la science sociale
+1848, ou l'apprentissage de la République
+Le Parti Républicain au coup d'état et sous le Second Empire
+Jean-Gustave Courcelle-Seneuil
+Las utopías sociales en América Latina en el siglo XIX
+L'intervention des pouvoirs publics dans le contrat de travail
+La Nouvelle revue
+ Bibliographie générale du Périgord

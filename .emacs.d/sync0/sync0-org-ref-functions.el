@@ -55,6 +55,16 @@
       (bibtex-search-entry key nil 0)
       (prog1 (reftex-get-bib-field "date" (bibtex-parse-entry t))))))
 
+(defun sync0-org-ref-get-citation-origdate (key)
+  "Get the year of an entry with KEY.  Return year as a string."
+  (let* ((results (org-ref-get-bibtex-key-and-file key))
+         (bibfile (cdr results)))
+    (with-temp-buffer
+      (insert-file-contents bibfile)
+      (bibtex-set-dialect (parsebib-find-bibtex-dialect) t)
+      (bibtex-search-entry key nil 0)
+      (prog1 (reftex-get-bib-field "origdate" (bibtex-parse-entry t))))))
+
 (defun sync0-org-ref-get-citation-language (key)
   "Get the year of an entry with KEY.  Return year as a string."
   (let* ((results (org-ref-get-bibtex-key-and-file key))
@@ -275,16 +285,15 @@
   "Open the pdf for bibtex key under point if it exists."
   (interactive)
   (let* ((bibkey (let* ((candidates (bibtex-completion-candidates))
-                        ;; (key-at-point (sync0-org-ref-search-bibkey-in-buffer))
-                        (key-at-point (org-ref-get-bibtex-key-under-cursor))
-                        (preselect (and key-at-point
-                                        (cl-position-if (lambda (cand)
-                                                          (member (cons "=key=" key-at-point)
-                                                                  (cdr cand)))
-                                                        candidates)))
+                        ;; (key-at-point (org-ref-get-bibtex-key-under-cursor))
+                        ;; (preselect (and key-at-point
+                        ;;                 (cl-position-if (lambda (cand)
+                        ;;                                   (member (cons "=key=" key-at-point)
+                        ;;                                           (cdr cand)))
+                        ;;                                 candidates)))
                         (selection (ivy-read "Choose BibTeX key to extract from : "
                                              candidates
-                                             :preselect preselect
+                                             ;; :preselect preselect
                                              :caller 'ivy-bibtex
                                              :history 'ivy-bibtex-history)))
                    (cdr (assoc "=key=" (cdr (assoc selection candidates))))))

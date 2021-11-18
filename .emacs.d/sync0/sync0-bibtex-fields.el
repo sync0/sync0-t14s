@@ -194,7 +194,6 @@
                                     ("addendum")
                                     ("keywords")))))
 
-
 (setq bibtex-biblatex-entry-alist '(("Article" "Article in Journal"
                                      (("author")
                                       ("title")

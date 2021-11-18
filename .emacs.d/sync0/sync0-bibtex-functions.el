@@ -14,7 +14,7 @@
                       (cdr (assoc "title" (cdr (assoc selection candidates))))
                     selection)))
          (subtitle (read-string "Sous-titre du texte : " nil nil nil t))
-         (title-fixed (if (equal subtitle "")
+         (title-fixed (if (string= subtitle "")
                           title
                         (concat title " : " subtitle)))
          (derivation (yes-or-no-p "Derive entry?"))
@@ -32,25 +32,28 @@
           (replace-regexp-in-string "-" "/" date))
          (initial-author (unless (null derivation)
                            (sync0-org-ref-get-citation-author crossref)))
-         (origdate (read-string "Origdate (ex. 1890-18-12) : "))
-         (date-fixed (if (or (equal origdate "")
-                             (equal date origdate))
+         (initial-origdate (unless (null derivation)
+                         (sync0-org-ref-get-citation-origdate crossref)))
+         (origdate (read-string "Origdate (ex. 1890-18-12) : " initial-origdate))
+         (date-fixed (if (or (string= origdate "")
+                             (string= date origdate))
                          (concat "(" date ")")
                        (concat "(" origdate ") (" date ")")))
          (author (completing-read "Auteur : " sync0-bibtex-authors
                                   nil nil initial-author))
-     (author-fixed (cond ((string-match " and " author)
-                          ;; create a list with parts 
-                          (let* ((author-list  (split-string author " and "))
-                                 (names (let (x)
-                                          (dolist  (element author-list x)
-                                            (setq x (concat x element "\",\""))))))
-                            (concat "\"" (substring names 0 -2))))
-                         ;; check when author is an organization
-                         ((string-match "^{" author)
-                          (concat "\"" (substring author 1 -1) "\""))
-                         ;; other cases
-                         (t (concat "\"" author "\""))))
+         (author-fixed (unless (string= author "nil")
+                         (cond ((string-match " and " author)
+                                ;; create a list with parts 
+                                (let* ((author-list  (split-string author " and "))
+                                       (names (let (x)
+                                                (dolist  (element author-list x)
+                                                  (setq x (concat x element "\", \""))))))
+                                  (concat "\"" (substring names 0 -2))))
+                               ;; check when author is an organization
+                               ((string-match "^{" author)
+                                (concat "\"" (substring author 1 -1) "\""))
+                               ;; other cases
+                               (t (concat "\"" author "\"")))))
          (lastname (cond ((string-match " and " author)
                           ;; create a list with parts 
                           (let* ((author-list  (split-string author " and "))
@@ -75,7 +78,7 @@
                                                                  (progn
                                                                    (string-match "\\([[:graph:]]+\\),"   element)
                                                                    (match-string 1 element))
-                                                                 ",author/"))))))
+                                                                 ", author/"))))))
                             (substring last-names 0 -7)))
                          ((string-match "^{" author)
                           (string-match "{\\([[:print:]]+\\)}" author)
@@ -88,39 +91,41 @@
          (language (completing-read "Choose language : "
                                     sync0-bibtex-languages nil nil initial-language))
          (langid language) 
-         (journal (when (or (equal type "Article")
-                            (equal type "InCollection"))
+         (journal (when (or (string= type "Article")
+                            (string= type "InCollection"))
                     (completing-read "Titre du journal : " sync0-bibtex-journals)))
          (volume
-          (when (or (equal type "Article")
-                    (equal type "Book")
-                    (equal type "InBook")
-                    (equal type "Collection")
-                    (equal type "InCollection"))
-            (read-string "Tome : ")))
-         (number (when (equal type "Article")
+          (when (or (string= type "Article")
+                    (string= type "Book")
+                    (string= type "InBook")
+                    (string= type "Collection")
+                    (string= type "InCollection"))
+            (unless (not (null derivation))
+              (read-string "Tome : "))))
+         (number (when (string= type "Article")
                    (read-string "Numero : ")))
-         (publisher (unless (or (equal type "Unpublished")
-                                (equal type "Article"))
+         (publisher (unless (or (string= type "Unpublished")
+                                (string= type "Article"))
                       (completing-read "Maison d'edition : " sync0-bibtex-publishers)))
-         (location (when (or (equal type "Book")
-                             (equal type "Collection"))
-                     (completing-read "Location : " sync0-bibtex-locations)))
-         (pages (when (or (equal type "Article")
-                          (equal type "InCollection")
-                          (equal type "InBook"))
+         (location (when (or (string= type "Book")
+                             (string= type "Collection"))
+                     (unless (not (null derivation))
+                       (completing-read "Location : " sync0-bibtex-locations))))
+         (pages (when (or (string= type "Article")
+                          (string= type "InCollection")
+                          (string= type "InBook"))
                   (read-string "Pages (ex. : 90-180) : ")))
-         (booktitle (when (and (or (equal type "InBook")
-                                   (equal type "InCollection"))
+         (booktitle (when (and (or (string= type "InBook")
+                                   (string= type "InCollection"))
                                (null derivation))
                       (completing-read "Book title: " sync0-bibtex-booktitles)))
-         (booksubtitle (when (and (or (equal type "InBook")
-                                      (equal type "InCollection"))
+         (booksubtitle (when (and (or (string= type "InBook")
+                                      (string= type "InCollection"))
                                   (null derivation))
                          (read-string "Book subtitle: " nil nil nil t)))
          (parent
           (cond ((and (null derivation)
-                      (equal type "Article"))
+                      (string= type "Article"))
                  journal)
                 ((not (null booktitle))
                  booktitle)
@@ -133,20 +138,18 @@
                                              sync0-bibtex-media)) "(\"" "\")"))
          (library (completing-read "Choose location to trace back: "
                                    sync0-bibtex-traces nil nil nil))
-         (addendum (when (equal type "Unpublished")
+         (addendum (when (string= type "Unpublished")
                      (read-string "Addendum (ex. Box, Folder, etc.) : ")))
          (url (read-string "Url : " nil nil nil t))
-         (urldate (unless (equal url "") creation))
-         (file-pdf (unless (equal type "Online")
+         (urldate (unless (string= url "") creation))
+         (file-pdf (unless (string= type "Online")
                      (concat "/home/sync0/Documents/pdfs/" filename ".pdf")))
          ;; in case of extraction define these
          (extraction (unless (null derivation)
                        (yes-or-no-p "Extract  PDF from entry?")))
-         (beg (unless (and (null derivation)
-                           (null extraction))
+         (beg (unless (null extraction)
                 (read-string "First page for extraction: ")))
-         (end (unless (and (null derivation)
-                           (null extraction))
+         (end (unless (null extraction)
                 (read-string "Last page for extraction: ")))
          (origfile (unless (null derivation)
                      (car (bibtex-completion-find-pdf crossref))))
@@ -184,8 +187,8 @@
                               medium
                               library
                               file-pdf))
-         (bibtex-fields (if (equal type "Collection")
-                            (cl-substitute "editor" "author" sync0-bibtex-fields)
+         (bibtex-fields (if (string= type "Collection")
+                            (cl-substitute "editor" "author" sync0-bibtex-fields :test #'equal)
                           sync0-bibtex-fields))
          (fields (mapcar* #'(lambda (x y) (list x y)) bibtex-fields bibtex-definitions))
          ;; define the bibtex entries
@@ -193,42 +196,46 @@
           (let (x)
             (dolist (element fields x) 
               (unless (or (null (cadr element))
-                          (equal (cadr element) ""))
+                          (string= (cadr element) ""))
                 (setq x (concat x (car element) " = {" (cadr element) "},\n"))))))
          ;; select target bibliography file (.bib)
          (obsidian-file (concat sync0-obsidian-directory filename ".md")) 
          (obsidian-entry (concat "---\n"
                                  "zettel_type: reference\n"
+                                 "id: " filename "\n"
                                  "citekey: " filename "\n"
                                  "created: " (format-time-string "%Y-%m-%d") "\n"
                                  "biblatex_type: " type-downcase "\n"
                                  "title: \"" title "\"\n"
-                                 (unless (equal subtitle "")
+                                 (unless (string= subtitle "")
                                    (concat "subtitle: \"" subtitle "\"\n"))
-                                 "author: [" author-fixed "]\n"
+                                 (unless (string= author "nil")
+                                   (concat "author: [" author-fixed "]\n"))
                                  (unless (or (null crossref)
-                                          (equal crossref ""))
+                                          (string= crossref ""))
                                    (concat "crossref: " crossref "\n"))
                                  (unless (or (null parent)
-                                          (equal parent ""))
+                                          (string= parent ""))
                                    (concat "parent: \"" parent "\"\n"))
-                                 "aliases: [\"" lastname " " date-fixed  " " title-fixed "\","
-                                 "\"" lastname " " date-fixed  " " title "\"]\n"
+                                 (if (string= subtitle "")
+                                 (concat "aliases: [\"" (unless (string= author "nil") (concat lastname " ")) date-fixed " " title-fixed "\"]\n")
+                                 (concat "aliases: [\"" (unless (string= author "nil") (concat lastname " ")) date-fixed " " title-fixed "\", "
+                                 "\"" (unless (string= author "nil") lastname) " " date-fixed  " " title "\"]\n"))
                                  (unless (or (null url)
-                                          (equal url ""))
+                                          (string= url ""))
                                    (concat "url: \"" url "\"\n"))
                                  (unless (or (null origdate)
-                                          (equal origdate ""))
+                                          (string= origdate ""))
                                    (concat "origdate: " origdate "\n"))
                                  "date: " date "\n"
                                  (unless (or (null medium)
-                                          (equal medium ""))
+                                          (string= medium ""))
                                    (concat "medium: [\"" medium "\"]\n"))
                                  "language: " language "\n"
                                  "library: \"" library "\"\n"
-                                 "tags: [reference/" type-downcase ",bibkey/" filename ",date/" date-tag ",author/" lastname-tag ",language/" language "]\n"
+                                 "tags: [reference/" type-downcase ", bibkey/" filename ", date/" date-tag (unless (string= author "nil") (concat ", author/" lastname-tag)) ", language/" language "]\n"
                                  "---\n" 
-                                 "# " lastname " " date-fixed " " title-fixed "\n\n" 
+                                 "# " (unless (string= author "nil") (concat lastname " ")) date-fixed " " title-fixed "\n\n" 
                                  "## Description\n\n" 
                                  "## Progrès de la lecture\n\n" 
                                  "## Annotations\n\n"))
@@ -297,7 +304,7 @@
                       (cdr (assoc "title" (cdr (assoc selection candidates))))
                     selection)))
          (subtitle (read-string "Sous-titre du texte : " nil nil nil t))
-         (title-fixed (if (equal subtitle "")
+         (title-fixed (if (string= subtitle "")
                           title
                         (concat title " : " subtitle)))
          (date (read-string "Date (ex. 1890-18-12) : "))
@@ -305,18 +312,19 @@
           (replace-regexp-in-string "-" "/" date))
          (author (completing-read "Auteur : " sync0-bibtex-authors
                                   nil nil nil))
-     (author-fixed (cond ((string-match " and " author)
-                          ;; create a list with parts 
-                          (let* ((author-list  (split-string author " and "))
-                                 (names (let (x)
-                                          (dolist  (element author-list x)
-                                            (setq x (concat x element "\",\""))))))
-                            (concat "\"" (substring names 0 -2))))
-                         ;; check when author is an organization
-                         ((string-match "^{" author)
-                          (concat "\"" (substring author 1 -1) "\""))
-                         ;; other cases
-                         (t (concat "\"" author "\""))))
+         (author-fixed (unless (string= author "nil")
+                         (cond ((string-match " and " author)
+                                ;; create a list with parts 
+                                (let* ((author-list  (split-string author " and "))
+                                       (names (let (x)
+                                                (dolist  (element author-list x)
+                                                  (setq x (concat x element "\", \""))))))
+                                  (concat "\"" (substring names 0 -2))))
+                               ;; check when author is an organization
+                               ((string-match "^{" author)
+                                (concat "\"" (substring author 1 -1) "\""))
+                               ;; other cases
+                               (t (concat "\"" author "\"")))))
          (lastname (cond ((string-match " and " author)
                           ;; create a list with parts 
                           (let* ((author-list  (split-string author " and "))
@@ -341,7 +349,7 @@
                                                                  (progn
                                                                    (string-match "\\([[:graph:]]+\\),"   element)
                                                                    (match-string 1 element))
-                                                                 ",author/"))))))
+                                                                 ", author/"))))))
                             ;; (substring last-names 0 -2)))
                             (substring last-names 0 -7)))
                          ((string-match "^{" author)
@@ -361,8 +369,8 @@
                                       sync0-bibtex-traces nil nil nil))
          (addendum (read-string "Addendum (ex. Box, Folder, etc.) : "))
          (url (read-string "Url : " nil nil nil t))
-         (urldate (unless (equal url "") creation))
-         (file-pdf (unless (equal type "Online")
+         (urldate (unless (string= url "") creation))
+         (file-pdf (unless (string= type "Online")
                      (concat "/home/sync0/Documents/pdfs/" filename ".pdf")))
          (bibtex-definitions (list 
                               title
@@ -376,7 +384,7 @@
                               langid
                               library
                               file-pdf))
-         (bibtex-fields (if (equal type "Collection")
+         (bibtex-fields (if (string= type "Collection")
                             (cl-substitute "editor" "author" sync0-bibtex-quick-fields)
                           sync0-bibtex-quick-fields))
          (fields (mapcar* #'(lambda (x y) (list x y)) bibtex-fields bibtex-definitions))
@@ -385,7 +393,7 @@
           (let (x)
             (dolist (element fields x) 
               (unless (or (null (cadr element))
-                          (equal (cadr element) ""))
+                          (string= (cadr element) ""))
                 (setq x (concat x (car element) " = {" (cadr element) "},\n"))))))
          ;; select target bibliography file (.bib)
          (bib-file sync0-default-bibliography) 
@@ -395,24 +403,28 @@
          (obsidian-file (concat sync0-obsidian-directory filename ".md")) 
          (obsidian-entry (concat "---\n"
                                  "zettel_type: reference\n"
+                                 "id: " filename "\n"
                                  "biblatex_type: " type-downcase "\n"
                                  "citekey: " filename "\n"
                                  "created: " (format-time-string "%Y-%m-%d") "\n"
                                  "title: \"" title "\"\n"
-                                 (unless (equal subtitle "")
+                                 (unless (string= subtitle "")
                                    (concat "subtitle: \"" subtitle "\"\n"))
-                                 "author: [" author-fixed "]\n"
-                                 "aliases: [\""  lastname " (" date  ") " title-fixed "\","
-                                 "\"" lastname " " date-fixed  " " title "\"]\n"
+                                 (unless (string= author "nil")
+                                   (concat "author: [" author-fixed "]\n"))
+                                 (if (string= subtitle "")
+                                 (concat "aliases: [\"" (unless (string= author "nil") lastname " ") "(" date  ") " title-fixed "\"]\n")
+                                 (concat "aliases: [\"" (unless (string= author "nil") lastname " ") "(" date  ") " title-fixed "\", "
+                                 "\"" (unless (string= author "nil") (concat lastname " ")) "(" date ") " title "\"]\n"))
                                  (unless (or (null url)
-                                          (equal url ""))
+                                          (string= url ""))
                                    (concat "url: \"" url "\"\n"))
                                  "date: " date "\n"
                                  "language: " language "\n"
                                  "library: \"" library "\"\n"
-                                 "tags: [reference/" type-downcase ",bibkey/" filename ",date/" date-tag ",author/" lastname-tag ",language/" language "]\n"
+                                 "tags: [reference/" type-downcase ", bibkey/" filename ", date/" date-tag (unless (string= author "nil") (concat ", author/" lastname-tag)) ", language/" language "]\n"
                                  "---\n" 
-                                 "# " lastname " (" date ") " title-fixed "\n\n" 
+                                 "# " (unless (string= author "nil") (concat lastname " ")) "(" date ") " title-fixed "\n\n" 
                                  "## Description\n\n" 
                                  "## Progrès de la lecture\n\n" 
                                  "## Annotations\n\n"))
@@ -639,18 +651,206 @@ by org-roam files"
   (let* ((new-key (format-time-string "%Y%m%d%H%M%S"))
          (directory "/home/sync0/Documents/pdfs/")
          (new-path (concat directory new-key ".pdf"))
-         (pdf-path
+         (regex "^@\\([[A-z]+\\){[[:alnum:]]+,")
+         (beg
           (save-excursion
-            (when  (re-search-forward "file = {\\(.+\\)}," nil t 1)
-              (match-string-no-properties 1)))))
-    (when-let ((type
-                (when (re-search-forward "\\(^@[[:lower:]]+{\\)[[:digit:]]+," nil t 1)
-                  (match-string-no-properties 1))))
-      (kill-whole-line 1)
-      (insert (concat type new-key ",\n")))
-    (when (re-search-forward "file = {" nil t 1)
-      (kill-whole-line 1)
-      (insert (concat "file = {" new-path "},\n")))))
+            (re-search-forward regex nil t 1)))
+         (end
+          (save-excursion
+            (re-search-forward "^}\n" nil t 1)))
+         (type
+          (save-excursion
+            (re-search-forward regex end t 1)
+              (match-string-no-properties 1)))
+         (path-string
+          (concat "file = {" new-path "},\n"))
+         (type-string
+          (concat "@" type "{" new-key ",\n")))
+    (re-search-forward regex end t 1) 
+    (kill-whole-line 1)
+    (insert type-string)
+    (if (re-search-forward "file[[:blank:]]+=[[:blank:]]+{" end t 1)
+        (progn 
+          (kill-whole-line 1)
+          (insert path-string))
+      (unless (string= type "Online")
+        (next-line)
+        (insert path-string)))))
+
+(defun sync0-bibtex-clean-entry ()
+  "Change bibtex key at point with a key using the format provided
+by org-roam files"
+  (interactive)
+  (let* ((new-key (format-time-string "%Y%m%d%H%M%S"))
+         (directory "/home/sync0/Documents/pdfs/")
+         (new-path (concat directory new-key ".pdf"))
+         (regex "^@\\([[A-z]+\\){[[:alnum:]]+,")
+         (beg
+          (save-excursion
+            (re-search-forward regex nil t 1)))
+         (end
+          (save-excursion
+            (re-search-forward "^}\n" nil t 1)))
+         (type
+          (save-excursion
+            (re-search-forward regex end t 1)
+              (match-string-no-properties 1)))
+         (language (completing-read "Choose language : "
+                                    sync0-bibtex-languages))
+         (language-string
+          (concat "  language          = {"
+                  language
+                  "},\n  langid          = {"
+                  language
+                  "},\n" 
+                  ))
+         (type-string
+          (concat "@" (upcase-initials type) "{" new-key ",\n")))
+    (re-search-forward regex end t 1) 
+    (kill-whole-line 1)
+    (insert type-string)
+    (save-excursion
+      (when (re-search-forward "\\(journal\\)[[:blank:]]+=" end t 1)
+        (replace-match "journaltitle" nil nil nil 1)))
+    (save-excursion
+      (when (re-search-forward "\\(year\\)[[:blank:]]+=" end t 1)
+        (replace-match "date" nil nil nil 1)))
+          (next-line)
+          (insert language-string)))
+
+(defun sync0-bibtex-create-md-note-from-entry ()
+  (interactive)
+  (let*    ((rawbibkey (when (re-search-forward "^@[A-z]+{\\([[:digit:]]+\\)," nil t 1)
+                     (match-string-no-properties 1)))
+            (bibkey (read-string "Input bibkey to create notes for : " rawbibkey))
+            (entry (bibtex-completion-get-entry bibkey))
+            (zettel-type "reference")
+            (type (bibtex-completion-get-value "=type=" entry))
+            (type-downcase (downcase type))
+            (title (bibtex-completion-get-value "title" entry))
+            (subtitle (bibtex-completion-get-value "subtitle" entry))
+            (title-fixed (if (or (string= title subtitle)
+                                 (null subtitle))
+                             title
+                           (concat title " : " subtitle)))
+            (author (if (string= type-downcase "collection")
+                        (bibtex-completion-get-value "editor" entry)
+                      (bibtex-completion-get-value "author" entry)))
+            (author-fixed (unless (null author)
+                            (cond ((string-match " and " author)
+                                   ;; create a list with parts 
+                                   (let* ((author-list  (split-string author " and "))
+                                          (names (let (x)
+                                                   (dolist  (element author-list x)
+                                                     (setq x (concat x element "\", \""))))))
+                                     (concat "\"" (substring names 0 -2))))
+                                  ;; check when author is an organization
+                                  ((string-match "^{" author)
+                                   (concat "\"" (substring author 1 -1) "\""))
+                                  ;; other cases
+                                  (t (concat "\"" author "\"")))))
+            (lastname (unless (null author)
+             (cond ((string-match " and " author)
+                             ;; create a list with parts 
+                             (let* ((author-list  (split-string author " and "))
+                                    (last-names (let (x)
+                                                  (dolist  (element author-list x)
+                                                    (setq x (concat x
+                                                                    (progn
+                                                                      (string-match "\\([[:graph:]]+\\),"   element)
+                                                                      (match-string 1 element))
+                                                                    ", "))))))
+                               (substring last-names 0 -2)))
+                            ((string-match "^{" author)
+                             (string-match "{\\([[:print:]]+\\)}" author)
+                             (match-string 1 author))
+                            (t (nth 0 (split-string author ", "))))))
+            (lastname-raw (unless (null author)
+             (cond ((string-match " and " author)
+                                 ;; create a list with parts 
+                                 (let* ((author-list  (split-string author " and "))
+                                        (last-names (let (x)
+                                                      (dolist  (element author-list x)
+                                                        (setq x (concat x
+                                                                        (progn
+                                                                          (string-match "\\([[:graph:]]+\\),"   element)
+                                                                          (match-string 1 element))
+                                                                        ", author/"))))))
+                                   (substring last-names 0 -8)))
+                                ((string-match "^{" author)
+                                 (string-match "{\\([[:print:]]+\\)}" author)
+                                 (match-string 1 author))
+                                (t (nth 0 (split-string author ", "))))))
+            (lastname-tag (unless (null author)
+             (replace-regexp-in-string "[[:space:]]+" "_" (downcase lastname-raw))))
+            (origdate (bibtex-completion-get-value "origdate" entry))
+            (date (bibtex-completion-get-value "date" entry))
+            (date-fixed (cond ((and (null date)
+                                    (null origdate)) "")
+                              ((null origdate)
+                               (concat "(" date ")"))
+                              (t (concat "(" origdate ") (" date ")"))))
+            (date-tag (unless (null date)
+             (replace-regexp-in-string "-" "/" date)))
+            (url (bibtex-completion-get-value "url" entry))
+            (language (bibtex-completion-get-value "language" entry))
+            (journal (when (or (string= type-downcase "article")
+                               (string= type-downcase "incollection"))
+                       (bibtex-completion-get-value "journaltitle" entry)))
+            (crossref (when (or (string= type-downcase "inbook")
+                                 (string= type-downcase "incollection"))
+                         (bibtex-completion-get-value "crossref" entry)))
+            (crossref-entry (unless (null crossref)
+                              (bibtex-completion-get-entry crossref)))
+            (booktitle (when (or (string= type-downcase "inbook")
+                                 (string= type-downcase "incollection"))
+                         (bibtex-completion-get-value "title" crossref-entry)))
+            (parent
+             (cond ((string= type-downcase "article")
+                    journal)
+                   ((not (null booktitle))
+                    booktitle)
+                   (t nil)))
+            (obsidian-file (concat sync0-obsidian-directory bibkey ".md")) 
+            (obsidian-entry (concat "---\n"
+                                    "zettel_type: reference\n"
+                                    "id: " bibkey "\n"
+                                    "citekey: " bibkey "\n"
+                                    "created: " (format-time-string "%Y-%m-%d") "\n"
+                                    "biblatex_type: " type-downcase "\n"
+                                    "title: \"" title "\"\n"
+                                    (unless (null subtitle)
+                                      (concat "subtitle: \"" subtitle "\"\n"))
+                                    (unless (null author)
+                                      (concat "author: [" author-fixed "]\n"))
+                                    (unless (or (null parent)
+                                                (string= parent ""))
+                                      (concat "parent: \"" parent "\"\n"))
+                                    (unless (null crossref)
+                                      (concat "crossref: " crossref "\n"))
+                                    (if (null subtitle)
+                                        (concat "aliases: [\"" (unless (null author) (concat lastname " ")) date-fixed " " title-fixed "\"]\n")
+                                      (concat "aliases: [\"" (unless (null author) (concat lastname " ")) date-fixed " " title-fixed "\", "
+                                              "\"" (unless (null author) lastname) " " date-fixed  " " title "\"]\n"))
+                                    (unless (or (null url)
+                                                (string= url ""))
+                                      (concat "url: \"" url "\"\n"))
+                                    (unless (or (null origdate)
+                                                (string= origdate ""))
+                                      (concat "origdate: " origdate "\n"))
+                                    "date: " date "\n"
+                                    "language: " language "\n"
+                                    "tags: [reference/" type-downcase ", bibkey/" bibkey ", date/" date-tag (unless (null author) (concat ", author/" lastname-tag)) ", language/" language "]\n"
+                                    "---\n" 
+                                    "# " (unless (null author) (concat lastname " ")) date-fixed " " title-fixed "\n\n" 
+                                    "## Description\n\n" 
+                                    "## Progrès de la lecture\n\n" 
+                                    "## Annotations\n\n")))
+      (if (file-exists-p obsidian-file)
+          (message "Error: %s.md file already present in Obsidian vault." bibkey)
+        (with-temp-buffer 
+          (insert obsidian-entry)
+          (write-file obsidian-file)))))
 
 ;; (when (file-exists-p pdf-path)
 ;;   (rename-file pdf-path new-path)))))
@@ -662,6 +862,8 @@ by org-roam files"
      Key _u_pdate        Pdf _o_pen         Open _n_otes
      _E_ntry insert      Open in _z_athura
      Quick _e_ntry       Copy to _p_ath  
+     _N_ote from entry   Extract _s_election
+     Entry _c_lean   
      ^----------------------------------------------------
      ^Bibliographies^ 
      ^---------------------------------------------------
@@ -669,11 +871,14 @@ by org-roam files"
                                                                      
      _q_uit
           "
+  ("c" sync0-bibtex-clean-entry)
   ("E" sync0-bibtex-capture-reference)
   ("e" sync0-bibtex-capture-quick-reference)
   ("u" sync0-bibtex-update-key)
   ("p" sync0-org-ref-copy-pdf-to-path)
-  ("n" sync0-org-ref-open-notes)
+  ("N" sync0-bibtex-create-md-note-from-entry)
+  ("n" sync0-ivy-bibtex-open-notes)
+  ("s" sync0-pdf-page-extractor)
   ("v" sync0-visit-bibliography-in-buffer)
   ("o" sync0-org-ref-open-pdf-at-point)
   ("z" sync0-org-ref-open-pdf-at-point-zathura)

@@ -2,7 +2,22 @@
 ;;; This format is meant to be slightly human-readable;
 ;;; nevertheless, you probably don't want to edit it.
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
-(("font"
+(("relatorio_genealogia"
+ (filename . "~/Dropbox/obsidian/20211022134956.md")
+ (front-context-string . "otherlangs: [es]")
+ (rear-context-string . "22 \nlang: pt-PT\n")
+ (position . 140))
+("html"
+ (filename . "~/Projects/comfama/html/2021-10-08/flor.html")
+ (front-context-string . "  \n             ")
+ (rear-context-string . "                ")
+ (position . 350))
+("bib"
+ (filename . "~/Dropbox/bibliographies/bibliography.bib")
+ (front-context-string . "\n\n@Comment{jabre")
+ (rear-context-string . "2145656.pdf},\n}\n")
+ (position . 277621))
+("font"
  (filename . "~/Dropbox/obsidian/.obsidian/themes/sync0.css")
  (front-context-string . "/* 1. Font */\nbo")
  (rear-context-string . "r(--yellow);\n}\n\n")
@@ -13,10 +28,10 @@
  (rear-context-string . " ] (1853/03/15) ")
  (position . 511))
 ("test"
- (filename . "~/Dropbox/2910562839589283.org")
- (front-context-string)
- (rear-context-string . "de la société]]\n")
- (position . 1038))
+ (filename . "~/Dropbox/test/11111.md")
+ (front-context-string . "itle: Courriel a")
+ (rear-context-string)
+ (position . 6))
 ("sefardi"
  (filename . "~/Dropbox/org/projects/20210121083612.org")
  (front-context-string . ":\n\nhttps://www.f")
@@ -213,8 +228,8 @@
  (rear-context-string . "\"init.el\"))))))\n")
  (position . 5443))
 ("here"
- (filename . "~/Dropbox/obsidian/20210911082421.md")
- (front-context-string . "D'abord, je suis")
- (rear-context-string . "et M. Frobert,\n\n")
- (position . 266))
+ (filename . "~/Dropbox/bibliographies/bibliography.bib")
+ (front-context-string . "Personal Collect")
+ (rear-context-string . "ry           = {")
+ (position . 267299))
 )

@@ -7,7 +7,7 @@ export ZSH="/home/sync0/.oh-my-zsh"
 # Add more variables to the PATH
 # PATH=$HOME/.luarocks/bin/digestif:$PATH
 PATH="/home/sync0/.local/share/pandoc/filters/:$PATH"
-
+MERMAID_BIN="/home/sync0/node_modules/.bin/mmdc"
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
