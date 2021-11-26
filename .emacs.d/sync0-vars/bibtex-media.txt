@@ -1,5 +1,6 @@
-pri
-print,digital
-print
-online
+print" "digital
 digital
+online
+print
+print,digital
+pri

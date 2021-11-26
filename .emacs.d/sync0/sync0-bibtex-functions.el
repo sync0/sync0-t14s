@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t -*-
+
 (defun sync0-bibtex-capture-reference ()
   (interactive)
   (let* ((type (completing-read "Choose Bibtex entry type: " sync0-bibtex-entry-types))
@@ -91,6 +93,7 @@
          (language (completing-read "Choose language : "
                                     sync0-bibtex-languages nil nil initial-language))
          (langid language) 
+
          (journal (when (or (string= type "Article")
                             (string= type "InCollection"))
                     (completing-read "Titre du journal : " sync0-bibtex-journals)))
@@ -186,7 +189,8 @@
                               langid
                               medium
                               library
-                              file-pdf))
+                              file-pdf
+                              keywords))
          (bibtex-fields (if (string= type "Collection")
                             (cl-substitute "editor" "author" sync0-bibtex-fields :test #'equal)
                           sync0-bibtex-fields))
@@ -243,7 +247,7 @@
          ;; (bib-file (completing-read "Fichier BibLaTeX : "
          ;;                            (f-files "~/Dropbox/bibliographies" (lambda (k) (string-match-p ".bib" k)))))
          ;; create string of new biblatex entry
-         (bibtex-entry (concat "\n@" type "{" filename "," "\n" entries "\n}\n")))
+         (bibtex-entry (concat "\n@" type "{" filename "," "\n" entries "}\n")))
     ;; add biblatex entry to target bibliography file.
     ;; The entry has to be added this way to prevent a bug
     ;; that happens with biblatex-completion: unless the entry
@@ -413,8 +417,8 @@
                                  (unless (string= author "nil")
                                    (concat "author: [" author-fixed "]\n"))
                                  (if (string= subtitle "")
-                                 (concat "aliases: [\"" (unless (string= author "nil") lastname " ") "(" date  ") " title-fixed "\"]\n")
-                                 (concat "aliases: [\"" (unless (string= author "nil") lastname " ") "(" date  ") " title-fixed "\", "
+                                 (concat "aliases: [\"" (unless (string= author "nil") (concat lastname " ")) "(" date  ") " title-fixed "\"]\n")
+                                 (concat "aliases: [\"" (unless (string= author "nil") (concat lastname " ")) "(" date  ") " title-fixed "\", "
                                  "\"" (unless (string= author "nil") (concat lastname " ")) "(" date ") " title "\"]\n"))
                                  (unless (or (null url)
                                           (string= url ""))
@@ -428,7 +432,7 @@
                                  "## Description\n\n" 
                                  "## Progrès de la lecture\n\n" 
                                  "## Annotations\n\n"))
-         (bibtex-entry (concat "\n@" type "{" filename "," "\n" entries "\n}\n")))
+         (bibtex-entry (concat "\n@" type "{" filename "," "\n" entries "}\n")))
     ;; add biblatex entry to target bibliography file.
     ;; The entry has to be added this way to prevent a bug
     ;; that happens with biblatex-completion: unless the entry
@@ -819,8 +823,8 @@ by org-roam files"
                                     "created: " (format-time-string "%Y-%m-%d") "\n"
                                     "biblatex_type: " type-downcase "\n"
                                     "title: \"" title "\"\n"
-                                    (unless (null subtitle)
-                                      (concat "subtitle: \"" subtitle "\"\n"))
+                                    ;; (unless (null subtitle)
+                                    ;;   (concat "subtitle: \"" subtitle "\"\n"))
                                     (unless (null author)
                                       (concat "author: [" author-fixed "]\n"))
                                     (unless (or (null parent)
@@ -828,10 +832,11 @@ by org-roam files"
                                       (concat "parent: \"" parent "\"\n"))
                                     (unless (null crossref)
                                       (concat "crossref: " crossref "\n"))
-                                    (if (null subtitle)
-                                        (concat "aliases: [\"" (unless (null author) (concat lastname " ")) date-fixed " " title-fixed "\"]\n")
-                                      (concat "aliases: [\"" (unless (null author) (concat lastname " ")) date-fixed " " title-fixed "\", "
-                                              "\"" (unless (null author) lastname) " " date-fixed  " " title "\"]\n"))
+                                    ;; (if (null subtitle)
+                                    ;;     (concat "aliases: [\"" (unless (null author) (concat lastname " ")) date-fixed " " title-fixed "\"]\n")
+                                    ;;   (concat "aliases: [\"" (unless (null author) (concat lastname " ")) date-fixed " " title-fixed "\", "
+                                    ;;           "\"" (unless (null author) lastname) " " date-fixed  " " title "\"]\n"))
+                                        (concat "aliases: [\"" (unless (null author) (concat lastname " ")) date-fixed " " title "\"]\n")
                                     (unless (or (null url)
                                                 (string= url ""))
                                       (concat "url: \"" url "\"\n"))
@@ -842,7 +847,8 @@ by org-roam files"
                                     "language: " language "\n"
                                     "tags: [reference/" type-downcase ", bibkey/" bibkey ", date/" date-tag (unless (null author) (concat ", author/" lastname-tag)) ", language/" language "]\n"
                                     "---\n" 
-                                    "# " (unless (null author) (concat lastname " ")) date-fixed " " title-fixed "\n\n" 
+                                    "# " (unless (null author) (concat lastname " ")) date-fixed " " title "\n\n" 
+                                    ;; "# " (unless (null author) (concat lastname " ")) date-fixed " " title-fixed "\n\n" 
                                     "## Description\n\n" 
                                     "## Progrès de la lecture\n\n" 
                                     "## Annotations\n\n")))
@@ -855,34 +861,184 @@ by org-roam files"
 ;; (when (file-exists-p pdf-path)
 ;;   (rename-file pdf-path new-path)))))
 
-(defhydra sync0-hydra-bibtex-functions (:color amaranth :hint nil :exit t)
-  "
-     ^Refs^              ^PDFs^             ^Notes^              
-     ^-----------------------------------------------------
-     Key _u_pdate        Pdf _o_pen         Open _n_otes
-     _E_ntry insert      Open in _z_athura
-     Quick _e_ntry       Copy to _p_ath  
-     _N_ote from entry   Extract _s_election
-     Entry _c_lean   
-     ^----------------------------------------------------
-     ^Bibliographies^ 
-     ^---------------------------------------------------
-     Bibfile _v_isit 
-                                                                     
-     _q_uit
-          "
-  ("c" sync0-bibtex-clean-entry)
-  ("E" sync0-bibtex-capture-reference)
-  ("e" sync0-bibtex-capture-quick-reference)
-  ("u" sync0-bibtex-update-key)
-  ("p" sync0-org-ref-copy-pdf-to-path)
-  ("N" sync0-bibtex-create-md-note-from-entry)
-  ("n" sync0-ivy-bibtex-open-notes)
-  ("s" sync0-pdf-page-extractor)
-  ("v" sync0-visit-bibliography-in-buffer)
-  ("o" sync0-org-ref-open-pdf-at-point)
-  ("z" sync0-org-ref-open-pdf-at-point-zathura)
-  ("q" nil :color blue))
+(defun sync0-bibtex-extract-multiple-entries-from-pdf (seqlists)
+  "Extract pdfs and create bibtex entries and markdown entries
+for each extranction. This function requires an input 'seqlists'
+that is a list composed of n lists of the form: (name,
+first-page, last-page). Likewise, for this to work, it is
+necessary that the pages of the pdf match the page numbers of the
+actual book. Otherwise, the entries will have wrong data."
+  (let* ((bibkey (let* ((candidates (bibtex-completion-candidates))
+                        (selection (ivy-read "Choose BibTeX key to extract from : "
+                                             candidates
+                                             :caller 'ivy-bibtex
+                                             :history 'ivy-bibtex-history)))
+                   (cdr (assoc "=key=" (cdr (assoc selection candidates))))))
+         (entry (bibtex-completion-get-entry bibkey))
+         (input-file (car (bibtex-completion-find-pdf bibkey)))
+         (obsidian-master-note (concat sync0-obsidian-directory bibkey ".md"))
+         (type (completing-read "Choose Bibtex entry type: " sync0-bibtex-entry-types))
+         (type-downcase (downcase type))
+         (creation (format-time-string "%Y-%m-%d")) 
+         (parent (bibtex-completion-get-value "title" entry))
+         (origdate (bibtex-completion-get-value "origdate" entry))
+         (date (bibtex-completion-get-value "date" entry))
+         (date-fixed (cond ((and (null date)
+                                 (null origdate)) "")
+                           ((null origdate)
+                            (concat "(" date ")"))
+                           (t (concat "(" origdate ") (" date ")"))))
+         (date-tag
+          (replace-regexp-in-string "-" "/" date))
+         (author (completing-read "Auteur : " sync0-bibtex-authors
+                                  nil nil nil))
+         (author-fixed (unless (string= author "nil")
+                         (cond ((string-match " and " author)
+                                ;; create a list with parts 
+                                (let* ((author-list  (split-string author " and "))
+                                       (names (let (x)
+                                                (dolist  (element author-list x)
+                                                  (setq x (concat x element "\", \""))))))
+                                  (concat "\"" (substring names 0 -2))))
+                               ;; check when author is an organization
+                               ((string-match "^{" author)
+                                (concat "\"" (substring author 1 -1) "\""))
+                               ;; other cases
+                               (t (concat "\"" author "\"")))))
+         (lastname (cond ((string-match " and " author)
+                          ;; create a list with parts 
+                          (let* ((author-list  (split-string author " and "))
+                                 (last-names (let (x)
+                                               (dolist  (element author-list x)
+                                                 (setq x (concat x
+                                                                 (progn
+                                                                   (string-match "\\([[:graph:]]+\\),"   element)
+                                                                   (match-string 1 element))
+                                                                 ", "))))))
+                            (substring last-names 0 -2)))
+                         ((string-match "^{" author)
+                          (string-match "{\\([[:print:]]+\\)}" author)
+                          (match-string 1 author))
+                         (t (nth 0 (split-string author ", ")))))
+         (lastname-raw (cond ((string-match " and " author)
+                              ;; create a list with parts 
+                              (let* ((author-list  (split-string author " and "))
+                                     (last-names (let (x)
+                                                   (dolist  (element author-list x)
+                                                     (setq x (concat x
+                                                                     (progn
+                                                                       (string-match "\\([[:graph:]]+\\),"   element)
+                                                                       (match-string 1 element))
+                                                                     ", author/"))))))
+                                ;; (substring last-names 0 -2)))
+                                (substring last-names 0 -7)))
+                             ((string-match "^{" author)
+                              (string-match "{\\([[:print:]]+\\)}" author)
+                              (match-string 1 author))
+                             (t (nth 0 (split-string author ", ")))))
+         (lastname-tag
+          (replace-regexp-in-string "[[:space:]]+" "_" (downcase lastname-raw)))
+         (language (bibtex-completion-get-value "language" entry))
+         (langid language)
+         (crossref bibkey)) 
+    ;; End of definition before loop
+    ;; Loop for extracting the pdf using ghostcritp
+    (dolist (elt seqlists)
+      (let* ((raw-filename (1+ (string-to-number (format-time-string "%Y%m%d%H%M%S"))))
+             (filename (number-to-string raw-filename))
+             (file-pdf (concat "/home/sync0/Documents/pdfs/" filename ".pdf"))
+             (title (nth 0 elt))
+             (beg (number-to-string (nth 1 elt)))
+             (end (number-to-string (nth 2 elt)))
+             (pages (concat beg "-" end))
+             (bibtex-definitions (list 
+                                  title
+                                  date
+                                  author
+                                  crossref
+                                  pages
+                                  language
+                                  langid
+                                  file-pdf))
+             (bibtex-fields sync0-bibtex-extract-fields)
+             (fields (mapcar* #'(lambda (x y) (list x y)) bibtex-fields bibtex-definitions))
+             ;; define the bibtex entries
+             (entries
+              (let (x)
+                (dolist (element fields x) 
+                  (unless (or (null (cadr element))
+                              (string= (cadr element) ""))
+                    (setq x (concat x (car element) " = {" (cadr element) "},\n"))))))
+             (bib-file sync0-default-bibliography) 
+             ;; create string of new bibtex entry
+             (obsidian-file (concat sync0-obsidian-directory filename ".md")) 
+             (obsidian-entry (concat "---\n"
+                                     "id: " filename "\n"
+                                     "citekey: " filename "\n"
+                                     "zettel_type: reference\n"
+                                     "biblatex_type: " type-downcase "\n"
+                                     "title: \"" title "\"\n"
+                                     "created: " creation "\n"
+                                     "crossref: " crossref "\n"
+                                     "parent: \"" parent "\"\n"
+                                     (unless (string= author "nil")
+                                       (concat "author: [" author-fixed "]\n"))
+                                     "aliases: [\"" (unless (string= author "nil") (concat lastname " "))  date-fixed  " " title "\"]\n"
+                                    (unless (or (null origdate)
+                                                (string= origdate ""))
+                                      (concat "origdate: " origdate "\n"))
+                                     "date: " date "\n"
+                                     "language: " language "\n"
+                                     "tags: [reference/" type-downcase ", bibkey/" filename ", date/" date-tag (unless (string= author "nil") (concat ", author/" lastname-tag)) ", language/" language "]\n"
+                                     "---\n" 
+                                     "# " (unless (string= author "nil") (concat lastname " "))  date-fixed " " title "\n\n" 
+                                     "## Description\n\n" 
+                                     "## Progrès de la lecture\n\n" 
+                                     "## Annotations\n\n"))
+             (bibtex-entry (concat "@" type "{" filename "," "\n" entries "}\n"))
+             (obsidian-reference (concat "\n- [" lastname " " date-fixed " " title "](" filename ".md)\n"))
+             (extraction-command (concat
+                                  "gs -sDEVICE=pdfwrite -dNOPAUSE -dBATCH -dSAFER -dFirstPage="
+                                  beg
+                                  " -dLastPage="
+                                  end
+                                  " -sOutputFile="
+                                  sync0-pdfs-folder
+                                  filename
+                                  ".pdf "
+                                  input-file)))
+        ;; End of definitions for sublist
+        ;; Append new bibtex entry to default bibliography file
+        (with-temp-buffer 
+          (insert obsidian-reference)
+          (append-to-file (point-min) (point-max) obsidian-master-note))
+        (with-temp-buffer 
+          (insert bibtex-entry)
+          (append-to-file (point-min) (point-max) bib-file))
+        ;; Create md note in obsidian based on the defined metadata
+        (with-temp-buffer 
+          (insert obsidian-entry)
+          (write-file obsidian-file))
+        ;; Extract the pdf
+        (shell-command extraction-command)))))
+
+(major-mode-hydra-define bibtex-mode nil 
+  ("References"
+   (("c" sync0-bibtex-clean-entry "Clean entry")
+    ("E" sync0-bibtex-capture-reference "Capture entry")
+    ("e" sync0-bibtex-capture-quick-reference "Quick capture")
+    ("u" sync0-bibtex-update-key "Update next key")
+    ("N" sync0-bibtex-create-md-note-from-entry "Create md from entry"))
+   "PDFs"
+   (("p" sync0-org-ref-copy-pdf-to-path "Copy to path")
+    ("s" sync0-pdf-page-extractor "Extract from entry")
+    ("o" sync0-org-ref-open-pdf-at-point "Open in pdfview")
+    ("z" sync0-org-ref-open-pdf-at-point-zathura "Open in zathura"))
+   "Annotations"
+   (("n" sync0-ivy-bibtex-open-notes "Open annotations"))
+   "Bibliographies"
+    (("v" ivy-bibtex "Visit entry")
+   ("V" sync0-visit-bibliography-in-buffer "Visit bibfile"))))
 
 ;; (evil-leader/set-key
 ;;   "O" 'org-open-at-point
@@ -893,7 +1049,7 @@ by org-roam files"
 ;; "z" 'sync0-org-tree-to-indirect-buffer
 ;; "z" 'sync0-hydra-org-functions/body
 
-(evil-leader/set-key-for-mode 'bibtex-mode "z" 'sync0-hydra-bibtex-functions/body)
+;; (evil-leader/set-key-for-mode 'bibtex-mode "z" 'sync0-hydra-bibtex-functions/body)
 
 
 (provide 'sync0-bibtex-functions)

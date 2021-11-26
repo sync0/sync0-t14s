@@ -3,10 +3,10 @@
   (let ((current-authors)
         (final-list)
         (bibtex-authors  (append
-                (mapcar #'(lambda (x) (cdr (assoc "editor" x)))
-                          (bibtex-completion-candidates))
-                (mapcar #'(lambda (x) (cdr (assoc "author" x)))
-                          (bibtex-completion-candidates)))))
+                          (mapcar #'(lambda (x) (cdr (assoc "editor" x)))
+                                  (bibtex-completion-candidates))
+                          (mapcar #'(lambda (x) (cdr (assoc "author" x)))
+                                  (bibtex-completion-candidates)))))
     (with-temp-buffer
       (insert-file-contents "~/.emacs.d/sync0-vars/bibtex-authors.txt")
       (goto-char (point-min))
@@ -18,35 +18,34 @@
       (setq final-list (delete-dups (append current-authors bibtex-authors)))
       (sync0-insert-elements-of-list final-list))))
 
-
 (defun sync0-bibtex-completion-reverse-author (key)
   "Reverse the author used for "
   (let* ((string-key (number-to-string key))
          (author (sync0-org-ref-get-citation-author string-key)))
-  (cond ((string-match " and " author)
-         ;; create a list with parts 
-         (let* ((author-list  (split-string author " and "))
-                (names (let (x)
-                         (dolist  (element author-list x)
-                           (setq x (concat x
-                                           (progn
-                                             (string-match ", \\([[:graph:]]+\\)$"   element)
-                                             (match-string 1 element))
-                                           " "
-                                           (progn
-                                             (string-match "\\([[:graph:]]+\\),"   element)
-                                             (match-string 1 element))
-                                           ", "))))))
-           (substring names 0 -2)))
-        ;; check when author is an organization
-        ((string-match "^{" author)
-         (string-match "{\\([[:print:]]+\\)}" author)
-         (match-string 1 author))
-        ;; other cases
-        (t (let* ((author-list (split-string author ", "))
-                  (last-name (nth 0 author-list))
-                  (first-name (nth 1 author-list)))
-             (concat first-name " " last-name))))))
+    (cond ((string-match " and " author)
+           ;; create a list with parts 
+           (let* ((author-list  (split-string author " and "))
+                  (names (let (x)
+                           (dolist  (element author-list x)
+                             (setq x (concat x
+                                             (progn
+                                               (string-match ", \\([[:graph:]]+\\)$"   element)
+                                               (match-string 1 element))
+                                             " "
+                                             (progn
+                                               (string-match "\\([[:graph:]]+\\),"   element)
+                                               (match-string 1 element))
+                                             ", "))))))
+             (substring names 0 -2)))
+          ;; check when author is an organization
+          ((string-match "^{" author)
+           (string-match "{\\([[:print:]]+\\)}" author)
+           (match-string 1 author))
+          ;; other cases
+          (t (let* ((author-list (split-string author ", "))
+                    (last-name (nth 0 author-list))
+                    (first-name (nth 1 author-list)))
+               (concat first-name " " last-name))))))
 
 (defun sync0-pdf-page-extractor ()
   "Extract as a separate pdf the pages within the page rage
@@ -143,35 +142,35 @@ buffer. Can also be called with key."
                   (cdr (assoc "=key=" (cdr (assoc selection candidates)))))))
     (find-file (concat sync0-obsidian-directory bibkey ".md"))))
 
-(defhydra sync0-hydra-ivy-bibtex-functions (:color blue :hint nil)
-"
-^BibLaTeX^           ^Etc.^    
-^--------------------------------------
-Open _n_otes         Open _d_eft
-_E_xtract field      _Q_uote (display)     
-PDF _o_pen           _F_oreign quote       
-PDF in _z_athura
-_V_isit corr. PDF
-_C_opy pdf
-_B_ib files
-Open _i_vy bibtex
+;; (defhydra sync0-hydra-ivy-bibtex-functions (:color blue :hint nil)
+;;   "
+;; ^BibLaTeX^           ^Etc.^    
+;; ^--------------------------------------
+;; Open _n_otes         Open _d_eft
+;; _E_xtract field      _Q_uote (display)     
+;; PDF _o_pen           _F_oreign quote       
+;; PDF in _z_athura
+;; _V_isit corr. PDF
+;; _C_opy pdf
+;; _B_ib files
+;; Open _i_vy bibtex
 
-_q_uit
-"
-  ("B" sync0-visit-bibliography-in-buffer)
-  ("C" sync0-org-ref-copy-pdf-to-path)
-  ("d" deft)
-  ("i" ivy-bibtex)
-  ("n" sync0-ivy-bibtex-open-notes)
-  ("E" sync0-ivy-bibtex-extractor)
-  ("o" sync0-org-ref-open-pdf-at-point)
-  ("F" (progn (yas-expand-snippet (yas-lookup-snippet "csquotes_foreign_displayquote"))))
-  ("Q" (progn (yas-expand-snippet (yas-lookup-snippet "csquotes_displayquote"))))
-  ("V" sync0-org-open-corresponding-pdf)
-  ("z" sync0-org-ref-open-pdf-at-point-zathura)
-  ("q" nil :color blue))
+;; _q_uit
+;; "
+;;   ("B" sync0-visit-bibliography-in-buffer)
+;;   ("C" sync0-org-ref-copy-pdf-to-path)
+;;   ("d" deft)
+;;   ("i" ivy-bibtex)
+;;   ("n" sync0-ivy-bibtex-open-notes)
+;;   ("E" sync0-ivy-bibtex-extractor)
+;;   ("o" sync0-org-ref-open-pdf-at-point)
+;;   ("F" (progn (yas-expand-snippet (yas-lookup-snippet "csquotes_foreign_displayquote"))))
+;;   ("Q" (progn (yas-expand-snippet (yas-lookup-snippet "csquotes_displayquote"))))
+;;   ("V" sync0-org-open-corresponding-pdf)
+;;   ("z" sync0-org-ref-open-pdf-at-point-zathura)
+;;   ("q" nil :color blue))
 
-(evil-leader/set-key
-  "i" 'sync0-hydra-ivy-bibtex-functions/body)
+;; (evil-leader/set-key
+;;   "i" 'sync0-hydra-ivy-bibtex-functions/body)
 
 (provide 'sync0-ivy-bibtex-functions)

@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t -*-
+
 (defvar bootstrap-version)
 (let ((bootstrap-file
        (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
@@ -134,7 +136,7 @@
 (setq system-time-locale "EN_US.UTF-8")
 
 ;; Improve slow down due to undo
-(setq-default undo-limit 100000
+(setq-default undo-limit 800000
               ;; Split vertically by default
               split-height-threshold nil
               ;; split-width-threshold (- (window-width) 10)
@@ -230,6 +232,10 @@
     '("title" "subtitle" "date" "author" "addendum" "url" "urldate" "language" "langid" "library" "file")
     "List of Bibtex entry fields")
 
+  (defvar sync0-bibtex-extract-fields
+    '("title" "date" "author" "crossref" "pages" "language" "langid" "file")
+    "List of Bibtex entry fields")
+
   (defvar sync0-bibtex-booktitles 
     '()
     "List of bibtex authors")
@@ -296,6 +302,15 @@
 (defmacro sync0-nullify-variable (var)
   "Make target variable nil"
   `(setf ,var nil))
+
+(defun sync0-nullify-variables (varlist)
+  "Set all variables from varlist nil"
+  (dolist (element varlist) 
+    (sync0-nullify-variable element)))
+
+;; (defun sync0-nullify-variables (varlist)
+;;   "Set all variables from varlist nil"
+;;   (mapcar #'sync0-nullify-variable varlist))
 
 (defun sync0-set-variable-from-files  (varlist)
   "From a list of pairs of variable and files, define all of them
@@ -556,6 +571,22 @@ when necessary."
 
 (use-package hydra
   :straight (hydra :type git :host github :repo "abo-abo/hydra"))
+
+(use-package major-mode-hydra
+  :straight (major-mode-hydra :type git :host github :repo "jerrypnz/major-mode-hydra.el")
+  :bind
+  ("M-SPC" . major-mode-hydra)
+  :custom
+  (major-mode-hydra-invisible-quit-key "q")
+  :config
+  (setq major-mode-hydra-title-generator
+        '(lambda (mode)
+           (s-concat "\n"
+                     (s-repeat 10 " ")
+                     (all-the-icons-icon-for-mode mode :v-adjust 0.05)
+                     " "
+                     (symbol-name mode)
+                     " commands"))))
 
 (use-package which-key
   :straight (which-key :type git :host github :repo "justbur/emacs-which-key")
@@ -2200,8 +2231,8 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
         ;; '((text-mode company-capf company-dabbrev company-yasnippet company-ispell company-org-roam)
         ;;(text-mode company-capf company-yasnippet company-ispell company-bibtex)
         (graphviz-dot-mode company-capf company-graphviz-dot-backend company-yasnippet)
-        (prog-mode company-capf company-lsp company-yasnippet)
-        (elisp-mode company-elisp company-capf company-yasnippet)
+        (prog-mode company-capf company-lsp company-yasnippet company-files)
+        (elisp-mode company-elisp company-capf company-yasnippet company-files)
         ;; (nxml-mode company-capf company-yasnippet company-nxml)
         ;; (python-mode company-capf company-yasnippet company-jedi)
         (conf-mode company-capf company-dabbrev-code company-yasnippet))
@@ -2305,62 +2336,64 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
      (prog-mode . yas-minor-mode)
      (bibtex-mode . yas-minor-mode)))
 
-  (use-package latex
-    :straight nil
-    :mode
-    ("\\.tex\\'" . latex-mode)
-    :custom
-    (TeX-auto-save t)
-    ;; Don't prompt for saving the .tex file
-    (TeX-save-query nil)       
-    (TeX-parse-self t)
-    ;; If `t`, automatically shows compilation log
-    (TeX-show-compilation nil)         
-    ;; Disable language-specific hyphen insertion.
-    (LaTeX-babel-hyphen nil)
-    ;; `"` expands into csquotes macros (for this to work, babel pkg must be loaded after csquotes pkg).
-    (LaTeX-csquotes-close-quote "}")
-    (LaTeX-csquotes-open-quote "\\autoquote{")
-    (TeX-file-extensions '("Rnw" "rnw" "Snw" "snw" "tex" "sty" "cls" "ltx" "texi" "texinfo" "dtx"))
-    (preview-gs-command "/usr/local/bin/gs")
-    ;; Activate forward/reverse search
-    (TeX-source-correlate-mode t)        
-    (TeX-PDF-mode t)
-    :config
-    (define-key LaTeX-mode-map (kbd "M-p")
-      (lambda ()
-        "Save the buffer and run `TeX-command-run-all`."
-        (interactive)
-        (save-buffer)
-        (TeX-command-run-all nil)))
+(use-package latex
+  :straight nil
+  :mode
+  ("\\.tex\\'" . latex-mode)
+  :custom
+  (TeX-auto-save t)
+  ;; Don't prompt for saving the .tex file
+  (TeX-save-query nil)       
+  (TeX-parse-self t)
+  ;; If `t`, automatically shows compilation log
+  (TeX-show-compilation nil)         
+  ;; Disable language-specific hyphen insertion.
+  (LaTeX-babel-hyphen nil)
+  ;; `"` expands into csquotes macros (for this to work, babel pkg must be loaded after csquotes pkg).
+  (LaTeX-csquotes-close-quote "}")
+  (LaTeX-csquotes-open-quote "\\autoquote{")
+  (TeX-file-extensions '("Rnw" "rnw" "Snw" "snw" "tex" "sty" "cls" "ltx" "texi" "texinfo" "dtx"))
+  (preview-gs-command "/usr/local/bin/gs")
+  ;; Activate forward/reverse search
+  (TeX-source-correlate-mode t)        
+  (TeX-PDF-mode t)
+  :config
+  ;; (define-key LaTeX-mode-map (kbd "M-p")
+  ;;   (lambda ()
+  ;;     "Save the buffer and run `TeX-command-run-all`."
+  ;;     (interactive)
+  ;;     (save-buffer)
+  ;;     (TeX-command-run-all nil)))
 
-    ;; Zathura settings
-    (add-to-list 'TeX-view-program-list  '("Zathura"     ("zathura "
-                                                          (mode-io-correlate " --synctex-forward %n:0:%b -x \"emacsclient +%{line} %{input}\" ")
-                                                          " %o") "zathura"))
+  (require 'sync0-tex)
 
-    (add-to-list 'TeX-view-program-selection
-                 '(output-pdf "Zathura"))
+  ;; Zathura settings
+  (add-to-list 'TeX-view-program-list  '("Zathura"     ("zathura "
+                                                        (mode-io-correlate " --synctex-forward %n:0:%b -x \"emacsclient +%{line} %{input}\" ")
+                                                        " %o") "zathura"))
 
-    (evil-define-key 'normal LaTeX-mode-map
-      "k" 'previous-line
-      "j" 'next-line
-      ;;  "m" 'set-mark-command
-      "q" 'fill-paragraph
-      "Q" 'sync0-insert-line-below
-      (kbd "SPC") 'sync0-insert-whitespace
-      "[" 'backward-sentence
-      "]" 'forward-sentence)
+  (add-to-list 'TeX-view-program-selection
+               '(output-pdf "Zathura"))
 
-    (setq-default TeX-master nil ; by each new fie AUCTEX will ask for a master fie.
-                  TeX-PDF-mode t
-                  TeX-engine 'luatex)     ; optional
+  (evil-define-key 'normal LaTeX-mode-map
+    "k" 'previous-line
+    "j" 'next-line
+    ;;  "m" 'set-mark-command
+    "q" 'fill-paragraph
+    "Q" 'sync0-insert-line-below
+    (kbd "SPC") 'sync0-insert-whitespace
+    "[" 'backward-sentence
+    "]" 'forward-sentence)
 
-    ;; Font-lock for AuCTeX
-    ;; Note: '«' and '»' is by pressing 'C-x 8 <' and 'C-x 8 >', respectively
-    (font-lock-add-keywords 'latex-mode (list (list "\\(«\\(.+?\\|\n\\)\\)\\(+?\\)\\(»\\)" '(1 'font-latex-string-face t) '(2 'font-latex-string-face t) '(3 'font-latex-string-face t))))
-    ;; Add standard Sweave file extensions to the list of files recognized  by AuCTeX.
-    (add-hook 'TeX-mode-hook (lambda () (reftex-isearch-minor-mode))))
+  (setq-default TeX-master nil ; by each new fie AUCTEX will ask for a master fie.
+                TeX-PDF-mode t
+                TeX-engine 'luatex)     ; optional
+
+  ;; Font-lock for AuCTeX
+  ;; Note: '«' and '»' is by pressing 'C-x 8 <' and 'C-x 8 >', respectively
+  (font-lock-add-keywords 'latex-mode (list (list "\\(«\\(.+?\\|\n\\)\\)\\(+?\\)\\(»\\)" '(1 'font-latex-string-face t) '(2 'font-latex-string-face t) '(3 'font-latex-string-face t))))
+  ;; Add standard Sweave file extensions to the list of files recognized  by AuCTeX.
+  (add-hook 'TeX-mode-hook (lambda () (reftex-isearch-minor-mode))))
 
 (use-package bibtex
   :straight nil
@@ -2463,8 +2496,8 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
     ;; :custom
     ;; (ivy-bibtex-default-action 'ivy-bibtex-edit-notes)
     :config
-    (setq ivy-bibtex-default-action 'ivy-bibtex-insert-citation)
-    (setq ivy-bibtex-default-multi-action 'ivy-bibtex-insert-citation)
+    (setq ivy-bibtex-default-action 'ivy-bibtex-show-entry)
+    (setq ivy-bibtex-default-multi-action 'ivy-bibtex-show-entry)
     (require 'sync0-ivy-bibtex-functions)))
 
    (use-package pdf-tools

@@ -108,6 +108,7 @@
 (setq sync0-bibtex-current-zettel-type "John Doe")
 (setq sync0-bibtex-current-language "John Doe")
 (setq sync0-bibtex-current-date "John Doe")
+
 ;; (setq sync0-bibtex-current-origdate "John Doe")
 
 ;; (let* (

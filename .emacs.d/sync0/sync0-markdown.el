@@ -47,55 +47,37 @@ created: " (format-time-string "%Y-%m-%d")
 (defvar sync0-pandoc-export-md-to-tex-settings-alist
       '(("arvore" (lambda ()
                     (concat
-                     " -H layout_scrartcl.tex"
-                     " --metadata-file=/home/sync0/Dropbox/typography/pandoc/arvore.yaml")))
+                     " --metadata-file=/home/sync0/Dropbox/typography/pandoc/defaults_arvore.yaml")))
         ("scrartcl" (lambda ()
                      (concat
-                      " -H layout_scrartcl.tex"
-                      " --metadata-file=/home/sync0/Dropbox/typography/pandoc/scrartcl.yaml")))
+                      " --metadata-file=/home/sync0/Dropbox/typography/pandoc/defaults_scrartcl.yaml")))
+        ("scrartcl_a5" (lambda ()
+                     (concat
+                      " --defaults=/home/sync0/Dropbox/typography/pandoc/defaults_scrartcl_a5.yaml")))
         ("scrbook" (lambda ()
                      (concat
-                      " -H layout_scrbook.tex"
-                      " -H counterwithout.tex"
-                      " --metadata-file=/home/sync0/Dropbox/typography/pandoc/scrbook.yaml")))
+                      " --metadata-file=/home/sync0/Dropbox/typography/pandoc/defaults_scrbook.yaml")))
         ("scrreprt" (lambda ()
                      (concat
-                      " -H layout_scrreprt.tex"
-                      " -H counterwithout.tex"
-                      " --metadata-file=/home/sync0/Dropbox/typography/pandoc/scrreprt.yaml")))
-        ("scrartcl (toc, index)" (lambda ()
-                     (concat
-                      " -H layout_scrartcl.tex"
-                      ;; " -H before_index.tex"
-                      ;; " -A after_index.tex"
-                      " --metadata-file=/home/sync0/Dropbox/typography/pandoc/scrartcl_index.yaml"))))
+                      " --metadata-file=/home/sync0/Dropbox/typography/pandoc/defaults_scrreprt.yaml"))))
       "List of concatenated strings defining the styles for markdown to pdf export")
 
 (defvar sync0-pandoc-export-md-to-pdf-settings-alist
       '(("arvore" (lambda ()
                     (concat
-                      " --defaults=/home/sync0/Dropbox/typography/pandoc/defaults_arvore.yaml"
-                     )))
+                      " --defaults=/home/sync0/Dropbox/typography/pandoc/defaults_arvore.yaml")))
         ("scrartcl" (lambda ()
                      (concat
-                      " --defaults=/home/sync0/Dropbox/typography/pandoc/defaults_scrartcl.yaml"
-                      )))
+                      " --defaults=/home/sync0/Dropbox/typography/pandoc/defaults_scrartcl.yaml")))
         ("scrartcl_a5" (lambda ()
                      (concat
-                      " --defaults=/home/sync0/Dropbox/typography/pandoc/defaults_scrartcl_a5.yaml"
-                      )))
+                      " --defaults=/home/sync0/Dropbox/typography/pandoc/defaults_scrartcl_a5.yaml")))
         ("scrbook" (lambda ()
                      (concat
-                      " --defaults=/home/sync0/Dropbox/typography/pandoc/defaults_scrbook.yaml"
-                      )))
-        ;; ("scrbook (part)" (lambda ()
-        ;;              (concat
-        ;;               " --defaults=/home/sync0/Dropbox/typography/pandoc/defaults_scrbook.yaml"
-        ;;               )))
+                      " --defaults=/home/sync0/Dropbox/typography/pandoc/defaults_scrbook.yaml")))
         ("scrreprt" (lambda ()
                      (concat
-                      " --defaults=/home/sync0/Dropbox/typography/pandoc/defaults_scrreprt.yaml"
-                      ))))
+                      " --defaults=/home/sync0/Dropbox/typography/pandoc/defaults_scrreprt.yaml"))))
       "List of concatenated strings defining the styles for markdown to pdf export")
 
   (defvar sync0-pandoc-md-to-pdf-command-base
@@ -117,7 +99,7 @@ created: " (format-time-string "%Y-%m-%d")
      "pandoc"
      " --from=markdown --to=latex"
      " --standalone"
-     " --resource-path=.:/home/sync0/.local/share/pandoc/filters:/home/sync0/Dropbox/typography/css:/home/sync0/Dropbox/typography/csl:/home/sync0/Dropbox/typography/pandoc:/home/sync0/Dropbox/bibliographies:/home/sync0/Dropbox/obsidian/img"
+     " --resource-path=.:/home/sync0/.local/share/pandoc/filters:/home/sync0/Dropbox/typography/css:/home/sync0/Dropbox/typography/csl:/home/sync0/Dropbox/typography/pandoc:/home/sync0/Dropbox/bibliographies:/home/sync0/Dropbox/typography/pandoc:/home/sync0/Dropbox/obsidian/img"
      " --shift-heading-level-by=-1" 
      " --filter=/home/sync0/.local/share/pandoc/filters/delink.hs"
      " --lua-filter=diagram-generator.lua "
@@ -155,6 +137,24 @@ created: " (format-time-string "%Y-%m-%d")
 (defun sync0-pandoc-export-md-to-pdf ()
   (interactive)
   (let* ((type (completing-read "Choose document type for export: " sync0-pandoc-export-md-to-pdf-settings-alist))
+         (lang (if (progn
+                     (goto-char (point-min))
+                     (re-search-forward "^lang: \\([A-z-]+\\)\n" nil t 1))
+                   (match-string-no-properties 1)
+                 (completing-read "Choose export language: " 
+                                  '("en-US" "en-GB" "pt-BR" "pt-PT" "de-DE" "fr-FR" "es-CO"))))
+         (type-settings (funcall
+                         (cadr (assoc type sync0-pandoc-export-md-to-pdf-settings-alist))))
+         (raw-command (concat "pandoc" type-settings))
+         (current-path (buffer-file-name))
+         (current-file (when (string-match "^.+/\\([0-9]+\\)\\.md$" current-path)
+                         (match-string-no-properties 1 current-path)))
+         (command (concat raw-command " " current-file ".md -o" current-file ".pdf")))
+    (shell-command command)))
+
+(defun sync0-pandoc-export-md-to-tex ()
+  (interactive)
+  (let* ((type (completing-read "Choose document type for export: " sync0-pandoc-export-md-to-tex-settings-alist))
          ;; (citationp (yes-or-no-p "Use citations module? "))
          (lang (if (progn
                      (goto-char (point-min))
@@ -164,42 +164,14 @@ created: " (format-time-string "%Y-%m-%d")
                                   '("en-US" "en-GB" "pt-BR" "pt-PT" "de-DE" "fr-FR" "es-CO"))))
          ;; (citations (concat sync0-pandoc-md-to-pdf-command-citations
          ;;               (cdr (assoc lang sync0-pandoc-md-to-pdf-command-citations-language))))
-         ;; (base (concat sync0-pandoc-md-to-pdf-command-base
+         ;; (base (concat sync0-pandoc-md-to-tex-command-base
          ;;               (cdr (assoc lang sync0-pandoc-md-to-pdf-command-base-language))))
-         ;; (base sync0-pandoc-md-to-pdf-command-base)
-         (base "pandoc")
          (type-settings (funcall
-                         (cadr (assoc type sync0-pandoc-export-md-to-pdf-settings-alist))))
+                         (cadr (assoc type sync0-pandoc-export-md-to-tex-settings-alist))))
          ;; (raw-command (if citationp 
          ;;                  (concat base type-settings citations)
          ;;                (concat base type-settings)))
-         (raw-command (concat base type-settings))
-         (current-path (buffer-file-name))
-         (current-file (when (string-match "^.+/\\([0-9]+\\)\\.md$" current-path)
-                         (match-string-no-properties 1 current-path)))
-         ;; (file (read-string "Which file to convert to PDF? " current-file))
-         (command (concat raw-command " " current-file ".md -o" current-file ".pdf")))
-    (shell-command command)))
-
-(defun sync0-pandoc-export-md-to-tex ()
-  (interactive)
-  (let* ((type (completing-read "Choose document type for export: " sync0-pandoc-export-md-to-tex-settings-alist))
-         (citationp (yes-or-no-p "Use citations module? "))
-         (lang (if (progn
-                     (goto-char (point-min))
-                     (re-search-forward "^lang: \\([A-z-]+\\)\n" nil t 1))
-                   (match-string-no-properties 1)
-                 (completing-read "Choose export language: " 
-                                  '("en-US" "en-GB" "pt-BR" "pt-PT" "de-DE" "fr-FR" "es-CO"))))
-         (citations (concat sync0-pandoc-md-to-pdf-command-citations
-                       (cdr (assoc lang sync0-pandoc-md-to-pdf-command-citations-language))))
-         (base (concat sync0-pandoc-md-to-tex-command-base
-                       (cdr (assoc lang sync0-pandoc-md-to-pdf-command-base-language))))
-         (type-settings (funcall
-                         (cadr (assoc type sync0-pandoc-export-md-to-tex-settings-alist))))
-         (raw-command (if citationp 
-                          (concat base type-settings citations)
-                        (concat base type-settings)))
+         (raw-command (concat "pandoc" type-settings))
          (current-path (buffer-file-name))
          (current-file (when (string-match "^.+/\\([0-9]+\\)\\.md$" current-path)
                          (match-string-no-properties 1 current-path)))
@@ -253,40 +225,32 @@ created: " (format-time-string "%Y-%m-%d")
 ;;          (command (concat sync0-pandoc-md-to-pdf-command " " file ".md -o" file ".pdf")))
 ;;       (shell-command command)))
 
-(defhydra sync0-hydra-markdown-functions (:color amaranth :hint nil :exit t)
-  "
-  ^Links^             ^Footnotes^             ^Trees^              ^Export^           ^Etc.^
-  ^---------------------------------------------------------------------------------------------------
-  Wiki link _i_nsert   New _f_ootnote         Indirect _b_uffer    Export: _p_df     Insert drawer
-  Lin_k_ insert        ^ ^                    Export trees         Export: _d_ocx    New local _a_bbrev
-  _I_mage insert       ^ ^                    ^ ^                  Export: _l_atex 
-  ^---------------------------------------------------------------------------------------------------
-  ^Citations^         ^Visualization^         ^References
-  ^---------------------------------------------------------------------------------------------------
-  Insert _c_itation    Toggle _m_arkup         Open _r_ef. in zathura
-  ^ ^                  Open pdf in _z_athura
-  _q_uit
-  "
-  ;; ("b" org-epub-export-to-epub)
-  ;; ("s" org-store-link)
-  ("i" markdown-insert-wiki-link)
-  ("k" markdown-insert-link)
-  ("I" markdown-insert-image)
-  ("f" markdown-insert-footnote)
-  ("b" markdown-narrow-to-subtree)
-  ("c" ivy-bibtex)
-  ("m" markdown-toggle-markup-hiding)
-  ("p" sync0-pandoc-export-md-to-pdf)
-  ("l" sync0-pandoc-export-md-to-tex)
-  ("z" sync0-markdown-open-pdf-in-zathura)
-  ("d" sync0-pandoc-export-md-to-docx)
-  ("r" sync0-org-ref-open-pdf-at-point-zathura)
-  ;; ("t" sync0-pandoc-export-md-to-tex)
-  ;; ("E" sync0-org-export-headlines-to-latex)
-  ("a" sync0-define-local-abbrev)
-  ;; ("d" org-insert-drawer)
-  ("q" nil :color blue))
+(major-mode-hydra-define markdown-mode nil 
+  ("Links"
+   ;; ("s" org-store-link)
+   (("i" markdown-insert-wiki-link "Insert wiki-link")
+    ("k" markdown-insert-link "Insert markdown link")
+    ("I" markdown-insert-image "Insert image"))
+   "Scholarly"
+   (("f" markdown-insert-footnote "Insert footnote")
+    ("c" ivy-bibtex "Show bibtex entry"))
+   "Visualization"
+   (("m" markdown-toggle-markup-hiding "Toggle markup")
+    ("b" markdown-narrow-to-subtree "Narrow to header")
+    ("z" sync0-markdown-open-pdf-in-zathura "Show pdf")
+    ("r" sync0-org-ref-open-pdf-at-point-zathura "Open reference pdf"))
+   "Export"
+   (("p" sync0-pandoc-export-md-to-pdf "Pdf")
+    ("l" sync0-pandoc-export-md-to-tex "TeX")
+    ("d" sync0-pandoc-export-md-to-docx "Docx"))
+   ;; ("b" org-epub-export-to-epub)
+   ;; ("t" sync0-pandoc-export-md-to-tex)
+   ;; ("E" sync0-org-export-headlines-to-latex)
+   "Etc"
+   (("a" sync0-define-local-abbrev "Define abbrev"))))
+;; ("d" org-insert-drawer)
 
-(evil-leader/set-key-for-mode 'markdown-mode "z" 'sync0-hydra-markdown-functions/body)
+;; (evil-leader/set-key-for-mode 'markdown-mode "z" 'sync0-hydra-markdown-functions/body)
+
 
 (provide 'sync0-markdown)
