@@ -938,3 +938,42 @@
 
 
 ;; ;; Next : create functions for defining author strings
+
+(defun sync0-bibtex-update-completion-files (seqlists)
+  (interactive)
+  (dolist (element seqlists)
+    (let ((current-elements)
+          (final-list)
+          (bib-elements (mapcar #'(lambda (x) (cdr (assoc (car element) x)))
+                                  (bibtex-completion-candidates))))
+      (with-temp-buffer
+        (insert-file-contents (cadddr element))
+        (goto-char (point-min))
+        ;; (keep-lines "contexts" (point-min) (point-max)) 
+        (while (re-search-forward "^\\([[:print:]]+\\)\n" (point-max) t)
+          (push  (match-string 1) current-elements)))
+      (with-temp-file (cadddr element)
+        (setq final-list (delete-dups (append current-elements bib-elements)))
+        (sync0-insert-elements-of-list final-list)))))
+
+  (setq foo
+    '(("booktitle" (sync0-bibtex-entry-booktitle sync0-bibtex-booktitles "~/.emacs.d/sync0-vars/bibtex-booktitles.txt"))
+      ("publisher" (sync0-bibtex-entry-publisher sync0-bibtex-publishers "~/.emacs.d/sync0-vars/bibtex-publishers.txt"))
+      ("journaltitle" (sync0-bibtex-entry-journal sync0-bibtex-journals "~/.emacs.d/sync0-vars/bibtex-journals.txt"))
+      ("location" (sync0-bibtex-entry-location sync0-bibtex-locations "~/.emacs.d/sync0-vars/bibtex-locations.txt"))
+      ("author" (sync0-bibtex-entry-author sync0-bibtex-authors "~/.emacs.d/sync0-vars/bibtex-authors.txt"))
+      ("library" (sync0-bibtex-entry-library sync0-bibtex-traces "~/.emacs.d/sync0-vars/bibtex-trace.txt"))
+      ("medium" (sync0-bibtex-entry-medium sync0-bibtex-media "~/.emacs.d/sync0-vars/bibtex-media.txt"))
+      ("institution" (sync0-bibtex-entry-institution sync0-bibtex-institutions "~/.emacs.d/sync0-vars/bibtex-institutions.txt"))
+      ("language" (sync0-bibtex-entry-language sync0-bibtex-languages  "~/.emacs.d/sync0-vars/languages.txt"))))
+
+      (setq test '("author" (sync0-bibtex-entry-author sync0-bibtex-authors "~/.emacs.d/sync0-vars/bibtex-authors.txt")))
+
+
+(defun sync0-bibtex-update-vars (seqlists)
+  "Update variables used for completion based on the information
+   provided by the new entry."
+  (dolist (element seqlists)
+    (unless (member (eval (cadr element))  (eval (caddr element)))
+      (push (cadr element) (caddr element))
+      (append-to-file (concat (eval (cadr element)) "\n") nil (cadddr element))))))

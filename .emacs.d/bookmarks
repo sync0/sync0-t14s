@@ -228,8 +228,8 @@
  (rear-context-string . "\"init.el\"))))))\n")
  (position . 5443))
 ("here"
- (filename . "~/Dropbox/bibliographies/bibliography.bib")
- (front-context-string . "Personal Collect")
- (rear-context-string . "ry           = {")
- (position . 267299))
+ (filename . "~/.emacs.d/sync0/sync0-bibtex-functions.el")
+ (front-context-string . "-medium sync0-bi")
+ (rear-context-string . "nc0-bibtex-entry")
+ (position . 30069))
 )

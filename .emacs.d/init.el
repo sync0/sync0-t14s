@@ -221,62 +221,72 @@
     "List of Bibtex entry types")
 
   (defvar sync0-bibtex-fields
-    '("title" "subtitle" "date" "origdate" "author" "journaltitle" "booktitle" "booksubtitle" "crossref" "volume" "number" "publisher" "location" "pages" "addendum" "url" "urldate" "language" "langid" "medium" "library" "file")
+    '("title" "subtitle" "eventtitle" "date" "origdate" "eventdate" "author" "journaltitle" "booktitle" "booksubtitle" "crossref" "chapter" "volume" "number" "series" "publisher" "location" "pages" "note" "doi" "url" "urldate" "language" "langid" "medium" "institution" "library" "file" "keywords")
     "List of Bibtex entry fields")
 
   (defvar sync0-bibtex-full-fields
-    '("title" "subtitle" "date" "origdate" "author" "journaltitle" "booktitle" "booksubtitle" "translator" "crossref"  "eventdate" "eventtitle" "venue" "volume" "number" "chapter" "edition" "pages" "publisher" "location" "pages" "addendum" "url" "urldate" "language" "langid" "library" "file")
+    '("title" "subtitle" "date" "origdate" "author" "journaltitle" "booktitle" "booksubtitle" "translator" "crossref"  "eventdate" "eventtitle" "venue" "volume" "number" "chapter" "edition" "pages" "publisher" "location" "pages" "note" "url" "urldate" "language" "langid" "library" "file" "keywords")
     "List of Bibtex entry fields")
 
   (defvar sync0-bibtex-quick-fields
-    '("title" "subtitle" "date" "author" "addendum" "url" "urldate" "language" "langid" "library" "file")
+    '("title" "subtitle" "date" "author" "note" "url" "urldate" "language" "langid" "library" "file" "keywords")
     "List of Bibtex entry fields")
 
   (defvar sync0-bibtex-extract-fields
-    '("title" "date" "author" "crossref" "pages" "language" "langid" "file")
+    '("title" "date" "author" "crossref" "pages" "language" "langid" "file" "keywords")
     "List of Bibtex entry fields")
 
-  (defvar sync0-bibtex-booktitles 
+  (defvar sync0-bibtex-completion-booktitle 
     '()
     "List of bibtex authors")
 
-  (defvar sync0-bibtex-publishers 
+  (defvar sync0-bibtex-completion-publisher 
     '()
     "List of bibtex authors")
 
-  (defvar sync0-bibtex-journals 
+  (defvar sync0-bibtex-completion-journaltitle
     '()
     "List of bibtex authors")
 
-  (defvar sync0-bibtex-locations 
+  (defvar sync0-bibtex-completion-location 
     '()
     "List of bibtex authors")
 
-  (defvar sync0-bibtex-authors 
+  (defvar sync0-bibtex-completion-author 
     '()
     "List of bibtex authors")
 
-  (defvar sync0-bibtex-languages
+  (defvar sync0-bibtex-completion-language
     '()
     "List of Bibtex languages")
 
-  (defvar sync0-bibtex-media
+  (defvar sync0-bibtex-completion-medium
     '()
     "List of Bibtex media")
 
-  (defvar sync0-bibtex-traces
+  (defvar sync0-bibtex-completion-library
     '()
     "List of Bibtex traces")
 
-  (defvar sync0-bibtex-variables-list
-    '((sync0-bibtex-booktitles . "~/.emacs.d/sync0-vars/bibtex-booktitles.txt")
-      (sync0-bibtex-publishers . "~/.emacs.d/sync0-vars/bibtex-publishers.txt")
-      (sync0-bibtex-journals . "~/.emacs.d/sync0-vars/bibtex-journals.txt")
-      (sync0-bibtex-locations . "~/.emacs.d/sync0-vars/bibtex-locations.txt")
-      (sync0-bibtex-authors .  "~/.emacs.d/sync0-vars/bibtex-authors.txt")
-      (sync0-bibtex-traces .  "~/.emacs.d/sync0-vars/bibtex-trace.txt")
-      (sync0-bibtex-media .  "~/.emacs.d/sync0-vars/bibtex-media.txt")
-      (sync0-bibtex-languages .  "~/.emacs.d/sync0-vars/languages.txt")))
+  (defvar sync0-bibtex-completion-institution
+    '()
+    "List of Bibtex traces")
+
+  (defvar sync0-bibtex-completion-note
+    '()
+    "List of Bibtex traces")
+
+  (defvar sync0-bibtex-variables-alist
+    '((sync0-bibtex-completion-booktitle . "~/.emacs.d/sync0-vars/bibtex-completion-booktitle.txt")
+      (sync0-bibtex-completion-publisher . "~/.emacs.d/sync0-vars/bibtex-completion-publisher.txt")
+      (sync0-bibtex-completion-journaltitle . "~/.emacs.d/sync0-vars/bibtex-completion-journaltitle.txt")
+      (sync0-bibtex-completion-location . "~/.emacs.d/sync0-vars/bibtex-completion-location.txt")
+      (sync0-bibtex-completion-author .  "~/.emacs.d/sync0-vars/bibtex-completion-author.txt")
+      (sync0-bibtex-completion-note .  "~/.emacs.d/sync0-vars/bibtex-completion-note.txt")
+      (sync0-bibtex-completion-library .  "~/.emacs.d/sync0-vars/bibtex-completion-library.txt")
+      (sync0-bibtex-completion-medium .  "~/.emacs.d/sync0-vars/bibtex-completion-medium.txt")
+      (sync0-bibtex-completion-institution .  "~/.emacs.d/sync0-vars/bibtex-completion-institution.txt")
+      (sync0-bibtex-completion-language .  "~/.emacs.d/sync0-vars/bibtex-completion-language.txt")))
 
   ;; define the rest
   (setq sync0-zettelkasten-directory (concat (getenv "HOME") "/Dropbox/org/")
@@ -327,7 +337,7 @@
           (add-to-list var (match-string-no-properties 1)))))))
 
 (sync0-set-variable-from-files sync0-zettelkasten-variables-list)
-(sync0-set-variable-from-files sync0-bibtex-variables-list)
+(sync0-set-variable-from-files sync0-bibtex-variables-alist)
 
 (defun sync0-downcase-and-no-whitespace (x)
   "Downcase and replace whitespace by _ in the current string"
@@ -548,6 +558,11 @@ when necessary."
         (split-string-and-unquote string separator))
        "(" ")")
     string))
+
+(defun sync0-null-p (var)
+  (or (null var)
+      (string= var "")
+      (string= var "nil")))
 
 (use-package s)
 
@@ -2451,7 +2466,7 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
   (bibtex-completion-notes-extension ".md")
   ;; (bibtex-completion-notes-extension ".org")
   (bibtex-completion-pdf-extension '(".pdf" ".epub"))
-  (bibtex-completion-additional-search-fields '(editor journaltitle origdate subtitle volume booktitle location publisher))
+  (bibtex-completion-additional-search-fields '(editor journaltitle origdate subtitle volume booktitle location publisher note library medium institution))
 
   :config 
   ;; (setq ivy-bibtex-default-action 'ivy-bibtex-insert-key)
