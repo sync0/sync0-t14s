@@ -35,16 +35,6 @@
       (message "PDF found in library for %s" bibkey)
       (message "No PDF found for %s" bibkey))))
 
-(defun sync0-org-ref-open-pdf-at-point ()
-  "Open the pdf for bibtex key under point if it exists."
-  (interactive)
-  (let* ((results (org-ref-get-bibtex-key-and-file))
-         (key (car results))
-         (file (car (bibtex-completion-find-pdf key))))
-    (if (file-exists-p file)
-        (org-open-file file))
-    (message "No PDF found for %s" key)))
-
 (defun sync0-org-ref-get-citation-date (key)
   "Get the year of an entry with KEY.  Return year as a string."
   (let* ((results (org-ref-get-bibtex-key-and-file key))
@@ -282,28 +272,6 @@
 ;;         (call-process "zathura" nil 0 nil pdf-file)
 ;;       (message "No PDF found for %s" key))))
 
-(defun sync0-org-ref-open-pdf-at-point-zathura ()
-  "Open the pdf for bibtex key under point if it exists."
-  (interactive)
-  (let* ((bibkey (let* ((candidates (bibtex-completion-candidates))
-                        ;; (key-at-point (org-ref-get-bibtex-key-under-cursor))
-                        ;; (preselect (and key-at-point
-                        ;;                 (cl-position-if (lambda (cand)
-                        ;;                                   (member (cons "=key=" key-at-point)
-                        ;;                                           (cdr cand)))
-                        ;;                                 candidates)))
-                        (selection (ivy-read "Choose BibTeX key to extract from : "
-                                             candidates
-                                             ;; :preselect preselect
-                                             :caller 'ivy-bibtex
-                                             :history 'ivy-bibtex-history)))
-                   (cdr (assoc "=key=" (cdr (assoc selection candidates))))))
-         (pdf-file (car (bibtex-completion-find-pdf bibkey))))
-    (if (file-exists-p pdf-file)
-        (call-process "zathura" nil 0 nil pdf-file)
-      (message "No PDF found for %s" key))))
-
-
 (defun sync0-org-ref-create-headline ()
   "Open the pdf for bibtex key under point if it exists."
   (interactive)
@@ -457,7 +425,6 @@
 ;;                        "\n"
 ;;                        ))
 ;;              ":NOTES: " link "\n:END:\n"))))
-
 
 (defun sync0-org-ref-copy-pdf-to-path ()
   "Open the pdf for bibtex key under point if it exists."

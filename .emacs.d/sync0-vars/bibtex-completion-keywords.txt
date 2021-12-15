@@ -1,0 +1,280 @@
+nil
+article, 1849-03-19, 
+article, 1848-07-11, 
+article, 1840-05-21, h. c.
+article, 1838-08-11, 
+book, 2021, 1990, lewis_bill, laliberte_dan, stallman_richard
+article, 1834-03-16, 
+article, 1834-03-11, 
+incollection, 1842, 20210621013804, courcelle-seneuil_jean-gustave, pagnerre, pagnerre-1ed
+collection, 1853-01/1853-03, 
+book, 2018, hudson_michael
+incollection, 1852, 20210621010353, courcelle-seneuil_jean-gustave, 
+20210621014631, pagnerre, courcelle-seneuil_jean-gustave, incollection
+Bibard
+agulhon-maurice, birnberg-jacques, lausanne, secondary
+agulhon-maurice, lausanne, secondary
+ahrens-sönke, zettelkasten, notetaking, study-techniques
+akrich, meadel, pillon
+allen-david, productivity, gtd, business
+alonso-encina, cara-cuervo
+armatte
+ashby, cybernetics
+barros-arana-diego, lyon, courcelle-seneuil, secondary
+baumol-william
+beaud-michel, writing, research, thesis
+beecher-jonathan, secondary, lausanne
+bell-emma, bryman-alan, ethics, doctorat, classes, session-1
+bello-andres
+bello-andres, lyon
+berg-maxine, projet
+bianchi-ana maria, lyon, ignore
+blanc-louis, primary, lausanne
+boice-robert, writing
+book, courcelle-seneuil_jean-leopold, brother, 1861, french
+boucheron-patrick
+bouchet-thomas, bourdeau-vincent, castleton-edward, jarrige-françois, secondary, lausanne
+bouchet-thomas, secondary, lausanne
+bourdieu-pierre
+bourdieu-pierre, lyon, methodology
+boyer-carl
+brabazon-tara, note-taking
+brain, computer, memoire, metaphors, chapter-2
+braunstein-jean-françois
+breton, cybernetics
+breton-yves, lyon
+caravaca-jimena, lyon, courcelle-seneuil, secondary
+carroll-william, carson-colin
+castagnez-ruggiu-noëlline, socialism
+castel-robert, travail
+chapanis-alphonse, chapter-2
+chassonery-zaigouche, science-studies
+chassonery-zaigouche, science-studies, fourcade
+chassonnery-zaigouche, science-studies
+citton, physiocratie, quesnay, metaphors, analogies
+collier-simon, lyon
+computer
+computer, cybernetics, economics, memoire, analogy
+computer, memoire, chapter-2
+cottereau-alain, secondary, lausanne, travail, ouvriers, france
+courcelle-seneuil
+courcelle-seneuil, doctorat
+courcelle-seneuil, letter, archive
+courcelle-seneuil, marco_luc, inbook, french
+courcelle-seneuil, primary, lyon
+courcelle-seneuil_jean-gustave, article, french, journal-des-economistes
+courcelle-seneuil_jean-gustave, article, french, la-reforme
+courcelle-seneuil_jean-gustave, article, revis, revista-ciencias-i-letras, spanish
+courcelle-seneuil_jean-gustave, article, spanish, anales-universidad-chile
+courcelle-seneuil_jean-gustave, article, spanish, revista-ciencias-i-letras
+courcelle-seneuil_jean-gustave, article, spanish, revista-del-pacifico
+courcelle-seneuil_jean-gustave, book, french
+courcelle-seneuil_jean-gustave, book, spanish
+courcelle-seneuil_jean-gustave, inbook, introduction, foreword
+courcelle-seneuil_jean-gustave, incollection, french, dictionnaire-economie-politique
+courcelle-seneuil_jean-gustave, incollection, french, encyclopedie-du-xix-siecle
+courcelle-seneuil_jean-gustave, unpublished, french, letter
+courcelle-seneuil_jean-leopold, brother, book
+courcelle-seneuil_jean-leopold, brother, book, french
+courcelle-seneuil_jean-leopold, brother, thesis
+courcelle-seneuil_jean-leopold, son, article
+courcelle-seneuil_jean-leopold, son, book
+couyoumdjian-juan-pablo, lyon
+cuvillier-armand, lausanne, secondary
+cybernetics, chapter-2
+debreu
+demier-francis, lausanne
+denord-françois, lyon, methodology, ignore
+desrosieres, statistics
+didry-claude, lausanne, secondary
+didry-claude, secondary, lausanne
+doctorat
+economics, hayek-friedrich, neoliberalism
+economics, memoire, metaphors
+ets
+flamm-kenneth
+flandreau-marc
+foucault
+foucault_michel, seminar, book
+fourcade-marion, lyon, secondary
+fournel-jean-louis, zancarini-jean-claude, lyon, methodology, ignore
+francois-vatin, thierry-pillon
+francois-vatin, thierry-pillon, chapter-1
+francois-vatin, thierry-pillon, introduction
+friedmann-georges, memoire, travail
+frobert-ludovic, lyon
+fuentealba-hernández-leonardo, lyon, secondary
+galbraith-james-kenneth, mmt
+garay-vera-cristian, lyon, secondary, courcelle-seneuil
+gaudilliere-jean-paul
+giedion-siegfried
+glaser-elisabeth, lyon, courcelle-seneuil, secondary
+godley-wynne
+goos-marteen, manning-alan
+gulick-luther
+gulick-luther, urwick-lyndall
+hafner-katie
+hauriou
+hayat-samuel, lausanne, secondary
+hayat-samuel, secondary, lausanne
+hayek-friedrich
+herbert-jean
+hirschman-albert, lyon, secondary, courcelle-seneuil
+hirschman-albert, lyon, secondary, ignore
+history-of-science, giorgio-israel
+hudson-michael
+hudson-michael, mesopotamia
+hurtado-cristina, lyon, courcelle-seneuil, secondary
+incollection, 1852, 20210621010353, dictionnaire-economie-politique-i, dictionnaire-economie-politique, courcelle-seneuil_jean-gustave
+introduction, maas
+ivan-jaksic, andres-estefane, claudio-robles
+jaksic-ivan, lyon, secondary
+jarrige-françois, fureix-emmanuel, lausanne
+jones-gareth stedman, claeys-gregory, secondary, lausanne
+jones-gareth stedman, moggach-douglas, secondary, lausanne
+jose-edwards, lyon
+joyce-patrick
+keynes-john-maynard
+lagedamon-pierre-henri, lausanne, secondary
+laidler-harry, lausanne, secondary
+lamott-anne, writing
+latour-bruno
+lausanne
+lausanne, secondary
+lefranc-georges, secondary, lausanne
+lemercier-claire, picard-emmanuelle, lyon, methodology
+lemercier-claire, zalc-claire
+leroy-maxime, lausanne, secondary
+luhmann-niklas, zettelkasten, notetaking
+luhmann-niklas, zettelkasten, notetaking, study-techniques, writing
+lyon, courcelle-seneuil, secondary, ignore
+maas
+maas, chapter-1
+maas, jevons
+mac-clure-oscar, lyon, courcelle-seneuil, secondary
+machamer-peter
+marx-karl, lausanne
+matonti-frederique, hauchecorne-mathieu, lausanne
+matonti-frederique, lausanne
+maxwell, analogies, metaphors
+mayr-otto, projet
+memoire
+memoire, analogy, jevons
+memoire, chapter-2
+memoire, introduction
+memoire, metaphor
+memoire, primary
+memoire, projet
+memoire, projet, introduction
+memoire, prony
+mesopotamia
+mill-john-stuart
+mill-john-stuart, lyon, primary
+mirowski
+mirowski, introduction
+mirowski, physics, analogies, metaphors
+mirowski-philip
+mirowski-philip, nik-khah-edward
+mitchell-innes
+mitchell-innes-alfred
+mmt
+mmt, hudson
+mosler-warren, mmt
+moss-bernard, lausanne, secondary
+musso-pierre
+newman-michael, secondary, lausanne
+nilsson-nils, projet
+oliveira, introduction
+pachukanis, droit
+passy-hippolyte
+passy_hippolyte, article, french, journal-des-economistes
+pastor cesteros-susana, caro-cuervo
+peart-sandra, levy-david
+philip-husbands, owen-holland, michael-wheeler
+pinto-louis, lyon
+pinto-louis, lyon, methodology, ignore
+plehwe-dieter, walpen-bernhard
+prost-antoine, historiography
+rabinbach, introduction
+ribeil
+rothbard-murray, lyon, courcelle-seneuil, ignore, secondary
+said-edward
+salerno-joseph, lyon, secondary
+samuelson
+say-jean-baptiste, lyon, primary
+sewell-william
+simon-herbert, chapter-2
+simon-herbert, memoire
+simon-herbert, memoire, primary
+simone-weil, taylorism
+sismondi-jean-charles, primary
+skinner-quentin, lyon
+smith-adam
+socialism
+spitz-jean-fabien
+sumner-william-graham, lyon
+supiot
+supiot-alain
+taylor-keith, lausanne, secondary
+thomson-edward-palmer
+tournier-maurice, lausanne, secondary
+travail, orlean, memoire
+turing-alan
+vatin
+vatin, introduction
+veliz-claudio, lyon, ignore
+whatmore-richard, lyon, methodology
+will, chile, secondary
+will-robert, lyon, ignore
+will-robert, lyon, secondary
+willard-claude, secondary, lausanne
+william-ross-ashby, cybernetics
+winch-donald, lyon, methodology
+work, labor, memoire
+wray-randall, mmt
+wray_randall, mmt, money, inbook
+collection, 1853-04-15, journal-des-economistes, s1, v35, n144
+collection, 1853-10/1853-12, journal-des-economistes, s1, v37
+collection, 1853-07/1853-09, journal-des-economistes, s1, v36
+collection, 1853-04/1853-06, journal-des-economistes, s1, v35
+incollection, 1853-03-15, 20211202234012, say_horace-emile, journal-des-economistes, s1, v34, n43
+incollection, 1853-03-15, 20211202230044, courcelle-seneuil_jean-gustave, journal-des-economistes, s1, v34, n43
+collection, 1853-01/1853-03, journal-des-economistes, s1, v34
+20210621014631, pagnerre, pagnerre-6ed, courcelle-seneuil_jean-gustave, incollection
+courcelle-seneuil_jean-gustave, article, french, journal-des-economistes, n151, v37
+courcelle-seneuil_jean-gustave, article, french, journal-des-economistes, v3, s2, n7
+frobert-ludovic, lyon, article
+article, societe-economie-politique, journal-des-economistes, s2, v3, n8
+article, 1849-03-25, le_droit
+article, 1849-03-22, la_presse
+article, 1849-03-19, le_droit
+article, 1848-07-28,
+article, 1848-07-11, la_gazette_du_languedoc
+article, 1848-07-10,
+article, 1843-09-29,
+article, 1840-05-01, rey_al., le_temps
+article, 1840-05-24, journal-du-peuple
+article, 1840-05-21, h-c
+article, 1838-08-11, journal-du-peuple
+article, 1838-08-11, le_siecle
+article, 1838-08-11, la_presse
+vatin_francois, pillon_thierry
+willard_claude, secondary, lausanne
+ashby_william-ross, cybernetics
+article, akrich_madeleine, meadel_cecile, pillon
+manual, 2020-12-31, 2006, kime_philip, wemheuer_moritz, lehman_philipp
+manual, 2021, 1990, chassell_robert
+manual, 2021, 1985, stallman_richard
+manual, 2021, 1990, lewis_bill, laliberte_dan, stallman_richard
+unpublished, 1834, courcelle-seneuil_jean-gustave
+article, 1834-03-16, journal-de-paris
+article, 1834-03-11, le-charivari
+incollection, 1853, 20210621010808, courcelle-seneuil_jean-gustave, dictionnaire-economie-politique, dictionnaire-economie-politique-2
+luhmann_niklas, zettelkasten, notetaking, study-techniques, writing
+incollection, 1842, 20210621013804, courcelle-seneuil_jean-gustave, pagnerre, pagnerre-1ed, dictionnaire-politique
+hudson_michael, incollection
+hudson_michael, mesopotamia
+article, 1850-07-31, 
+article, 1850-12-21, courcelle-seneuil_jean-gustave
+collection, 1904, vega_manuel
+article, 1988, rodríguez-jiménez_pablo

@@ -2,7 +2,12 @@
 ;;; This format is meant to be slightly human-readable;
 ;;; nevertheless, you probably don't want to edit it.
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
-(("relatorio_genealogia"
+(("courcelle-bib"
+ (filename . "~/Dropbox/obsidian/bibliographie_courcelle-seneuil.tex")
+ (front-context-string . "\n\\hypertarget{ur")
+ (rear-context-string . "tique-t.-1-ai}}\n")
+ (position . 2208))
+("relatorio_genealogia"
  (filename . "~/Dropbox/obsidian/20211022134956.md")
  (front-context-string . "otherlangs: [es]")
  (rear-context-string . "22 \nlang: pt-PT\n")
@@ -93,10 +98,10 @@
  (rear-context-string . "Eles | têm    |\n")
  (position . 1687))
 ("here2"
- (filename . "~/.emacs.d/init.el")
- (front-context-string . "\n(if (> (display")
- (rear-context-string . "ne-end-spaces))\n")
- (position . 43857))
+ (filename . "~/Dropbox/bibliographies/bibliography.bib")
+ (front-context-string . "20210728204042,\n")
+ (rear-context-string . "ult2004a,\n@Book{")
+ (position . 373172))
 ("matonti"
  (filename . "~/Dropbox/notes/matonti2012.org")
  (front-context-string . "\n\n* 無 Conclusion")
@@ -228,8 +233,8 @@
  (rear-context-string . "\"init.el\"))))))\n")
  (position . 5443))
 ("here"
- (filename . "~/.emacs.d/sync0/sync0-bibtex-functions.el")
- (front-context-string . "-medium sync0-bi")
- (rear-context-string . "nc0-bibtex-entry")
- (position . 30069))
+ (filename . "~/Dropbox/bibliographies/bibliography.bib")
+ (front-context-string)
+ (rear-context-string . "8aff\\;\\;\\;;\n}\n\n\n")
+ (position . 521771))
 )

@@ -47,49 +47,6 @@
                     (first-name (nth 1 author-list)))
                (concat first-name " " last-name))))))
 
-(defun sync0-pdf-page-extractor ()
-  "Extract as a separate pdf the pages within the page rage
-  specified by beg and end"
-  (interactive)
-  (let* ((bibkey (let* ((candidates (bibtex-completion-candidates))
-                        (key-at-point (sync0-org-ref-search-bibkey-in-buffer))
-                        (preselect (and key-at-point
-                                        (cl-position-if (lambda (cand)
-                                                          (member (cons "=key=" key-at-point)
-                                                                  (cdr cand)))
-                                                        candidates)))
-                        (selection (ivy-read "Choose BibTeX key to extract from : "
-                                             candidates
-                                             :preselect preselect
-                                             :caller 'ivy-bibtex
-                                             :history 'ivy-bibtex-history)))
-                   (cdr (assoc "=key=" (cdr (assoc selection candidates))))))
-         (input-file (car (bibtex-completion-find-pdf bibkey)))
-         (beg (read-string "Première page : "))
-         (end (read-string "Dernière page : "))
-         (filename
-          (if (yes-or-no-p "Derive pdf file name from existing BibTeX entry?")
-              (let* ((candidates (bibtex-completion-candidates))
-                     (selection (ivy-read "Crossref : "
-                                          candidates
-                                          :caller 'ivy-bibtex
-                                          :history 'ivy-bibtex-history)))
-                (cdr (assoc "=key=" (cdr (assoc selection candidates)))))
-            (concat bibkey "_" beg "-" end)))
-         (command (concat
-                   "gs -sDEVICE=pdfwrite -dNOPAUSE -dBATCH -dSAFER -dFirstPage="
-                   beg
-                   " -dLastPage="
-                   end
-                   " -sOutputFile="
-                   sync0-pdfs-folder
-                   filename
-                   ".pdf "
-                   input-file)))
-    (if (file-exists-p input-file)
-        (shell-command command)
-      (message "No PDF found for %s" bibkey))))
-
 (defun sync0-bibtex-completion-journaltitle ()
   (completing-read "Journal title : "
                    (delete-dups (mapcar #'(lambda (x) (cdr (assoc "journaltitle" x)))
@@ -122,26 +79,6 @@
                            '("=key=" "title" "author" "journaltitle" "date" "editor" "booktitle"))))
     (insert (bibtex-completion-get-value bibtex-field entry))))
 
-(defun sync0-ivy-bibtex-open-notes ()
-  "Open the notes for bibtex key under point in a cite link in a
-buffer. Can also be called with key."
-  (interactive)
-  (let ((bibkey (let* ((candidates (bibtex-completion-candidates))
-                       (key-at-point (org-ref-get-bibtex-key-under-cursor))
-                       ;; (key-at-point (sync0-org-ref-search-bibkey-in-buffer))
-                       (preselect (and key-at-point
-                                       (cl-position-if (lambda (cand)
-                                                         (member (cons "=key=" key-at-point)
-                                                                 (cdr cand)))
-                                                       candidates)))
-                       (selection (ivy-read "Choose BibTeX key to extract from : "
-                                            candidates
-                                            :preselect preselect
-                                            :caller 'ivy-bibtex
-                                            :history 'ivy-bibtex-history)))
-                  (cdr (assoc "=key=" (cdr (assoc selection candidates)))))))
-    (find-file (concat sync0-obsidian-directory bibkey ".md"))))
-
 ;; (defhydra sync0-hydra-ivy-bibtex-functions (:color blue :hint nil)
 ;;   "
 ;; ^BibLaTeX^           ^Etc.^    
@@ -172,5 +109,56 @@ buffer. Can also be called with key."
 
 ;; (evil-leader/set-key
 ;;   "i" 'sync0-hydra-ivy-bibtex-functions/body)
+
+;; This action is for ivy-bibtex/bibtex-completion
+;; (defun bibtex-completion-print-pdf-list (keys)
+;;   "Print the PDFs of the entries with the given KEYS where available."
+;;   (let ((command (sync0-print-define-command)))
+;;     (dolist (key keys)
+;;       (let ((pdf (car (bibtex-completion-find-pdf key))))
+;;         (if pdf
+;;             (sync0-bibtex-print-pdf pdf command)
+;;           (message "No PDF(s) found for this entry: %s" key))))))
+
+(defun bibtex-completion-print-pdf-list (keys)
+  "Print the PDFs of the entries with the given KEYS where available."
+  (let ((command (sync0-print-define-command)))
+    (dolist (key keys)
+      (when-let ((pdf (car (bibtex-completion-find-pdf key))))
+        (sync0-bibtex-print-pdf pdf command)))))
+
+(defun bibtex-completion-crop-pdf-list (keys)
+  "Print the PDFs of the entries with the given KEYS where available."
+  (when-let*    ((bibkey (sync0-bibtex-completion-choose-key))
+                 (entry (bibtex-completion-get-entry bibkey))
+                 (sample (bibtex-completion-get-value "file" entry))
+                 (cropbox (sync0-pdf-define-cropbox sample)))
+    (dolist (key keys)
+      (when-let ((pdf (car (bibtex-completion-find-pdf key))))
+        (sync0-bibtex-crop-pdf pdf cropbox)))))
+
+(defun bibtex-completion-copy-pdf-to-path-list (keys)
+  "Print the PDFs of the entries with the given KEYS where available."
+  (let ((path (read-string "Où envoyer ce pdf ? (finir en /) ")))
+    (dolist (key keys)
+      (when-let ((pdf (car (bibtex-completion-find-pdf key))))
+        (sync0-bibtex-copy-pdf-to-path path key)))))
+
+;; Before being able to call custom functions from ivy-bibtex, these
+;; have to be manually added to ivy-bibtex. 
+
+(ivy-bibtex-ivify-action bibtex-completion-print-pdf-list ivy-bibtex-print-pdf-list)
+
+(ivy-bibtex-ivify-action bibtex-completion-crop-pdf-list ivy-bibtex-crop-pdf-list)
+
+(ivy-bibtex-ivify-action bibtex-completion-copy-pdf-to-path-list ivy-bibtex-copy-pdf-to-path-list)
+
+;; This is the way to add actions to ivy-bibtex wituhout overwriting
+;; those already defined.
+(ivy-add-actions
+ 'ivy-bibtex
+ '(("p" ivy-bibtex-print-pdf-list "Print attachments with default printer" ivy-bibtex-print-pdf-list)
+   ("P" ivy-bibtex-copy-pdf-to-path-list "Copy attached pdf to target path" ivy-bibtex-copy-pdf-to-path-list)
+   ("x" ivy-bibtex-crop-pdf-list "Crop attachments using model cropbox" ivy-bibtex-crop-pdf-list)))
 
 (provide 'sync0-ivy-bibtex-functions)

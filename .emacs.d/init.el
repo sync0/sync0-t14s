@@ -13,16 +13,19 @@
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
 
+;; Install use-package using the straight package manager. 
 (straight-use-package 'use-package)
-
+;; Have use-package use straight by default to install package; i.e.,
+;; use-package has to be told not to use straight when this is not
+;; desired, such as when packages are already present by default in Emacs.
 (setq straight-use-package-by-default t)
-
+;; Turn off 
 (setq package-enable-at-startup nil)
 
 (eval-when-compile
   ;; Activate "use-package". 
   (require 'use-package))
-;; Necessary to allow use-package to bind keys through ":bind" keyword.
+;; bind-key is necessary to allow use-package to bind keys through the ":bind" keyword.
 (require 'bind-key)
 
 (setq use-package-verbose t)
@@ -221,7 +224,7 @@
     "List of Bibtex entry types")
 
   (defvar sync0-bibtex-fields
-    '("title" "subtitle" "eventtitle" "date" "origdate" "eventdate" "author" "journaltitle" "booktitle" "booksubtitle" "crossref" "chapter" "volume" "number" "series" "publisher" "location" "pages" "note" "doi" "url" "urldate" "language" "langid" "medium" "institution" "library" "file" "keywords")
+    '("title" "subtitle" "eventtitle" "date" "origdate" "eventdate" "author" "journaltitle" "booktitle" "booksubtitle" "crossref" "chapter" "volume" "number" "series" "publisher" "location" "pages" "note" "doi" "url" "urldate" "language" "langid" "medium" "institution" "library" "file" "shorthand" "keywords")
     "List of Bibtex entry fields")
 
   (defvar sync0-bibtex-full-fields
@@ -272,21 +275,30 @@
     '()
     "List of Bibtex traces")
 
+  (defvar sync0-bibtex-completion-keywords
+    '()
+    "List of Bibtex traces")
+
   (defvar sync0-bibtex-completion-note
     '()
     "List of Bibtex traces")
 
-  (defvar sync0-bibtex-variables-alist
-    '((sync0-bibtex-completion-booktitle . "~/.emacs.d/sync0-vars/bibtex-completion-booktitle.txt")
-      (sync0-bibtex-completion-publisher . "~/.emacs.d/sync0-vars/bibtex-completion-publisher.txt")
+  (defvar sync0-bibtex-completion-variables-alist
+    '((sync0-bibtex-completion-publisher . "~/.emacs.d/sync0-vars/bibtex-completion-publisher.txt")
       (sync0-bibtex-completion-journaltitle . "~/.emacs.d/sync0-vars/bibtex-completion-journaltitle.txt")
       (sync0-bibtex-completion-location . "~/.emacs.d/sync0-vars/bibtex-completion-location.txt")
       (sync0-bibtex-completion-author .  "~/.emacs.d/sync0-vars/bibtex-completion-author.txt")
+      (sync0-bibtex-completion-keywords .  "~/.emacs.d/sync0-vars/bibtex-completion-keywords.txt")
       (sync0-bibtex-completion-note .  "~/.emacs.d/sync0-vars/bibtex-completion-note.txt")
       (sync0-bibtex-completion-library .  "~/.emacs.d/sync0-vars/bibtex-completion-library.txt")
       (sync0-bibtex-completion-medium .  "~/.emacs.d/sync0-vars/bibtex-completion-medium.txt")
       (sync0-bibtex-completion-institution .  "~/.emacs.d/sync0-vars/bibtex-completion-institution.txt")
-      (sync0-bibtex-completion-language .  "~/.emacs.d/sync0-vars/bibtex-completion-language.txt")))
+      (sync0-bibtex-completion-language .  "~/.emacs.d/sync0-vars/bibtex-completion-language.txt"))
+"Alist of variables used to define their initial values to be used in completion.")
+
+      ;; (sync0-bibtex-completion-booktitle . "~/.emacs.d/sync0-vars/bibtex-completion-booktitle.txt")
+
+        ;; sync0-zettelkasten-directory-references (concat (getenv "HOME") "/Dropbox/org/reference/")
 
   ;; define the rest
   (setq sync0-zettelkasten-directory (concat (getenv "HOME") "/Dropbox/org/")
@@ -294,7 +306,6 @@
         sync0-zettelkasten-directory-sans (concat (getenv "HOME") "/Dropbox/org")
         sync0-exported-pdfs-directory (concat (getenv "HOME") "/Dropbox/pdfs/")
         sync0-default-bibliography (concat (getenv "HOME") "/Dropbox/bibliographies/bibliography.bib")
-        ;; sync0-zettelkasten-directory-references (concat (getenv "HOME") "/Dropbox/org/reference/")
         sync0-emacs-directory (concat (getenv "HOME") "/.emacs.d/sync0/")
         sync0-pdfs-folder (concat (getenv "HOME") "/Documents/pdfs/")
         sync0-current-year (format-time-string "%Y")
@@ -313,14 +324,9 @@
   "Make target variable nil"
   `(setf ,var nil))
 
-(defun sync0-nullify-variables (varlist)
+(defun sync0-nullify-variable-list (varlist)
   "Set all variables from varlist nil"
-  (dolist (element varlist) 
-    (sync0-nullify-variable element)))
-
-;; (defun sync0-nullify-variables (varlist)
-;;   "Set all variables from varlist nil"
-;;   (mapcar #'sync0-nullify-variable varlist))
+  (mapc #'(lambda (a) (set a nil)) varlist))
 
 (defun sync0-set-variable-from-files  (varlist)
   "From a list of pairs of variable and files, define all of them
@@ -337,7 +343,7 @@
           (add-to-list var (match-string-no-properties 1)))))))
 
 (sync0-set-variable-from-files sync0-zettelkasten-variables-list)
-(sync0-set-variable-from-files sync0-bibtex-variables-alist)
+(sync0-set-variable-from-files sync0-bibtex-completion-variables-alist)
 
 (defun sync0-downcase-and-no-whitespace (x)
   "Downcase and replace whitespace by _ in the current string"
@@ -564,6 +570,8 @@ when necessary."
       (string= var "")
       (string= var "nil")))
 
+(require 'sync0-functions)
+
 (use-package s)
 
   (use-package undo-tree
@@ -621,7 +629,11 @@ when necessary."
   :hook (after-init . ivy-mode)
   :custom
   (ivy-use-virtual-buffers t)
-  (ivy-count-format "(%d/%d) "))
+  (ivy-count-format "(%d/%d) ")
+  :config
+  (setq ivy-re-builders-alist
+        '((ivy-bibtex . ivy--regex-ignore-order)
+          (t . ivy--regex-plus))))
 
 (use-package counsel 
   :bind
@@ -1052,12 +1064,12 @@ when necessary."
                                  :family "Inconsolata"
                                  :height 150)
              ;;:height 175
-             (setq line-spacing 1.5))
+             (setq line-spacing 7))
     ;; low resolution font size
     (progn (set-face-attribute 'default nil 
                                :family "Inconsolata"
                                :height 130)
-           (setq line-spacing 0.1)))
+           (setq line-spacing 3)))
 
   (defun sync0-buffer-face-proportional ()
     "Set font to a variable width (proportional) fonts in current buffer"
@@ -1356,8 +1368,8 @@ Exempt major modes are defined in `display-line-numbers-exempt-modes'."
   (define-key org-roam-mode-map [mouse-1] #'org-roam-visit-thing)
 
 (evil-leader/set-key-for-mode 'org-mode "B" 'org-roam-buffer-toggle)
-(evil-leader/set-key-for-mode 'org-mode "i" 'sync0-org-roam-insert)
-(evil-leader/set-key-for-mode 'org-mode "I" 'sync0-hydra-org-roam-insert/body)
+;; (evil-leader/set-key-for-mode 'org-mode "i" 'sync0-org-roam-insert)
+;; (evil-leader/set-key-for-mode 'org-mode "I" 'sync0-hydra-org-roam-insert/body)
 
   (evil-leader/set-key
     "F" 'org-roam-node-find))
@@ -1905,6 +1917,29 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
   :commands follow-mode
   :custom (follow-auto t))
 
+   (use-package festival 
+     :straight nil
+     :load-path "~/.emacs.d/sync0/" 
+     :commands say-minor-mode
+     :config
+     (autoload 'say-minor-mode "festival" "Menu for using Festival." t)
+     ;; (say-minor-mode t)
+
+     ;; (defun sync0-festival-el () 
+     ;;   (interactive)
+     ;;   (festival-send-command '(voice_el_diphone)))
+
+     ;; (defun sync0-festival-english-male () 
+     ;;   (interactive)
+     ;;   (festival-send-command '(voice_nitech_us_awb_arctic_hts)))
+
+     ;; (defun sync0-festival-english-female () 
+     ;;   (interactive)
+     ;;   (festival-send-command '(voice_nitech_us_slt_arctic_hts)))
+
+     :bind (:map evil-visual-state-map 
+           ("s" . festival-say-region)))
+
 (use-package graphviz-dot-mode
   :straight (graphviz-dot-mode :type git :host github :repo "ppareit/graphviz-dot-mode") 
   :custom
@@ -2321,11 +2356,11 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
 
 (use-package python
   :straight nil
-  :custom 
-  (jedi:setup-keys t)
-  (jedi:complete-on-dot t)
+  ;; :custom 
+  ;; (jedi:setup-keys t)
+  ;; (jedi:complete-on-dot t)
   :config
-  (add-hook 'python-mode-hook 'jedi:setup)
+  ;; (add-hook 'python-mode-hook 'jedi:setup)
   (add-hook 'python-mode-hook 'py-autopep8-enable-on-save)
   (add-hook 'python-mode-hook 'flycheck-mode))
 
@@ -2436,8 +2471,16 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
   :config
   (bibtex-set-dialect 'biblatex)
   (require 'bibtex-completion)
+  (require 'bibtex-utils)
   (require 'sync0-bibtex-functions)
   (require 'sync0-bibtex-fields)
+  (require 'scihub)
+
+  (setq scihub-homepage "https://sci-hub.ee/")
+  (setq scihub-download-directory sync0-pdfs-folder)
+  (setq scihub-open-after-download nil)
+
+  (setq bu-keywords-values sync0-bibtex-completion-keywords)
 
   (setq bibtex-autokey-prefix-string (format-time-string "%Y%m%d%H%M%S"))
 
@@ -2448,6 +2491,7 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
   ;;                          (lambda () (sync0-bibtex-parse-keys nil t)))
   ;;   "Completion table for BibTeX reference keys.
   ;;  The CDRs of the elements are t for header keys and nil for crossref keys.")
+
 
   (evil-define-key 'normal bibtex-mode-map
     "K" 'sync0-bibtex-previous-key
@@ -2466,18 +2510,16 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
   (bibtex-completion-notes-extension ".md")
   ;; (bibtex-completion-notes-extension ".org")
   (bibtex-completion-pdf-extension '(".pdf" ".epub"))
-  (bibtex-completion-additional-search-fields '(editor journaltitle origdate subtitle volume booktitle location publisher note library medium institution))
+  (bibtex-completion-additional-search-fields '(editor journaltitle origdate subtitle volume booktitle location publisher note library medium institution keywords))
 
   :config 
-  ;; (setq ivy-bibtex-default-action 'ivy-bibtex-insert-key)
-  ;; (setq ivy-bibtex-default-multi-action 'ivy-bibtex-insert-key)
   (setq bibtex-completion-display-formats
 	'((article       . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title}: ${subtitle} @ ${journaltitle} [${=key=}]")
 	  (book          . "${=has-pdf=:1}${=has-note=:1}| ${author} [${origdate}](${date:4}) ${title} ${volume}: ${subtitle} [${=key=}]")
-	  (inbook        . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title:55} @ ${booktitle} [${=key=}]")
-	  (incollection  . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title:55} @ ${booktitle} [${=key=}]")
+	  (inbook        . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title:55} [${=key=}]")
+	  (incollection  . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title:55} [${=key=}]")
 	  (collection    . "${=has-pdf=:1}${=has-note=:1}| ${editor} (${date:4}) ${title:55} ${volume}: ${subtitle} [${=key=}]")
-	  (inproceedings . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title:55} @ ${booktitle} [${=key=}]")
+	  (inproceedings . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title:55} [${=key=}]")
 	  (t             . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date}) ${title}: ${subtitle} [${=key=}]")))
 
   (setq bibtex-completion-format-citation-functions
@@ -2508,8 +2550,6 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
          "## Références\n\n"))
 
   (use-package ivy-bibtex
-    ;; :custom
-    ;; (ivy-bibtex-default-action 'ivy-bibtex-edit-notes)
     :config
     (setq ivy-bibtex-default-action 'ivy-bibtex-show-entry)
     (setq ivy-bibtex-default-multi-action 'ivy-bibtex-show-entry)

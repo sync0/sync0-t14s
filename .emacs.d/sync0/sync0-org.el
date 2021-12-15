@@ -118,53 +118,31 @@
         (org-open-file pdf-path)
       (message "No PDF found for %s.org" file-name))))
 
-(defhydra sync0-hydra-org-functions (:color amaranth :hint nil :exit t)
-"
-^Links^             ^Footnotes^          ^Trees^              ^Export^           ^Etc.^
-^---------------------------------------------------------------------------------------------------
-Link _i_nsert       New _f_ootnote       _I_ndirect buffer    Latex _e_xport     Insert _d_rawer
-Link _s_tore        Footnote _a_ctions   Open _o_verview      _E_xport trees     New local _a_bbrev
-Last stored lin_k_  ^ ^                  Overview _j_ump      _V_isit corr. PDF  _T_angle init file
-^ ^                 ^ ^                  Show sparse _t_ree   Export to epub
-                                                                     
-_q_uit
-"
-  ;; ("b" org-epub-export-to-epub)
-  ("s" org-store-link)
-  ("i" org-insert-link)
-  ("k" org-insert-last-stored-link)
-  ("f" org-footnote-new)
-  ("a" org-footnote-action)
-  ("I" sync0-org-tree-to-indirect-buffer)
-  ("j" sync0-overview-jump-to-overview)
-  ("o" sync0-overview-tree-window)
-  ("e" sync0-org-export-latex-and-beamer)
-  ("T" sync0-org-tangle-initfile)
-  ("t" org-sparse-tree)
-  ("E" sync0-org-export-headlines-to-latex)
-  ("a" sync0-define-local-abbrev)
-  ("d" org-insert-drawer)
-  ("V" sync0-org-open-corresponding-pdf)
-  ("q" nil :color blue))
+(major-mode-hydra-define org-mode nil 
+  ("Links"
+   (("s" org-store-link "Link insert")
+    ("i" org-insert-link "Link store")
+    ("k" org-insert-last-stored-link "Last stored link"))
+   "Footnotes"
+   (("f" org-footnote-new "New footnote")
+    ("a" org-footnote-action "Footnote actions"))
+   "Trees"
+   (("I" sync0-org-tree-to-indirect-buffer "Indirect buffer")
+    ("j" sync0-overview-jump-to-overview "Open overview")
+    ("o" sync0-overview-tree-window "Overview jump")
+    ("t" org-sparse-tree "Show sparse tree"))
+   "Export"
+   (("e" sync0-org-export-latex-and-beamer "Latex export")
+    ("E" sync0-org-export-headlines-to-latex "Export headlines")
+    ("V" sync0-org-open-corresponding-pdf "Visit corresponding PDF"))
+   "Etc."
+   (("T" sync0-org-tangle-initfile "Tangle init file")
+    ("a" sync0-define-local-abbrev "Define local abbrev")
+    ("d" org-insert-drawer "Insert org drawer"))))
 
 (evil-leader/set-key-for-mode 'org-mode "O" 'org-open-at-point)
 (evil-leader/set-key-for-mode 'org-mode "#" 'sync0-org-open-other-frame)
 
-;; (evil-leader/set-key
-;;   "O" 'org-open-at-point
-;;   "#" 'sync0-org-open-other-frame)
-
-;; "O" 'sync0-overview-tree-window
-;; "o" 'sync0-overview-jump-to-overview
-;; "I" 'org-insert-link
-;; "z" 'sync0-org-tree-to-indirect-buffer
-;; "z" 'sync0-hydra-org-functions/body
-
-(evil-leader/set-key-for-mode 'org-mode "z" 'sync0-hydra-org-functions/body)
-
-
-;; font lock keywords 
-;; org footnotes should look like real footnotes
 (add-to-list 'font-lock-extra-managed-props 'display)
 
 (font-lock-add-keywords 'org-mode

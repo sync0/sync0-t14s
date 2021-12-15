@@ -977,3 +977,215 @@
     (unless (member (eval (cadr element))  (eval (caddr element)))
       (push (cadr element) (caddr element))
       (append-to-file (concat (eval (cadr element)) "\n") nil (cadddr element))))))
+
+
+(defun sync0-bibtex-extract-multiple-entries-from-pdf (seqlists)
+  "Extract pdfs and create bibtex entries and markdown entries
+for each extranction. This function requires an input 'seqlists'
+that is a list composed of n lists of the form: (name,
+first-page, last-page). Likewise, for this to work, it is
+necessary that the pages of the pdf match the page numbers of the
+actual book. Otherwise, the entries will have wrong data."
+  ;; Set all fields to nil 
+  (sync0-nullify-variables sync0-bibtex-entry-definitions-list)
+  (let*    ((bibkey (sync0-bibtex-completion-choose-key))
+            (entry (bibtex-completion-get-entry bibkey))
+            (type (completing-read "Choose Bibtex entry type: " sync0-bibtex-entry-types))
+            (input-file (car (bibtex-completion-find-pdf bibkey)))
+            (obsidian-master-note (concat sync0-obsidian-directory bibkey ".md")))
+    ;; (setq sync0-bibtex-entry-creation-entry entry)
+    (setq sync0-bibtex-entry-crossref bibkey)
+    (setq sync0-bibtex-entry-crossref-entry entry)
+    (sync0-nullify-variables sync0-bibtex-entry-initial-fields-list))
+  ;; General settings for all notes to be created
+  (setq sync0-bibtex-entry-type type)
+  (setq sync0-bibtex-entry-type-downcase
+        (downcase type))
+  (sync0-bibtex-entry-define-author bibkey)
+  (sync0-bibtex-entry-define-date bibkey)
+  (sync0-bibtex-entry-define-language bibkey)
+  (setq sync0-bibtex-entry-parent
+        (bibtex-completion-get-value "title" entry))
+  ;; Begin loop; specific settings for each note are to be defined
+  ;; inside the loop.
+  (dolist (elt seqlists)
+    (let* ((raw-filename (1+ (string-to-number (format-time-string "%Y%m%d%H%M%S"))))
+           (filename (number-to-string raw-filename))
+           (file-pdf (concat "/home/sync0/Documents/pdfs/" filename ".pdf"))
+           (title (nth 0 elt))
+           (beg (number-to-string (nth 1 elt)))
+           (end (number-to-string (nth 2 elt)))
+           (pages (concat beg "-" end))
+           (obsidian-reference
+            (concat "\n- [" sync0-bibtex-entry-lastname " " sync0-bibtex-entry-date-fixed " " title "](" filename ".md)\n")))
+      (setq sync0-bibtex-entry-key filename)
+      (setq sync0-bibtex-entry-title title)
+      (setq sync0-bibtex-entry-subtitle nil)
+      (setq sync0-bibtex-entry-title-fixed sync0-bibtex-entry-title)
+      (sync0-bibtex-entry-define-keywords)
+      (setq sync0-bibtex-entry-extract t)
+      (setq sync0-bibtex-entry-use-extraction-page-numbers t)
+      (setq sync0-bibtex-entry-pages pages)
+      ;; Beginning of loop actions
+      ;; First, extract entry
+      (sync0-bibtex-entry-extract-pdf sync0-bibtex-entry-key beg end)
+      ;; Second, append entry to default bibliography file.
+      (sync0-bibtex-entry-append-to-bibliography sync0-bibtex-entry-key)
+      ;; Third, create an obsidian markdown note for the entry.
+      (sync0-bibtex-entry-create-obsidian-note-from-entry sync0-bibtex-entry-key)
+      ;; Fourth, add a markdown link in the obsidian master note
+      ;; (ie., the note corresponding to the file used as the source
+      ;; for extraction).
+      (append-to-file obsidian-reference nil obsidian-master-note)))
+      ;; End of loop
+      (sync0-nullify-variables sync0-bibtex-entry-extraction-fields-list))
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    (setq sync0-bibtex-entry-pages
+          (bibtex-completion-get-value "pages" sync0-bibtex-entry-creation-entry))
+    (unless (sync0-null-p sync0-bibtex-entry-pages)
+      (setq sync0-bibtex-entry-extract
+            (yes-or-no-p "Extract  PDF from existing entry?"))
+      (setq sync0-bibtex-entry-use-extraction-page-numbers
+            (when sync0-bibtex-entry-extract
+              (yes-or-no-p "Use page numbers from extraction?")))
+      (if sync0-bibtex-entry-use-extraction-page-numbers
+          (let ((beg (progn
+                       (string-match "\\([[:digit:]]+\\)-[[:digit:]]+"  sync0-bibtex-entry-pages)
+                       (match-string 1 sync0-bibtex-entry-pages)))
+                (end (progn
+                       (string-match "[[:digit:]]+-\\([[:digit:]]+\\)" sync0-bibtex-entry-pages)
+                       (match-string 1 sync0-bibtex-entry-pages))))
+            (sync0-bibtex-entry-extract-pdf sync0-bibtex-entry-key beg end))
+        (sync0-bibtex-entry-extract-pdf sync0-bibtex-entry-key)))
+    (sync0-bibtex-entry-create-obsidian-note-from-entry sync0-bibtex-entry-key)
+    ;; Reset these two values to prevent unwanted extractions
+    (setq sync0-bibtex-entry-extract nil
+          sync0-bibtex-entry-crossref-entry nil
+          sync0-bibtex-entry-creation-entry nil
+          sync0-bibtex-entry-use-extraction-page-numbers nil)))
+
+
+
+
+
+
+
+
+
+
+         ;; (origdate (bibtex-completion-get-value "origdate" entry))
+         ;; (date (bibtex-completion-get-value "date" entry))
+         ;; (date-fixed (cond ((and (null date)
+         ;;                         (null origdate)) "")
+         ;;                   ((null origdate)
+         ;;                    (concat "(" date ")"))
+         ;;                   (t (concat "(" origdate ") (" date ")"))))
+         ;; (date-tag
+         ;;  (replace-regexp-in-string "-" "/" date))
+
+
+
+         ;; (author (completing-read "Auteur : " sync0-bibtex-completion-author
+         ;;                          nil nil nil))
+         ;; (author-fixed (unless (string= author "nil")
+         ;;                 (cond ((string-match " and " author)
+         ;;                        ;; create a list with parts 
+         ;;                        (let* ((author-list  (split-string author " and "))
+         ;;                               (names (let (x)
+         ;;                                        (dolist  (element author-list x)
+         ;;                                          (setq x (concat x element "\", \""))))))
+         ;;                          (concat "\"" (substring names 0 -2))))
+         ;;                       ;; check when author is an organization
+         ;;                       ((string-match "^{" author)
+         ;;                        (concat "\"" (substring author 1 -1) "\""))
+         ;;                       ;; other cases
+         ;;                       (t (concat "\"" author "\"")))))
+         ;; (lastname (cond ((string-match " and " author)
+         ;;                  ;; create a list with parts 
+         ;;                  (let* ((author-list  (split-string author " and "))
+         ;;                         (last-names (let (x)
+         ;;                                       (dolist  (element author-list x)
+         ;;                                         (setq x (concat x
+         ;;                                                         (progn
+         ;;                                                           (string-match "\\([[:graph:]]+\\),"   element)
+         ;;                                                           (match-string 1 element))
+         ;;                                                         ", "))))))
+         ;;                    (substring last-names 0 -2)))
+         ;;                 ((string-match "^{" author)
+         ;;                  (string-match "{\\([[:print:]]+\\)}" author)
+         ;;                  (match-string 1 author))
+         ;;                 (t (nth 0 (split-string author ", ")))))
+         ;; (lastname-raw (cond ((string-match " and " author)
+         ;;                      ;; create a list with parts 
+         ;;                      (let* ((author-list  (split-string author " and "))
+         ;;                             (last-names (let (x)
+         ;;                                           (dolist  (element author-list x)
+         ;;                                             (setq x (concat x
+         ;;                                                             (progn
+         ;;                                                               (string-match "\\([[:graph:]]+\\),"   element)
+         ;;                                                               (match-string 1 element))
+         ;;                                                             ", author/"))))))
+         ;;                        ;; (substring last-names 0 -2)))
+         ;;                        (substring last-names 0 -7)))
+         ;;                     ((string-match "^{" author)
+         ;;                      (string-match "{\\([[:print:]]+\\)}" author)
+         ;;                      (match-string 1 author))
+         ;;                     (t (nth 0 (split-string author ", ")))))
+         ;; (author-tag-obsidian
+         ;;  (replace-regexp-in-string "[[:space:]]+" "_" (downcase lastname-raw)))
+         ;; (language (bibtex-completion-get-value "language" entry))
+         ;; (langid language)
+         ;; (crossref bibkey)) 
+
+
+    ;; End of definition before loop
+    ;; Loop for extracting the pdf using ghostcritp
+
+
+(defun sync0-bibtex-extract-subpdf ()
+  "Extract pdf from an existing pdf."
+  ;; Set all fields to nil 
+(interactive)
+  (let*    ((bibkey (sync0-bibtex-completion-choose-key))
+            (input-file (car (bibtex-completion-find-pdf bibkey)))
+            (output-file (concat sync0-pdfs-folder bibkey "a.pdf"))
+            (range (read-string "Page range: "))
+            (command (concat "pdftk " input-file " cat" range " output " output-file)))
+(shell-command command)))
+
+(defun sync0-bibtex-extract-subpdf ()
+  "Extract pdf from an existing pdf."
+  ;; Set all fields to nil 
+(interactive)
+  (let*    ((bibkey (sync0-bibtex-completion-choose-key))
+            (input-file (car (bibtex-completion-find-pdf bibkey)))
+            (output-file (concat sync0-pdfs-folder bibkey "a.pdf"))
+            (range (read-string "Page range: "))
+            (command (concat "pdftk " input-file " cat" range " output " output-file)))
+(shell-command command)))
+
+(defun foo ()
+  "Choose key with completion."
+(interactive)
+  (let* ((entry (save-excursion (bibtex-beginning-of-entry)
+			       (bibtex-parse-entry)))
+         (preselect (cdr (assoc "=key=" entry))))
+(message "%s" preselect)))
