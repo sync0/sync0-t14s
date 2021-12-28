@@ -144,6 +144,12 @@
       (when-let ((pdf (car (bibtex-completion-find-pdf key))))
         (sync0-bibtex-copy-pdf-to-path path key)))))
 
+(defun bibtex-completion-rewrite-notes-from-biblatex-data-list (keys)
+  "Print the PDFs of the entries with the given KEYS where available."
+  (dolist (key keys)
+    (when (file-exists-p (concat sync0-obsidian-directory key ".md"))
+      (sync0-bibtex-create-note-from-entry t key t)))) 
+
 ;; Before being able to call custom functions from ivy-bibtex, these
 ;; have to be manually added to ivy-bibtex. 
 
@@ -153,12 +159,15 @@
 
 (ivy-bibtex-ivify-action bibtex-completion-copy-pdf-to-path-list ivy-bibtex-copy-pdf-to-path-list)
 
+(ivy-bibtex-ivify-action bibtex-completion-rewrite-notes-from-biblatex-data-list ivy-bibtex-rewrite-notes-from-biblatex-data-list)
+
 ;; This is the way to add actions to ivy-bibtex wituhout overwriting
 ;; those already defined.
 (ivy-add-actions
  'ivy-bibtex
  '(("p" ivy-bibtex-print-pdf-list "Print attachments with default printer" ivy-bibtex-print-pdf-list)
    ("P" ivy-bibtex-copy-pdf-to-path-list "Copy attached pdf to target path" ivy-bibtex-copy-pdf-to-path-list)
+   ("R" ivy-bibtex-rewrite-notes-from-biblatex-data-list "Rewrite note metadata from Biblatex entry" ivy-bibtex-rewrite-notes-from-biblatex-data-list)
    ("x" ivy-bibtex-crop-pdf-list "Crop attachments using model cropbox" ivy-bibtex-crop-pdf-list)))
 
 (provide 'sync0-ivy-bibtex-functions)

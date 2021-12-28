@@ -216,7 +216,7 @@
       (sync0-zettelkasten-fiche-types . "~/.emacs.d/sync0-vars/fiche-types.txt")))
 
   (defvar sync0-bibtex-entry-types
-    '("Article" "Book" "InBook" "InCollection" "Collection" "Unpublished" "Thesis" "Proceedings" "InProceedings" "Online" "Report" "Manual")
+    '("Article" "Book" "InBook" "InCollection" "Collection" "Unpublished" "Thesis" "Proceedings" "InProceedings" "Online" "Report" "Manual" "Misc")
     "List of Bibtex entry types")
 
   (defvar sync0-bibtex-crossref-types
@@ -248,6 +248,10 @@
     "List of bibtex authors")
 
   (defvar sync0-bibtex-completion-journaltitle
+    '()
+    "List of bibtex authors")
+
+  (defvar sync0-bibtex-completion-title
     '()
     "List of bibtex authors")
 
@@ -287,6 +291,7 @@
     '((sync0-bibtex-completion-publisher . "~/.emacs.d/sync0-vars/bibtex-completion-publisher.txt")
       (sync0-bibtex-completion-journaltitle . "~/.emacs.d/sync0-vars/bibtex-completion-journaltitle.txt")
       (sync0-bibtex-completion-location . "~/.emacs.d/sync0-vars/bibtex-completion-location.txt")
+      (sync0-bibtex-completion-title . "~/.emacs.d/sync0-vars/bibtex-completion-title.txt")
       (sync0-bibtex-completion-author .  "~/.emacs.d/sync0-vars/bibtex-completion-author.txt")
       (sync0-bibtex-completion-keywords .  "~/.emacs.d/sync0-vars/bibtex-completion-keywords.txt")
       (sync0-bibtex-completion-note .  "~/.emacs.d/sync0-vars/bibtex-completion-note.txt")
@@ -476,6 +481,14 @@ With prefix arg, find the previous file."
     (insert (concat (car list) "\n"))
     (setq list (cdr list))))
 
+(defun sync0-show-elements-of-list (list sep)
+  "Print massive string with each element of list separated by sep"
+  (let (x)
+    (while list
+      (setq x (concat (car list) sep x))
+      (setq list (cdr list)))
+    (string-trim-right x sep)))
+
 (defun sync0-update-list (newelt list file)
   "Saves my projects in my home folder."
   (if (member newelt list)
@@ -484,7 +497,7 @@ With prefix arg, find the previous file."
            (concat "~/.emacs.d/sync0-vars/" file ".txt"))
           (new-list (cons newelt list)))
       ;; (add-to-list list newelt)
-       (sync0-redefine list new-list)
+      (sync0-redefine list new-list)
       (with-temp-file file-path
         (sync0-insert-elements-of-list list)
         (save-buffer)
@@ -566,9 +579,21 @@ when necessary."
     string))
 
 (defun sync0-null-p (var)
-  (or (null var)
-      (string= var "")
-      (string= var "nil")))
+"General purpose predicate to determine whether an object var is
+empty (not in the lisp sense but in a human-readable sense)."
+  (cond ((stringp var)
+         (or (string= var "")
+             (string= var "nil")))
+        ((listp var)
+          (or (null var)
+              (equal var '(""))))
+          (t (null var))))
+
+;; (defun sync0-null-p (var)
+;; (cond ((stringp var)
+;;   (or (null var)
+;;       (string= var "")
+;;       (string= var "nil")))
 
 (require 'sync0-functions)
 
@@ -2510,7 +2535,8 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
   (bibtex-completion-notes-extension ".md")
   ;; (bibtex-completion-notes-extension ".org")
   (bibtex-completion-pdf-extension '(".pdf" ".epub"))
-  (bibtex-completion-additional-search-fields '(editor journaltitle origdate subtitle volume booktitle location publisher note library medium institution keywords))
+  (bibtex-completion-additional-search-fields '(journaltitle origdate subtitle volume location publisher note library institution keywords))
+  ;; (bibtex-completion-additional-search-fields '(editor journaltitle origdate subtitle volume booktitle location publisher note library medium institution keywords))
 
   :config 
   (setq bibtex-completion-display-formats

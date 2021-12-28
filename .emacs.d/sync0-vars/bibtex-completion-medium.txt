@@ -2,8 +2,3 @@ digital
 online
 print
 print,digital
-
-
-
-
-

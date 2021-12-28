@@ -234,7 +234,7 @@
  (position . 5443))
 ("here"
  (filename . "~/Dropbox/bibliographies/bibliography.bib")
- (front-context-string)
- (rear-context-string . "8aff\\;\\;\\;;\n}\n\n\n")
- (position . 521771))
+ (front-context-string . "medium = {digita")
+ (rear-context-string . "gid = {french},\n")
+ (position . 594868))
 )

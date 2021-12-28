@@ -1,6 +1,6 @@
 Bibliographie générale du Périgord
 1848 la révolution oubliée
-1848, ou l'apprentissage de la République
+1848, ou l’apprentissage de la République
 A Companion to Intellectuel History
 A Treatise on Money
 An Inquiry into the Nature and Causes of the Wealth of Nations
@@ -16,11 +16,11 @@ Conduite de la vie civilisée
 Conferencias sobre historia económica de Colombia
 Conjurer la peur
 Courcelle-Seneuil
-Cours complet d'économie politique pratique
+Cours complet d’économie politique pratique
 Creating the Computer
 Des mots sur la grève
 Design for a Brain
-Douze leçons sur l'histoire
+Douze leçons sur l’histoire
 Economics
 El balanceador
 Essays in Positive Economics
@@ -44,11 +44,11 @@ Including a Symposium on the Historical Epistemology of Economics
 Interaction and Market Structure
 Jean-Gustave Courcelle-Seneuil
 Journeys Toward Progress
-L'Héritage de la révolution
-L'art de la thèse
-L'institution du travail
-L'intervention des pouvoirs publics dans le contrat de travail
-L'utopie de la communication
+L’Héritage de la révolution
+L’Art de la thèse
+L’Institution du travail
+L’Intervention des pouvoirs publics dans le contrat de travail
+L’Utopie de la communication
 La Banque libre
 La Condition ouvrière
 La France ouvrière
@@ -61,10 +61,10 @@ La révolution de février au Luxembourg
 La science en action
 Las utopías sociales en América Latina en el siglo XIX
 Le Capital
-Le Parti Républicain au coup d'état et sous le Second Empire
+Le Parti Républicain au coup d’état et sous le Second Empire
 Le crédit et la banque
 Le crédit et les banques
-Le débat sur l'organisation du travail en France
+Le débat sur l’organisation du travail en France
 Le travail
 Le travail et ses valeurs
 Les Socialismes français, 1796-1866
@@ -77,21 +77,21 @@ Mechanization Takes Command
 Memory Machines
 Money Doctors
 More Heat than Light
-Méthodes quantitatives pour l'historien
+Méthodes quantitatives pour l’historien
 Naissance de la biopolitique
 Natural Images in Economic Thought
 Note-taking for Consecutive Interpreting
-Nouveaux principes d'économie politique
+Nouveaux principes d’économie politique
 Organisation du travail
-Pages d'histoire de la révolution de février 1848
+Pages d’histoire de la révolution de février 1848
 Paper Machines
 Pour une sociologie historique de la quantification
 Principles of Political Economy
 Professors as Writers
 Proyecto de Código Civil
 Précis de morale rationnelle
-Préparation à l'étude du droit
-Quand les socialistes inventaient l'avenir
+Préparation à l’étude du droit
+Quand les socialistes inventaient l’avenir
 Representations of the Intellectual
 Revue du progrès
 Science-Mart
@@ -108,7 +108,7 @@ The Glorious Book
 The Great Transformation
 The History of the Calculus and its Conceptual Development
 The Human Motor
-The Interpreter's Handbook
+The Interpreter’s Handbook
 The Knowledge We Have Lost in Information
 The Machinery Question and the Making of Political Economy 1815--1848
 The Making of the English Working Class
@@ -124,9 +124,9 @@ The Street Porter and the Philosopher
 Traite de sociologie du travail
 Traité théorique et pratique des opérations de banque
 Travail, temps libre et socialisme
-Turing's Man
-Un jeudi à l'Assemblée
-Un journal d'ouvriers
+Turing’s Man
+Un jeudi à l’Assemblée
+Un journal d’ouvriers
 Understanding Modern Money
 Universität als Milieu
 Visions of Politics
@@ -136,9 +136,3 @@ William Stanley Jevons and the Making of Modern Economics
 Work and Revolution in France
 “Raw Data” Is an Oxymoron
 Études sur la science sociale
-``Raw Data'' Is an Oxymoron
-
-
-
-
-

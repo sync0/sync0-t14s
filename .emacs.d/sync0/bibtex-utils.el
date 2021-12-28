@@ -58,7 +58,7 @@
 ;;;;;;;;;;;;;;
 
 (defvar bu-keywords-values)
-(make-variable-buffer-local 'bu-keywords-values)
+;; (make-variable-buffer-local 'bu-keywords-values)
 (make-obsolete-variable
  'bibtex-keywords-values
  "Bibtex-utils functions and variables are now prefixed with bu-, not bibtex-"
