@@ -20,7 +20,7 @@ Bulletin de la Société Historique et Archéologique du Périgord
 Journal of Social Ontology
 Theory and Society
 nil
-Séances et travaux de l'Académie des Sciences Morales et Politiques
+Séances et travaux de l’Académie des Sciences Morales et Politiques
 Revista de la Universidad Pontificia Bolivariana
 Gérer \& comprendre
 Le Grand Journal
@@ -43,7 +43,7 @@ Nuevo Mundo Mundos Nuevos
 Revista del Pacífico
 History of European Ideas
 Polis
-Revue d'histoire moderne et contemporaine
+Revue d’histoire moderne et contemporaine
 Anales de la Universidad de Chile
 Journal des économistes
 Le Radical
@@ -52,11 +52,11 @@ Canto Rodado
 Alpha
 Cuadernos de Historia
 Universum
-L'Intransigeant
+L’Intransigeant
 Excelsior
 Revue britannique
 Mondes sociaux
-Vie \& sciences de l'entreprise
+Vie \& sciences de l’entreprise
 Historia (Santiago)
 Sciences Sociales et Santé
 Nature
@@ -96,22 +96,22 @@ Journal of the History of Ideas
 Actes de la Recherche en Sciences Sociales
 Le Mouvement social
 History and Theory
-Revue Française d'Histoire des Idées Politiques
+Revue Française d’Histoire des Idées Politiques
 Past {\&} Present
 Mind
 Bulletin de psychologie
 Revue Française de Socio-Économie
-Cahiers d'histoire
+Cahiers d’histoire
 Revue du MAUSS
 Terrains \& Travaux
 The Grand Journal
 The Crazy
 The Mud
 Revue Historique
-Cahiers d'économie politique
+Cahiers d’économie politique
 Revue internationale de droit comparé
 Amérique Latine : Histoire et Mémoire
-Revue d'économie politique
+Revue d’économie politique
 Revue économique de Bordeaux
 Épistémocritique
 Cambridge Journal of Economics
@@ -126,4 +126,4 @@ La Gazette du Languedoc
 Le Droit
 Le Pouvoir
 Romantisme
-
+L’Économiste français

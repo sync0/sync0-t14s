@@ -292,7 +292,7 @@ https://stackoverflow.com/questions/23207958/how-to-prevent-emacs-dired-from-spl
     "List of Bibtex entry types")
 
   (defvar sync0-bibtex-fields
-    '("title" "subtitle" "eventtitle" "date" "origdate" "eventdate" "author" "journaltitle" "booktitle" "booksubtitle" "crossref" "chapter" "volume" "number" "series" "publisher" "location" "pages" "note" "doi" "url" "urldate" "language" "langid" "medium" "institution" "library" "file" "shorthand" "keywords")
+    '("title" "subtitle" "eventtitle" "date" "origdate" "eventdate" "author" "journaltitle" "edition" "booktitle" "booksubtitle" "crossref" "chapter" "volume" "number" "series" "publisher" "location" "pages" "note" "doi" "url" "urldate" "language" "langid" "medium" "institution" "library" "related" "relatedtype" "file" "shorthand" "keywords")
     "List of Bibtex entry fields")
 
   (defvar sync0-bibtex-full-fields
@@ -3048,18 +3048,20 @@ Auto-close delimiters and blocks as you type
   (bibtex-completion-notes-extension ".md")
   ;; (bibtex-completion-notes-extension ".org")
   (bibtex-completion-pdf-extension '(".pdf" ".epub"))
-  (bibtex-completion-additional-search-fields '(journaltitle origdate subtitle volume location publisher note library institution keywords))
+  (bibtex-completion-additional-search-fields '(journaltitle origdate subtitle volume location publisher note library institution keywords edition))
   ;; (bibtex-completion-additional-search-fields '(editor journaltitle origdate subtitle volume booktitle location publisher note library medium institution keywords))
 
   :config 
   (setq bibtex-completion-display-formats
-	'((article       . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title}: ${subtitle} @ ${journaltitle} [${=key=}]")
-	  (book          . "${=has-pdf=:1}${=has-note=:1}| ${author} [${origdate}](${date:4}) ${title} ${volume}: ${subtitle} [${=key=}]")
-	  (inbook        . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title:55} [${=key=}]")
-	  (incollection  . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title:55} [${=key=}]")
-	  (collection    . "${=has-pdf=:1}${=has-note=:1}| ${editor} (${date:4}) ${title:55} ${volume}: ${subtitle} [${=key=}]")
-	  (inproceedings . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title:55} [${=key=}]")
-	  (t             . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date}) ${title}: ${subtitle} [${=key=}]")))
+	'((article       . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title}: ${subtitle} @ ${journaltitle} [${=type=}:${=key=}]")
+	  (mvbook          . "${=has-pdf=:1}${=has-note=:1}| ${author} [${origdate}](${date:4}) ${title} ${volume}: ${subtitle} Ed. ${edition} [${=type=}:${=key=}]")
+	  (book          . "${=has-pdf=:1}${=has-note=:1}| ${author} [${origdate}](${date:4}) ${title} ${volume}: ${subtitle} Ed. ${edition} [${=type=}:${=key=}]")
+	  (inbook        . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title:55} [${=type=}:${=key=}]")
+	  (incollection  . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title:55} [${=type=}:${=key=}]")
+	  (collection    . "${=has-pdf=:1}${=has-note=:1}| ${editor} (${date:4}) ${title:55} ${volume}: ${subtitle} [${=type=}:${=key=}]")
+	  (mvcollection    . "${=has-pdf=:1}${=has-note=:1}| ${editor} (${date:4}) ${title:55} ${volume}: ${subtitle} [${=type=}:${=key=}]")
+	  (inproceedings . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title:55} [${=type=}:${=key=}]")
+	  (t             . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date}) ${title}: ${subtitle} [${=type=}:${=key=}]")))
 
   (setq bibtex-completion-format-citation-functions
         '((org-mode      . bibtex-completion-format-citation-org-link-to-PDF)
@@ -3088,11 +3090,12 @@ Auto-close delimiters and blocks as you type
          "## Annotations\n\n"
          "## Références\n\n"))
 
-  (use-package ivy-bibtex
+(use-package ivy-bibtex
     :config
     (setq ivy-bibtex-default-action 'ivy-bibtex-show-entry)
     (setq ivy-bibtex-default-multi-action 'ivy-bibtex-show-entry)
-    (require 'sync0-ivy-bibtex-functions)))
+    (require 'sync0-ivy-bibtex-functions)
+  (evil-leader/set-key "v" 'ivy-bibtex)))
  #+END_SRC 
 
 ** pdf-tools

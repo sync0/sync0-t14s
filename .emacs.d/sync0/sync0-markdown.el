@@ -1,3 +1,5 @@
+(require 'sync0-print)
+
 (setq sync0-markdown-zettel-template 
       (concat
 "---
@@ -225,6 +227,51 @@ created: " (format-time-string "%Y-%m-%d")
 ;;          (command (concat sync0-pandoc-md-to-pdf-command " " file ".md -o" file ".pdf")))
 ;;       (shell-command command)))
 
+(defun sync0-markdown-print-pdf ()
+  "Print the pdf provided in the argument. Generalized for
+interactive use and use in pipes to output to the printer."
+  (interactive)
+  (let ((pdf (concat (substring (buffer-file-name) 0 -2) "pdf"))
+         (command (sync0-print-define-command))) 
+    (if (file-exists-p pdf)
+        (shell-command (concat command pdf))
+      (message "No pdf found for current markdown note"))))
+
+(defun sync0-markdown-copy-pdf-to-path ()
+  "Copy attached pdf to path and change the title to make it
+readable."
+  (interactive)
+  (let* ((pdf (concat (substring (buffer-file-name) 0 -2) "pdf"))
+         (date (format-time-string "%Y-%m-%d"))
+         (regex-title "^title: \"\\(.+\\)\"")
+         (regex-subtitle "^subtitle: \"\\(.+\\)\"")
+         (title (save-excursion
+                  (goto-char (point-min))
+                  (when  (re-search-forward regex-title nil t 1)
+                    (match-string 1))))
+         (subtitle (save-excursion
+                     (goto-char (point-min))
+                     (when (re-search-forward regex-subtitle nil t 1)
+                       (match-string 1))))
+         (target-path (read-string "Où envoyer ce pdf ? (finir en /) "))
+         (command (concat "cp "
+                          pdf
+                          " \""
+                          target-path
+                          "Rivera Carreño_"
+                          date
+                          "_"
+                          title
+                          "_"
+                          subtitle
+                          ".pdf\"")))
+    (if (file-exists-p pdf)
+        (progn 
+          (shell-command command)
+          ;; (message "%s" command)
+          (message "PDF moved to target location"))
+      (message "No PDF found"))))
+
 (major-mode-hydra-define markdown-mode nil 
   ("Links"
    ;; ("s" org-store-link)
@@ -247,7 +294,10 @@ created: " (format-time-string "%Y-%m-%d")
    ;; ("t" sync0-pandoc-export-md-to-tex)
    ;; ("E" sync0-org-export-headlines-to-latex)
    "Etc"
-   (("a" sync0-define-local-abbrev "Define abbrev"))))
+   (("a" sync0-define-local-abbrev "Define abbrev")
+   ("P" sync0-markdown-print-pdf "Corresp. pdf")
+   ("M" sync0-markdown-copy-pdf-to-path "Move to path")
+    )))
 ;; ("d" org-insert-drawer)
 
 ;; (evil-leader/set-key-for-mode 'markdown-mode "z" 'sync0-hydra-markdown-functions/body)

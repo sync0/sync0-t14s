@@ -150,6 +150,12 @@
     (when (file-exists-p (concat sync0-obsidian-directory key ".md"))
       (sync0-bibtex-create-note-from-entry t key t)))) 
 
+(defun bibtex-completion-archive-entries-list (keys)
+  "Print the PDFs of the entries with the given KEYS where available."
+  (dolist (key keys)
+    (when (string-match ".+\\.bib"   (buffer-file-name))
+      (sync0-bibtex-archive-entry key))))
+
 ;; Before being able to call custom functions from ivy-bibtex, these
 ;; have to be manually added to ivy-bibtex. 
 
@@ -161,6 +167,8 @@
 
 (ivy-bibtex-ivify-action bibtex-completion-rewrite-notes-from-biblatex-data-list ivy-bibtex-rewrite-notes-from-biblatex-data-list)
 
+(ivy-bibtex-ivify-action bibtex-completion-archive-entries-list ivy-bibtex-archive-entries-list)
+
 ;; This is the way to add actions to ivy-bibtex wituhout overwriting
 ;; those already defined.
 (ivy-add-actions
@@ -168,6 +176,20 @@
  '(("p" ivy-bibtex-print-pdf-list "Print attachments with default printer" ivy-bibtex-print-pdf-list)
    ("P" ivy-bibtex-copy-pdf-to-path-list "Copy attached pdf to target path" ivy-bibtex-copy-pdf-to-path-list)
    ("R" ivy-bibtex-rewrite-notes-from-biblatex-data-list "Rewrite note metadata from Biblatex entry" ivy-bibtex-rewrite-notes-from-biblatex-data-list)
+   ("A" ivy-bibtex-archive-entries-list "Archive Biblatex entries" ivy-bibtex-archive-entries-list)
    ("x" ivy-bibtex-crop-pdf-list "Crop attachments using model cropbox" ivy-bibtex-crop-pdf-list)))
+
+(defun sync0-ivy-bibtex-with-local-bibliography ()
+  ""
+  (interactive)
+  (let ((current-buffer (buffer-file-name)))
+    (if (string-match ".+\\.bib" current-buffer)
+        (ivy-bibtex-with-local-bibliography)
+      (let* ((files (f-files "/home/sync0/Dropbox/bibliographies/" (lambda (x) (string-match ".+\\.bib" x))))
+             (selection (completing-read "Choose bibliography file to navigate: " files)))
+        (find-file selection)
+        (ivy-bibtex-with-local-bibliography)))))
+
+  (evil-leader/set-key "V" 'sync0-ivy-bibtex-with-local-bibliography)
 
 (provide 'sync0-ivy-bibtex-functions)

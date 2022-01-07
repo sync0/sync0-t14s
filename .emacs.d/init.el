@@ -224,7 +224,7 @@
     "List of Bibtex entry types")
 
   (defvar sync0-bibtex-fields
-    '("title" "subtitle" "eventtitle" "date" "origdate" "eventdate" "author" "journaltitle" "booktitle" "booksubtitle" "crossref" "chapter" "volume" "number" "series" "publisher" "location" "pages" "note" "doi" "url" "urldate" "language" "langid" "medium" "institution" "library" "file" "shorthand" "keywords")
+    '("title" "subtitle" "eventtitle" "date" "origdate" "eventdate" "author" "journaltitle" "edition" "booktitle" "booksubtitle" "crossref" "chapter" "volume" "number" "series" "publisher" "location" "pages" "note" "doi" "url" "urldate" "language" "langid" "medium" "institution" "library" "related" "relatedtype" "file" "shorthand" "keywords")
     "List of Bibtex entry fields")
 
   (defvar sync0-bibtex-full-fields
@@ -2535,16 +2535,18 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
   (bibtex-completion-notes-extension ".md")
   ;; (bibtex-completion-notes-extension ".org")
   (bibtex-completion-pdf-extension '(".pdf" ".epub"))
-  (bibtex-completion-additional-search-fields '(journaltitle origdate subtitle volume location publisher note library institution keywords))
+  (bibtex-completion-additional-search-fields '(journaltitle origdate subtitle volume location publisher note library institution keywords edition))
   ;; (bibtex-completion-additional-search-fields '(editor journaltitle origdate subtitle volume booktitle location publisher note library medium institution keywords))
 
   :config 
   (setq bibtex-completion-display-formats
 	'((article       . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title}: ${subtitle} @ ${journaltitle} [${=key=}]")
-	  (book          . "${=has-pdf=:1}${=has-note=:1}| ${author} [${origdate}](${date:4}) ${title} ${volume}: ${subtitle} [${=key=}]")
+	  (mvbook          . "${=has-pdf=:1}${=has-note=:1}| ${author} [${origdate}](${date:4}) ${title} ${volume}: ${subtitle} Ed. ${edition} [${=key=}]")
+	  (book          . "${=has-pdf=:1}${=has-note=:1}| ${author} [${origdate}](${date:4}) ${title} ${volume}: ${subtitle} Ed. ${edition} [${=key=}]")
 	  (inbook        . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title:55} [${=key=}]")
 	  (incollection  . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title:55} [${=key=}]")
 	  (collection    . "${=has-pdf=:1}${=has-note=:1}| ${editor} (${date:4}) ${title:55} ${volume}: ${subtitle} [${=key=}]")
+	  (mvcollection    . "${=has-pdf=:1}${=has-note=:1}| ${editor} (${date:4}) ${title:55} ${volume}: ${subtitle} [${=key=}]")
 	  (inproceedings . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title:55} [${=key=}]")
 	  (t             . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date}) ${title}: ${subtitle} [${=key=}]")))
 
