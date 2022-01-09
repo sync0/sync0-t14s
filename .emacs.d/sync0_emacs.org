@@ -1418,7 +1418,7 @@ Configure default font faces for Info, ERC, and Org
 (require 'display-line-numbers)
 
 (defcustom display-line-numbers-exempt-modes
-  '(vterm-mode eshell-mode shell-mode term-mode ansi-term-mode org-mode neotree-mode markdown-mode deft-mode help-mode)
+  '(vterm-mode eshell-mode shell-mode term-mode ansi-term-mode org-mode neotree-mode markdown-mode deft-mode help-mode nov-mode)
   "Major modes on which to disable line numbers."
   :group 'display-line-numbers
   :type 'list
@@ -2324,7 +2324,7 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
                                    :family "Sitka Text"
                                    ;; :height 200
                                    ;; :height 220
-                                   :height 250)
+                                   :height 160)
 
           (setq nov-text-width 66)
           (nov-render-document))

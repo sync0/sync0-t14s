@@ -1134,7 +1134,7 @@ empty (not in the lisp sense but in a human-readable sense)."
 (require 'display-line-numbers)
 
 (defcustom display-line-numbers-exempt-modes
-  '(vterm-mode eshell-mode shell-mode term-mode ansi-term-mode org-mode neotree-mode markdown-mode deft-mode help-mode)
+  '(vterm-mode eshell-mode shell-mode term-mode ansi-term-mode org-mode neotree-mode markdown-mode deft-mode help-mode nov-mode)
   "Major modes on which to disable line numbers."
   :group 'display-line-numbers
   :type 'list
@@ -1905,7 +1905,7 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
                                    :family "Sitka Text"
                                    ;; :height 200
                                    ;; :height 220
-                                   :height 250)
+                                   :height 160)
 
           (setq nov-text-width 66)
           (nov-render-document))
@@ -2540,15 +2540,15 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
 
   :config 
   (setq bibtex-completion-display-formats
-	'((article       . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title}: ${subtitle} @ ${journaltitle} [${=key=}]")
-	  (mvbook          . "${=has-pdf=:1}${=has-note=:1}| ${author} [${origdate}](${date:4}) ${title} ${volume}: ${subtitle} Ed. ${edition} [${=key=}]")
-	  (book          . "${=has-pdf=:1}${=has-note=:1}| ${author} [${origdate}](${date:4}) ${title} ${volume}: ${subtitle} Ed. ${edition} [${=key=}]")
-	  (inbook        . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title:55} [${=key=}]")
-	  (incollection  . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title:55} [${=key=}]")
-	  (collection    . "${=has-pdf=:1}${=has-note=:1}| ${editor} (${date:4}) ${title:55} ${volume}: ${subtitle} [${=key=}]")
-	  (mvcollection    . "${=has-pdf=:1}${=has-note=:1}| ${editor} (${date:4}) ${title:55} ${volume}: ${subtitle} [${=key=}]")
-	  (inproceedings . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title:55} [${=key=}]")
-	  (t             . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date}) ${title}: ${subtitle} [${=key=}]")))
+	'((article       . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title}: ${subtitle} @ ${journaltitle} [${=type=}:${=key=}]")
+	  (mvbook          . "${=has-pdf=:1}${=has-note=:1}| ${author} [${origdate}](${date:4}) ${title} ${volume}: ${subtitle} Ed. ${edition} [${=type=}:${=key=}]")
+	  (book          . "${=has-pdf=:1}${=has-note=:1}| ${author} [${origdate}](${date:4}) ${title} ${volume}: ${subtitle} Ed. ${edition} [${=type=}:${=key=}]")
+	  (inbook        . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title:55} [${=type=}:${=key=}]")
+	  (incollection  . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title:55} [${=type=}:${=key=}]")
+	  (collection    . "${=has-pdf=:1}${=has-note=:1}| ${editor} (${date:4}) ${title:55} ${volume}: ${subtitle} [${=type=}:${=key=}]")
+	  (mvcollection    . "${=has-pdf=:1}${=has-note=:1}| ${editor} (${date:4}) ${title:55} ${volume}: ${subtitle} [${=type=}:${=key=}]")
+	  (inproceedings . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title:55} [${=type=}:${=key=}]")
+	  (t             . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date}) ${title}: ${subtitle} [${=type=}:${=key=}]")))
 
   (setq bibtex-completion-format-citation-functions
         '((org-mode      . bibtex-completion-format-citation-org-link-to-PDF)
@@ -2577,11 +2577,12 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
          "## Annotations\n\n"
          "## Références\n\n"))
 
-  (use-package ivy-bibtex
+(use-package ivy-bibtex
     :config
     (setq ivy-bibtex-default-action 'ivy-bibtex-show-entry)
     (setq ivy-bibtex-default-multi-action 'ivy-bibtex-show-entry)
-    (require 'sync0-ivy-bibtex-functions)))
+    (require 'sync0-ivy-bibtex-functions)
+  (evil-leader/set-key "v" 'ivy-bibtex)))
 
    (use-package pdf-tools
      :magic ("%PDF" . pdf-view-mode)

@@ -1,821 +1,938 @@
-Informe verbal sobre “Lecciones elementales de economía política”
-Richesse des nations
-Organisation et rationalisation du travail
-L'homme face à la nature
-Le travail et les sciences humaines
-Le travail saisi par l'économie politique
-Le travail et les sciences de la nature
-Genèse de la notion de travail
-Le sens de la MESURE
-Le produit de la nature et le temps des hommes
-Le « travail physique » comme valeur mécanique (XVIIIe-XIXe siècles)
-L'esprit d'ingénieur
-Les « sciences du travail »
-Computing Machinery and Intelligence
-Des mots sur la grève
-Time, Work-Discipline, and Industrial Capitalism
-The Political Ideas of the Utopian Socialists
-Au-delà de l'emploi
-Le droit de travail
-La subordination et la liberté
-Identité
-La personne et la chose
-Critique du droit du travail
-Louis Blanc
-Nouveaux principes d'économie politique
-Work and Revolution in France
-La technique
-Economics
-The Origins of American Social Science
-Critical and Revolutionary Theory
-Les débuts de l'ergonomie en France à la veille de la Première Guerre mondiale
-Preface
-Metaphors of the Machine in the Post-Fordist Era
-The Eclipse of the Utopias of Labor
-The Human Motor
-Neoliberal Hegemony
-(Re)traductions
-The Metaphoric Circuit
-Conclusions
-The Metamorphosis of the Work Concept and its Incorporation into Economic Thought
-A History of the Work Concept
-Work and Waste
-The Quest for Artificial Intelligence
-La religion industrielle
-The Origins of the French Labor Movement
-Seven Deadly Innocent Frauds of Economic Policy
-Soft Currency Economics
-The Knowledge We Have Lost in Information
-The Road from Mont Pelèrin
-Keynote for ``Life and Debt'' Conference
-Naturalizing the Market on the Road to Revisionism
-Machine Dreams
-Economics, Science , and Knowledge
-Doing What Comes Naturally
-Natural Images in Economic Thought
-Principles of Political Economy
-Authority, Liberty \& Automatic Machinery in Early Modern Europe
-On Governors
-Le Capital
-Minds, Machines and Metaphors
-Le débat sur l'organisation du travail en France
-Du marchandage dans la menuiserie
-The Cambridge Companion to Galileo
-The Historical Epistemology of Economics
-The Machinery of the Mind
-Engines of Discovery
-The Image of Economics
-Mechanical Reasoning
-Histoire des idées sociales en France
-Méthodes quantitatives pour l'historien
-Quelle approche prosopographique ?
-Histoire du travail et des travailleurs
-La science en action
-Science in Action
-History of Socialism
-Travail, temps libre et socialisme
-The Historical Meanings of Work
-La modernité désenchantée
-Mémoires de l'Institut national des sciences et arts
-The Mechanical Mind in History
-From The Sensory Order to the Liberal Order
-The Intellectuals and Socialism
-«Au nom du peuple français»
-In an Ancient Game, Computing's Future
-Papers on the Science of Public Administration
-Notes on the Theory of Organization
-1848 la révolution oubliée
-The Centrality of Mathematics in the History of Western Thought
-Lousy and Lovely Jobs
-The Computer
-Maastricht and All That
-Mechanization Takes Command
-The Ontology of the Enemy
-Foreword
-L'Encyclopédie et le travail humain
-Essays in Positive Economics
-Les enjeux de la traduction
-The Superiority of Economists
-The Construction of a Global Profession
-Maurice Hauriou, constitutionnaliste (1856-1929)
-Creating the Computer
-The Closed World
-The Glorious Book
-Du louage d'ouvrage au contrat de travail
-Du sujet de droit à la citoyenneté du travail
-Mechanism, Organism, and Society
-Gouverner par les nombres
-Pour une sociologie historique de la quantification
-Le prophète, le pèlerin et le missionnaire
-Theoretic Models
-Un journal d'ouvriers
-Droit et bon droit
-The Third Wave of Science Studies
-L'Ordre économique de la mondialisation libérale
-Les économistes dans la cité au XXe siècle
-Some Thoughts on Economists' Duels in Court
-Men, Machines, and Models
-Les métamorphoses de la question sociale
-Neoliberalism, capitalist class formation and the global network of corporations and policy groups
-Peripheral Vision
-L'utopie de la communication
-Quelle épistémologie historique ?
-Vlog 18
-The History of the Calculus and its Conceptual Development
-La spécificité du champ scientifique et les conditions sociales du progrès de la raison
-Conjurer la peur
-Turing's Man
-Les Socialismes français, 1796-1866
-Histoire d'une innovation
-Albert Hirschman na América Latina e sua trilogia sobre desenvolvimento econômico
-The Machinery Question and the Making of Political Economy 1851--1848
-L'art de la thèse
-Macroeconomics of Unbalanced Growth
-Letter to Herbert Alexander Simon
-Alain Desrosières
-The Myth of the Machine
-Notice sur Courcelle-Seneuil
-Revue d'histoire et de prospective du management
-Opúsculo sobre la hacienda pública de Chile
-Matrimonio incestuoso en el Medellín colonial 1700--1810
-Profils et biographies : Professeurs français
-Album de la colonie française au Chili
-Dispensas matrimoniales de Rionegro, Antioquia, Colombia
-An Inquiry into the Nature and Causes of the Wealth of Nations
-Design for a Brain
-Meaning and Understanding in the History of Ideas
-The Making of the English Working Class
-Séance de l’Assemblée législative
-Démonétisation de l’or
-Séance de l'Assemblée législative
-La monnaie d’or
-Revue des journaux : Le rapport de M. de Rémusat
-Paris 30 juillet : Aux démocrates !
-Juridiction criminelle : Cour d’assises de la Vienne (Poitiers)
-Cour d’assises de Poitiers : Affaire des troubles de Limoges
-Cour d’assises de la Vienne (Poitiers) : Présidence de M. Bourgon de Layre
-Faits divers : 28 juillet 1848
-Un directeur-général
-Faits divers : Paris, 7 juillet 1848
-Variétés : Dictionnaire politique
-Variétés : Le crédit et la banque par M. Courcelle-Seneuil
-Le privilège de de la Banque de France
-Économie politique : Le crédit et la banque
-La 8e livraison du Dictionnaire politique paraît aujourd’hui
-Nouvelles diverses : Louis Blanc et ses collaborateurs abandonnent la redaction du Bon Sens
-Encyclopédie du dix-neuvième siècle
-Labor in the Early States
-La Gouvernance par les nombres
-Le travail
-Traité de sociologie du travail
-La France ouvrière
-Effects of Control on Stability
-Prendre ses médicaments / prendre la parole
-The biblatex Package
-An Introduction to Programming in Emacs Lisp
-GNU Emacs Manual
-GNU Emacs Lisp Reference Manual
-De l’influence intellectuelle de la France sur l’Angleterre au 19e siècle
-Littérature. --- Philosophie. : Lettres à Édouard sur les Révolutions ; par J. G. Courcelle-Seneuil
-Salmigondis : Lettres à Édouard sur les Révolutions, par J. G. Courcelle Seneuil
-Le Parti Républicain sous la monarchie de Juillet
-The Great Transformation
-Voitures publiques
-Virement de parties
-Vingtième
-Trésor
-Terre
-Taille
-Système
-Seigneuriage
-Revenu (Impôt du)
-Régie
-Profit
-Professions
-Prestation
-Postes
-Papier-monnaie
-Organisation du travail
-Noirot, (N. Jean-Étienne)
-Luxe
-Lois somptuaires
-Lois agraires
-Livrets d’ouvriers
-Librairie
-Lettre de change
-Kommunikation mit Zettelkästen
-Tours
-Prud’hommes
-Protecteur (Système)
-Propriété
-Prolétaire. Prolétariat
-Privilèges
-Prisons
-Primaires (Écoles)
-Préfet maritime
-Population
-Percepteur. Perception
-Pensions
-Pénitentiaire
-Péage
-Paupérisme
-Patente
-Pain
-Ouvrier
-Ostracisme
-Oppression
-Navigation
-Mutation
-Monopole. Monopoleur
-Monnaie
-Maximum
-Marine
-Maîtrise
-Liberté commerciale
-Jurande
-Invalides
-Intendants
-Instruction publique
-Inscription maritime
-Industrie
-Histoire
-Grains
-Fisc
-Ferme générale
-Faction
-Exportation
-Épargne (Caisse d’)
-Économistes
-Économie
-Douane
-Don
-Dime
-Déportation
-Dépenses
-Crise
-Corps
-Contribution
-Contentieux
-Comptes
-Commerce
-Colonie
-Collège
-Collecteur
-Budget
-Assignats
-Altération des monnaies
-Aides (Cours des)
-Aides
-La Condition ouvrière
-D’une Banque d’échange fondée par M. Bonnard à Marseille
-Journal des économistes
-Compte rendu de « Traité théorique et pratique des opérations de banque » par J.-G. Courcelle-Seneuil
-Commerce extérieur de la Grande-Bretagne en 1852
-Dictionnaire de l'économie politique
-Dictionnaire universel théorique et pratique du commerce et de la navigation
-...and forgive them their debts
-Féodalité
-Imprimerie
-Fortunes particulières
-Situation du cours
-La procynarnocupidomachie
-Employment Policy and the Value of the Currency
-De la gangrene considérée sous le rapport de ses causes
-The Prying Eyes of the Natural Scientist
-Lettre à Ignacio Domeyko
-Transcripción parcial del testamento de Cristóbal de Toro Zapata Herrera
-Adjudication
-Acte additionnel
-Accapareur
-Accaparement
-Carta a Juan Antonio Mon y Velarde para la fundación de una colonia en el Valle de Sonsón
-Información matrimonial: Valeriano Gutiérrez y Micaela Toro
-La familia conversa de Pedro León de Cieza
-España y América: Cultura y Colonización
-Registro de custodia: Testamento de Cristóbal de Toro Zapata
-Actas de la II Jornada de Historia de Llerena
-Apuntes genealógicos
-Dispensa de matrimonio: Santiago de Thoro de Arma-Rionegro y el matrimonio de su hijo Thomás de Toro con María Dionisia Duque
-Les massacres du Liban
-Récensement de la Dordgone, Commune de Vanxains
-Registre de décès de Margueritte Aspasie Aubin Descourade
-The Monetary System of Chile
-Bibliographie générale du Périgord
-Les propriétés : Grand Chêne et Pelouse
-Joseph Massé et le jardin de botanique de l'école centrale de Périgueux (1795-1826)
-Bulletin de la Société Historique et Archéologique du Périgord
-Dictionnaire des parlementaires d'Aquitaine sous la Troisième République
-The Historiography of the Portalian Period (1830-1891) in Chile
-Regulación y emergencia de los sistemas bancarios
-The Progress of Economic Ideas in France
-Lettre à Andrés Bello
-Epistolario
-Relación entre valores y principios generales de derecho en la interpretación constitucional de los derechos fundamentales en Chile
-La alteración de precios como fraude
-Los comienzos de la historiografía económica de Chile
-Lettre à Diego Barros Arana
-De Courcelle-Seneuil à Williamson, une même passion pour l'économie et la gestion
-La teoría de Courcelle-Seneuil
-Comentario a la teoría de Courcelle-Seneuil de J.V. Lastarria
-La América de J.V. Lastarria y las ideas de Courcelle-Seneuil
-Essai des mathématiques, à l'École centrale du département de la Dordogne
-Programme du jury d'instruction publique du département de la Dordogne pour l'ouverture de son École centrale
-Répertoire numérique de la série C
-Les « nobles citoyens » de Périgueux au XVIIIe siècle
-Le Périgord des nobles bourgeois du XVIIIe siècle
-Les « Nobles citoyens » de Périgueux au XVIIIème siècle
-Les « nobles citoyens » de Périgueux au XVIIIe siècle, suite II
-Desplazados y terratenientes en la colonización antioqueña del sur, 1780-1930
-La influencia de la cultura francesa en la educación chilena
-(Re)conociendo la enseñanza económica en Chile
-Genealogías sonsoneñas
-El nacimiento de Sonsón
-Cómo se formó Sonsón
-Archivo Heriberto Zapata Cuéncar (1908-1982): Inventario
-Sonsón en MCMXVII
-Monografía Histórica de Sonsón (digitalizada)
-Crónicas de Sonsón
-Monografía Histórica de Sonsón
-Sonsón
-Pierre Pontard, Évêque constitutionnel sour la Révolution
-Joseph Massé et le jardin de botanique de l'école centrale de Périgueux
-Registre de mariage de Jean Courcelle Ducluzeau avec Françoise L'hoste
-Registre de mariage de Jean Chastenet Duvigneaud avec Margueritte Courcelle
-Registre de mariage de Pierre Aubin Descourades avec Marie Chastenent Duvigneaud
-Registre de naissance de Margueritte Aubin Descourade II
-Registre de naissance de Margueritte Aubin Descourade
-Registre de naissance de Jean Courcelle-Seneuil
-Registre de décès de Jean Courcelle-Seneuil
-Registre de mariage de Jean Courcelle-Seneuil avec Marguerite Aspasie Aubin Descourade
-Registre de naissance de Jean-Léopold Courcelle-Seneuil (frère)
-Registre de naissance de Jean-Gustave Courcelle-Seneuil
-Archivos del siglo XVIII, XIX, XX en el Municipio de Sonsón
-Reflections on the Ontology of Money
-Money: What It Is and What It Should Be
-Social positioning and the nature of money
-Language and social ontology
-Economic ontology: what? why? how?
-The Economic World View
-Money, Social Ontology and Law
-In defence of the nominalist ontology of money
-Further reflections on the ontology of money
-The ontology of money
-Ontology and the study of social reality
-La refonte des monnaies de cuivre
-Tratado elemental de economía política
-Estudio sobre la organización económica i la hacienda pública de Chile
-Tratado de economía políticas
-Estudios económicoss
-De nuestra inferioridad económica
-Evolución del impuesto al ingreso en Chile
-Desigualdad y salarios en perspectiva histórica
-Introducción
-Los aspectos económicos de la independencia chilena, 1780-1840
-Introducción general
-Misiones económicas en Chile
-Liberalismo y poder
-La sociologie de Bourdieu
-Registro civil de matrimonio de Carlos Alberto Rivera Carreño con Min Jung Choi
-Registro civil de nacimiento de Juan Felipe Rivera Carreño
-Registro civil de nacimiento de Andrea Carolina Rivera Carreño
-Registro civil de nacimiento de Carlos Alberto Rivera Carreño
-Introduction
-Jean-Baptiste Say, 1767--1832
-La monnaie, le crédit et la banque en France
-Les ultra-libéraux : Charles Dunoyer, Frédéric Bastiat, Joseph Garnier, Jean-Gustave Courcelle-Seneuil
-Historical Ontology
-‘Babylonian madness’
-Can Taxes and Bonds Finance Government Spending?
-Do Taxes and Bonds Finance Government Spending?
-Theories of Money and Banking
-Conclusion
-The Emergence of Capitalist Credit Money
-What is Money
-The Credit Theory of Money
-Notice sur la vie et les travaux de M. J.-G. Courcelle-Seneuil
-Money and Taxes
-Understanding Modern Money
-Bank Money
-The Classification of Money
-The Role of the State and the Hierarchy of Money
-Sobre reconocimiento de censo a favor de las monjas de Santa Clara de Bogotá
-Mortuoria de Ylario López, vecino del valle de Rionegro, casado con María Arias y fallecido en 1755
-Solicitud para averiguar el destino de dos réos prófugos: Emigdio Toro y Vicente Sánchez
-Oficio para dar ejecución a la demanda interpuesta por Salvador Nepomuceno Gómez a Santiago de Toro
-Jean-Gustave Courcelle-Seneuil
-Guerre de l'Espagne au Chili
-Courcelle-Seneuil (Jean-Gustave)
-Épitre à M. X.
-La Littérature au prisme de l’économie
-Introduction : Économie et littérature
-La fictionnalisation de l’argent au XIXe siècle ou l’invention d’un sous-genre romanesque
-La naturalisation de l’économie dans le roman du XIXe siècle
-Résumés annuels
-Censo de 1786 del Retiro, Antioquia
-Inventarios de algunos archivos locales de Colombia en los departamentos de Santander, Norte de Santander, Antioquia y Cundinamarca
-Testamento de Hilario López Cano
-Familias de Antioquia
-Itinerario racial
-Abejorral, Parroquia Nuestra Señora del Carmen: Defunciones, vol 1-7
-Cristóbal de Toro Zapata: Título de alférez de la compañía de infantería española de la villa de Medellín que le otorga el tesorero Juan de Alzate, capitán de dicha compañía
-Partida de defunción del Depositario Cristóbal Toro Zapata
-Y fui casado y velado según orden de nuestra santa madre iglesia
-Partida de matrimonio de José Toro Zapata Guerra Peláez con María Herrera Benítez Colmenares
-Partida de bautismo de José Toro Zapata Guerra Peláez
-Partida de defunción de Cristóbal Toro Zapata Herrera
-Partida de bautismo de Cristóbal Toro Zapata Herrera
-Índice del Archivo Histórico del Municipio de Marinilla
-Testamento de Cristóbal de Toro Zapata Herrera
-Partida de defunción de José Santiago Toro Duque
-Partida de defunción de Francisco Javier Toro López
-Partida de matrimonio de Francisco Javier Toro López con Juana María del Rosario Ospina Valencia
-Partida de confirmación de Francisco Javier Toro López
-Partida de matrimonio de Pedro José Toro Ospina con María Rita Cardona Pérez
-Partida de bautismo de Pedro José Toro Ospina
-Partida de bautismo de María Micaela Toro Cardona
-Partida de matrimonio de Valerio Gutiérrez Pérez con María Micaela Toro Cardona
-Partida de defunción de María Micaela Toro Cardona
-Partida de matrimonio de Matías Gutiérrez Toro con María Petronila Rincón
-Partida de bautismo de Matías Gutiérrez Toro
-Partida de defunción de Matías Gutiérrez Toro
-Partida de matrimonio de Rafael Ángel Suárez Muñoz con María Jesús Gutiérrez Rincón
-Partida de bautismo de María Jesús Gutiérrez Rincón
-Partida de bautismo de Aliria Suárez Gutiérrez
-Partida de matrimonio de Jesús María Rivera Álvarez con Aliria Suárez Gutiérrez
-Partida de matrimonio de Carlos Alberto Rivera Suárez con Rosa Patricia Carreño Estupiñán
-Registro civil de nacimiento de Carlos Alberto Rivera Suárez
-Registro civil de matrimonio de Carlos Alberto Rivera Suárez con Rosa Patricia Carreño Estupiñán
-Partida de bautismo de Carlos Alberto Rivera Suárez
-Un pionnier oublié de la gestion des entreprises, Courcelle-Seneuil
-Gérer \& comprendre
-Des devoirs respectifs des classes de la société
-Ancient Law
-L'ancien droit considéré dans ses rapports avec l'histoire de la société primitive et avec les idées modernes
-Or et monnaie dans l'histoire
-Cuneiform Texts and the Writing of History
-La Distinction
-La construction d'objet
-L'épistémologie française, 1830--1970
-HTML \& CSS
-Pierre Bourdieu et la théorie du monde social
-Dictionnaire Bourdieu
-Writing Without Teachers
-Política liberal y modernización económica
-cuzproduces.com
-Things I wish I knew when I started my PhD\ldots
-Capital cultural, escuela y espacio social
-Lettre à Ramón Briceño
-Dossier de décoration de la Légion d'honneur à Jean-Léopold Courcelle-Seneui
-Dossier de décoration de la Légion d'honneur à Jean-Léopold Courcelle-Seneuil (frère)
-Latinoamérica desde la economía
-Émanciper le travail
-Science de la science et réflexivité
-Le bal des célibataires
-Esquisse d'une théorie de la pratique
-Bibliographie Jean-Gustave Courcelle-Seneuil
-Un sage au XIXe siècle
-Securité, territoire, population
-El liberalismo moderado chileno
-Lanzamiento | "Libertad y socialismo" de Jean Gustave Couercelle-Seneuil
-Libertad y socialismo
-Fiche : Jean-Léopold Courcelle-Seneuil
-Héraclès
-Le travail ancien et moderne
-Atsina
-Registre du mariage entre Jean-Léopold Courcelle-Seneuil et Jeanne Minier
-Registre de naissance de Jean-Léopold Courcelle-Seneuil
-Officiers et anciens élèves
-Compte rendu de ``Traité d'économie politique, Vol. 1'' de M. Courcelle-Seneuil
-Compte rendu de ``Traité d'économie politique, Vol. 2'' de M. Courcelle-Seneuil
-Das Kapital
-Le journal d'un parlementaire
-Dossier de décoration de la Légion d'honneur à Jean-Gustave Courcelle-Seneuil
-El Sentimiento Aristocrático
-Compte rendu de ``La société moderne'' par J.-G. Courcelle-Seneuil
-Histoire de la pensée managériale
-Some Aspects of the Development of Economic Thought in Chile, ca. 1778-1878
-Les traditions économiques françaises
-Economic Nationalism and Tax Reform in Late Nineteenth Century Chile
-De l’usage de la « crise » dans les essais de vulgarisation d’histoire économique au Chili (1860-1960)
-La política fiscal en Chile
-Progrès et développement économique au Chili durant la République conservatrice (1830-1861)
-La Faculté de droit de Paris à l'époque où Boissonade y faisait ses études
-Archives \& Culture
-Le goût de l'archive
-Santiago du Chili
-État général des fonds
-Centre des Archives diplomatiques de Nantes
-Ambassades, consulats, réseau culturel et de coopération (XVIe-XXe siècles)
-Les archives diplomatiques français
-Histoire des doctrines relatives au crédit et à la monnaie
-Théories françaises de la monnaie
-Monnaie et monnaies
-La genèse de la monnaie
-Monnaie, État et Production
-La monnaie et ses mécanismes
-Introduction à une sociologie critique
-Dinero, crédito bancario y ciclos económicos
-Money, Bank Credit, and Economic Cycles
-El sociólogo y el historiador
-Le raisonnement sociologique
-Nine Lives of Neoliberalism
-Local Subversions of Colonial Cultures
-Sociologie des intellectuels
-Treatise on Money
-Theorie der wirtschaftlichen Entwicklung
-History of Economic Analysis
-The Perspective of the World
-The Wheels of Commerce
-The Structure of Everyday Life
-The Ascent of Money
-A Financial History of Western Europe
-Michel Aglietta, Des crises monétaires aux crises financières
-Michel Aglietta, Dettes crises monétaires et financières
-Michel Aglietta, La monnaie, entre dettes et souveraineté
-Modern Monetary Theory and Practice
-How the Organization of Labor shaped Civilization’s Takeoff
-Labor in the Ancient World
-Money and Credit in Capitalist Economies
-Macroeconomics
-La violence de la monnaie
-La Monnaie
-Debt
-Ökonomisches Kapital, kulturelles Kapital, soziales Kapital
-The Forms of Capital
-Controversies in Monetary Economics
-What is Money?
-The Nature of Money
-Les fondements de la théorie bancaire
-Financial Markets, Money and Banking
-A lost century in economics
-Keynes's theories of money and banking in the \textit{Treatise} and \textit{The General Theory}
-Concepts of Money
-Credit and State Theories of Money
-Free and Not So Free Banking Theories among the Classicals; or, Classical Forerunners of Free Banking and Why They Have Been Neglected
-Courcelle-Seneuil, article nécrologique, par Don Diégo Barros Arana
-Francisation et francomanie en Amérique latine
-Le Chili et la France
-Estado e forma política
-Informe sobre el estado de la hacienda pública en 1.º de octubre de 1861
-La revolución capitalista de Chile
-Mercaderes, empresarios y capitalistas
-Políticas y teorías monetarias en Chile
-Le « Manuel des affaires » ou comment devenir un bon entrepreneur
-Présentation
-Manuel des affaires
-El liberalismo económico de Jean Gustave Courcelle-Seneuil
-La démographie des firmes industrielles en France (1973-1980)
-Ensayistas proteccionistas del siglo XIX
-Monetary Inflation in Chile
-De la liberté des banques
-Le papier-monnaie
-Los ideales nacionalistas ante el doctrinarismo de nuestros partidos políticos históricos
-Ensayo sobre la naturaleza del papel-moneda bajo su aspecto histórico y económico-monetario
-Historia de las doctrinas económicas en América y en especial en Chile
-Variaciones monetarias, impulso urbano y salarios en Santiago en la segunda mitad del siglo XVIII
-Seis años de política monetaria
-El Sistema Monetario i la Organización Bancaria de Chile
-The Money Doctor in the Andes
-Foucault, Anti-communism \& the Global Theory Industry
-Foucault: The Faux Radical
-Fascism: Now You See It, Now You Don’t!
-L'Institut d'histoire sociale, une officine anti-sociale
-Critical Theory, colonialism, and the historicity of thought
-Le risque chez Courcelle-Seneuil
-Quand un économiste français fascinait les gestionnaires allemands (1868-1914)
-Reform, Abolition, and Decoloniality
-The Threat of Fascism in the United States
-The Communist
-Finance Capital and Fascist Trends in the United States
-Traité théorique et pratique des Entreprises industrielles, commerciales et agricoles, ou Manuel des Affaires
-Dictionnaire politique encyclopédique du langage et de la science politiques
-Traité élémentaire de comptabilité
-Dossiers biographiques Boutillier du Retail
-Cours de comptabilité
-Examen comparativo de la tarifa i lejislación aduanera de Chile
-Notions préliminaires de comptabilité
-Traité théorique et pratique des entreprises industrielles, commerciales et agricoles
-Formar al hombre de estado
-Deuils
-Nécrologie
-La banque libre au Chili
-Laissons Faire
-Yves Guyot
-Clases dominantes y desarrollo desigual
-Clases medias chilenas y transgresión de la homogamia
-Élites, pobladores y educación superior en Chile
-Élites chilenas del siglo XIX. Historiografía
-Proyectos de la élite chilena del siglo XIX (I)
-La independencia y sus cadenas
-Formación de élites y Educación Superior en Iberoamérica (SS. \textsc{xvi-xxi})
-La Fundación de la Universidad de Chile y de la Universidad Católica de Chile
-Tratado teórico i práctico de economía política
-Revista de Ciencias i Letras
-Teoría y praxis de las reformas fiscales en Chile (1810-1840)
-Memoria sobre la moneda de Chile
-Revista del Pacífico
-La crisis comercial de 1861 i sus remedios
-Simulador de cuota: Convocatoria 2020
-The Big Idea: Interview with Noam Chomsky
-Daniel Mendoza arremete fuertemente contra Andrés Escobar
-Manufacturing Consent
-La Escuela de Cambridge
-La Historia de Ideas y sus Críticos
-Épisode 2 : La Loi du travail
-Introdução ao estudo do direito
-Hoteles emblemáticos de Panamá
-Pensar la revolución
-Carte des anciens arrondissements de Paris
-British Mail Steamers to South America, 1851-1965
-Jean-Gustave Courcelle-Seneuil, un libéral authentique
-Une installation
-La ``Révolution économique'' au Chili
-Nécrologie : Léopold Courcelle-Seneuil
-Réfutation des quatre articles du Dictionnaire politique sur le Babouvisme, la Communauté, l'Association et la Propriété)
-Courcelle-Seneuil
-Nécrologie : J.-G. Courcelle-Seneuil
-Probate record of Jean-Gustave Courcelle-Seneuil
-Documentos oficiales : Delegación universitaria
-Convirtiéndose en Foucault
-Actas del consejo de la universidad
-Anales de la Universidad de Chile
-Le crédit et les banques
-Revue du progrès
-Letter to Harriet Mill
-Actualité de l'histoire sociale des idées politiques
-The 1848 Revolutions and European Political Thought
-The Cambridge History of Nineteenth-Century Political Thought
-Historia política de Chile, 1810-2010
-Andrés Bello
-Journeys Toward Progress
-Chile's monetarist money doctors, 1850--1988
-Money Doctors
-Les conditions sociales de la circulation internationale des idées
-Quand les socialistes inventaient l'avenir
-Un jeudi à l'Assemblée
-Histoire de la Révolution de 1848
-Pages d'histoire de la révolution de février 1848
-La révolution de février au Luxembourg
-Proyecto de Código Civil
-Gramática de la lengua castellana
-Charles Fourier
-La mesa de tres patas
-La política económica de Chile, 1810-64
-What is Intellectual History?
-Chile: The Making of a Republic, 1830--1865
-Intellectual History and the History of Economics
-Hiring a Foreign Expert
-Historical Dictionary of France from the 1815 Restoration to the Second Empire
-The Street Porter and the Philosopher
-Cours complet d'économie politique pratique
-The Neglect of the French Liberal School in Anglo-American Economics
-What Social Classes Owe to Each Other
-1848, ou l'apprentissage de la République
-How to Take Smart Notes
-Getting Things Done
-Soy profesor/a, Aprender a enseñar
-Memory Machines
-The Ethics of Management Research
-Professors as Writers
-L'histoire des sciences
-Les économistes, le pouvoir politique et l'ordre social en France en 1830 et 1851
-L'économie politique en France au XIXe siècle
-Liberalismo económico y expertos internacionales en su encuentro con América Latina
-Histoire des idées socialistes en France
-Le crédit et la banque
-Compte rendu de « Manuel d’économie politique » par Peshine Smith
-Traité théorique et pratique des opérations de banque
-Compte rendu de « Traité théorique et pratique des opérations de banque » par Jean-Gustave Courcelle-Seneuil
-La Chine et les colonies européennes de l’Océan indien
-Compte rendu de « Traité théorique et pratique d'économie politique » par M. Boccardo
-Du revenu foncier
-Compte rendu de « Recherches historiques sur les douanes dans l'antiquité » par Paul de Lajonkaire
-Crise commerciale aux États-Unis
-Études sur la théorie de l’intérêt
-Études sur la théorie de l’intérêt (suite et fin)
-Correspondance
-Discurso pronunciado por don Juan Gustavo Courcelle Seneuil en su incorporación en la Facultad de Filosofía i Humanidades de la Universidad de Chile
-Crise économique au Chili
-Compte rendu de « Question monétaire : Description et usages du mode de payement par chèques, etc. » par M. Jules Lechevalier Saint-André
-Application de la science économique dans les fonctions réservées à l’initiative des particuliers
-La economía política
-Difficultés monétaires aux Antilles françaises
-Rapport de M. Passy à l'Académie des sciences morales et politiques sur l'ouvrage de M. Courcelle-Seneuil
-D’une application contestée du principe de la propriété
-Des rapports de l’économie politique avec la morale et avec le droit
-Compte rendu de « De la liberté » par John Stuart Mill
-Compte rendu de trois publications nouvelles de M. Boccardo
-Des billets de la banque de Bologne
-Compte rendu de « Monnaie universelle » par Alexander Tefft
-Economía política
-Études sur la science sociale
-La science sociale et l’économie politique
-De la nécessité d’enseigner l’économie politique dans les écoles de droit
-Études sur la consommation des richesses
-Compte tenu de « Travail et liberté : Études critiques d'économie sociale » par M. Th. Mannequin
-Compte rendu de « Estudios económicos y administrativos sobre Chile, desde 1856 hasta 1864 » par Manuel Miguel
-De la liberté des banques (2e article)
-Compte rendu de « Utilitarianism » par John Stuart Mill
-Compte rendu de « Bank monopoly the cause of commercial crises » par Georges Guthrie
-La banque libre
-Liberté et socialisme
-L’Héritage de la révolution
-Précis de morale rationnelle
-Situation et perspectives de l’économie politique
-Protection et libre-échange
-Préparation à l’étude du droit
-La Société moderne
-Conduite de la vie civilisée
-Importando modernidad
-Economía política clásica y pauperismo
-Daily Rituals
-Historiciser l'action publique
-L'institution du travail
-The Mechanization of the World Picture
-Homo æqualis I
-Introdução a Pachukanis
-The Official Guide to the \textsc{gre} General Test
-Interview and Q&A with Sönke Ahrens on How to Take Smart Notes
-Naissance de la biopolitique
-Republicanism and political economy in Pagnerre's Dictionnaire politique (1842)
-Courcelle - Seneuil en Chile
-El balanceador
-La fabrique moléculaire du genre
-Une marchandise scientifique?
-Note-taking for Consecutive Interpreting
-Warum haben Sie keinen Fernseher, Herr Luhmann?
-Les controverses autour du travail en 1848
-Intellectual Founders of the Republic
-The Interpreter's Handbook
-The Archaeology of Money
-La recepción de Courcelle-Seneuil, seguidor de Tocqueville, en Chile
-Scienza e storia
-What Judges Should Know About the Sociology of Science
-A Treatise on Money
-Paper Machines
-Paper as Passion
-Bird by Bird
-Communicating with Slip Boxes
-Learning How to Read
-William Stanley Jevons and the Making of Modern Economics
-El economista Courcelle-Seneuil en el periodo fundacional de la economía como disciplina en Chile
-Plaidoyer pour une histoire sociale des idées politiques
-Letter to Jean-Gustave Courcelle-Seneuil
-More Heat than Light
-Science-Mart
-Fecund, Cheap and Out of Control
-Deep Work
-Teoria geral do direito e marxismo
-Historia Intelectual, Historia Conceptual
-Informe verbal sobre "Lecciones elementales de economía política"
-Aprendizaje de segundas lenguas
-La philosophie, un « objet » pour le sociologue ?
-Douze leçons sur l'histoire
-The Other Side of the Coin
-Representations of the Intellectual
-Compte rendu de « Traité théorique des entreprises industrielles, commerciales et agricoles, ou Manuel des affaires » par M. Courcelle-Seneuil
-Question de l’or
-Si les capitaux sont plus abondants en Angleterre, et pourquoi?
-Des fondements du droit de propriété
-Les questions économiques et l'enseignement de l'économie politique au Chili
-Les arts agissant sur l'homme sont-ils productifs de richesse?
-Sur la limitation des émissions de billets par les banques
-Sur le rapport entre le prix des subsistances et le prix du travail
-Monopole des agents de change
-Rational Choice and the Structure of the Environment
-Theories of Decision-Making in Economics and Behavioral Science
-Heuristic Problem Solving
-Visions of Politics
-Meaning and understanding in the history of ideas
-Motives, intentions and interpretations
-Interpretation and the understanding of speech acts
-`Social meaning' and the interpretation of social action
-Quentin Skinner
-Le Parti Républicain au coup d’état et sous le Second Empire
-L'identité économique de la France
-Common LISP
-The Introduction of Classical Economics into Chile
-Le travail et ses valeurs
-Le travail, sciences et société
-Modern Money Theory
-Herbert Simon
-Jean-Gustave Courcelle-Seneuil (1813--1892)
-Inflation in Chile
-Las utopías sociales en América Latina en el siglo XIX
-Necrolojía de Don Juan Gustavo Courcelle Seneuil
-Necrolojías: Don Juan Gustavo Courcelle Seneuil
-Jean-Gustave Courcelle-Seneuil Papers
-Lettres à Édouard sur les révolutions
-Traité théorique et pratique d'économie politique
-Grand Chêne, Bex
-Bancos de circulación
-Estudios sobre la crisis económica
-The Democracy Makers
-``Cosechando antes de la siembra''
-Historia del pensamiento económico en Chile, 1790-1970
-L'intervention des pouvoirs publics dans le contrat de travail
-Financiers, philanthropes
-Conferencias sobre historia económica de Colombia
-La Société des Amis du Peuple
-Principes d'économie politique
 Marx
+Principes d'économie politique
+La Société des Amis du Peuple
+Conferencias sobre historia económica de Colombia
+Financiers, philanthropes
+L'intervention des pouvoirs publics dans le contrat de travail
+Historia del pensamiento económico en Chile, 1790-1970
+``Cosechando antes de la siembra''
+The Democracy Makers
+Estudios sobre la crisis económica
+Bancos de circulación
+Grand Chêne, Bex
+Traité théorique et pratique d'économie politique
+Lettres à Édouard sur les révolutions
+Jean-Gustave Courcelle-Seneuil Papers
+Necrolojías: Don Juan Gustavo Courcelle Seneuil
+Necrolojía de Don Juan Gustavo Courcelle Seneuil
+Las utopías sociales en América Latina en el siglo XIX
+Inflation in Chile
+Jean-Gustave Courcelle-Seneuil (1813--1892)
+Herbert Simon
+Modern Money Theory
+Le travail, sciences et société
+Le travail et ses valeurs
+The Introduction of Classical Economics into Chile
+Common LISP
+L'identité économique de la France
+Le Parti Républicain au coup d’état et sous le Second Empire
+Quentin Skinner
+`Social meaning' and the interpretation of social action
+Interpretation and the understanding of speech acts
+Motives, intentions and interpretations
+Meaning and understanding in the history of ideas
+Visions of Politics
+Heuristic Problem Solving
+Theories of Decision-Making in Economics and Behavioral Science
+Rational Choice and the Structure of the Environment
+Monopole des agents de change
+Sur le rapport entre le prix des subsistances et le prix du travail
+Sur la limitation des émissions de billets par les banques
+Les arts agissant sur l'homme sont-ils productifs de richesse?
+Les questions économiques et l'enseignement de l'économie politique au Chili
+Des fondements du droit de propriété
+Si les capitaux sont plus abondants en Angleterre, et pourquoi?
+Question de l’or
+Compte rendu de « Traité théorique des entreprises industrielles, commerciales et agricoles, ou Manuel des affaires » par M. Courcelle-Seneuil
+Representations of the Intellectual
+The Other Side of the Coin
+Douze leçons sur l'histoire
+La philosophie, un « objet » pour le sociologue ?
+Aprendizaje de segundas lenguas
+Informe verbal sobre "Lecciones elementales de economía política"
+Historia Intelectual, Historia Conceptual
+Teoria geral do direito e marxismo
+Deep Work
+Fecund, Cheap and Out of Control
+Science-Mart
+More Heat than Light
+Letter to Jean-Gustave Courcelle-Seneuil
+Plaidoyer pour une histoire sociale des idées politiques
+El economista Courcelle-Seneuil en el periodo fundacional de la economía como disciplina en Chile
+William Stanley Jevons and the Making of Modern Economics
+Learning How to Read
+Communicating with Slip Boxes
+Bird by Bird
+Paper as Passion
+Paper Machines
+A Treatise on Money
+What Judges Should Know About the Sociology of Science
+Scienza e storia
+La recepción de Courcelle-Seneuil, seguidor de Tocqueville, en Chile
+The Archaeology of Money
+The Interpreter's Handbook
+Intellectual Founders of the Republic
+Les controverses autour du travail en 1848
+Warum haben Sie keinen Fernseher, Herr Luhmann?
+Note-taking for Consecutive Interpreting
+Une marchandise scientifique?
+La fabrique moléculaire du genre
+El balanceador
+Courcelle - Seneuil en Chile
+Republicanism and political economy in Pagnerre's Dictionnaire politique (1842)
+Naissance de la biopolitique
+Interview and Q&A with Sönke Ahrens on How to Take Smart Notes
+The Official Guide to the \textsc{gre} General Test
+Introdução a Pachukanis
+Homo æqualis I
+The Mechanization of the World Picture
+L'institution du travail
+Historiciser l'action publique
+Daily Rituals
+Economía política clásica y pauperismo
+Importando modernidad
+Conduite de la vie civilisée
+La Société moderne
+Préparation à l’étude du droit
+Protection et libre-échange
+Situation et perspectives de l’économie politique
+Précis de morale rationnelle
+L’Héritage de la révolution
+Liberté et socialisme
+La banque libre
+Compte rendu de « Bank monopoly the cause of commercial crises » par Georges Guthrie
+Compte rendu de « Utilitarianism » par John Stuart Mill
+De la liberté des banques (2e article)
+Compte rendu de « Estudios económicos y administrativos sobre Chile, desde 1856 hasta 1864 » par Manuel Miguel
+Compte tenu de « Travail et liberté : Études critiques d'économie sociale » par M. Th. Mannequin
+Études sur la consommation des richesses
+De la nécessité d’enseigner l’économie politique dans les écoles de droit
+La science sociale et l’économie politique
+Études sur la science sociale
+Economía política
+Compte rendu de « Monnaie universelle » par Alexander Tefft
+Des billets de la banque de Bologne
+Compte rendu de trois publications nouvelles de M. Boccardo
+Compte rendu de « De la liberté » par John Stuart Mill
+Des rapports de l’économie politique avec la morale et avec le droit
+D’une application contestée du principe de la propriété
+Rapport de M. Passy à l'Académie des sciences morales et politiques sur l'ouvrage de M. Courcelle-Seneuil
+Difficultés monétaires aux Antilles françaises
+La economía política
+Application de la science économique dans les fonctions réservées à l’initiative des particuliers
+Compte rendu de « Question monétaire : Description et usages du mode de payement par chèques, etc. » par M. Jules Lechevalier Saint-André
+Crise économique au Chili
+Discurso pronunciado por don Juan Gustavo Courcelle Seneuil en su incorporación en la Facultad de Filosofía i Humanidades de la Universidad de Chile
+Correspondance
+Études sur la théorie de l’intérêt (suite et fin)
+Études sur la théorie de l’intérêt
+Crise commerciale aux États-Unis
+Compte rendu de « Recherches historiques sur les douanes dans l'antiquité » par Paul de Lajonkaire
+Du revenu foncier
+Compte rendu de « Traité théorique et pratique d'économie politique » par M. Boccardo
+La Chine et les colonies européennes de l’Océan indien
+Compte rendu de « Traité théorique et pratique des opérations de banque » par Jean-Gustave Courcelle-Seneuil
+Traité théorique et pratique des opérations de banque
+Compte rendu de « Manuel d’économie politique » par Peshine Smith
+Le crédit et la banque
+Histoire des idées socialistes en France
+Liberalismo económico y expertos internacionales en su encuentro con América Latina
+L'économie politique en France au XIXe siècle
+Les économistes, le pouvoir politique et l'ordre social en France en 1830 et 1851
+L'histoire des sciences
+Professors as Writers
+The Ethics of Management Research
+Memory Machines
+Soy profesor/a, Aprender a enseñar
+Getting Things Done
+How to Take Smart Notes
+1848, ou l'apprentissage de la République
+What Social Classes Owe to Each Other
+The Neglect of the French Liberal School in Anglo-American Economics
+Cours complet d'économie politique pratique
+The Street Porter and the Philosopher
+Historical Dictionary of France from the 1815 Restoration to the Second Empire
+Hiring a Foreign Expert
+Intellectual History and the History of Economics
+Chile: The Making of a Republic, 1830--1865
+What is Intellectual History?
+La política económica de Chile, 1810-64
+La mesa de tres patas
+Charles Fourier
+Gramática de la lengua castellana
+Proyecto de Código Civil
+La révolution de février au Luxembourg
+Pages d'histoire de la révolution de février 1848
+Histoire de la Révolution de 1848
+Un jeudi à l'Assemblée
+Quand les socialistes inventaient l'avenir
+Les conditions sociales de la circulation internationale des idées
+Money Doctors
+Chile's monetarist money doctors, 1850--1988
+Journeys Toward Progress
+Andrés Bello
+Historia política de Chile, 1810-2010
+The Cambridge History of Nineteenth-Century Political Thought
+The 1848 Revolutions and European Political Thought
+Actualité de l'histoire sociale des idées politiques
+Letter to Harriet Mill
+Revue du progrès
+Le crédit et les banques
+Anales de la Universidad de Chile
+Actas del consejo de la universidad
+Convirtiéndose en Foucault
+Documentos oficiales : Delegación universitaria
+Probate record of Jean-Gustave Courcelle-Seneuil
+Nécrologie : J.-G. Courcelle-Seneuil
+Courcelle-Seneuil
+Réfutation des quatre articles du Dictionnaire politique sur le Babouvisme, la Communauté, l'Association et la Propriété)
+Nécrologie : Léopold Courcelle-Seneuil
+La ``Révolution économique'' au Chili
+Une installation
+Jean-Gustave Courcelle-Seneuil, un libéral authentique
+British Mail Steamers to South America, 1851-1965
+Carte des anciens arrondissements de Paris
+Pensar la revolución
+Hoteles emblemáticos de Panamá
+Introdução ao estudo do direito
+Épisode 2 : La Loi du travail
+La Historia de Ideas y sus Críticos
+La Escuela de Cambridge
+Manufacturing Consent
+Daniel Mendoza arremete fuertemente contra Andrés Escobar
+The Big Idea: Interview with Noam Chomsky
+Simulador de cuota: Convocatoria 2020
+La crisis comercial de 1861 i sus remedios
+Revista del Pacífico
+Memoria sobre la moneda de Chile
+Teoría y praxis de las reformas fiscales en Chile (1810-1840)
+Revista de Ciencias i Letras
+Tratado teórico i práctico de economía política
+La Fundación de la Universidad de Chile y de la Universidad Católica de Chile
+Formación de élites y Educación Superior en Iberoamérica (SS. \textsc{xvi-xxi})
+La independencia y sus cadenas
+Proyectos de la élite chilena del siglo XIX (I)
+Élites chilenas del siglo XIX. Historiografía
+Élites, pobladores y educación superior en Chile
+Clases medias chilenas y transgresión de la homogamia
+Clases dominantes y desarrollo desigual
+Yves Guyot
+Laissons Faire
+La banque libre au Chili
+Nécrologie
+Deuils
+Formar al hombre de estado
+Traité théorique et pratique des entreprises industrielles, commerciales et agricoles
+Notions préliminaires de comptabilité
+Examen comparativo de la tarifa i lejislación aduanera de Chile
+Cours de comptabilité
+Dossiers biographiques Boutillier du Retail
+Traité élémentaire de comptabilité
+Dictionnaire politique encyclopédique du langage et de la science politiques
+Traité théorique et pratique des Entreprises industrielles, commerciales et agricoles, ou Manuel des Affaires
+Finance Capital and Fascist Trends in the United States
+The Communist
+The Threat of Fascism in the United States
+Reform, Abolition, and Decoloniality
+Quand un économiste français fascinait les gestionnaires allemands (1868-1914)
+Le risque chez Courcelle-Seneuil
+Critical Theory, colonialism, and the historicity of thought
+L'Institut d'histoire sociale, une officine anti-sociale
+Fascism: Now You See It, Now You Don’t!
+Foucault: The Faux Radical
+Foucault, Anti-communism \& the Global Theory Industry
+The Money Doctor in the Andes
+El Sistema Monetario i la Organización Bancaria de Chile
+Seis años de política monetaria
+Variaciones monetarias, impulso urbano y salarios en Santiago en la segunda mitad del siglo XVIII
+Historia de las doctrinas económicas en América y en especial en Chile
+Ensayo sobre la naturaleza del papel-moneda bajo su aspecto histórico y económico-monetario
+Los ideales nacionalistas ante el doctrinarismo de nuestros partidos políticos históricos
+Le papier-monnaie
+De la liberté des banques
+Monetary Inflation in Chile
+Ensayistas proteccionistas del siglo XIX
+La démographie des firmes industrielles en France (1973-1980)
+El liberalismo económico de Jean Gustave Courcelle-Seneuil
+Manuel des affaires
+Présentation
+Le « Manuel des affaires » ou comment devenir un bon entrepreneur
+Políticas y teorías monetarias en Chile
+Mercaderes, empresarios y capitalistas
+La revolución capitalista de Chile
+Informe sobre el estado de la hacienda pública en 1.º de octubre de 1861
+Estado e forma política
+Le Chili et la France
+Francisation et francomanie en Amérique latine
+Courcelle-Seneuil, article nécrologique, par Don Diégo Barros Arana
+Free and Not So Free Banking Theories among the Classicals; or, Classical Forerunners of Free Banking and Why They Have Been Neglected
+Credit and State Theories of Money
+Concepts of Money
+Keynes's theories of money and banking in the \textit{Treatise} and \textit{The General Theory}
+A lost century in economics
+Financial Markets, Money and Banking
+Les fondements de la théorie bancaire
+The Nature of Money
+What is Money?
+Controversies in Monetary Economics
+The Forms of Capital
+Ökonomisches Kapital, kulturelles Kapital, soziales Kapital
+Debt
+La Monnaie
+La violence de la monnaie
+Macroeconomics
+Money and Credit in Capitalist Economies
+Labor in the Ancient World
+How the Organization of Labor shaped Civilization’s Takeoff
+Modern Monetary Theory and Practice
+Michel Aglietta, La monnaie, entre dettes et souveraineté
+Michel Aglietta, Dettes crises monétaires et financières
+Michel Aglietta, Des crises monétaires aux crises financières
+A Financial History of Western Europe
+The Ascent of Money
+The Structure of Everyday Life
+The Wheels of Commerce
+The Perspective of the World
+History of Economic Analysis
+Theorie der wirtschaftlichen Entwicklung
+Treatise on Money
+Sociologie des intellectuels
+Local Subversions of Colonial Cultures
+Nine Lives of Neoliberalism
+Le raisonnement sociologique
+El sociólogo y el historiador
+Money, Bank Credit, and Economic Cycles
+Dinero, crédito bancario y ciclos económicos
+Introduction à une sociologie critique
+La monnaie et ses mécanismes
+Monnaie, État et Production
+La genèse de la monnaie
+Monnaie et monnaies
+Théories françaises de la monnaie
+Histoire des doctrines relatives au crédit et à la monnaie
+Les archives diplomatiques français
+Ambassades, consulats, réseau culturel et de coopération (XVIe-XXe siècles)
+Centre des Archives diplomatiques de Nantes
+État général des fonds
+Santiago du Chili
+Le goût de l'archive
+Archives \& Culture
+La Faculté de droit de Paris à l'époque où Boissonade y faisait ses études
+Progrès et développement économique au Chili durant la République conservatrice (1830-1861)
+La política fiscal en Chile
+De l’usage de la « crise » dans les essais de vulgarisation d’histoire économique au Chili (1860-1960)
+Economic Nationalism and Tax Reform in Late Nineteenth Century Chile
+Les traditions économiques françaises
+Some Aspects of the Development of Economic Thought in Chile, ca. 1778-1878
+Histoire de la pensée managériale
+Compte rendu de ``La société moderne'' par J.-G. Courcelle-Seneuil
+El Sentimiento Aristocrático
+Dossier de décoration de la Légion d'honneur à Jean-Gustave Courcelle-Seneuil
+Le journal d'un parlementaire
+Das Kapital
+Compte rendu de ``Traité d'économie politique, Vol. 2'' de M. Courcelle-Seneuil
+Compte rendu de ``Traité d'économie politique, Vol. 1'' de M. Courcelle-Seneuil
+Officiers et anciens élèves
+Registre de naissance de Jean-Léopold Courcelle-Seneuil
+Registre du mariage entre Jean-Léopold Courcelle-Seneuil et Jeanne Minier
+Atsina
+Le travail ancien et moderne
+Héraclès
+Fiche : Jean-Léopold Courcelle-Seneuil
+Libertad y socialismo
+Lanzamiento | "Libertad y socialismo" de Jean Gustave Couercelle-Seneuil
+El liberalismo moderado chileno
+Securité, territoire, population
+Un sage au XIXe siècle
+Bibliographie Jean-Gustave Courcelle-Seneuil
+Esquisse d'une théorie de la pratique
+Le bal des célibataires
+Science de la science et réflexivité
+Émanciper le travail
+Latinoamérica desde la economía
+Dossier de décoration de la Légion d'honneur à Jean-Léopold Courcelle-Seneuil (frère)
+Dossier de décoration de la Légion d'honneur à Jean-Léopold Courcelle-Seneui
+Lettre à Ramón Briceño
+Capital cultural, escuela y espacio social
+Things I wish I knew when I started my PhD\ldots
+cuzproduces.com
+Política liberal y modernización económica
+Writing Without Teachers
+Dictionnaire Bourdieu
+Pierre Bourdieu et la théorie du monde social
+HTML \& CSS
+L'épistémologie française, 1830--1970
+La construction d'objet
+La Distinction
+Cuneiform Texts and the Writing of History
+Or et monnaie dans l'histoire
+L'ancien droit considéré dans ses rapports avec l'histoire de la société primitive et avec les idées modernes
+Ancient Law
+Des devoirs respectifs des classes de la société
+Gérer \& comprendre
+Un pionnier oublié de la gestion des entreprises, Courcelle-Seneuil
+Partida de bautismo de Carlos Alberto Rivera Suárez
+Registro civil de matrimonio de Carlos Alberto Rivera Suárez con Rosa Patricia Carreño Estupiñán
+Registro civil de nacimiento de Carlos Alberto Rivera Suárez
+Partida de matrimonio de Carlos Alberto Rivera Suárez con Rosa Patricia Carreño Estupiñán
+Partida de matrimonio de Jesús María Rivera Álvarez con Aliria Suárez Gutiérrez
+Partida de bautismo de Aliria Suárez Gutiérrez
+Partida de bautismo de María Jesús Gutiérrez Rincón
+Partida de matrimonio de Rafael Ángel Suárez Muñoz con María Jesús Gutiérrez Rincón
+Partida de defunción de Matías Gutiérrez Toro
+Partida de bautismo de Matías Gutiérrez Toro
+Partida de matrimonio de Matías Gutiérrez Toro con María Petronila Rincón
+Partida de defunción de María Micaela Toro Cardona
+Partida de matrimonio de Valerio Gutiérrez Pérez con María Micaela Toro Cardona
+Partida de bautismo de María Micaela Toro Cardona
+Partida de bautismo de Pedro José Toro Ospina
+Partida de matrimonio de Pedro José Toro Ospina con María Rita Cardona Pérez
+Partida de confirmación de Francisco Javier Toro López
+Partida de matrimonio de Francisco Javier Toro López con Juana María del Rosario Ospina Valencia
+Partida de defunción de Francisco Javier Toro López
+Partida de defunción de José Santiago Toro Duque
+Testamento de Cristóbal de Toro Zapata Herrera
+Índice del Archivo Histórico del Municipio de Marinilla
+Partida de bautismo de Cristóbal Toro Zapata Herrera
+Partida de defunción de Cristóbal Toro Zapata Herrera
+Partida de bautismo de José Toro Zapata Guerra Peláez
+Partida de matrimonio de José Toro Zapata Guerra Peláez con María Herrera Benítez Colmenares
+Y fui casado y velado según orden de nuestra santa madre iglesia
+Partida de defunción del Depositario Cristóbal Toro Zapata
+Cristóbal de Toro Zapata: Título de alférez de la compañía de infantería española de la villa de Medellín que le otorga el tesorero Juan de Alzate, capitán de dicha compañía
+Abejorral, Parroquia Nuestra Señora del Carmen: Defunciones, vol 1-7
+Itinerario racial
+Familias de Antioquia
+Testamento de Hilario López Cano
+Inventarios de algunos archivos locales de Colombia en los departamentos de Santander, Norte de Santander, Antioquia y Cundinamarca
+Censo de 1786 del Retiro, Antioquia
+Résumés annuels
+La naturalisation de l’économie dans le roman du XIXe siècle
+La fictionnalisation de l’argent au XIXe siècle ou l’invention d’un sous-genre romanesque
+Introduction : Économie et littérature
+La Littérature au prisme de l’économie
+Épitre à M. X.
+Courcelle-Seneuil (Jean-Gustave)
+Guerre de l'Espagne au Chili
+Jean-Gustave Courcelle-Seneuil
+Oficio para dar ejecución a la demanda interpuesta por Salvador Nepomuceno Gómez a Santiago de Toro
+Solicitud para averiguar el destino de dos réos prófugos: Emigdio Toro y Vicente Sánchez
+Mortuoria de Ylario López, vecino del valle de Rionegro, casado con María Arias y fallecido en 1755
+Sobre reconocimiento de censo a favor de las monjas de Santa Clara de Bogotá
+The Role of the State and the Hierarchy of Money
+The Classification of Money
+Bank Money
+Understanding Modern Money
+Money and Taxes
+Notice sur la vie et les travaux de M. J.-G. Courcelle-Seneuil
+The Credit Theory of Money
+What is Money
+The Emergence of Capitalist Credit Money
+Conclusion
+Theories of Money and Banking
+Do Taxes and Bonds Finance Government Spending?
+Can Taxes and Bonds Finance Government Spending?
+‘Babylonian madness’
+Historical Ontology
+Les ultra-libéraux : Charles Dunoyer, Frédéric Bastiat, Joseph Garnier, Jean-Gustave Courcelle-Seneuil
+La monnaie, le crédit et la banque en France
+Jean-Baptiste Say, 1767--1832
+Introduction
+Registro civil de nacimiento de Carlos Alberto Rivera Carreño
+Registro civil de nacimiento de Andrea Carolina Rivera Carreño
+Registro civil de nacimiento de Juan Felipe Rivera Carreño
+Registro civil de matrimonio de Carlos Alberto Rivera Carreño con Min Jung Choi
+La sociologie de Bourdieu
+Liberalismo y poder
+Misiones económicas en Chile
+Introducción general
+Los aspectos económicos de la independencia chilena, 1780-1840
+Introducción
+Desigualdad y salarios en perspectiva histórica
+Evolución del impuesto al ingreso en Chile
+De nuestra inferioridad económica
+Estudios económicoss
+Tratado de economía políticas
+Estudio sobre la organización económica i la hacienda pública de Chile
+Tratado elemental de economía política
+La refonte des monnaies de cuivre
+Ontology and the study of social reality
+The ontology of money
+Further reflections on the ontology of money
+In defence of the nominalist ontology of money
+Money, Social Ontology and Law
+The Economic World View
+Economic ontology: what? why? how?
+Language and social ontology
+Social positioning and the nature of money
+Money: What It Is and What It Should Be
+Reflections on the Ontology of Money
+Archivos del siglo XVIII, XIX, XX en el Municipio de Sonsón
+Registre de naissance de Jean-Gustave Courcelle-Seneuil
+Registre de naissance de Jean-Léopold Courcelle-Seneuil (frère)
+Registre de mariage de Jean Courcelle-Seneuil avec Marguerite Aspasie Aubin Descourade
+Registre de décès de Jean Courcelle-Seneuil
+Registre de naissance de Jean Courcelle-Seneuil
+Registre de naissance de Margueritte Aubin Descourade
+Registre de naissance de Margueritte Aubin Descourade II
+Registre de mariage de Pierre Aubin Descourades avec Marie Chastenent Duvigneaud
+Registre de mariage de Jean Chastenet Duvigneaud avec Margueritte Courcelle
+Registre de mariage de Jean Courcelle Ducluzeau avec Françoise L'hoste
+Joseph Massé et le jardin de botanique de l'école centrale de Périgueux
+Pierre Pontard, Évêque constitutionnel sour la Révolution
+Sonsón
+Monografía Histórica de Sonsón
+Crónicas de Sonsón
+Monografía Histórica de Sonsón (digitalizada)
+Sonsón en MCMXVII
+Archivo Heriberto Zapata Cuéncar (1908-1982): Inventario
+Cómo se formó Sonsón
+El nacimiento de Sonsón
+Genealogías sonsoneñas
+(Re)conociendo la enseñanza económica en Chile
+La influencia de la cultura francesa en la educación chilena
+Desplazados y terratenientes en la colonización antioqueña del sur, 1780-1930
+Les « nobles citoyens » de Périgueux au XVIIIe siècle, suite II
+Les « Nobles citoyens » de Périgueux au XVIIIème siècle
+Le Périgord des nobles bourgeois du XVIIIe siècle
+Les « nobles citoyens » de Périgueux au XVIIIe siècle
+Répertoire numérique de la série C
+Programme du jury d'instruction publique du département de la Dordogne pour l'ouverture de son École centrale
+Essai des mathématiques, à l'École centrale du département de la Dordogne
+La América de J.V. Lastarria y las ideas de Courcelle-Seneuil
+Comentario a la teoría de Courcelle-Seneuil de J.V. Lastarria
+La teoría de Courcelle-Seneuil
+De Courcelle-Seneuil à Williamson, une même passion pour l'économie et la gestion
+Lettre à Diego Barros Arana
+Los comienzos de la historiografía económica de Chile
+La alteración de precios como fraude
+Relación entre valores y principios generales de derecho en la interpretación constitucional de los derechos fundamentales en Chile
+Epistolario
+Lettre à Andrés Bello
+The Progress of Economic Ideas in France
+Regulación y emergencia de los sistemas bancarios
+The Historiography of the Portalian Period (1830-1891) in Chile
+Dictionnaire des parlementaires d'Aquitaine sous la Troisième République
+Bulletin de la Société Historique et Archéologique du Périgord
+Joseph Massé et le jardin de botanique de l'école centrale de Périgueux (1795-1826)
+Les propriétés : Grand Chêne et Pelouse
+Bibliographie générale du Périgord
+The Monetary System of Chile
+Registre de décès de Margueritte Aspasie Aubin Descourade
+Récensement de la Dordgone, Commune de Vanxains
+Les massacres du Liban
+Dispensa de matrimonio: Santiago de Thoro de Arma-Rionegro y el matrimonio de su hijo Thomás de Toro con María Dionisia Duque
+Apuntes genealógicos
+Actas de la II Jornada de Historia de Llerena
+Registro de custodia: Testamento de Cristóbal de Toro Zapata
+España y América: Cultura y Colonización
+La familia conversa de Pedro León de Cieza
+Información matrimonial: Valeriano Gutiérrez y Micaela Toro
+Carta a Juan Antonio Mon y Velarde para la fundación de una colonia en el Valle de Sonsón
+Accaparement
+Accapareur
+Acte additionnel
+Adjudication
+Transcripción parcial del testamento de Cristóbal de Toro Zapata Herrera
+Lettre à Ignacio Domeyko
+The Prying Eyes of the Natural Scientist
+De la gangrene considérée sous le rapport de ses causes
+Employment Policy and the Value of the Currency
+La procynarnocupidomachie
+Situation du cours
+Fortunes particulières
+Imprimerie
+Féodalité
+...and forgive them their debts
+Dictionnaire universel théorique et pratique du commerce et de la navigation
+Dictionnaire de l'économie politique
+Commerce extérieur de la Grande-Bretagne en 1852
+Compte rendu de « Traité théorique et pratique des opérations de banque » par J.-G. Courcelle-Seneuil
+Journal des économistes
+D’une Banque d’échange fondée par M. Bonnard à Marseille
+La Condition ouvrière
+Aides
+Aides (Cours des)
+Altération des monnaies
+Assignats
+Budget
+Collecteur
+Collège
+Colonie
+Commerce
+Comptes
+Contentieux
+Contribution
+Corps
+Crise
+Dépenses
+Déportation
+Dime
+Don
+Douane
+Économie
+Économistes
+Épargne (Caisse d’)
+Exportation
+Faction
+Ferme générale
+Fisc
+Grains
+Histoire
+Industrie
+Inscription maritime
+Instruction publique
+Intendants
+Invalides
+Jurande
+Liberté commerciale
+Maîtrise
+Marine
+Maximum
+Monnaie
+Monopole. Monopoleur
+Mutation
+Navigation
+Oppression
+Ostracisme
+Ouvrier
+Pain
+Patente
+Paupérisme
+Péage
+Pénitentiaire
+Pensions
+Percepteur. Perception
+Population
+Préfet maritime
+Primaires (Écoles)
+Prisons
+Privilèges
+Prolétaire. Prolétariat
+Propriété
+Protecteur (Système)
+Prud’hommes
+Tours
+Kommunikation mit Zettelkästen
+Lettre de change
+Librairie
+Livrets d’ouvriers
+Lois agraires
+Lois somptuaires
+Luxe
+Noirot, (N. Jean-Étienne)
+Organisation du travail
+Papier-monnaie
+Postes
+Prestation
+Professions
+Profit
+Régie
+Revenu (Impôt du)
+Seigneuriage
+Système
+Taille
+Terre
+Trésor
+Vingtième
+Virement de parties
+Voitures publiques
+The Great Transformation
+Le Parti Républicain sous la monarchie de Juillet
+Salmigondis : Lettres à Édouard sur les Révolutions, par J. G. Courcelle Seneuil
+Littérature. --- Philosophie. : Lettres à Édouard sur les Révolutions ; par J. G. Courcelle-Seneuil
+De l’influence intellectuelle de la France sur l’Angleterre au 19e siècle
+GNU Emacs Lisp Reference Manual
+GNU Emacs Manual
+An Introduction to Programming in Emacs Lisp
+The biblatex Package
+Prendre ses médicaments / prendre la parole
+Effects of Control on Stability
+La France ouvrière
+Traité de sociologie du travail
+Le travail
+La Gouvernance par les nombres
+Labor in the Early States
+Encyclopédie du dix-neuvième siècle
+Nouvelles diverses : Louis Blanc et ses collaborateurs abandonnent la redaction du Bon Sens
+La 8e livraison du Dictionnaire politique paraît aujourd’hui
+Économie politique : Le crédit et la banque
+Le privilège de de la Banque de France
+Variétés : Le crédit et la banque par M. Courcelle-Seneuil
+Variétés : Dictionnaire politique
+Faits divers : Paris, 7 juillet 1848
+Un directeur-général
+Faits divers : 28 juillet 1848
+Cour d’assises de la Vienne (Poitiers) : Présidence de M. Bourgon de Layre
+Cour d’assises de Poitiers : Affaire des troubles de Limoges
+Juridiction criminelle : Cour d’assises de la Vienne (Poitiers)
+Paris 30 juillet : Aux démocrates !
+Revue des journaux : Le rapport de M. de Rémusat
+La monnaie d’or
+Séance de l'Assemblée législative
+Démonétisation de l’or
+Séance de l’Assemblée législative
+The Making of the English Working Class
+Meaning and Understanding in the History of Ideas
+Design for a Brain
+An Inquiry into the Nature and Causes of the Wealth of Nations
+Dispensas matrimoniales de Rionegro, Antioquia, Colombia
+Album de la colonie française au Chili
+Profils et biographies : Professeurs français
+Matrimonio incestuoso en el Medellín colonial 1700--1810
+Opúsculo sobre la hacienda pública de Chile
+Revue d'histoire et de prospective du management
+Notice sur Courcelle-Seneuil
+The Myth of the Machine
+Alain Desrosières
+Letter to Herbert Alexander Simon
+Macroeconomics of Unbalanced Growth
+L'art de la thèse
+The Machinery Question and the Making of Political Economy 1851--1848
+Albert Hirschman na América Latina e sua trilogia sobre desenvolvimento econômico
+Histoire d'une innovation
+Les Socialismes français, 1796-1866
+Turing's Man
+Conjurer la peur
+La spécificité du champ scientifique et les conditions sociales du progrès de la raison
+The History of the Calculus and its Conceptual Development
+Vlog 18
+Quelle épistémologie historique ?
+L'utopie de la communication
+Peripheral Vision
+Neoliberalism, capitalist class formation and the global network of corporations and policy groups
+Les métamorphoses de la question sociale
+Men, Machines, and Models
+Some Thoughts on Economists' Duels in Court
+Les économistes dans la cité au XXe siècle
+L'Ordre économique de la mondialisation libérale
+The Third Wave of Science Studies
+Droit et bon droit
+Un journal d'ouvriers
+Theoretic Models
+Le prophète, le pèlerin et le missionnaire
+Pour une sociologie historique de la quantification
+Gouverner par les nombres
+Mechanism, Organism, and Society
+Du sujet de droit à la citoyenneté du travail
+Du louage d'ouvrage au contrat de travail
+The Glorious Book
+The Closed World
+Creating the Computer
+Maurice Hauriou, constitutionnaliste (1856-1929)
+The Construction of a Global Profession
+The Superiority of Economists
+Les enjeux de la traduction
+Essays in Positive Economics
+L'Encyclopédie et le travail humain
+Foreword
+The Ontology of the Enemy
+Mechanization Takes Command
+Maastricht and All That
+The Computer
+Lousy and Lovely Jobs
+The Centrality of Mathematics in the History of Western Thought
+1848 la révolution oubliée
+Notes on the Theory of Organization
+Papers on the Science of Public Administration
+In an Ancient Game, Computing's Future
+«Au nom du peuple français»
+The Intellectuals and Socialism
+From The Sensory Order to the Liberal Order
+The Mechanical Mind in History
+Mémoires de l'Institut national des sciences et arts
+La modernité désenchantée
+The Historical Meanings of Work
+Travail, temps libre et socialisme
+History of Socialism
+Science in Action
+La science en action
+Histoire du travail et des travailleurs
+Quelle approche prosopographique ?
+Méthodes quantitatives pour l'historien
+Histoire des idées sociales en France
+Mechanical Reasoning
+The Image of Economics
+Engines of Discovery
+The Machinery of the Mind
+The Historical Epistemology of Economics
+The Cambridge Companion to Galileo
+Du marchandage dans la menuiserie
+Le débat sur l'organisation du travail en France
+Minds, Machines and Metaphors
+Le Capital
+On Governors
+Authority, Liberty \& Automatic Machinery in Early Modern Europe
+Principles of Political Economy
+Natural Images in Economic Thought
+Doing What Comes Naturally
+Economics, Science , and Knowledge
+Machine Dreams
+Naturalizing the Market on the Road to Revisionism
+Keynote for ``Life and Debt'' Conference
+The Road from Mont Pelèrin
+The Knowledge We Have Lost in Information
+Soft Currency Economics
+Seven Deadly Innocent Frauds of Economic Policy
+The Origins of the French Labor Movement
+La religion industrielle
+The Quest for Artificial Intelligence
+Work and Waste
+A History of the Work Concept
+The Metamorphosis of the Work Concept and its Incorporation into Economic Thought
+Conclusions
+The Metaphoric Circuit
+(Re)traductions
+Neoliberal Hegemony
+The Human Motor
+The Eclipse of the Utopias of Labor
+Metaphors of the Machine in the Post-Fordist Era
+Preface
+Les débuts de l'ergonomie en France à la veille de la Première Guerre mondiale
+Critical and Revolutionary Theory
+The Origins of American Social Science
+Economics
+La technique
+Work and Revolution in France
+Nouveaux principes d'économie politique
+Louis Blanc
+Critique du droit du travail
+La personne et la chose
+Identité
+La subordination et la liberté
+Le droit de travail
+Au-delà de l'emploi
+The Political Ideas of the Utopian Socialists
+Time, Work-Discipline, and Industrial Capitalism
+Des mots sur la grève
+Computing Machinery and Intelligence
+Les « sciences du travail »
+L'esprit d'ingénieur
+Le « travail physique » comme valeur mécanique (XVIIIe-XIXe siècles)
+Le produit de la nature et le temps des hommes
+Le sens de la MESURE
+Genèse de la notion de travail
+Le travail et les sciences de la nature
+Le travail saisi par l'économie politique
+Le travail et les sciences humaines
+L'homme face à la nature
+Organisation et rationalisation du travail
+Richesse des nations
+Informe verbal sobre “Lecciones elementales de economía política”
+L’esprit d’ingénieur
+Les débuts de l’ergonomie en France à la veille de la Première Guerre mondiale
+Le débat sur l’organisation du travail en France
+In an Ancient Game, Computing’s Future
+L’Encyclopédie et le travail humain
+Du louage d’ouvrage au contrat de travail
+Della libertà
+Un mundo ch’ixi es posible
+Proyecto de lei sobre creación de un Banco Nacional
+La formation du radicalisme philosophique
+Tableau de l’état physique et moral des ouvriers employés dans les manufactures de coton, de laine et de soie
+The \emph{ifthen} package
+Traité théorique et pratique d’économie politique
+Esquisse d’une politique rationnelle
+La morale et l’usage des richesses
+De l’inégalité des conditions sociales
+Essai de définition de la science sociale
+Les prétentions et les arguments des nouveaux protectionnistes
+Émile-Justin Menier, un chocolatier en République
+Pourquoi les économistes n’aiment pas le coopératisme
+Courcelle-Seneuil, Jean-Gustave (1813--1892)
+Séance du 7 Mars 1879
+Guyot, Yves Prosper
+Les parlementaires de la Seine sous la Troisième République
+La Ligue pour la défense des intérêts des contribuables et des consommateurs
+Le libre-échange et le protectionnisme en France
+Elementos de teneduria de libros y de contabilitad
+Tratado sumario de economía politica
+Tratado teórico y práctico de las operaciones de banca
+Projet de loi pour la conservation des monuments ou des objets ayant un intérêt historique ou artistique
+Les opérations de banque
+Jean-Gustave Courcelle-Seneuil 1813--1892
+Le Parti républicain sous la monarchie de Juillet
+Lettre à M. Blanqui sur la propriété
+Qu’est-ce que la propriété ? ou Recherches sur le principe du droit et du gouvernement
+Prefacio del traductor
+Agresión de España contra Chile
+Agression de l’Espagne contre le Chili
+Leçons élémentaires d’économie politique
+Traité sommaire d’économie politique
+Images des répertoires du notaire Henri François Grignon pour l’étude CII
+Éléments de l’économie politique
+E. Peshine Smith
+Étude sur le mandarinat français
+Préface
+Leçons d’économie politique
+Sulle opinioni di Vincenzo Gioberti intorno all’economia politica e alla questione sociale
+Nouveaux principes d’économie politique
+L’Ordre économique de la mondialisation libérale
+L’art de la thèse
+Historiciser l’action publique
+Principes d’économie politique
+Au-delà de l’emploi
+Un journal d’ouvriers
+Revue d’histoire et de prospective du management
+L’homme face à la nature
+Le travail saisi par l’économie politique
+Littérature. --- Philosophie. : Lettres à Édouard sur les Révolutions
+Dictionnaire de l’économie politique
+Joseph Massé et le jardin de botanique de l’école centrale de Périgueux (1795-1826)
+Dictionnaire des parlementaires d’Aquitaine sous la Troisième République
+De Courcelle-Seneuil à Williamson, une même passion pour l’économie et la gestion
+Essai des mathématiques, à l’École centrale du département de la Dordogne
+Programme du jury d’instruction publique du département de la Dordogne pour l’ouverture de son École centrale
+Joseph Massé et le jardin de botanique de l’école centrale de Périgueux
+Registre de mariage de Jean Courcelle Ducluzeau avec Françoise L’hoste
+Guerre de l’Espagne au Chili
+L’ancien droit considéré dans ses rapports avec l’histoire de la société primitive et avec les idées modernes
+Or et monnaie dans l’histoire
+Espacio social y espacio simbólico
+La construction d’objet
+L’épistémologie française, 1830--1970
+Dossier de décoration de la Légion d’honneur à Jean-Léopold Courcelle-Seneui
+Dossier de décoration de la Légion d’honneur à Jean-Léopold Courcelle-Seneuil (frère)
+Esquisse d’une théorie de la pratique
+Compte rendu de « Traité d’économie politique, Vol. 1 » de M. Courcelle-Seneuil
+Compte rendu de « Traité d’économie politique, Vol. 2 » de M. Courcelle-Seneuil
+Le journal d’un parlementaire
+Dossier de décoration de la Légion d’honneur à Jean-Gustave Courcelle-Seneuil
+Compte rendu de « La société moderne » par J.-G. Courcelle-Seneuil
+La Faculté de droit de Paris à l’époque où Boissonade y faisait ses études
+Le goût de l’archive
+Keynes’s theories of money and banking in the \textit{Treatise} and \textit{The General Theory}
+L’Institut d’histoire sociale, une officine anti-sociale
+La « Révolution économique » au Chili
+Réfutation des quatre articles du Dictionnaire politique sur le Babouvisme, la Communauté, l’Association et la Propriété)
+Actualité de l’histoire sociale des idées politiques
+Chile’s monetarist money doctors, 1850--1988
+Quand les socialistes inventaient l’avenir
+Un jeudi à l’Assemblée
+Pages d’histoire de la révolution de février 1848
+Cours complet d’économie politique pratique
+1848, ou l’apprentissage de la République
+L’histoire des sciences
+Les économistes, le pouvoir politique et l’ordre social en France en 1830 et 1851
+L’économie politique en France au XIXe siècle
+Compte rendu de « Traité théorique et pratique d’économie politique » par M. Boccardo
+Compte rendu de « Recherches historiques sur les douanes dans l’antiquité » par Paul de Lajonkaire
+Rapport de M. Passy à l’Académie des sciences morales et politiques sur l’ouvrage de M. Courcelle-Seneuil
+Compte tenu de « Travail et liberté : Études critiques d’économie sociale » par M. Th. Mannequin
+L’institution du travail
+Republicanism and political economy in Pagnerre’s Dictionnaire politique (1842)
+The Interpreter’s Handbook
+Douze leçons sur l’histoire
+Les questions économiques et l’enseignement de l’économie politique au Chili
+Les arts agissant sur l’homme sont-ils productifs de richesse?
+L’identité économique de la France
+“Cosechando antes de la siembra”
+L’intervention des pouvoirs publics dans le contrat de travail
+Revista de España
+La mujer bajo el aspecto económico
+Vlog 18: Note taking during a PhD
+Vlog 18: Note taking during a PhD
+Vlog 18: Note taking during a PhD
+Virtue, Commerce and History
+Virtue, Commerce and History
+Virtue, Commerce and History

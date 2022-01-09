@@ -98,10 +98,10 @@
  (rear-context-string . "Eles | têm    |\n")
  (position . 1687))
 ("here2"
- (filename . "~/.emacs.d/sync0/sync0-bibtex-functions.el")
- (front-context-string . "sref-entry\n     ")
- (rear-context-string . "ibtex-entry-cros")
- (position . 66438))
+ (filename . "~/Dropbox/bibliographies/bibliography.bib")
+ (front-context-string . "s},\n  date      ")
+ (rear-context-string . "te de tres parte")
+ (position . 600556))
 ("matonti"
  (filename . "~/Dropbox/notes/matonti2012.org")
  (front-context-string . "\n\n* 無 Conclusion")
@@ -233,8 +233,8 @@
  (rear-context-string . "\"init.el\"))))))\n")
  (position . 5443))
 ("here"
- (filename . "~/Dropbox/obsidian/20211227121001.md")
- (front-context-string . "   \n\n[^2]: Par e")
- (rear-context-string . "e intransigeant”")
- (position . 1233))
+ (filename . "~/Dropbox/bibliographies/bibliography.bib")
+ (front-context-string . "  title         ")
+ (rear-context-string . "alvá, Melchor},\n")
+ (position . 600431))
 )

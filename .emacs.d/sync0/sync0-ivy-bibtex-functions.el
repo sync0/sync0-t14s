@@ -173,10 +173,10 @@
 ;; those already defined.
 (ivy-add-actions
  'ivy-bibtex
- '(("p" ivy-bibtex-print-pdf-list "Print attachments with default printer" ivy-bibtex-print-pdf-list)
-   ("P" ivy-bibtex-copy-pdf-to-path-list "Copy attached pdf to target path" ivy-bibtex-copy-pdf-to-path-list)
-   ("R" ivy-bibtex-rewrite-notes-from-biblatex-data-list "Rewrite note metadata from Biblatex entry" ivy-bibtex-rewrite-notes-from-biblatex-data-list)
-   ("A" ivy-bibtex-archive-entries-list "Archive Biblatex entries" ivy-bibtex-archive-entries-list)
+ '(("z" ivy-bibtex-print-pdf-list "Print attachments with default printer" ivy-bibtex-print-pdf-list)
+   ("Z" ivy-bibtex-copy-pdf-to-path-list "Copy attached pdf to target path" ivy-bibtex-copy-pdf-to-path-list)
+   ("Y" ivy-bibtex-rewrite-notes-from-biblatex-data-list "Rewrite note metadata from Biblatex entry" ivy-bibtex-rewrite-notes-from-biblatex-data-list)
+   ("w" ivy-bibtex-archive-entries-list "Archive Biblatex entries" ivy-bibtex-archive-entries-list)
    ("x" ivy-bibtex-crop-pdf-list "Crop attachments using model cropbox" ivy-bibtex-crop-pdf-list)))
 
 (defun sync0-ivy-bibtex-with-local-bibliography ()

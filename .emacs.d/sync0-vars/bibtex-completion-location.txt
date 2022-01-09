@@ -1,89 +1,92 @@
-Buenos Aires
-Marinilla, Colombia
-Bucaramanga, Colombia
-Caracas
-Suisse
-Llerena, Badajoz
-Rennes
-Talence, France
-Bordeaux
-Indianapolis
-France
-Oxford, London, Glasgow
-Cheltenham, Northanmpton
-Baltimore
-New York, Boston
-Hampshire, New York
-Auburn
-Westport, Connecticut
-Göttingen
-Hants, Brookfield
-Callaghan, Australia
-Aalten, the Netherlands
-Santiago
-Oxford, New York
-Toronto, London
-Princeton
-Berlin
-nil
-Brooklyn and London
-Cheltenham, Northampton
-Paris
-Toulouse
-Bruxelles
-New York
-Oxon, New York
-Dresden
-Lormont
-London
-Cambridge, New York
-New York, Toronto, London
-Cambridge
-Boston
-Abingdon, New York
-Alicante
-Dordrecht, Heidelberg, New York, London
-Los Angeles
-Berlin, Heidelberg
-University of Technology Sydney
-Cambridge, London
-Baltimore and London
-Chicago, New York
-Bielefeld
-Durham, London
-Oxon
-Cambridge, New York, Melbourne
-Roma
-Genève
-London, New York
-Chicago
-Washington, D.C.
-United States
-Oxford
-Chapel Hill
-Stillwater, Oklahoma
-London, New York, Delhi
-Netherlands
-São Paulo
-España
-Madrid
-Redwood City, California
-Medellín
-Santiago de Chile
-Durham
-Chicago, Illinois, \textsc{USA}
-Paris, Bruxelles
-United States of America
-Chile
-Berkeley, Los Angeles, London
-Cambridge, Malden
-Chichester
-México, D.F.
-Rochefort
-Marseille
-Valparaíso
-Sonsón, Colombia
-Medellín, Colombia
-Périgueux, France
 Rionegro, Antioquia
+Périgueux, France
+Medellín, Colombia
+Sonsón, Colombia
+Valparaíso
+Marseille
+Rochefort
+México, D.F.
+Chichester
+Cambridge, Malden
+Berkeley, Los Angeles, London
+Chile
+United States of America
+Paris, Bruxelles
+Chicago, Illinois, \textsc{USA}
+Durham
+Santiago de Chile
+Medellín
+Redwood City, California
+Madrid
+España
+São Paulo
+Netherlands
+London, New York, Delhi
+Stillwater, Oklahoma
+Chapel Hill
+Oxford
+United States
+Washington, D.C.
+Chicago
+London, New York
+Genève
+Roma
+Cambridge, New York, Melbourne
+Oxon
+Durham, London
+Bielefeld
+Chicago, New York
+Baltimore and London
+Cambridge, London
+University of Technology Sydney
+Berlin, Heidelberg
+Los Angeles
+Dordrecht, Heidelberg, New York, London
+Alicante
+Abingdon, New York
+Boston
+Cambridge
+New York, Toronto, London
+Cambridge, New York
+London
+Lormont
+Dresden
+Oxon, New York
+New York
+Bruxelles
+Toulouse
+Paris
+Cheltenham, Northampton
+Brooklyn and London
+nil
+Berlin
+Princeton
+Toronto, London
+Oxford, New York
+Santiago
+Aalten, the Netherlands
+Callaghan, Australia
+Hants, Brookfield
+Göttingen
+Westport, Connecticut
+Auburn
+Hampshire, New York
+New York, Boston
+Baltimore
+Cheltenham, Northanmpton
+Oxford, London, Glasgow
+France
+Indianapolis
+Bordeaux
+Talence, France
+Rennes
+Llerena, Badajoz
+Suisse
+Caracas
+Bucaramanga, Colombia
+Marinilla, Colombia
+Buenos Aires
+Bologna
+Lyon
+Pierrefitte-sur-Seine
 
