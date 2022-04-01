@@ -56,23 +56,38 @@
 ;;                                    'face 'deft-summary-face)))
 ;;       (widget-insert "\n"))))
 
-(defhydra sync0-hydra-deft-functions (:color amaranth :hint nil :exit t)
-  "
-        ^Deft^
-        ^------------------
-        _n_: New file
-        _f_: Filter
-        _c_: Clear filter
-        _d_: Delete file
+;; (defhydra sync0-hydra-deft-functions (:color amaranth :hint nil :exit t)
+;;   "
+;;         ^Deft^
+;;         ^------------------
+;;         _n_: New file
+;;         _f_: Filter
+;;         _c_: Clear filter
+;;         _d_: Delete file
                                                    
-        [q] Quit
-             "
-  ("f" deft-filter)
-  ("c" deft-filter-clear)
-  ("n" deft-new-file)
-  ("d" deft-delete-file)
-  ("q" nil :color blue))
+;;         [q] Quit
+;;              "
+;;   ("f" deft-filter)
+;;   ("c" deft-filter-clear)
+;;   ("n" deft-new-file)
+;;   ("d" deft-delete-file)
+;;   ("q" nil :color blue))
 
-(evil-leader/set-key-for-mode 'deft-mode "z" 'sync0-hydra-deft-functions/body)
+;; (evil-leader/set-key-for-mode 'deft-mode "z" 'sync0-hydra-deft-functions/body)
+
+
+(major-mode-hydra-define deft-mode nil 
+  ("Filters"
+   (("f" deft-filter "Set filter")
+    ("a" deft-filter-increment "Add to filter")
+    ("r" deft-refresh "Refresh")
+    ("c" deft-filter-clear "Clear filter"))
+   "Files"
+   (("n" deft-new-file "New file")
+    ("s" deft-archive-file "Archive")
+    ("R" deft-rename-file "Rename")
+    ("F" deft-find-file "Find")
+    ("d" deft-delete-file "Delete file"))))
+
 
 (provide 'sync0-deft)

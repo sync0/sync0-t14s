@@ -36,3 +36,5 @@
    ;; ("E" sync0-org-export-headlines-to-latex)
    "Etc"
    (("a" sync0-define-local-abbrev "Define abbrev"))))
+
+(provide 'sync0-tex)

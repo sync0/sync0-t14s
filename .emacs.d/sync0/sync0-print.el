@@ -24,6 +24,9 @@
                         (read-string "Enter number of copies: " "1")))
         (page-size (concat " -o media="
                            (completing-read "Choose page size: " '("a4" "a5" "a6" "letter" "legal"))))
+        (page-list (unless (yes-or-no-p "Print all pages?")
+                     (concat " -P "
+                             (read-string "Page list (ex. 1-3 or 1,3): " ))))
         (page-per-sheet (let ((pages (read-string "Enter number of pages per sheet (max. 16): " "1")))
                           (if (string= pages "1")
                               nil
@@ -37,6 +40,8 @@
     (concat sync0-print-command
             copies
             page-size
+            (unless (null page-list)
+              page-list)
             (unless (null page-per-sheet)
               page-per-sheet)
             double-sided

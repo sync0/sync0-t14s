@@ -156,6 +156,11 @@
     (when (string-match ".+\\.bib"   (buffer-file-name))
       (sync0-bibtex-archive-entry key))))
 
+(defun bibtex-completion-add-key-to-pdf-list (keys)
+  "Print the PDFs of the entries with the given KEYS where available."
+    (dolist (key keys)
+        (sync0-bibtex-add-key-to-pdf key)))
+
 ;; Before being able to call custom functions from ivy-bibtex, these
 ;; have to be manually added to ivy-bibtex. 
 
@@ -169,6 +174,8 @@
 
 (ivy-bibtex-ivify-action bibtex-completion-archive-entries-list ivy-bibtex-archive-entries-list)
 
+(ivy-bibtex-ivify-action bibtex-completion-add-key-to-pdf-list ivy-bibtex-add-key-to-pdf-list)
+
 ;; This is the way to add actions to ivy-bibtex wituhout overwriting
 ;; those already defined.
 (ivy-add-actions
@@ -177,6 +184,7 @@
    ("Z" ivy-bibtex-copy-pdf-to-path-list "Copy attached pdf to target path" ivy-bibtex-copy-pdf-to-path-list)
    ("Y" ivy-bibtex-rewrite-notes-from-biblatex-data-list "Rewrite note metadata from Biblatex entry" ivy-bibtex-rewrite-notes-from-biblatex-data-list)
    ("w" ivy-bibtex-archive-entries-list "Archive Biblatex entries" ivy-bibtex-archive-entries-list)
+   ("K" ivy-bibtex-add-key-to-pdf-list "Add bibkeys to pdfs" ivy-bibtex-add-key-to-pdf-list)
    ("x" ivy-bibtex-crop-pdf-list "Crop attachments using model cropbox" ivy-bibtex-crop-pdf-list)))
 
 (defun sync0-ivy-bibtex-with-local-bibliography ()

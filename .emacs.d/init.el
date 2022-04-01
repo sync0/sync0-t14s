@@ -216,7 +216,7 @@
       (sync0-zettelkasten-fiche-types . "~/.emacs.d/sync0-vars/fiche-types.txt")))
 
   (defvar sync0-bibtex-entry-types
-    '("Article" "Book" "InBook" "InCollection" "Collection" "Unpublished" "Thesis" "Proceedings" "InProceedings" "Online" "Report" "Manual" "Misc")
+    '("Article" "MvBook" "Book" "InBook" "InCollection" "MvCollection" "Collection" "Unpublished" "Thesis" "MvProceedings" "Proceedings" "InProceedings" "Online" "Report" "Manual" "Misc")
     "List of Bibtex entry types")
 
   (defvar sync0-bibtex-crossref-types
@@ -224,15 +224,15 @@
     "List of Bibtex entry types")
 
   (defvar sync0-bibtex-fields
-    '("title" "subtitle" "eventtitle" "date" "origdate" "eventdate" "author" "journaltitle" "edition" "booktitle" "booksubtitle" "crossref" "chapter" "volume" "number" "series" "publisher" "location" "pages" "note" "doi" "url" "urldate" "language" "langid" "medium" "institution" "library" "related" "relatedtype" "file" "shorthand" "keywords")
+    '("title" "subtitle" "eventtitle" "date" "origdate" "eventdate" "author" "editor" "journaltitle" "edition" "booktitle" "booksubtitle" "crossref" "chapter" "volume" "number" "series" "publisher" "location" "pages" "note" "doi" "url" "urldate" "language" "langid" "medium" "institution" "library" "related" "relatedtype" "file" "shorthand" "keywords")
     "List of Bibtex entry fields")
 
   (defvar sync0-bibtex-full-fields
-    '("title" "subtitle" "date" "origdate" "author" "journaltitle" "booktitle" "booksubtitle" "translator" "crossref"  "eventdate" "eventtitle" "venue" "volume" "number" "chapter" "edition" "pages" "publisher" "location" "pages" "note" "url" "urldate" "language" "langid" "library" "file" "keywords")
+    '("title" "subtitle" "date" "origdate" "author" "editor" "journaltitle" "booktitle" "booksubtitle" "translator" "crossref"  "eventdate" "eventtitle" "venue" "volume" "number" "chapter" "edition" "pages" "publisher" "location" "pages" "note" "url" "urldate" "language" "langid" "library" "file" "keywords")
     "List of Bibtex entry fields")
 
   (defvar sync0-bibtex-quick-fields
-    '("title" "subtitle" "date" "author" "note" "url" "urldate" "language" "langid" "library" "file" "keywords")
+    '("title" "subtitle" "date" "author" "editor" "note" "url" "urldate" "language" "langid" "library" "file" "keywords")
     "List of Bibtex entry fields")
 
   (defvar sync0-bibtex-extract-fields
@@ -625,16 +625,16 @@ empty (not in the lisp sense but in a human-readable sense)."
   :bind
   ("M-SPC" . major-mode-hydra)
   :custom
-  (major-mode-hydra-invisible-quit-key "q")
-  :config
-  (setq major-mode-hydra-title-generator
-        '(lambda (mode)
-           (s-concat "\n"
-                     (s-repeat 10 " ")
-                     (all-the-icons-icon-for-mode mode :v-adjust 0.05)
-                     " "
-                     (symbol-name mode)
-                     " commands"))))
+  (major-mode-hydra-invisible-quit-key "q"))
+  ;; :config
+  ;; (setq major-mode-hydra-title-generator
+  ;;       '(lambda (mode)
+  ;;          (s-concat "\n"
+  ;;                    (s-repeat 10 " ")
+  ;;                    (all-the-icons-icon-for-mode mode :v-adjust 0.05)
+  ;;                    " "
+  ;;                    (symbol-name mode)
+  ;;                    " commands")))
 
 (use-package which-key
   :straight (which-key :type git :host github :repo "justbur/emacs-which-key")
@@ -2411,10 +2411,10 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
      (prog-mode . yas-minor-mode)
      (bibtex-mode . yas-minor-mode)))
 
-(use-package latex
-  :straight nil
+(use-package tex
+  :straight auctex
   :mode
-  ("\\.tex\\'" . latex-mode)
+  ("\\.tex\\'" . LaTeX-mode)
   :custom
   (TeX-auto-save t)
   ;; Don't prompt for saving the .tex file
@@ -2525,7 +2525,8 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
 (use-package bibtex-completion
   :custom 
   (bibtex-completion-bibliography '("~/Dropbox/bibliographies/bibliography.bib"
-				    "~/Dropbox/bibliographies/doctorat.bib")) 
+				    "~/Dropbox/bibliographies/doctorat.bib"
+				    "~/Dropbox/bibliographies/cabinet.bib")) 
   (bibtex-completion-notes-path '"~/Dropbox/obsidian")
   ;; (bibtex-completion-notes-path '"~/Dropbox/org/permanent")
   (bibtex-completion-library-path '("~/Documents/pdfs/"))
@@ -2535,7 +2536,8 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
   (bibtex-completion-notes-extension ".md")
   ;; (bibtex-completion-notes-extension ".org")
   (bibtex-completion-pdf-extension '(".pdf" ".epub"))
-  (bibtex-completion-additional-search-fields '(journaltitle origdate subtitle volume location publisher note library institution keywords edition))
+  (bibtex-completion-additional-search-fields '(origdate subtitle))
+  ;; (bibtex-completion-additional-search-fields '(journaltitle origdate subtitle volume location publisher note library institution keywords edition))
   ;; (bibtex-completion-additional-search-fields '(editor journaltitle origdate subtitle volume booktitle location publisher note library medium institution keywords))
 
   :config 

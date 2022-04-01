@@ -1,11 +1,13 @@
 # -*- mode: snippet -*-
-# name: biblatex_unpublished
+# name: unpublished
 # key: unpublished
 # --
-@unpublished{Simon$1${3:}},
-author = {Simon, Herbert},
-title = {{${2:Université Paul Valery, Docteur Honoris Causa Award: Transcript (3/02/1984)}}},
-year = {${1:1984}}
-doi = {}
-annote = {}
+@unpublished{ ${title},
+  author = {${author}},
+  title  = {${title}},
+  note   = {${note}}${,
+  month  = {${month}}}${,
+  year   = {${year}}}
 }
+
+$0

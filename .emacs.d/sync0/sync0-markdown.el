@@ -30,7 +30,7 @@ created: " (format-time-string "%Y-%m-%d")
        " --from=markdown --to=html"
        " --standalone --mathjax --highlight-style=pygments"
        ;; " --resource-path=.:/home/sync0/Dropbox/typography/css:/home/sync0/Dropbox/typography/csl:/home/sync0/Dropbox/bibliographies"
-       " --resource-path=.:/home/sync0/.local/share/pandoc/filters:/home/sync0/Dropbox/typography/css:/home/sync0/Dropbox/typography/csl:/home/sync0/Dropbox/bibliographies"
+       " --resource-path=.:/home/sync0/.local/share/pandoc/filters:/home/sync0/Dropbox/typography/css:/home/sync0/Dropbox/typography/csl:/home/sync0/Dropbox/bibliographies:/home/sync0/Pictures/archives"
        ;; " --resource-path=.:/home/sync0/Dropbox/typography/css:/home/sync0/Dropbox/typography/csl:/home/sync0/Dropbox/bibliographies"
        " --shift-heading-level-by=-1" 
        " --css=markdown.css"
@@ -59,6 +59,9 @@ created: " (format-time-string "%Y-%m-%d")
         ("scrbook" (lambda ()
                      (concat
                       " --metadata-file=/home/sync0/Dropbox/typography/pandoc/defaults_scrbook.yaml")))
+        ;; ("zettel (A6)" (lambda ()
+        ;;              (concat
+        ;;               " --metadata-file=/home/sync0/Dropbox/typography/pandoc/defaults_scrbook.yaml")))
         ("scrreprt" (lambda ()
                      (concat
                       " --metadata-file=/home/sync0/Dropbox/typography/pandoc/defaults_scrreprt.yaml"))))
@@ -74,6 +77,9 @@ created: " (format-time-string "%Y-%m-%d")
         ("scrartcl_a5" (lambda ()
                      (concat
                       " --defaults=/home/sync0/Dropbox/typography/pandoc/defaults_scrartcl_a5.yaml")))
+        ("zettel" (lambda ()
+                     (concat
+                      " --defaults=/home/sync0/Dropbox/typography/pandoc/defaults_zettel.yaml")))
         ("scrbook" (lambda ()
                      (concat
                       " --defaults=/home/sync0/Dropbox/typography/pandoc/defaults_scrbook.yaml")))
@@ -88,7 +94,7 @@ created: " (format-time-string "%Y-%m-%d")
      " --from=markdown --to=pdf"
      " --standalone"
      " --pdf-engine=lualatex"
-     " --resource-path=.:/home/sync0/.local/share/pandoc/filters:/home/sync0/Dropbox/typography/css:/home/sync0/Dropbox/typography/csl:/home/sync0/Dropbox/typography/pandoc:/home/sync0/Dropbox/bibliographies:/home/sync0/Dropbox/typography/pandoc:/home/sync0/Dropbox/obsidian/img"
+     " --resource-path=.:/home/sync0/.local/share/pandoc/filters:/home/sync0/Dropbox/typography/css:/home/sync0/Dropbox/typography/csl:/home/sync0/Dropbox/typography/pandoc:/home/sync0/Dropbox/bibliographies:/home/sync0/Dropbox/typography/pandoc:/home/sync0/Dropbox/obsidian/img:/home/sync0/Pictures/archives:/home/sync0/Documents/pdfs"
      " --shift-heading-level-by=-1" 
      " --filter=/home/sync0/.local/share/pandoc/filters/delink.hs"
      " --lua-filter=diagram-generator.lua "
@@ -101,7 +107,7 @@ created: " (format-time-string "%Y-%m-%d")
      "pandoc"
      " --from=markdown --to=latex"
      " --standalone"
-     " --resource-path=.:/home/sync0/.local/share/pandoc/filters:/home/sync0/Dropbox/typography/css:/home/sync0/Dropbox/typography/csl:/home/sync0/Dropbox/typography/pandoc:/home/sync0/Dropbox/bibliographies:/home/sync0/Dropbox/typography/pandoc:/home/sync0/Dropbox/obsidian/img"
+     " --resource-path=.:/home/sync0/.local/share/pandoc/filters:/home/sync0/Dropbox/typography/css:/home/sync0/Dropbox/typography/csl:/home/sync0/Dropbox/typography/pandoc:/home/sync0/Dropbox/bibliographies:/home/sync0/Dropbox/typography/pandoc:/home/sync0/Dropbox/obsidian/img:/home/sync0/Pictures/archives"
      " --shift-heading-level-by=-1" 
      " --filter=/home/sync0/.local/share/pandoc/filters/delink.hs"
      " --lua-filter=diagram-generator.lua "
@@ -296,8 +302,7 @@ readable."
    "Etc"
    (("a" sync0-define-local-abbrev "Define abbrev")
    ("P" sync0-markdown-print-pdf "Corresp. pdf")
-   ("M" sync0-markdown-copy-pdf-to-path "Move to path")
-    )))
+   ("M" sync0-markdown-copy-pdf-to-path "Move to path"))))
 ;; ("d" org-insert-drawer)
 
 ;; (evil-leader/set-key-for-mode 'markdown-mode "z" 'sync0-hydra-markdown-functions/body)
