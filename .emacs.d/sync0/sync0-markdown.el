@@ -29,9 +29,9 @@ created: " (format-time-string "%Y-%m-%d")
        "pandoc"
        " --from=markdown --to=html"
        " --standalone --mathjax --highlight-style=pygments"
-       ;; " --resource-path=.:/home/sync0/Dropbox/typography/css:/home/sync0/Dropbox/typography/csl:/home/sync0/Dropbox/bibliographies"
-       " --resource-path=.:/home/sync0/.local/share/pandoc/filters:/home/sync0/Dropbox/typography/css:/home/sync0/Dropbox/typography/csl:/home/sync0/Dropbox/bibliographies:/home/sync0/Pictures/archives"
-       ;; " --resource-path=.:/home/sync0/Dropbox/typography/css:/home/sync0/Dropbox/typography/csl:/home/sync0/Dropbox/bibliographies"
+       ;; " --resource-path=.:/home/sync0/Gdrive/typography/css:/home/sync0/Gdrive/typography/csl:/home/sync0/Gdrive/bibliographies"
+       " --resource-path=.:/home/sync0/.local/share/pandoc/filters:/home/sync0/Gdrive/typography/css:/home/sync0/Gdrive/typography/csl:/home/sync0/Gdrive/bibliographies:/home/sync0/Pictures/archives"
+       ;; " --resource-path=.:/home/sync0/Gdrive/typography/css:/home/sync0/Gdrive/typography/csl:/home/sync0/Gdrive/bibliographies"
        " --shift-heading-level-by=-1" 
        " --css=markdown.css"
        ;; " --csl=history-of-political-economy.csl"
@@ -49,43 +49,43 @@ created: " (format-time-string "%Y-%m-%d")
 (defvar sync0-pandoc-export-md-to-tex-settings-alist
       '(("arvore" (lambda ()
                     (concat
-                     " --metadata-file=/home/sync0/Dropbox/typography/pandoc/defaults_arvore.yaml")))
+                     " --metadata-file=/home/sync0/Gdrive/typography/pandoc/defaults_arvore.yaml")))
         ("scrartcl" (lambda ()
                      (concat
-                      " --metadata-file=/home/sync0/Dropbox/typography/pandoc/defaults_scrartcl.yaml")))
+                      " --metadata-file=/home/sync0/Gdrive/typography/pandoc/defaults_scrartcl.yaml")))
         ("scrartcl_a5" (lambda ()
                      (concat
-                      " --defaults=/home/sync0/Dropbox/typography/pandoc/defaults_scrartcl_a5.yaml")))
+                      " --defaults=/home/sync0/Gdrive/typography/pandoc/defaults_scrartcl_a5.yaml")))
         ("scrbook" (lambda ()
                      (concat
-                      " --metadata-file=/home/sync0/Dropbox/typography/pandoc/defaults_scrbook.yaml")))
+                      " --metadata-file=/home/sync0/Gdrive/typography/pandoc/defaults_scrbook.yaml")))
         ;; ("zettel (A6)" (lambda ()
         ;;              (concat
-        ;;               " --metadata-file=/home/sync0/Dropbox/typography/pandoc/defaults_scrbook.yaml")))
+        ;;               " --metadata-file=/home/sync0/Gdrive/typography/pandoc/defaults_scrbook.yaml")))
         ("scrreprt" (lambda ()
                      (concat
-                      " --metadata-file=/home/sync0/Dropbox/typography/pandoc/defaults_scrreprt.yaml"))))
+                      " --metadata-file=/home/sync0/Gdrive/typography/pandoc/defaults_scrreprt.yaml"))))
       "List of concatenated strings defining the styles for markdown to pdf export")
 
 (defvar sync0-pandoc-export-md-to-pdf-settings-alist
       '(("arvore" (lambda ()
                     (concat
-                      " --defaults=/home/sync0/Dropbox/typography/pandoc/defaults_arvore.yaml")))
+                      " --defaults=/home/sync0/Gdrive/typography/pandoc/defaults_arvore.yaml")))
         ("scrartcl" (lambda ()
                      (concat
-                      " --defaults=/home/sync0/Dropbox/typography/pandoc/defaults_scrartcl.yaml")))
+                      " --defaults=/home/sync0/Gdrive/typography/pandoc/defaults_scrartcl.yaml")))
         ("scrartcl_a5" (lambda ()
                      (concat
-                      " --defaults=/home/sync0/Dropbox/typography/pandoc/defaults_scrartcl_a5.yaml")))
+                      " --defaults=/home/sync0/Gdrive/typography/pandoc/defaults_scrartcl_a5.yaml")))
         ("zettel" (lambda ()
                      (concat
-                      " --defaults=/home/sync0/Dropbox/typography/pandoc/defaults_zettel.yaml")))
+                      " --defaults=/home/sync0/Gdrive/typography/pandoc/defaults_zettel.yaml")))
         ("scrbook" (lambda ()
                      (concat
-                      " --defaults=/home/sync0/Dropbox/typography/pandoc/defaults_scrbook.yaml")))
+                      " --defaults=/home/sync0/Gdrive/typography/pandoc/defaults_scrbook.yaml")))
         ("scrreprt" (lambda ()
                      (concat
-                      " --defaults=/home/sync0/Dropbox/typography/pandoc/defaults_scrreprt.yaml"))))
+                      " --defaults=/home/sync0/Gdrive/typography/pandoc/defaults_scrreprt.yaml"))))
       "List of concatenated strings defining the styles for markdown to pdf export")
 
   (defvar sync0-pandoc-md-to-pdf-command-base
@@ -94,7 +94,7 @@ created: " (format-time-string "%Y-%m-%d")
      " --from=markdown --to=pdf"
      " --standalone"
      " --pdf-engine=lualatex"
-     " --resource-path=.:/home/sync0/.local/share/pandoc/filters:/home/sync0/Dropbox/typography/css:/home/sync0/Dropbox/typography/csl:/home/sync0/Dropbox/typography/pandoc:/home/sync0/Dropbox/bibliographies:/home/sync0/Dropbox/typography/pandoc:/home/sync0/Dropbox/obsidian/img:/home/sync0/Pictures/archives:/home/sync0/Documents/pdfs"
+     " --resource-path=.:/home/sync0/.local/share/pandoc/filters:/home/sync0/Gdrive/typography/css:/home/sync0/Gdrive/typography/csl:/home/sync0/Gdrive/typography/pandoc:/home/sync0/Gdrive/bibliographies:/home/sync0/Gdrive/typography/pandoc:/home/sync0/Gdrive/obsidian/img:/home/sync0/Pictures/archives:/home/sync0/Documents/pdfs"
      " --shift-heading-level-by=-1" 
      " --filter=/home/sync0/.local/share/pandoc/filters/delink.hs"
      " --lua-filter=diagram-generator.lua "
@@ -107,7 +107,7 @@ created: " (format-time-string "%Y-%m-%d")
      "pandoc"
      " --from=markdown --to=latex"
      " --standalone"
-     " --resource-path=.:/home/sync0/.local/share/pandoc/filters:/home/sync0/Dropbox/typography/css:/home/sync0/Dropbox/typography/csl:/home/sync0/Dropbox/typography/pandoc:/home/sync0/Dropbox/bibliographies:/home/sync0/Dropbox/typography/pandoc:/home/sync0/Dropbox/obsidian/img:/home/sync0/Pictures/archives"
+     " --resource-path=.:/home/sync0/.local/share/pandoc/filters:/home/sync0/Gdrive/typography/css:/home/sync0/Gdrive/typography/csl:/home/sync0/Gdrive/typography/pandoc:/home/sync0/Gdrive/bibliographies:/home/sync0/Gdrive/typography/pandoc:/home/sync0/Gdrive/obsidian/img:/home/sync0/Pictures/archives"
      " --shift-heading-level-by=-1" 
      " --filter=/home/sync0/.local/share/pandoc/filters/delink.hs"
      " --lua-filter=diagram-generator.lua "
@@ -138,7 +138,7 @@ created: " (format-time-string "%Y-%m-%d")
 (defvar sync0-pandoc-md-to-pdf-command-citations
           (concat
            " --citeproc"
-           " --bibliography=/home/sync0/Dropbox/bibliographies/bibliography.bib"
+           " --bibliography=/home/sync0/Gdrive/bibliographies/bibliography.bib"
            " --csl=chicago-fullnote-bibliography.csl")
     "String of citation export settings for pandoc to convert from markdown to pdf.")
   
@@ -205,7 +205,7 @@ created: " (format-time-string "%Y-%m-%d")
        "pandoc"
        " --from=markdown --to=docx"
        " --standalone"
-       " --resource-path=.:/home/sync0/.local/share/pandoc/filters:/home/sync0/Dropbox/typography/css:/home/sync0/Dropbox/typography/csl:/home/sync0/Dropbox/pandoc/yaml:/home/sync0/Dropbox/pandoc/templates:/home/sync0/Dropbox/bibliographies"
+       " --resource-path=.:/home/sync0/.local/share/pandoc/filters:/home/sync0/Gdrive/typography/css:/home/sync0/Gdrive/typography/csl:/home/sync0/Gdrive/pandoc/yaml:/home/sync0/Gdrive/pandoc/templates:/home/sync0/Gdrive/bibliographies"
        " --shift-heading-level-by=-1" 
        " --metadata=reference-section-title:Références"
        " --citeproc"

@@ -248,8 +248,8 @@
  (rear-context-string . "\"init.el\"))))))\n")
  (position . 5443))
 ("here"
- (filename . "~/Dropbox/bibliographies/bibliography.bib")
- (front-context-string . "publisher       ")
- (rear-context-string . "       = {2},\n  ")
- (position . 411413))
+ (filename . "~/Gdrive/bibliographies/bibliography.bib")
+ (front-context-string . "  date          ")
+ (rear-context-string . "tschland sind},\n")
+ (position . 732867))
 )

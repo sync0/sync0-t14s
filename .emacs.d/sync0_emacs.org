@@ -60,8 +60,8 @@ Add to ~load-path~ the folder that houses my personal configuration files.
 Define user information.
  #+BEGIN_SRC emacs-lisp
 (setq user-full-name "Carlos Alberto Rivera Carreño"
-      ;; Define my Dropbox location
-      sync0-dropbox-directory "~/Dropbox/"
+      ;; Define my Gdrive location
+      sync0-cloud-directory "~/Gdrive/"
       user-mail-address "carc.sync0@gmail.com")
 
  #+END_SRC
@@ -292,7 +292,7 @@ https://stackoverflow.com/questions/23207958/how-to-prevent-emacs-dired-from-spl
     "List of Bibtex entry types")
 
   (defvar sync0-bibtex-fields
-    '("title" "subtitle" "eventtitle" "date" "origdate" "eventdate" "author" "editor" "journaltitle" "edition" "booktitle" "booksubtitle" "crossref" "chapter" "volume" "number" "series" "publisher" "location" "pages" "note" "doi" "url" "urldate" "language" "langid" "medium" "institution" "library" "related" "relatedtype" "file" "shorthand" "description" "keywords")
+    '("title" "subtitle" "eventtitle" "date" "origdate" "eventdate" "author" "editor" "journaltitle" "edition" "booktitle" "booksubtitle" "crossref" "chapter" "volume" "number" "series" "publisher" "location" "pages" "note" "doi" "url" "urldate" "language" "langid" "medium" "institution" "library" "related" "relatedtype" "relatedstring" "file" "shorthand" "description" "keywords")
     "List of Bibtex entry fields")
 
   (defvar sync0-bibtex-full-fields
@@ -371,16 +371,18 @@ https://stackoverflow.com/questions/23207958/how-to-prevent-emacs-dired-from-spl
 
       ;; (sync0-bibtex-completion-booktitle . "~/.emacs.d/sync0-vars/bibtex-completion-booktitle.txt")
 
-        ;; sync0-zettelkasten-directory-references (concat (getenv "HOME") "/Dropbox/org/reference/")
+        ;; sync0-zettelkasten-directory-references (concat (getenv "HOME") "/Gdrive/org/reference/")
 
   ;; define the rest
-  (setq sync0-zettelkasten-directory (concat (getenv "HOME") "/Dropbox/org/")
-        sync0-obsidian-directory (concat (getenv "HOME") "/Dropbox/obsidian/")
-        sync0-zettelkasten-directory-sans (concat (getenv "HOME") "/Dropbox/org")
-        sync0-exported-pdfs-directory (concat (getenv "HOME") "/Dropbox/pdfs/")
-        sync0-default-bibliography (concat (getenv "HOME") "/Dropbox/bibliographies/bibliography.bib")
+  (setq sync0-zettelkasten-directory (concat (getenv "HOME") "/Gdrive/obsidian/")
+        ;; sync0-obsidian-directory (concat (getenv "HOME") "/Gdrive/obsidian/")
+        sync0-zettelkasten-directory-sans (concat (getenv "HOME") "/Gdrive/obsidian")
+        sync0-zettelkasten-attachments-directory (concat (getenv "HOME") "/Gdrive/cabinet/")
+        ;; sync0-exported-pdfs-directory (concat (getenv "HOME") "/Gdrive/cabinet/")
+        sync0-zettelkasten-exported-pdfs-directory sync0-zettelkasten-attachments-directory
+        sync0-bibtex-bibliobraphy-directory (concat (getenv "HOME") "/Gdrive/bibliographies/")
+        sync0-bibtex-default-bibliography (concat (getenv "HOME") "/Gdrive/bibliographies/bibliography.bib")
         sync0-emacs-directory (concat (getenv "HOME") "/.emacs.d/sync0/")
-        sync0-pdfs-folder (concat (getenv "HOME") "/Documents/pdfs/")
         sync0-current-year (format-time-string "%Y")
         sync0-current-month (format-time-string "%B")
         sync0-current-month-downcase (downcase (format-time-string "%B"))
@@ -1667,10 +1669,10 @@ Exempt major modes are defined in `display-line-numbers-exempt-modes'."
 (use-package org-ref
   ;; :straight (org-ref :type git :host github :repo "jkitchin/org-ref") 
   :custom
-  (reftex-default-bibliography '("~/Dropbox/bibliographies/bibliography.bib"
-                                 "~/Dropbox/bibliographies/doctorat.bib"))
+  (reftex-default-bibliography '("~/Gdrive/bibliographies/bibliography.bib"
+                                 "~/Gdrive/bibliographies/doctorat.bib"))
   (org-ref-default-bibliography reftex-default-bibliography)
-  (org-ref-pdf-directory sync0-pdfs-folder)
+  (org-ref-pdf-directory sync0-zettelkasten-attachments-directory)
   (org-ref-completion-library 'org-ref-ivy-cite)
   (org-ref-open-pdf-function 'sync0-org-ref-open-pdf-at-point)
 
@@ -1698,7 +1700,7 @@ Exempt major modes are defined in `display-line-numbers-exempt-modes'."
   :init 
   (require 'org-id)
   :custom
-  (org-roam-directory "~/Dropbox/obsidian/")
+  (org-roam-directory "~/Gdrive/obsidian/")
   (org-roam-file-exclude-regexp "\(task\|img\|doctorat\|templates\)/[[:graph:]]+.md")
   (org-roam-file-extensions '("org" "md"))
   ;; exclude useless files from my org directory 
@@ -1819,7 +1821,7 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
   :straight nil
   :after org 
   :custom
-  (org-default-notes-file "~/Dropbox/etc/notes.org")
+  (org-default-notes-file (concat sync0-zettelkasten-directory "scratch.org"))
   :config 
   (require 'org-ref)
   (require 'sync0-org-capture-functions)
@@ -1832,8 +1834,8 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
         '(("a" "Annotation" entry
            (file buffer-file-name)
            (function sync0-org-capture-annotation-body)
-           ;; (file+headline "~/Dropbox/org/todo/todo.org" "Autres")
-           ;; (file "~/Dropbox/org/todo/todo.org")
+           ;; (file+headline "~/Gdrive/org/todo/todo.org" "Autres")
+           ;; (file "~/Gdrive/org/todo/todo.org")
            ;; "** %^{Titre}\n:PROPERTIES:\n:CREATED: %U\n:END:\n"
            :unnarrowed t)
           ;; ("j" "Journal" entry (function org-journal-find-location)
@@ -1853,7 +1855,7 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
            (function sync0-org-capture-reference)
            :unnarrowed t)
           ("t" "Tâche" entry
-           ;; (file+headline "~/Dropbox/org/todo/todo.org" "Autres")
+           ;; (file+headline "~/Gdrive/org/todo/todo.org" "Autres")
            (file "~/Dropbox/org/todo/todo.org")
            "* 未 %^{Task}\n:PROPERTIES:\n:CREATED: %U\n:END:\n"
            :immediate-finish t)
@@ -2060,7 +2062,7 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
     ;; Do not show export buffer.
     (org-export-show-temporary-export-buffer nil)
     ;; Set path for org default directory (necessary for refile and agenda).
-    (org-directory (concat (getenv "HOME") "/Dropbox/org"))
+    (org-directory (concat (getenv "HOME") "/Gdrive/org"))
     (org-refile-use-outline-path 'file)
     (org-outline-path-complete-in-steps nil)
     (org-startup-with-inline-images t)
@@ -2357,7 +2359,7 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
   ;; (deft-use-filter-string-for-filename t)
   (deft-default-extension "md")
   ;; (deft-default-extension "org")
-  (deft-directory sync0-obsidian-directory)
+  (deft-directory sync0-zettelkasten-directory)
   (deft-new-file-format "%Y%m%d%H%M%S")
   :config
   (require 'sync0-deft)
@@ -3013,7 +3015,7 @@ Auto-close delimiters and blocks as you type
   (require 'scihub)
 
   (setq scihub-homepage "https://sci-hub.ee/")
-  (setq scihub-download-directory sync0-pdfs-folder)
+  (setq scihub-download-directory sync0-zettelkasten-attachments-directory)
   (setq scihub-open-after-download nil)
 
   (setq bu-keywords-values sync0-bibtex-completion-keywords)
@@ -3038,12 +3040,13 @@ Auto-close delimiters and blocks as you type
  #+BEGIN_SRC emacs-lisp
 (use-package bibtex-completion
   :custom 
-  (bibtex-completion-bibliography '("~/Dropbox/bibliographies/bibliography.bib"
-				    "~/Dropbox/bibliographies/doctorat.bib"
-				    "~/Dropbox/bibliographies/cabinet.bib")) 
-  (bibtex-completion-notes-path '"~/Dropbox/obsidian")
-  ;; (bibtex-completion-notes-path '"~/Dropbox/org/permanent")
-  (bibtex-completion-library-path '("~/Documents/pdfs/" "~/Dropbox/cabinet/"))
+  (bibtex-completion-bibliography '("~/Gdrive/bibliographies/bibliography.bib"
+				    ;; "~/Gdrive/bibliographies/doctorat.bib"
+				    "~/Gdrive/bibliographies/cabinet.bib")) 
+  (bibtex-completion-notes-path sync0-zettelkasten-directory-sans)
+  ;; (bibtex-completion-notes-path '"~/Gdrive/org/permanent")
+  ;; (bibtex-completion-library-path '("~/Gdrive/cabinet/"))
+  (bibtex-completion-library-path (list sync0-attachments-directory))
   (bibtex-completion-pdf-field "file")
   (bibtex-completion-pdf-symbol "P")
   (bibtex-completion-notes-symbol "N")

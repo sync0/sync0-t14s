@@ -193,7 +193,7 @@
   (let ((current-buffer (buffer-file-name)))
     (if (string-match ".+\\.bib" current-buffer)
         (ivy-bibtex-with-local-bibliography)
-      (let* ((files (f-files "/home/sync0/Dropbox/bibliographies/" (lambda (x) (string-match ".+\\.bib" x))))
+      (let* ((files (f-files "/home/sync0/Gdrive/bibliographies/" (lambda (x) (string-match ".+\\.bib" x))))
              (selection (completing-read "Choose bibliography file to navigate: " files)))
         (find-file selection)
         (ivy-bibtex-with-local-bibliography)))))
