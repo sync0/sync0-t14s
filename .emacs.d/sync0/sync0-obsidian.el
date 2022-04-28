@@ -1,3 +1,16 @@
+(defvar sync0-obsidian-archive-directory
+     "/home/sync0/Pictures/archives/")
+
+;; (defvar sync0-obsidian-default-zettel-body
+;;   (concat "---\n"
+;;                                  "id: " filename "\n"
+;;                                  "zettel_type: " type "\n"
+;;                                  "created: " creation "\n"
+;;                                  "title: \"" title "\"\n"
+;;                                  "aliases: [\"" title "\"]\n"
+;;                                  "tags: [" type "]\n"
+;;                                  "---\n")
+
 (defun sync0-obsidian-create-zettel ()
   (interactive)
   (let* ((type (completing-read "Choose Zettel type: " sync0-zettelkasten-zettel-types))

@@ -5,7 +5,7 @@
 (add-to-list 'org-latex-classes '("scrartcl"
                                   "\\documentclass{scrartcl}
                                          [NO-DEFAULT-PACKAGES]
-   \\input{/home/sync0/Dropbox/typography/latex_preamble.tex}
+   \\input{/home/sync0/Gdrive/typography/latex_preamble.tex}
                                          [EXTRA]"
                                   ("\\section{%s}" . "\\section*{%s}")
                                   ("\\subsection{%s}" . "\\subsection*{%s}")
@@ -16,7 +16,7 @@
 (add-to-list 'org-latex-classes '("scrartcl-subsection"
                                   "\\documentclass{scrartcl}
                                          [NO-DEFAULT-PACKAGES]
-   \\input{/home/sync0/Dropbox/typography/latex_preamble.tex}
+   \\input{/home/sync0/Gdrive/typography/latex_preamble.tex}
                                          [EXTRA]"
                                   ("\\section{%s}" . "\\section*{%s}")
                                   ("\\subsection{%s}" . "\\subsection*{%s}")
@@ -26,7 +26,7 @@
 (add-to-list 'org-latex-classes '("scrartcl-section"
                                   "\\documentclass{scrartcl}
                                          [NO-DEFAULT-PACKAGES]
-   \\input{/home/sync0/Dropbox/typography/latex_preamble.tex}
+   \\input{/home/sync0/Gdrive/typography/latex_preamble.tex}
                                          [EXTRA]"
                                   ("\\section{%s}" . "\\section*{%s}")
                                   ("\\paragraph{%s}" . "\\paragraph*{%s}")
@@ -35,7 +35,7 @@
 (add-to-list 'org-latex-classes '("scrreprt"
                                   "\\documentclass{scrreprt}
                                          [NO-DEFAULT-PACKAGES]
-   \\input{/home/sync0/Dropbox/typography/latex_preamble.tex}
+   \\input{/home/sync0/Gdrive/typography/latex_preamble.tex}
                                          [EXTRA]"
                                   ("\\chapter{%s}" . "\\chapter*{%s}")
                                   ("\\section{%s}" . "\\section*{%s}")
@@ -47,7 +47,7 @@
 (add-to-list 'org-latex-classes '("scrbook"
                                   "\\documentclass{scrbook}
                                          [NO-DEFAULT-PACKAGES]
-   \\input{/home/sync0/Dropbox/typography/latex_preamble.tex}
+   \\input{/home/sync0/Gdrive/typography/latex_preamble.tex}
                                          [EXTRA]"
                                   ("\\part{%s}" . "\\part*{%s}")
                                   ("\\chapter{%s}" . "\\chapter*{%s}")
@@ -60,7 +60,7 @@
 (add-to-list 'org-latex-classes '("scrbook-chapter"
                                   "\\documentclass{scrbook}
                                          [NO-DEFAULT-PACKAGES]
-   \\input{/home/sync0/Dropbox/typography/latex_preamble.tex}
+   \\input{/home/sync0/Gdrive/typography/latex_preamble.tex}
                                          [EXTRA]"
                                   ("\\chapter{%s}" . "\\chapter*{%s}")
                                   ("\\section{%s}" . "\\section*{%s}")
@@ -72,7 +72,7 @@
 (add-to-list 'org-latex-classes '("scrbook-section"
                                   "\\documentclass{scrbook}
                                          [NO-DEFAULT-PACKAGES]
-   \\input{/home/sync0/Dropbox/typography/latex_preamble.tex}
+   \\input{/home/sync0/Gdrive/typography/latex_preamble.tex}
                                          [EXTRA]"
                                   ("\\chapter{%s}" . "\\chapter*{%s}")
                                   ("\\section{%s}" . "\\section*{%s}")
@@ -82,7 +82,7 @@
 (add-to-list 'org-latex-classes '("scrbook-subsection"
                                   "\\documentclass{scrbook}
                                          [NO-DEFAULT-PACKAGES]
-   \\input{/home/sync0/Dropbox/typography/latex_preamble.tex}
+   \\input{/home/sync0/Gdrive/typography/latex_preamble.tex}
                                          [EXTRA]"
                                   ("\\chapter{%s}" . "\\chapter*{%s}")
                                   ("\\section{%s}" . "\\section*{%s}")
@@ -93,7 +93,7 @@
 (add-to-list 'org-latex-classes '("article"
                                   "\\documentclass{article}
                                          [NO-DEFAULT-PACKAGES]
-   \\input{/home/sync0/Dropbox/typography/latex_preamble.tex}
+   \\input{/home/sync0/Gdrive/typography/latex_preamble.tex}
                                          [EXTRA]"
                                   ("\\chapter{%s}" . "\\chapter*{%s}")
                                   ("\\section{%s}" . "\\section*{%s}")
@@ -105,7 +105,7 @@
 (add-to-list 'org-latex-classes '("book"
                                   "\\documentclass{book}
                                          [NO-DEFAULT-PACKAGES]
-   \\input{/home/sync0/Dropbox/typography/latex_preamble.tex}
+   \\input{/home/sync0/Gdrive/typography/latex_preamble.tex}
                                          [EXTRA]"
                                   ("\\chapter{%s}" . "\\chapter*{%s}")
                                   ("\\section{%s}" . "\\section*{%s}")
@@ -117,7 +117,7 @@
 (add-to-list 'org-latex-classes '("report"
                                   "\\documentclass{report}
                                          [NO-DEFAULT-PACKAGES]
-   \\input{/home/sync0/Dropbox/typography/latex_preamble.tex}
+   \\input{/home/sync0/Gdrive/typography/latex_preamble.tex}
                                          [EXTRA]"
                                   ("\\chapter{%s}" . "\\chapter*{%s}")
                                   ("\\section{%s}" . "\\section*{%s}")
@@ -129,7 +129,7 @@
 (add-to-list 'org-latex-classes '("beamer"
                                   "\\documentclass{beamer}
                                          [NO-DEFAULT-PACKAGES]
-   \\input{/home/sync0/Dropbox/typography/latex_preamble-beamer.tex}
+   \\input{/home/sync0/Gdrive/typography/latex_preamble-beamer.tex}
                                          [EXTRA]"
                                   ("\\section{%s}" . "\\section*{%s}")
                                   ("\\subsection{%s}" . "\\subsection*{%s}")

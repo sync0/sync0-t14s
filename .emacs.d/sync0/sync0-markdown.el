@@ -80,6 +80,9 @@ created: " (format-time-string "%Y-%m-%d")
         ("zettel" (lambda ()
                      (concat
                       " --defaults=/home/sync0/Gdrive/typography/pandoc/defaults_zettel.yaml")))
+        ("scrlttr2" (lambda ()
+                     (concat
+                      " --template scrlttr2")))
         ("scrbook" (lambda ()
                      (concat
                       " --defaults=/home/sync0/Gdrive/typography/pandoc/defaults_scrbook.yaml")))

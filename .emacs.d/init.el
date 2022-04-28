@@ -224,7 +224,7 @@
     "List of Bibtex entry types")
 
   (defvar sync0-bibtex-fields
-    '("title" "subtitle" "eventtitle" "date" "origdate" "eventdate" "author" "editor" "journaltitle" "edition" "booktitle" "booksubtitle" "crossref" "chapter" "volume" "number" "series" "publisher" "location" "pages" "note" "doi" "url" "urldate" "language" "langid" "medium" "institution" "library" "related" "relatedtype" "relatedstring" "file" "shorthand" "description" "keywords")
+    '("title" "subtitle" "eventtitle" "date" "origdate" "eventdate" "author" "editor" "journaltitle" "edition" "booktitle" "booksubtitle" "crossref" "chapter" "volume" "number" "series" "publisher" "location" "pages" "note" "doi" "url" "urldate" "language" "langid" "medium" "institution" "library" "related" "relatedtype" "relatedstring" "file" "shorttitle" "shorthand" "description" "keywords")
     "List of Bibtex entry fields")
 
   (defvar sync0-bibtex-full-fields
@@ -334,6 +334,12 @@
 (defun sync0-nullify-variable-list (varlist)
   "Set all variables from varlist nil"
   (mapc #'(lambda (a) (set a nil)) varlist))
+
+(defun sync0-has-dups-p (LIST) ""
+       (let ((unique1 (remove-duplicates LIST :test #'equal)))
+     (if (eq LIST unique1)
+         nil
+       t)))
 
 (defun sync0-set-variable-from-files  (varlist)
   "From a list of pairs of variable and files, define all of them
@@ -2532,13 +2538,13 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
   (bibtex-completion-notes-path sync0-zettelkasten-directory-sans)
   ;; (bibtex-completion-notes-path '"~/Gdrive/org/permanent")
   ;; (bibtex-completion-library-path '("~/Gdrive/cabinet/"))
-  (bibtex-completion-library-path (list sync0-attachments-directory))
+  (bibtex-completion-library-path (list sync0-zettelkasten-attachments-directory))
   (bibtex-completion-pdf-field "file")
   (bibtex-completion-pdf-symbol "P")
   (bibtex-completion-notes-symbol "N")
   (bibtex-completion-notes-extension ".md")
   ;; (bibtex-completion-notes-extension ".org")
-  (bibtex-completion-pdf-extension '(".pdf" ".epub" ".doc" ".docx"))
+  (bibtex-completion-pdf-extension '(".pdf" ".epub" ".doc" ".docx" ".org"))
   (bibtex-completion-additional-search-fields '(origdate subtitle))
   ;; (bibtex-completion-additional-search-fields '(journaltitle origdate subtitle volume location publisher note library institution keywords edition))
   ;; (bibtex-completion-additional-search-fields '(editor journaltitle origdate subtitle volume booktitle location publisher note library medium institution keywords))

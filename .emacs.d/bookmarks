@@ -114,9 +114,9 @@
  (position . 1687))
 ("here2"
  (filename . "~/.emacs.d/sync0/sync0-bibtex-functions.el")
- (front-context-string . "get-value \"file\"")
- (rear-context-string . "btex-completion-")
- (position . 57712))
+ (front-context-string . "t \n             ")
+ (rear-context-string . "          (conca")
+ (position . 13296))
 ("matonti"
  (filename . "~/Dropbox/notes/matonti2012.org")
  (front-context-string . "\n\n* 無 Conclusion")
@@ -248,8 +248,8 @@
  (rear-context-string . "\"init.el\"))))))\n")
  (position . 5443))
 ("here"
- (filename . "~/Gdrive/bibliographies/bibliography.bib")
- (front-context-string . "  date          ")
- (rear-context-string . "tschland sind},\n")
- (position . 732867))
+ (filename . "~/.emacs.d/sync0/sync0-bibtex-functions.el")
+ (front-context-string . ")\n\n(defun sync0-")
+ (rear-context-string . "-list \", \"))))))")
+ (position . 21825))
 )
