@@ -224,7 +224,7 @@
     "List of Bibtex entry types")
 
   (defvar sync0-bibtex-fields
-    '("title" "subtitle" "eventtitle" "date" "origdate" "eventdate" "author" "editor" "journaltitle" "edition" "booktitle" "booksubtitle" "crossref" "chapter" "volume" "number" "series" "publisher" "location" "pages" "note" "doi" "url" "urldate" "language" "langid" "medium" "institution" "library" "related" "relatedtype" "relatedstring" "file" "shorttitle" "shorthand" "description" "keywords")
+    '("title" "subtitle" "eventtitle" "date" "origdate" "eventdate" "author" "editor" "journaltitle" "edition" "booktitle" "booksubtitle" "crossref" "chapter" "volume" "number" "series" "publisher" "location" "pages" "note" "doi" "url" "urldate" "language" "langid" "medium" "institution" "library" "related" "relatedtype" "relatedstring" "file" "created" "password" "shorttitle" "doctype" "shorthand" "description" "keywords")
     "List of Bibtex entry fields")
 
   (defvar sync0-bibtex-full-fields
@@ -1662,19 +1662,6 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
                      ("transcribe" . ?t)
                      ("ignore" . ?i)
                      ("delegated" . ?d)))
-    ;; (org-tag-alist '(("projects" . ?p)
-    ;;                  ;; ("noexport" . ?n)
-    ;;                  ("readings" . ?r)
-    ;;                  ;; ("reviews" . ?r)
-    ;;                  ("exams" . ?e)
-    ;;                  ("urgent" . ?u)
-    ;;                  ("this_week" . ?t)
-    ;;                  ("this_month" . ?m)
-    ;;                  ("next_week" . ?n)
-    ;;                  ("short_term" . ?s)
-    ;;                  ("long_term" . ?l)
-    ;;                  ;; ("university" . ?u)
-    ;;                  ("important" . ?i)))
     ;; Hide inherited tags from Org's agenda view.
     ;; org-agenda-show-inherited-tags nil
     ;; Define todo keywords.

@@ -266,6 +266,8 @@
         ("\\.mm\\'" . default)
         ("\\.x?html?\\'" . default)
         ;; ("\\.epub\\'" . emacs)
+        ("\\.doc\\'" . "libreoffice --writer %s")
+        ("\\.docx\\'" . "libreoffice --writer %s")
         ("\\.pdf\\'" . emacs)))
 
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))

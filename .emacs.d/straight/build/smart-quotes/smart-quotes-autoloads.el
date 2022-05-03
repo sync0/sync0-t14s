@@ -1,4 +1,4 @@
-;;; smart-quotes-autoloads.el --- automatically extracted autoloads
+;;; smart-quotes-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t -*-
 ;;
 ;;; Code:
 
@@ -32,7 +32,7 @@ Unconditionally turn off Smart Quotes mode." nil nil)
 (autoload 'smart-quotes-smarten "smart-quotes" "\
 Turn quotes into smart quotes in region or buffer." t nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "smart-quotes" '("smart-quotes-")))
+(register-definition-prefixes "smart-quotes" '("smart-quotes-"))
 
 ;;;***
 

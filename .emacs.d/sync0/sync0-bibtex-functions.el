@@ -6,14 +6,20 @@
  ;;             do (check-type var symbol)
  ;;             collect `(defvar ,var ,initial-value))))
 
+(require 'bibtex-completion)
 (require 'sync0-print)
 (require 'sync0-pdf)
 
-(defvar sync0-alpha "abcdefghijklmnopqrstuvwxyz")
+(defvar sync0-alpha "abcdefghijkmnpqrstuvwxyz"
+  "Possible alphabetic characters that can appear in BibLaTeX keys.
+Use format of base58 encoding.")
 
-(defvar sync0-bibtex-keys (mapcar #'(lambda (x) (cdr (assoc "=key=" x)))
-                                         (bibtex-completion-candidates))
-  "List of all the keys used in of all of the bibliography files")
+;; (defvar sync0-bibtex-keys (mapcar #'(lambda (x) (cdr (assoc "=key=" x)))
+;;                                          (bibtex-completion-candidates))
+;;   "List of all the keys used in of all of the bibliography files")
+
+(setq sync0-bibtex-keys (mapcar #'(lambda (x) (cdr (assoc "=key=" x)))
+                                         (bibtex-completion-candidates)))
 
 (defvar sync0-bibtex-today-keys nil
   "Variable used to keep track of bibtex keys created today to
@@ -35,14 +41,23 @@ case, keys are outputed in the YYMMDDxx format, in which the last
 two characters are produced using the sync0-random-alnum function
 to produce random characters."
   (let ((x (concat (substring (format-time-string "%Y%m%d") 2 nil)
-                   (shell-command-to-string "uuidgen | tr -d '0123456789lo-' | cut -c 3-5"))))
-    (if (member x sync0-bibtex-today-keys)
+                   (sync0-random-alnum)
+                   (sync0-random-alnum))))
+    ;; (if (member x sync0-bibtex-today-keys)
+    (if (member x sync0-bibtex-keys)
         ;; Call recursively the function again
         (sync0-bibtex-entry-key-define)
       (progn 
         (push x sync0-bibtex-keys)
         (push x sync0-bibtex-today-keys)
-        (format "%s"x )))))
+        (format "%s" x)))))
+
+(defun sync0-bibtex-entry-define-keys-list (times) 
+  "Create as many new keys as requested. They are put on a list"
+  (let (values)
+    (dotimes (i times)
+      (push (sync0-bibtex-entry-key-define) values))
+    values))
 
 (defvar sync0-bibtex-archived-bibliography (concat sync0-bibtex-bibliobraphy-directory "archived.bib")
   "Bibliography to store entries that are not needed at the moment for whatever reason.")
@@ -75,6 +90,14 @@ to produce random characters."
       (push my-var x)))
   (setq sync0-bibtex-entry-definitions-list (nreverse x)))
 
+(let ((prefix "sync0-bibtex-entry-crossref-")
+      x)
+  (dolist (element sync0-bibtex-fields x)
+    (let ((my-var (intern (concat prefix element))))
+      (set my-var nil)
+      (push my-var x)))
+  (setq sync0-bibtex-entry-crossref-definitions-list (nreverse x)))
+
 ;; Define dummy variables for initial fields
 (let ((prefix "sync0-bibtex-entry-initial-")
       x)
@@ -83,6 +106,17 @@ to produce random characters."
       (set my-var nil)
       (push my-var x)))
   (setq sync0-bibtex-entry-initial-fields-list x))
+
+;; Define dummy variables for initial fields
+;; (let ((prefix "sync0-bibtex-entry-")
+;;       x)
+;;   (dolist (element '("subtitle" "volume" "edition") x)
+;;     (let ((my-var  (concat prefix element)))
+;;       ;; (set my-var nil)
+;;       (push my-var x)))
+;;   (setq sync0-bibtex-entry-crossref-crosscheck-fields-list x))
+
+(setq sync0-bibtex-entry-crossref-crosscheck-fields-list '("subtitle" "volume" "edition" "shorttitle")) 
 
 ;; use this to define all the dummy fields required for creating
 ;; bibtex entries. these do not appear in the bibtex entry but are
@@ -106,6 +140,7 @@ to produce random characters."
       '("title"
         "subtitle"
         "date"
+        "created"
         "author"
         "url"
         "language"
@@ -283,6 +318,9 @@ to produce random characters."
         ("date" (lambda ()
                   (setq sync0-bibtex-entry-date
                         (read-string "Date (ex. 1890-18-12) : " sync0-bibtex-entry-initial-date))))
+        ("created" (lambda ()
+                  (setq sync0-bibtex-entry-created
+                        (format-time-string "%Y-%m-%d"))))
         ("origdate" (lambda ()
                       (setq sync0-bibtex-entry-origdate
                             (read-string "Origdate (ex. 1890-18-12) : " sync0-bibtex-entry-initial-origdate))))
@@ -349,19 +387,23 @@ to produce random characters."
                     (setq sync0-bibtex-entry-file
                           (concat ":" sync0-zettelkasten-attachments-directory sync0-bibtex-entry-key ".pdf:PDF"))
                   (if sync0-bibtex-entry-file-old
-                    (setq sync0-bibtex-entry-file
-                          (let* ((attachments (bibtex-completion-find-pdf sync0-bibtex-entry-key))
-                                 (new-extension (completing-read "Choose extension to add" bibtex-completion-pdf-extension))
-                                 (new-extension-caps (upcase (substring new-extension 1)))
-                                 (new-attach (concat ":" sync0-zettelkasten-attachments-directory sync0-bibtex-entry-key new-extension ":" new-extension-caps)))
-                            (if (> (length attachments) 1)
-                                (let (x)
-                                  (dolist (element attachments x)
-                                    (let* ((extension (file-name-extension element t))
-                                           (extension-sans (upcase (substring extension 1 nil))))
-                                      (setq x (concat x ":" element extension ":" extension-sans ";"))))
-                                  (concat x new-attach))
-                              (concat (car attachments) ";" new-attach))))
+                      (setq sync0-bibtex-entry-file
+                            (let* ((attachments (bibtex-completion-find-pdf sync0-bibtex-entry-key))
+                                   (new-extension (completing-read "Choose extension to add" bibtex-completion-pdf-extension))
+                                   (new-extension-caps (upcase (substring new-extension 1)))
+                                   (new-attach (concat ":" sync0-zettelkasten-attachments-directory sync0-bibtex-entry-key new-extension ":" new-extension-caps)))
+                              (cond ((> (length attachments) 1)
+                                     (let (x)
+                                       (dolist (element attachments x)
+                                         (let* ((extension (file-name-extension element t))
+                                                (extension-sans (upcase (substring extension 1 nil))))
+                                           (setq x (concat x ":" element extension ":" extension-sans ";"))))
+                                       (concat x new-attach)))
+                                    ((equal (length attachments) 1)
+                                     (let* ((single-attach (car attachments))
+                                            (old-extension-caps (upcase (file-name-extension single-attach))))
+                                       (concat ":" single-attach ":" old-extension-caps ";" new-attach)))
+                                    (t new-attach))))
                     (setq sync0-bibtex-entry-file
                         (let* ((extension (completing-read "Choose extension to add" bibtex-completion-pdf-extension))
                                (extension-sans (upcase (substring extension 1))))
@@ -455,6 +497,7 @@ to produce random characters."
                                                                  ("date" "date/" sync0-bibtex-entry-date-tag)
                                                                  ("origdate" "origdate/" sync0-bibtex-entry-origdate)
                                                                  ("crossref" "crossref/" sync0-bibtex-entry-crossref)
+                                                                 ("doctype" "doctype/" sync0-bibtex-entry-doctype)
                                                                  ("language" "language/" sync0-bibtex-entry-language)
                                                                  ("edition" "edition/" sync0-bibtex-entry-edition)
                                                                  ("related" "related/" sync0-bibtex-entry-related-tag)
@@ -540,168 +583,178 @@ biblatex standard instead of bibtex."
   (sync0-nullify-variable-list (append 
                                 sync0-bibtex-entry-helper-fields-list
                                 sync0-bibtex-entry-definitions-list
+                                sync0-bibtex-entry-crossref-definitions-list
                                 sync0-bibtex-entry-extraction-fields-list
                                 sync0-bibtex-entry-initial-fields-list))
   ;; First load fields
   (let* ((entry (when bibkey (bibtex-completion-get-entry bibkey)))
          (type (if entry
                    ;; add function here to upcase the entry
-                       ;; because it is lowercase when extracted from
-                       ;; bibtex-completion
-                      (sync0-bibtex-normalize-case (bibtex-completion-get-value "=type="  entry))
-                     (completing-read "Choose Bibtex entry type: " sync0-bibtex-entry-types)))
-             ;; Make sure that all bibtex fields are taken into
-             ;; account when gathering info. from the bibtex file.
-             ;; When creatin a field, use only the default fields for
-             ;; each entry type.
-             (fields (cond (bibkey
-                            sync0-bibtex-fields)
-                           (quick
-                            sync0-bibtex-base-fields)
-                           (t (append
-                               (cdr (assoc type sync0-bibtex-type-fields))
-                               sync0-bibtex-base-fields)))))
-        (setq sync0-bibtex-entry-key
-              (if bibkey 
-                  bibkey
-                  (sync0-bibtex-entry-key-define)))
-        (setq sync0-bibtex-entry (if entry
-                                     entry
-                                     nil))
-        ;; (setq sync0-bibtex-entry-urldate
-        ;;       (format-time-string "%Y-%m-%d")) 
-        (setq sync0-bibtex-entry-type type)
-        ;; the following field is used to avoid inconsistensies in
-        ;; case when using the type for boolean operations
-        (setq sync0-bibtex-entry-type-downcase (downcase type))
-        (dolist (element fields)
-          (if entry
-              (when-let ((value (bibtex-completion-get-value element entry)))
-                (set (intern (concat "sync0-bibtex-entry-" element)) value))
-            (funcall (cadr (assoc element sync0-bibtex-entry-functions))))
+                   ;; because it is lowercase when extracted from
+                   ;; bibtex-completion
+                   (sync0-bibtex-normalize-case (bibtex-completion-get-value "=type="  entry))
+                 (completing-read "Choose Bibtex entry type: " sync0-bibtex-entry-types)))
+         ;; Make sure that all bibtex fields are taken into
+         ;; account when gathering info. from the bibtex file.
+         ;; When creatin a field, use only the default fields for
+         ;; each entry type.
+         (fields (cond (bibkey
+                        sync0-bibtex-fields)
+                       (quick
+                        sync0-bibtex-base-fields)
+                       (t (append
+                           (cdr (assoc type sync0-bibtex-type-fields))
+                           sync0-bibtex-base-fields)))))
+    (setq sync0-bibtex-entry-key (or bibkey 
+                                     (sync0-bibtex-entry-key-define)))
+    ;; (setq sync0-bibtex-entry (or entry
+    ;;                              nil))
+    (setq sync0-bibtex-entry-type type)
+    ;; the following field is used to avoid inconsistensies in
+    ;; case when using the type for boolean operations
+    (setq sync0-bibtex-entry-type-downcase (downcase type))
+    ;; x keeps the values; y keeps the names of the internal variables
+    (let (x)
+      (dolist (element fields x)
+        (let ((value (if entry
+                         (bibtex-completion-get-value element entry)
+                       (funcall (cadr (assoc element sync0-bibtex-entry-functions)))))
+              (var (concat "sync0-bibtex-entry-" element)))
+          ;; set the variable to the value
+          (set (intern var) value)
+          ;; create cons of the form  ("sync0-bibtex-entry-title" . "The good old days") for an alist
+          (push (cons var value) x)
           ;; added this last function to see if I can get completion to work
-          (sync0-bibtex-update-var element))
-      ;; define the helper fields for the other functions to work
-      ;; correctly. Otherwise, only defining the bibtex fields will
-      ;; generate errors when calling the functions to extract pdfs or
-      ;; crete reading notes.
-      ;; author
-      ;; 
-      ;;;; load the following to be used, if not called, then the
-      ;;;; crossref fields will not be loaded at all when calling
-      ;;;; bibkey to load existing fields and this can lead to
-      ;;;; unexpected results
-      (when (and bibkey
-                 sync0-bibtex-entry-crossref)
-        (setq sync0-bibtex-entry-crossref-entry
-              (bibtex-completion-get-entry sync0-bibtex-entry-crossref)))
+          (sync0-bibtex-update-var element)))
+      (setq sync0-bibtex-entry-fields-alist x))
+    ;; define the helper fields for the other functions to work
+    ;; correctly. Otherwise, only defining the bibtex fields will
+    ;; generate errors when calling the functions to extract pdfs or
+    ;; crete reading notes.
+    ;; author
+    ;; 
+    ;; load the following to be used, if not called, then the
+    ;; crossref fields will not be loaded at all when calling
+    ;; bibkey to load existing fields and this can lead to
+    ;; unexpected results
+    (when (and bibkey
+               sync0-bibtex-entry-crossref)
+      (setq sync0-bibtex-entry-crossref-entry
+            (bibtex-completion-get-entry sync0-bibtex-entry-crossref))
+      ;; when crossref is present, load crossref fields
+      (let (x)
+        (dolist (element sync0-bibtex-fields x)
+          (let ((value (bibtex-completion-get-value element sync0-bibtex-entry-crossref-entry))
+                (var (concat "sync0-bibtex-entry-crossref-" element)))
+            ;; set the variable to the value
+            (set (intern var) value)
+            ;; create cons of the form  ("sync0-bibtex-entry-title" . "The good old days") for an alist
+            (push (cons var value) x)
+            ;; added this last function to see if I can get completion to work
+            (sync0-bibtex-update-var element)))
+        (setq sync0-bibtex-entry-crossref-fields-alist x))
+      ;; Check and fix problems with crossref-fields
+      (dolist (element sync0-bibtex-entry-crossref-crosscheck-fields-list)
+        (let* ((entry-element (concat "sync0-bibtex-entry-" element))
+               (entry-cons (assoc entry-element sync0-bibtex-entry-fields-alist))
+               (entry-value (cdr entry-cons))
+               (crossref-element (concat "sync0-bibtex-entry-crossref-" element))
+               (crossref-cons (assoc crossref-element sync0-bibtex-entry-crossref-fields-alist))
+               (crossref-value (cdr crossref-cons)))
+          (when (string= entry-value crossref-value)
+            (set (intern entry-element) nil)))))
       ;;; Configure the author dummy variables avoiding conflicts with
       ;;; the editor field.
-      (if (and (sync0-null-p sync0-bibtex-entry-author)
-               (or (string= sync0-bibtex-entry-type-downcase "collection")
-                   (string= sync0-bibtex-entry-type-downcase "mvcollection")
-                   (string= sync0-bibtex-entry-type-downcase "proceedings")))
-          (sync0-bibtex-configure-author-vars sync0-bibtex-entry-editor)
-        (sync0-bibtex-configure-author-vars sync0-bibtex-entry-author))
-      ;; (setq sync0-bibtex-entry-author-tag
-      ;;       (unless (sync0-null-p sync0-bibtex-entry-author)
-      ;;         (cond ((string-match " and " sync0-bibtex-entry-author)
-      ;;                (let* ((no-comma (replace-regexp-in-string ", " "_" (downcase sync0-bibtex-entry-author)))
-      ;;                       (no-space (replace-regexp-in-string "[[:space:]]+" "-" no-comma)))
-      ;;                  (replace-regexp-in-string "-and-" ", author/" no-space)))
-      ;;               ((string-match "^{" sync0-bibtex-entry-author)
-      ;;                (string-match "{\\([[:print:]]+\\)}" sync0-bibtex-entry-author)
-      ;;                (downcase (match-string 1 sync0-bibtex-entry-author)))
-      ;;               (t (let ((raw (replace-regexp-in-string ", " "_" sync0-bibtex-entry-author)))
-      ;;                    (downcase (replace-regexp-in-string " " "-" raw)))))))
-      ;; dates
-      ;; (setq sync0-bibtex-entry-date-tag
-      ;;       (unless (sync0-null-p sync0-bibtex-entry-date)
-      ;;         (replace-regexp-in-string "-" "/" sync0-bibtex-entry-date)))
-      (setq sync0-bibtex-entry-date-tag
-            (cond ((and (sync0-null-p sync0-bibtex-entry-origdate)
-                        (sync0-null-p sync0-bibtex-entry-date))
-                   "")
-                  ((or (string= sync0-bibtex-entry-date sync0-bibtex-entry-origdate)
-                       (and (bound-and-true-p sync0-bibtex-entry-date)
-                            (sync0-null-p sync0-bibtex-entry-origdate)))
-                   (let* ((first (replace-regexp-in-string "/" "@" sync0-bibtex-entry-date))
-                          (second (replace-regexp-in-string "-" "/" first)))
-                     (replace-regexp-in-string "@" "-" second)))
-                  (t (let* ((first (replace-regexp-in-string "/" "@" sync0-bibtex-entry-date))
-                            (second (replace-regexp-in-string "-" "/" first))
-                            (third (replace-regexp-in-string "@" "-" second))
-                            (first-orig (replace-regexp-in-string "/" "@" sync0-bibtex-entry-origdate))
-                            (second-orig (replace-regexp-in-string "-" "/" first-orig))
-                            (third-orig (replace-regexp-in-string "@" "-" second-orig)))
-                       (concat third ", date/" third-orig)))))
-      (setq sync0-bibtex-entry-date-fixed
-            (cond ((and (sync0-null-p sync0-bibtex-entry-origdate)
-                        (sync0-null-p sync0-bibtex-entry-date))
-                   "-")
-                  ((or (string= sync0-bibtex-entry-date sync0-bibtex-entry-origdate)
-                       (and (bound-and-true-p sync0-bibtex-entry-date)
-                            (sync0-null-p sync0-bibtex-entry-origdate)))
-                   (concat "(" sync0-bibtex-entry-date ")"))
-                  (t (concat "(" sync0-bibtex-entry-origdate ") (" sync0-bibtex-entry-date ")"))))
-      ;; title
-      (setq sync0-bibtex-entry-title-fixed
-            (if (sync0-null-p sync0-bibtex-entry-subtitle)
-                (concat sync0-bibtex-entry-title
-                        (unless (or (sync0-null-p sync0-bibtex-entry-volume)
-                                    (string= sync0-bibtex-entry-type "Article")
-                                    (when sync0-bibtex-entry-crossref
-                                      (bibtex-completion-get-value "volume" sync0-bibtex-entry-crossref-entry)))
-                          (concat ", T." sync0-bibtex-entry-volume)))
+    (if (and (sync0-null-p sync0-bibtex-entry-author)
+             (or (string= sync0-bibtex-entry-type-downcase "collection")
+                 (string= sync0-bibtex-entry-type-downcase "mvcollection")
+                 (string= sync0-bibtex-entry-type-downcase "proceedings")))
+        (sync0-bibtex-configure-author-vars sync0-bibtex-entry-editor)
+      (sync0-bibtex-configure-author-vars sync0-bibtex-entry-author))
+    (setq sync0-bibtex-entry-date-tag
+          (cond ((and (sync0-null-p sync0-bibtex-entry-origdate)
+                      (sync0-null-p sync0-bibtex-entry-date))
+                 "")
+                ((or (string= sync0-bibtex-entry-date sync0-bibtex-entry-origdate)
+                     (and (bound-and-true-p sync0-bibtex-entry-date)
+                          (sync0-null-p sync0-bibtex-entry-origdate)))
+                 (let* ((first (replace-regexp-in-string "/" "@" sync0-bibtex-entry-date))
+                        (second (replace-regexp-in-string "-" "/" first)))
+                   (replace-regexp-in-string "@" "-" second)))
+                (t (let* ((first (replace-regexp-in-string "/" "@" sync0-bibtex-entry-date))
+                          (second (replace-regexp-in-string "-" "/" first))
+                          (third (replace-regexp-in-string "@" "-" second))
+                          (first-orig (replace-regexp-in-string "/" "@" sync0-bibtex-entry-origdate))
+                          (second-orig (replace-regexp-in-string "-" "/" first-orig))
+                          (third-orig (replace-regexp-in-string "@" "-" second-orig)))
+                     (concat third ", date/" third-orig)))))
+    (setq sync0-bibtex-entry-date-fixed
+          (cond ((and (sync0-null-p sync0-bibtex-entry-origdate)
+                      (sync0-null-p sync0-bibtex-entry-date))
+                 "-")
+                ((or (string= sync0-bibtex-entry-date sync0-bibtex-entry-origdate)
+                     (and (bound-and-true-p sync0-bibtex-entry-date)
+                          (sync0-null-p sync0-bibtex-entry-origdate)))
+                 (concat "(" sync0-bibtex-entry-date ")"))
+                (t (concat "(" sync0-bibtex-entry-origdate ") (" sync0-bibtex-entry-date ")"))))
+    ;; title
+    (setq sync0-bibtex-entry-title-fixed
+          (if (sync0-null-p sync0-bibtex-entry-subtitle)
               (concat sync0-bibtex-entry-title
                       (unless (or (sync0-null-p sync0-bibtex-entry-volume)
                                   (string= sync0-bibtex-entry-type "Article")
                                   (when sync0-bibtex-entry-crossref
                                     (bibtex-completion-get-value "volume" sync0-bibtex-entry-crossref-entry)))
-                        (concat ", T." sync0-bibtex-entry-volume)) " : " sync0-bibtex-entry-subtitle)))
-      (setq sync0-bibtex-entry-title-aliases
+                        (concat ", T." sync0-bibtex-entry-volume)))
             (concat sync0-bibtex-entry-title
                     (unless (or (sync0-null-p sync0-bibtex-entry-volume)
                                 (string= sync0-bibtex-entry-type "Article")
                                 (when sync0-bibtex-entry-crossref
                                   (bibtex-completion-get-value "volume" sync0-bibtex-entry-crossref-entry)))
-                      (concat ", T." sync0-bibtex-entry-volume))))
-      (unless (null sync0-bibtex-entry-related)
-        (setq sync0-bibtex-entry-related-tag
-              (if (sync0-null-p sync0-bibtex-entry-related)
-                  ""
-                (if (string-match ", " sync0-bibtex-entry-related)
-                    (let* ((my-related (split-string sync0-bibtex-entry-related ", "))
-                           (new-related (mapcar #'(lambda (x) (concat "related/" x)) my-related)))
-                      (sync0-show-elements-of-list new-related ", "))
-                  sync0-bibtex-entry-related))))
-      (setq sync0-bibtex-entry-title-compatible
-            (replace-regexp-in-string "[[:blank:]]*:[[:blank:]]*" "_" sync0-bibtex-entry-title-fixed))
-      (unless (null sync0-bibtex-entry-medium)
-        (setq sync0-bibtex-entry-medium-fixed
-              (if (string-match ", " sync0-bibtex-entry-medium)
-                  (let ((raw (split-string sync0-bibtex-entry-medium ", ")))
-                    (concat "\""
-                            (substring (let (x)
-                                         (dolist  (element raw x)
-                                           (setq x (concat x element "\", \""))))
-                                       0 -3)))
-                (concat "\"" sync0-bibtex-entry-medium "\""))))
-      ;; parent
-      (setq sync0-bibtex-entry-parent
-            (cond ((string= sync0-bibtex-entry-type-downcase "article")
-                   sync0-bibtex-entry-journaltitle)
-                  ((or (string= sync0-bibtex-entry-type-downcase "inbook")
-                       (string= sync0-bibtex-entry-type-downcase "incollection")
-                       (string= sync0-bibtex-entry-type-downcase "inproceedings"))
-                   (if (sync0-null-p sync0-bibtex-entry-booksubtitle)
-                       sync0-bibtex-entry-booktitle
-                     (concat sync0-bibtex-entry-booktitle " : " sync0-bibtex-entry-booksubtitle)))
-                  (t sync0-bibtex-entry-series)))
-      ;; keywors have to be calculated last in order to prevent 
-      (if bibkey
-          (bibtex-completion-get-value "keywords" entry)
-        (funcall (cadr (assoc "keywords" sync0-bibtex-entry-functions))))))
+                      (concat ", T." sync0-bibtex-entry-volume)) " : " sync0-bibtex-entry-subtitle)))
+    (setq sync0-bibtex-entry-title-aliases
+          (concat sync0-bibtex-entry-title
+                  (unless (or (sync0-null-p sync0-bibtex-entry-volume)
+                              (string= sync0-bibtex-entry-type "Article")
+                              (when sync0-bibtex-entry-crossref
+                                (bibtex-completion-get-value "volume" sync0-bibtex-entry-crossref-entry)))
+                    (concat ", T." sync0-bibtex-entry-volume))))
+    (unless (null sync0-bibtex-entry-related)
+      (setq sync0-bibtex-entry-related-tag
+            (if (sync0-null-p sync0-bibtex-entry-related)
+                ""
+              (if (string-match ", " sync0-bibtex-entry-related)
+                  (let* ((my-related (split-string sync0-bibtex-entry-related ", "))
+                         (new-related (mapcar #'(lambda (x) (concat "related/" x)) my-related)))
+                    (sync0-show-elements-of-list new-related ", "))
+                sync0-bibtex-entry-related))))
+    (setq sync0-bibtex-entry-title-compatible
+          (replace-regexp-in-string "[[:blank:]]*:[[:blank:]]*" "_" sync0-bibtex-entry-title-fixed))
+    (unless (null sync0-bibtex-entry-medium)
+      (setq sync0-bibtex-entry-medium-fixed
+            (if (string-match ", " sync0-bibtex-entry-medium)
+                (let ((raw (split-string sync0-bibtex-entry-medium ", ")))
+                  (concat "\""
+                          (substring (let (x)
+                                       (dolist  (element raw x)
+                                         (setq x (concat x element "\", \""))))
+                                     0 -3)))
+              (concat "\"" sync0-bibtex-entry-medium "\""))))
+    ;; parent
+    (setq sync0-bibtex-entry-parent
+          (cond ((string= sync0-bibtex-entry-type-downcase "article")
+                 sync0-bibtex-entry-journaltitle)
+                ((or (string= sync0-bibtex-entry-type-downcase "inbook")
+                     (string= sync0-bibtex-entry-type-downcase "incollection")
+                     (string= sync0-bibtex-entry-type-downcase "inproceedings"))
+                 (if (sync0-null-p sync0-bibtex-entry-booksubtitle)
+                     sync0-bibtex-entry-booktitle
+                   (concat sync0-bibtex-entry-booktitle " : " sync0-bibtex-entry-booksubtitle)))
+                (t sync0-bibtex-entry-series)))
+    ;; keywors have to be calculated last in order to prevent 
+    (if bibkey
+        (bibtex-completion-get-value "keywords" entry)
+      (funcall (cadr (assoc "keywords" sync0-bibtex-entry-functions))))))
 
 (defun sync0-bibtex-choose-attachment (&optional bibkey)
   "REWRITE! Function used to select an attachment to be read by
@@ -721,8 +774,7 @@ bibtex-completion to be loaded; otherwise, fails."
 corner using cpdf. This function only works on pdfs. This
 function is to be used only in pipes."
   (interactive)
-  (when-let* ((refkey (if bibkey
-                          bibkey
+  (when-let* ((refkey (or bibkey
                           (sync0-bibtex-completion-choose-key t t)))
               (file (sync0-bibtex-choose-attachment refkey))
               (message-function (lambda ()
@@ -1017,6 +1069,18 @@ function is to be used only in pipes."
                (message "New note created for %s %s with key %s" sync0-bibtex-entry-date-fixed sync0-bibtex-entry-title-fixed sync0-bibtex-entry-key)
              (message "New note created for %s %s %s with key %s" sync0-bibtex-entry-lastname sync0-bibtex-entry-date-fixed sync0-bibtex-entry-title-fixed sync0-bibtex-entry-key)))))
 
+(defun sync0-bibtex-entry-select-draft-prefix (&optional bibkey)
+  (when (equal sync0-bibtex-entry-doctype "draft")
+    (cond ((equal sync0-bibtex-entry-language "french")
+           "Ébauche : ")
+          ((equal sync0-bibtex-entry-language "english")
+           "Draft: ")
+          ((equal sync0-bibtex-entry-language "spanish")
+           "Esbozo: ")
+          ((equal sync0-bibtex-entry-language "portuguese")
+           "Esboço: ")
+          (t "Draft: "))))
+
 (defun sync0-bibtex-entry-create-obsidian-note-from-entry (bibkey &optional rewrite)
   "Create new markdown note for corresponding bibkey in default
 obsidian vault. This function in not intended for interactive
@@ -1030,6 +1094,9 @@ the note, instead of attempting to create a new note."
                                (concat sync0-bibtex-entry-lastname " "))
                              sync0-bibtex-entry-date-fixed
                              " "
+                             (sync0-bibtex-entry-select-draft-prefix)
+                             (unless (sync0-null-p sync0-bibtex-entry-chapter)
+                               (concat " Ch. " sync0-bibtex-entry-chapter " : "))
                              sync0-bibtex-entry-title-fixed
                              (unless (sync0-null-p sync0-bibtex-entry-edition)
                                (concat " (" sync0-bibtex-entry-edition "e)"))))
@@ -1039,10 +1106,16 @@ the note, instead of attempting to create a new note."
                                      (concat sync0-bibtex-entry-lastname " "))
                                    sync0-bibtex-entry-date-fixed
                                    " "
+                                   (sync0-bibtex-entry-select-draft-prefix)
+                                   (unless (sync0-null-p sync0-bibtex-entry-chapter)
+                                     (concat " Ch. " sync0-bibtex-entry-chapter " : "))
                                    sync0-bibtex-entry-title-aliases
                                    (unless (sync0-null-p sync0-bibtex-entry-edition)
                                      (concat " (" sync0-bibtex-entry-edition "e)"))))
-              (title-date (concat sync0-bibtex-entry-title-aliases
+              (title-date (concat (sync0-bibtex-entry-select-draft-prefix)
+                           (unless (sync0-null-p sync0-bibtex-entry-chapter)
+                                    (concat " Ch. " sync0-bibtex-entry-chapter " : "))
+                                  sync0-bibtex-entry-title-aliases
                                   (unless (sync0-null-p sync0-bibtex-entry-edition)
                                     (concat " (" sync0-bibtex-entry-edition "e)"))
                                   " "
@@ -1059,8 +1132,12 @@ the note, instead of attempting to create a new note."
                                 "citekey: " bibkey "\n"
                                 (unless (sync0-null-p sync0-bibtex-entry-description)
                                   (concat "description: \"" sync0-bibtex-entry-description "\"\n"))
-                                "created: " (format-time-string "%Y-%m-%d") "\n"
+                                (if (sync0-null-p sync0-bibtex-entry-created)
+                                    (concat "created: " (format-time-string "%Y-%m-%d") "\n")
+                                  (concat "created: " sync0-bibtex-entry-created "\n"))
                                 "biblatex_type: " (downcase sync0-bibtex-entry-type)  "\n"
+                                (unless (sync0-null-p sync0-bibtex-entry-doctype)
+                                  (concat "doctype: \"" sync0-bibtex-entry-doctype "\"\n"))
                                 "title: \"" sync0-bibtex-entry-title "\"\n"
                                 (unless (sync0-null-p sync0-bibtex-entry-subtitle)
                                   (concat "subtitle: \"" sync0-bibtex-entry-subtitle "\"\n"))
@@ -1098,8 +1175,7 @@ the note, instead of attempting to create a new note."
                                 "---\n"
                                 "# " author-title "\n"))
          (obsidian-rest (concat  "\n## Description\n\n" 
-                                 "## Progrès de la lecture\n\n" 
-                                 "## Annotations\n\n"))
+                                 "## Progrès de la lecture\n\n"))
          (obsidian-entry (concat obsidian-yaml obsidian-rest)))
     (cond ((and rewrite
                 (file-exists-p obsidian-file))
@@ -1205,9 +1281,27 @@ the note, instead of attempting to create a new note."
         (setq x (read-string "New key : " suggester)))
       (format "%s" x))))
 
-(defun sync0-bibtex-update-key ()
+;; (defun sync0-bibtex-update-key-in-bibfile (oldkey newkey bibfile)
+;;   "Change bibtex key at point with a key using the format provided
+;; by org-roam files"
+;;   (with-temp-file bibfile
+;;     (insert-file-contents bibfile)
+;;     (goto-char (point-min))
+;;     (while (re-search-forward oldkey nil t)
+;;       (replace-match newkey))))
+
+(defun sync0-bibtex-update-key-in-buffer (oldkey newkey)
   "Change bibtex key at point with a key using the format provided
 by org-roam files"
+  (save-excursion
+    (goto-char (point-min))
+    (while (re-search-forward oldkey nil t)
+      (replace-match newkey))))
+
+(defun sync0-bibtex-update-key ()
+  "Change bibtex key at point with a key using the format
+provided by org-roam files. Function intended to be used on an
+entry under point in a .bib file"
   (interactive)
   (let* ((entry (save-excursion (bibtex-beginning-of-entry)
 			        (bibtex-parse-entry)))
@@ -1239,6 +1333,8 @@ by org-roam files"
             (rename-file element new-path)))))
     (when attach-list 
       (bibtex-make-field path-list t))
+    ;; Replace all instances of the old key in the current buffer.
+    (sync0-bibtex-update-key-in-buffer old-key new-key)
     (message "Key for entry %s has been replaced with key %s" old-key new-key)))
 
 ;; (defun sync0-bibtex-update-key ()
@@ -1325,8 +1421,7 @@ by org-roam files"
    is only useful when calling this function in loops to prevent
    undesired behavior)."
        (interactive)
-       (let    ((bibkey (if refkey 
-                            refkey
+       (let    ((bibkey (or refkey 
                             (sync0-bibtex-completion-choose-key t t))))
          (sync0-bibtex-completion-load-entry bibkey)
          (unless no-extract
@@ -1345,54 +1440,51 @@ by org-roam files"
    first-page, last-page). Likewise, for this to work, it is
    necessary that the pages of the pdf match the page numbers of the
    actual book. Otherwise, the entries will have wrong data."
-  (let*    ((bibkey (sync0-bibtex-completion-choose-key t t))
-            (extra-keyword (completing-read "Extra keywords to add : " sync0-bibtex-completion-keywords))
-            (input-file (car (bibtex-completion-find-pdf bibkey)))
-            ;; (counter)
-            (obsidian-master-note (concat sync0-zettelkasten-directory bibkey ".md")))
-    (sync0-bibtex-completion-load-entry bibkey)
+  (sync0-bibtex-completion-load-entry (sync0-bibtex-completion-choose-key t t))
+  (let*    ((bibkey sync0-bibtex-entry-key)
+            (add-notes (yes-or-no-p "Create Obsidian notes for the newly created entries?"))
+            (no-of-entries (length seqlists))
+            (keylist (sync0-bibtex-entry-define-keys-list no-of-entries))
+            (keywords-list (split-string sync0-bibtex-entry-keywords ", "))
+            (extra-keywords (completing-read-multiple "Input extra keywords: " 
+                                                      sync0-bibtex-completion-keywords))
+            (master-list (if (sync0-null-p extra-keywords)
+                             keywords-list
+                           (cl-union keywords-list extra-keywords)))
+            (input-file (sync0-bibtex-choose-attachment bibkey)))
+    (setq sync0-bibtex-entry-keywords (sync0-show-elements-of-list master-list ", "))
     (setq sync0-bibtex-entry-type-crossref bibkey)
     (setq sync0-bibtex-entry-type (completing-read "Choose Bibtex entry type: " sync0-bibtex-entry-types))
     (setq sync0-bibtex-entry-type-downcase (downcase sync0-bibtex-entry-type))
     (setq sync0-bibtex-entry-parent sync0-bibtex-entry-title-fixed)
     ;; Begin loop; specific settings for each note are to be defined
     ;; inside the loop.
-    (dolist (element seqlists)
-     ;; (setq counter (1+ counter))
-      (let* ((filename (sync0-bibtex-entry-key-define))
-             ;; (file-pdf (concat ":" sync0-zettelkasten-attachments-directory filename ".pdf:PDF"))
-             (title (nth 0 element))
-             (beg (number-to-string (nth 1 element)))
-             (end (number-to-string (nth 2 element)))
+    (dotimes (i no-of-entries)
+      (let* ((triple (elt seqlists i))
+             (filename (elt keylist i))
+             (title (nth 0 triple))
+             (beg (number-to-string (nth 1 triple)))
+             (end (number-to-string (nth 2 triple)))
              (pages (if (string= beg end)
                         beg
                       (concat beg "-" end)))
-             (pages-fixed (replace-regexp-in-string "-" "--" pages))
-             (obsidian-reference
-              (concat "- [" sync0-bibtex-entry-lastname " " sync0-bibtex-entry-date-fixed " " title "](" filename ".md)\n")))
+             (pages-fixed (replace-regexp-in-string "-" "--" pages)))
         (setq sync0-bibtex-entry-key filename)
         (setq sync0-bibtex-entry-title title)
         (setq sync0-bibtex-entry-subtitle nil)
         (setq sync0-bibtex-entry-title-fixed sync0-bibtex-entry-title)
-        (unless (sync0-null-p extra-keyword)
-          (setq sync0-bibtex-entry-keywords
-                (concat sync0-bibtex-entry-keywords ", " extra-keyword)))
         (setq sync0-bibtex-entry-pages pages)
         (setq sync0-bibtex-entry-shorthand
               (concat title ", p. " pages-fixed))
         (setq sync0-bibtex-entry-file
-                (concat ":" sync0-zettelkasten-attachments-directory sync0-bibtex-entry-key ".pdf:PDF"))
+              (concat ":" sync0-zettelkasten-attachments-directory filename ".pdf:PDF"))
         ;; Beginning of loop actions
         ;; First, extract entry
         (sync0-bibtex-crossref-extract-pdf beg end)
         ;; Second, append entry to default bibliography file.
-        (sync0-bibtex-entry-append-to-bibliography sync0-bibtex-entry-key)
+        (sync0-bibtex-entry-append-to-bibliography filename)
         ;; Third, create an obsidian markdown note for the entry.
-        (sync0-bibtex-entry-create-obsidian-note-from-entry sync0-bibtex-entry-key)
-        ;; Fourth, add a markdown link in the obsidian master note
-        ;; (ie., the note corresponding to the file used as the source
-        ;; for extraction).
-        (append-to-file obsidian-reference nil obsidian-master-note)))))
+        (sync0-bibtex-entry-create-obsidian-note-from-entry filename)))))
 
 (defun sync0-bibtex-extract-subpdf ()
   "Extract pdf from an existing pdf."
@@ -1505,6 +1597,7 @@ ivy-bibtex to search for the pdf attached to a bibtex entry."
 (setq sync0-bibtex-entry-creation nil)
   (sync0-nullify-variable-list (append 
                                 sync0-bibtex-entry-definitions-list
+                                sync0-bibtex-entry-crossref-definitions-list
                                 sync0-bibtex-entry-extraction-fields-list
                                 sync0-bibtex-entry-initial-fields-list))
   (let* ((field (completing-read "Choose Bibtex field: " sync0-bibtex-fields))
@@ -1618,67 +1711,37 @@ etc.)."
           (rename-file output file t))
       (message "Conditions not satisfied by entry %s to attach corresponding toc." bibkey))))
 
-
 (defun sync0-bibtex-define-entries-from-bibkey (&optional bibkey)
-  "Add bibkey to pdf using cpdf. This function is to be used only
-in pipes."
+  "Creates copies of target entry but with different keys. This
+function also creates markdown notes for the created entries."
   (interactive)
-  (let* ((refkey (if bibkey
-                    bibkey
-                  (sync0-bibtex-completion-choose-key t t)))
-        ;; (counter 1)
-        (extra-keyword (completing-read "Extra keywords to add : " sync0-bibtex-completion-keywords))
-        (howmany (string-to-number (read-string "How many entries to create? ")))
-        (keylist (list refkey)))
-    (sync0-bibtex-completion-load-entry refkey)
-    ;; (setq sync0-bibtex-entry-parent sync0-bibtex-entry-title-fixed)
-    ;; Begin loop; specific settings for each note are to be defined
-    ;; inside the loop.
-    ;; (setq sync0-bibtex-entry-type-crossref bibkey)
-    ;; (setq sync0-bibtex-entry-type (completing-read "Choose Bibtex entry type: " sync0-bibtex-entry-types))
-    ;; (setq sync0-bibtex-entry-type-downcase (downcase sync0-bibtex-entry-type))
-    ;; (setq sync0-bibtex-entry-parent sync0-bibtex-entry-title-fixed)
-    (dotimes (counter howmany) 
-      ;; (setq counter (1+ counter))
-      ;; (let* ((raw-filename (+ (string-to-number (format-time-string "%Y%m%d%H%M%S")) counter))
-      ;;        (filename (number-to-string raw-filename)))
-        ;; (file-pdf (concat ":" sync0-zettelkasten-attachments-directory filename ".pdf:PDF"))
-        ;; (title (nth 0 elt))
-        ;; (beg (number-to-string (nth 1 elt)))
-        ;; (end (number-to-string (nth 2 elt)))
-        ;; (pages (if (string= beg end)
-        ;;            beg
-        ;;          (concat beg "-" end)))
-        ;; (pages-fixed (replace-regexp-in-string "-" "--" pages))
-        ;; (obsidian-reference
-        ;;  (concat "- [" sync0-bibtex-entry-lastname " " sync0-bibtex-entry-date-fixed " " title "](" filename ".md)\n")))
-        (setq sync0-bibtex-entry-key
-              (number-to-string (+ (string-to-number (format-time-string "%Y%m%d%H%M%S")) counter)))
-        ;; (setq sync0-bibtex-entry-title title)
-        ;; (setq sync0-bibtex-entry-subtitle nil)
-        ;; (setq sync0-bibtex-entry-title-fixed sync0-bibtex-entry-title)
-        (unless (sync0-null-p extra-keyword)
-          (setq sync0-bibtex-entry-keywords
-                (concat sync0-bibtex-entry-keywords ", " extra-keyword)))
-        ;; (setq sync0-bibtex-entry-pages pages)
-        ;; (setq sync0-bibtex-entry-shorthand
-        ;;       (concat title ", p. " pages-fixed))
-        (unless (sync0-null-p sync0-bibtex-entry-file)
+  (sync0-bibtex-completion-load-entry (or bibkey
+                                          (sync0-bibtex-completion-choose-key t t)))
+  (let* ((howmany (string-to-number (read-string "How many entries to create? ")))
+         (add-notes (yes-or-no-p "Create Obsidian notes for the newly created entries?"))
+         (keylist (sync0-bibtex-entry-define-keys-list howmany))
+         (keywords-list (split-string sync0-bibtex-entry-keywords ", "))
+         (extra-keywords (completing-read-multiple "Input extra keywords: " 
+                                                   sync0-bibtex-completion-keywords))
+         (master-list (if (sync0-null-p extra-keywords)
+                          keywords-list
+                        (cl-union keywords-list extra-keywords))))
+    (setq sync0-bibtex-entry-keywords (sync0-show-elements-of-list master-list ", "))
+    ;; Beginning of loop actions
+    (dolist (key keylist)
+      (setq sync0-bibtex-entry-key key)
+      (unless (sync0-null-p sync0-bibtex-entry-file)
         (setq sync0-bibtex-entry-file
               (concat ":" sync0-zettelkasten-attachments-directory sync0-bibtex-entry-key ".pdf:PDF")))
-        ;; Beginning of loop actions
-        ;; First, extract entry
-        ;; (sync0-bibtex-crossref-extract-pdf beg end)
-        ;; Second, append entry to default bibliography file.
-        (sync0-bibtex-entry-append-to-bibliography sync0-bibtex-entry-key)
-        ;; Third, create an obsidian markdown note for the entry.
-        (sync0-bibtex-entry-create-obsidian-note-from-entry sync0-bibtex-entry-key)
-        ;; Fourth, add a markdown link in the obsidian master note
-        ;; (ie., the note corresponding to the file used as the source
-        ;; for extraction).
-        ;; (append-to-file obsidian-reference nil obsidian-master-note)
-        ;; (setq counter (1- counter))
-        (push sync0-bibtex-entry-key keylist))
+      ;; Second, append entry to default bibliography file.
+      (sync0-bibtex-entry-append-to-bibliography sync0-bibtex-entry-key)
+      ;; Third, create an obsidian markdown note for the entry.
+      (unless (null add-notes)
+        (sync0-bibtex-entry-create-obsidian-note-from-entry sync0-bibtex-entry-key)))
+    ;; Fourth, add a markdown link in the obsidian master note
+    ;; (ie., the note corresponding to the file used as the source
+    ;; for extraction).
+    ;; (append-to-file obsidian-reference nil obsidian-master-note)
     (unless (sync0-null-p sync0-bibtex-entry-crossref)
       (bibtex-search-entry sync0-bibtex-entry-crossref)
       ;; (bibtex-beginning-of-entry)
@@ -1731,6 +1794,19 @@ readable."
              (file-exists-p image))
         (shell-command command)
       (message "Conversion for entry %s failed." refkey))))
+
+(defun sync0-bibtex-arrange-pdf (&optional bibkey)
+  "Use PDF Arranger on target pdf."
+  (interactive)
+  (let* ((refkey (or bibkey
+                     (sync0-bibtex-completion-choose-key t t)))
+         (file (sync0-bibtex-choose-attachment refkey))
+         (extension (file-name-extension file))
+         (command (concat "pdfarranger " file)))
+    (if (and (file-exists-p file)
+             (equal extension "pdf"))
+        (shell-command command)
+      (message "Problem opening file for entry %s failed." refkey))))
 
 (major-mode-hydra-define bibtex-mode nil 
   ("Entries"

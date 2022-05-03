@@ -1,4 +1,4 @@
-;;; org-ref-autoloads.el --- automatically extracted autoloads
+;;; org-ref-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t -*-
 ;;
 ;;; Code:
 
@@ -128,7 +128,7 @@ Search Crossref with QUERY and use helm to select an entry to add to BIBTEX-FILE
 
 \(fn QUERY BIBTEX-FILE)" t nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "doi-utils" '("*doi-utils-" "agu-pdf-url" "aip-pdf-url" "aps-pdf-url" "asme-biomechanical-pdf-url" "copernicus-" "crossref-add-bibtex-entry" "doi-" "ecs" "generic-full-pdf-url" "ieee" "iop-pdf-url" "jneurosci-pdf-url" "jstor-pdf-url" "linkinghub-elsevier-pdf-url" "nature-pdf-url" "osa-pdf-url" "pnas-pdf-url" "rsc-pdf-url" "sage-pdf-url" "science-" "siam-pdf-url" "springer-" "tandfonline-pdf-url" "wiley-pdf-url")))
+(register-definition-prefixes "doi-utils" '("*doi-utils-" "agu-pdf-url" "aip-pdf-url" "aps-pdf-url" "asme-biomechanical-pdf-url" "copernicus-" "crossref-add-bibtex-entry" "doi-" "ecs" "generic-full-pdf-url" "ieee" "iop-pdf-url" "jneurosci-pdf-url" "jstor-pdf-url" "linkinghub-elsevier-pdf-url" "nature-pdf-url" "osa-pdf-url" "pnas-pdf-url" "rsc-pdf-url" "sage-pdf-url" "science-" "siam-pdf-url" "springer-" "tandfonline-pdf-url" "wiley-pdf-url"))
 
 ;;;***
 
@@ -168,7 +168,7 @@ key.
 
 \(fn ARXIV-NUMBER BIBFILE PDFDIR)" t nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "org-ref-arxiv" '("arxiv-")))
+(register-definition-prefixes "org-ref-arxiv" '("arxiv-"))
 
 ;;;***
 
@@ -312,7 +312,7 @@ will clobber the file.
 
 \(fn BIBFILE)" t nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "org-ref-bibtex" '("org-ref-" "orhc-")))
+(register-definition-prefixes "org-ref-bibtex" '("org-ref-" "orhc-"))
 
 ;;;***
 
@@ -320,7 +320,7 @@ will clobber the file.
 ;;;;;;  0 0 0))
 ;;; Generated autoloads from org-ref-citeproc.el
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "org-ref-citeproc" '("*orcp-" "baseline" "bibliography-style" "bold" "citation-style" "firstname" "italics" "lastname" "orcp-" "sentence-beginning-p" "superscript")))
+(register-definition-prefixes "org-ref-citeproc" '("*orcp-" "baseline" "bibliography-style" "bold" "citation-style" "firstname" "italics" "lastname" "orcp-" "sentence-beginning-p" "superscript"))
 
 ;;;***
 
@@ -471,7 +471,7 @@ provide their own version.
 (autoload 'org-ref-help "org-ref-core" "\
 Open the `org-ref' manual." t nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "org-ref-core" '("orc" "org-" "ori" "orn" "oro" "orp" "orsl" "oru")))
+(register-definition-prefixes "org-ref-core" '("orc" "org-" "ori" "orn" "oro" "orp" "orsl" "oru"))
 
 ;;;***
 
@@ -498,7 +498,7 @@ Add an acronym entry with LABEL.
 (autoload 'org-ref-insert-glossary-link "org-ref-glossary" "\
 Helm command to insert glossary and acronym entries as links." t nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "org-ref-glossary" '("or-" "org-ref-")))
+(register-definition-prefixes "org-ref-glossary" '("or-" "org-ref-"))
 
 ;;;***
 
@@ -569,7 +569,7 @@ With a prefix ARG, browse citation links.
 
 \(fn &optional ARG)" t nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "org-ref-helm-bibtex" '("bibtex-completion-copy-candidate" "org-ref-")))
+(register-definition-prefixes "org-ref-helm-bibtex" '("bibtex-completion-copy-candidate" "org-ref-"))
 
 ;;;***
 
@@ -577,7 +577,7 @@ With a prefix ARG, browse citation links.
 ;;;;;;  (0 0 0 0))
 ;;; Generated autoloads from org-ref-helm-cite.el
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "org-ref-helm-cite" '("org-ref-helm-" "orhc")))
+(register-definition-prefixes "org-ref-helm-cite" '("org-ref-helm-" "orhc"))
 
 ;;;***
 
@@ -602,7 +602,7 @@ in the file. Data comes from worldcat.
 
 \(fn ISBN BIBFILE)" t nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "org-ref-isbn" '("org-ref-isbn-" "oricb-")))
+(register-definition-prefixes "org-ref-isbn" '("org-ref-isbn-" "oricb-"))
 
 ;;;***
 
@@ -613,7 +613,7 @@ in the file. Data comes from worldcat.
 (autoload 'org-ref-ivy-cite-completion "org-ref-ivy-cite" "\
 Use ivy for completion." t nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "org-ref-ivy-cite" '("or-" "org-ref-")))
+(register-definition-prefixes "org-ref-ivy-cite" '("or-" "org-ref-"))
 
 ;;;***
 
@@ -625,7 +625,7 @@ Use ivy for completion." t nil)
 (autoload 'org-ref-latex-click "org-ref-latex" "\
 Jump to entry clicked on." t nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "org-ref-latex" '("org-ref-")))
+(register-definition-prefixes "org-ref-latex" '("org-ref-"))
 
 ;;;***
 
@@ -660,7 +660,7 @@ variable `org-ref-pdf-doi-regex'.
 (autoload 'org-ref-pdf-crossref-lookup "org-ref-pdf" "\
 Lookup highlighted text in PDFView in CrossRef." t nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "org-ref-pdf" '("org-ref-" "pdftotext-executable")))
+(register-definition-prefixes "org-ref-pdf" '("org-ref-" "pdftotext-executable"))
 
 ;;;***
 
@@ -693,7 +693,7 @@ Open QUERY in pubmed-clinical.
 
 \(fn QUERY)" t nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "org-ref-pubmed" '("pubmed-")))
+(register-definition-prefixes "org-ref-pubmed" '("pubmed-"))
 
 ;;;***
 
@@ -715,7 +715,7 @@ get a lot of options.  LINK-STRING is used by the link function.
 
 \(fn &optional LINK-STRING)" t nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "org-ref-reftex" '("org-" "ornr")))
+(register-definition-prefixes "org-ref-reftex" '("org-" "ornr"))
 
 ;;;***
 
@@ -762,7 +762,7 @@ Open QUERY as an advanced search at scopus.com.
 
 \(fn QUERY)" t nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "org-ref-scopus" '("*hydra-eid*" "*scopus-api-key*" "scopus")))
+(register-definition-prefixes "org-ref-scopus" '("*hydra-eid*" "*scopus-api-key*" "scopus"))
 
 ;;;***
 
@@ -799,7 +799,7 @@ one in the minibuffer.
 
 \(fn BIBFILE &optional URL)" t nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "org-ref-url-utils" '("org-ref-")))
+(register-definition-prefixes "org-ref-url-utils" '("org-ref-"))
 
 ;;;***
 
@@ -881,7 +881,7 @@ Set link TYPE properties to PARAMETERS.
 
 (function-put 'org-ref-link-set-parameters 'lisp-indent-function '1)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "org-ref-utils" '("ords" "org-ref")))
+(register-definition-prefixes "org-ref-utils" '("ords" "org-ref"))
 
 ;;;***
 
@@ -889,7 +889,7 @@ Set link TYPE properties to PARAMETERS.
 ;;;;;;  0 0 0))
 ;;; Generated autoloads from org-ref-worldcat.el
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "org-ref-worldcat" '("worldcat-query-all")))
+(register-definition-prefixes "org-ref-worldcat" '("worldcat-query-all"))
 
 ;;;***
 
@@ -902,7 +902,7 @@ Open the word at point or selection in Web of Science as a topic query." t nil)
 (autoload 'wos "org-ref-wos" "\
 Open Web of Science search page in a browser." t nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "org-ref-wos" '("*wos-" "wos-")))
+(register-definition-prefixes "org-ref-wos" '("*wos-" "wos-"))
 
 ;;;***
 

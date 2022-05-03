@@ -1,4 +1,4 @@
-;;; helm-bibtex-autoloads.el --- automatically extracted autoloads
+;;; helm-bibtex-autoloads.el --- automatically extracted autoloads  -*- lexical-binding: t -*-
 ;;
 ;;; Code:
 
@@ -39,7 +39,7 @@ reread.
 
 \(fn &optional ARG)" t nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "helm-bibtex" '("helm-")))
+(register-definition-prefixes "helm-bibtex" '("helm-"))
 
 ;;;***
 

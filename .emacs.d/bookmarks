@@ -1,8 +1,18 @@
-;;;; Emacs Bookmark Format Version 1 ;;;; -*- coding: utf-8 -*-
+;;;; Emacs Bookmark Format Version 1;;;; -*- coding: utf-8; mode: lisp-data -*-
 ;;; This format is meant to be slightly human-readable;
 ;;; nevertheless, you probably don't want to edit it.
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
-(("h3432"
+(("here4"
+ (filename . "~/.emacs.d/sync0/sync0-bibtex-functions.el")
+ (front-context-string . ")\n\n(defun sync0-")
+ (rear-context-string . "y-functions)))))")
+ (position . 36780))
+("here3"
+ (filename . "~/.emacs.d/sync0/sync0-bibtex-functions.el")
+ (front-context-string . " (set (intern (c")
+ (rear-context-string . "y)))\n           ")
+ (position . 28746))
+("h3432"
  (filename . "~/Dropbox/obsidian/requisicao2.tex")
  (front-context-string . "\\chapter[head={\\")
  (rear-context-string . "20120123236}.}\n\n")
@@ -114,9 +124,9 @@
  (position . 1687))
 ("here2"
  (filename . "~/.emacs.d/sync0/sync0-bibtex-functions.el")
- (front-context-string . "t \n             ")
- (rear-context-string . "          (conca")
- (position . 13296))
+ (front-context-string . "t) nil)))))\n    ")
+ (rear-context-string . "ern entry-elemen")
+ (position . 31419))
 ("matonti"
  (filename . "~/Dropbox/notes/matonti2012.org")
  (front-context-string . "\n\n* 無 Conclusion")
@@ -249,7 +259,7 @@
  (position . 5443))
 ("here"
  (filename . "~/.emacs.d/sync0/sync0-bibtex-functions.el")
- (front-context-string . ")\n\n(defun sync0-")
- (rear-context-string . "-list \", \"))))))")
- (position . 21825))
+ (front-context-string . ")\n\n             ")
+ (rear-context-string . "entry-shorttitle")
+ (position . 57842))
 )
