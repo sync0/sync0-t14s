@@ -1660,6 +1660,14 @@ Exempt major modes are defined in `display-line-numbers-exempt-modes'."
     ;; Split windows horizontally in ediff (instead of vertically)
     (ediff-split-window-function #'split-window-vertically))
 #+END_SRC 
+
+** unidecode
+Change strings from Unicode to ASCII.
+#+BEGIN_SRC emacs-lisp
+(use-package unidecode
+  :straight (unidecode :type git :host github :repo "sindikat/unidecode")) 
+#+END_SRC 
+
 * Org-mode                                                           :revise:
 ** org-id
  #+BEGIN_SRC emacs-lisp
@@ -2891,6 +2899,21 @@ Auto-close delimiters and blocks as you type
   (add-hook 'python-mode-hook 'flycheck-mode))
 #+END_SRC 
 
+** nodejs-repl
+#+BEGIN_SRC emacs-lisp
+(use-package nodejs-repl
+  :straight (nodejs-repl :type git :host github :repo "abicky/nodejs-repl.el") 
+  :config
+  (add-hook 'js-mode-hook
+            (lambda ()
+              (define-key js-mode-map (kbd "C-x C-e") 'nodejs-repl-send-last-expression)
+              (define-key js-mode-map (kbd "C-c C-j") 'nodejs-repl-send-line)
+              (define-key js-mode-map (kbd "C-c C-r") 'nodejs-repl-send-region)
+              (define-key js-mode-map (kbd "C-c C-c") 'nodejs-repl-send-buffer)
+              (define-key js-mode-map (kbd "C-c C-l") 'nodejs-repl-load-file)
+              (define-key js-mode-map (kbd "C-c C-z") 'nodejs-repl-switch-to-repl))))
+#+END_SRC 
+
 ** yasnippets
 #+BEGIN_SRC emacs-lisp
   (use-package yasnippet 
@@ -3011,6 +3034,7 @@ Auto-close delimiters and blocks as you type
   (require 'sync0-bibtex-functions)
   (require 'sync0-bibtex-fields)
   (require 'scihub)
+  (require 'unidecode)
 
   (setq scihub-homepage "https://sci-hub.ee/")
   (setq scihub-download-directory sync0-zettelkasten-attachments-directory)
@@ -3018,7 +3042,7 @@ Auto-close delimiters and blocks as you type
 
   (setq bu-keywords-values sync0-bibtex-completion-keywords)
 
-  (setq bibtex-autokey-prefix-string (format-time-string "%Y%m%d%H%M%S"))
+  (setq bibtex-autokey-prefix-string (format-time-string "%Y%m%d"))
 
   (unbind-key "TAB" bibtex-mode-map)
 
@@ -3031,6 +3055,7 @@ Auto-close delimiters and blocks as you type
 
   (evil-define-key 'normal bibtex-mode-map
     "K" 'sync0-bibtex-previous-key
+    "zf" 'bibtex-fill-entry
     "J" 'sync0-bibtex-next-key))
  #+END_SRC 
 

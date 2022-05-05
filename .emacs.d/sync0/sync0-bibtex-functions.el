@@ -14,12 +14,18 @@
   "Possible alphabetic characters that can appear in BibLaTeX keys.
 Use format of base58 encoding.")
 
-;; (defvar sync0-bibtex-keys (mapcar #'(lambda (x) (cdr (assoc "=key=" x)))
-;;                                          (bibtex-completion-candidates))
-;;   "List of all the keys used in of all of the bibliography files")
+(defvar sync0-bibtex-keys nil
+  "List of all the keys used in of all of the bibliography files")
 
-(setq sync0-bibtex-keys (mapcar #'(lambda (x) (cdr (assoc "=key=" x)))
-                                         (bibtex-completion-candidates)))
+
+(defun sync0-bibtex-populate-keys ()
+  "Load all bibtex keys on variable sync0-bibtex-keys."
+  (interactive)
+  (setq sync0-bibtex-keys (mapcar #'(lambda (x) (cdr (assoc "=key=" x)))
+                                  (bibtex-completion-candidates))))
+
+;; (setq sync0-bibtex-keys (mapcar #'(lambda (x) (cdr (assoc "=key=" x)))
+;;                                          (bibtex-completion-candidates)))
 
 (defvar sync0-bibtex-today-keys nil
   "Variable used to keep track of bibtex keys created today to
@@ -107,16 +113,24 @@ to produce random characters."
       (push my-var x)))
   (setq sync0-bibtex-entry-initial-fields-list x))
 
-;; Define dummy variables for initial fields
-;; (let ((prefix "sync0-bibtex-entry-")
-;;       x)
-;;   (dolist (element '("subtitle" "volume" "edition") x)
-;;     (let ((my-var  (concat prefix element)))
-;;       ;; (set my-var nil)
-;;       (push my-var x)))
-;;   (setq sync0-bibtex-entry-crossref-crosscheck-fields-list x))
-
 (setq sync0-bibtex-entry-crossref-crosscheck-fields-list '("subtitle" "volume" "edition" "shorttitle")) 
+
+(setq sync0-bibtex-obsidian-fields-list '(("description" "\"" "\"" sync0-bibtex-entry-description)
+                                         ("doctype" "\"" "\"" sync0-bibtex-entry-doctype)
+                                         ("author" "[" "]" sync0-bibtex-entry-author-fixed)
+                                         ("title" "\"" "\"" sync0-bibtex-entry-title)
+                                         ("subtitle" "\"" "\"" sync0-bibtex-entry-subtitle)
+                                         ("crossref" "" "" sync0-bibtex-entry-crossref)
+                                         ("parent" "\"" "\"" sync0-bibtex-entry-parent)
+                                         ("related" "[" "]" sync0-bibtex-entry-related)
+                                         ("relatedtype" "" "" sync0-bibtex-entry-relatedtype)
+                                         ("edition" "" "" sync0-bibtex-entry-edition)
+                                         ("url" "\"" "\"" sync0-bibtex-entry-url)
+                                         ("origdate" "" "" sync0-bibtex-entry-origdate)
+                                         ("date" "" "" sync0-bibtex-entry-date)
+                                         ("medium" "[" "]" sync0-bibtex-entry-medium-fixed)
+                                         ("language" "" "" sync0-bibtex-entry-language)
+                                         ("library" "[\"" "\"]" sync0-bibtex-entry-library)))
 
 ;; use this to define all the dummy fields required for creating
 ;; bibtex entries. these do not appear in the bibtex entry but are
@@ -492,28 +506,32 @@ to produce random characters."
                            (setq sync0-bibtex-entry-relatedstring
                                (read-string "Related description : " nil nil nil t))))
         ("keywords" (lambda ()
+                      ;; Requires package unidecode for conversion to
+                      ;; ASCII. See:
+                      ;; https://github.com/sindikat/unidecode
                       (setq sync0-bibtex-entry-keywords
-                            (let* ((my-fields-calculation-list '(("type" "reference/" sync0-bibtex-entry-type-downcase)
-                                                                 ("date" "date/" sync0-bibtex-entry-date-tag)
-                                                                 ("origdate" "origdate/" sync0-bibtex-entry-origdate)
-                                                                 ("crossref" "crossref/" sync0-bibtex-entry-crossref)
-                                                                 ("doctype" "doctype/" sync0-bibtex-entry-doctype)
-                                                                 ("language" "language/" sync0-bibtex-entry-language)
-                                                                 ("edition" "edition/" sync0-bibtex-entry-edition)
-                                                                 ("related" "related/" sync0-bibtex-entry-related-tag)
-                                                                 ("relatedtype" "relatedtype/" sync0-bibtex-entry-relatedtype)
-                                                                 ("author" "author/" sync0-bibtex-entry-author-tag)))
-                                   (actual-fields-list
-                                    (let (x)
-                                      (dolist (element my-fields-calculation-list x) 
-                                        (unless (sync0-null-p (eval (caddr element)))
-                                          (setq x (push (concat (cadr element)  (eval (caddr element))) x))))))
-                                   (extra-keywords (completing-read-multiple "Input extra keywords: " 
-                                                                             sync0-bibtex-completion-keywords))
-                                   (master-list (if (sync0-null-p extra-keywords)
-                                                    actual-fields-list
-                                                  (cl-union actual-fields-list extra-keywords))))
-                              (sync0-show-elements-of-list master-list ", ")))))))
+                            (unidecode
+                             (let* ((my-fields-calculation-list '(("type" "reference/" sync0-bibtex-entry-type-downcase)
+                                                                  ("date" "date/" sync0-bibtex-entry-date-tag)
+                                                                  ("origdate" "origdate/" sync0-bibtex-entry-origdate)
+                                                                  ("crossref" "crossref/" sync0-bibtex-entry-crossref)
+                                                                  ("doctype" "doctype/" sync0-bibtex-entry-doctype)
+                                                                  ("language" "language/" sync0-bibtex-entry-language)
+                                                                  ("edition" "edition/" sync0-bibtex-entry-edition)
+                                                                  ("related" "related/" sync0-bibtex-entry-related-tag)
+                                                                  ("relatedtype" "relatedtype/" sync0-bibtex-entry-relatedtype)
+                                                                  ("author" "author/" sync0-bibtex-entry-author-tag)))
+                                    (actual-fields-list
+                                     (let (x)
+                                       (dolist (element my-fields-calculation-list x) 
+                                         (unless (sync0-null-p (eval (caddr element)))
+                                           (setq x (push (concat (cadr element)  (eval (caddr element))) x))))))
+                                    (extra-keywords (completing-read-multiple "Input extra keywords: " 
+                                                                              sync0-bibtex-completion-keywords))
+                                    (master-list (if (sync0-null-p extra-keywords)
+                                                     actual-fields-list
+                                                   (cl-union actual-fields-list extra-keywords))))
+                               (sync0-show-elements-of-list master-list ", "))))))))
 
 (defun sync0-bibtex-normalize-case (entrytype)
   "Normalize case of bibtex type to prevent crazy unwanted
@@ -1087,93 +1105,108 @@ obsidian vault. This function in not intended for interactive
 use, but as a function to be included in pipes. When optional
 rewrite is true, this function rewrites the YAML frontmatter of
 the note, instead of attempting to create a new note."
-       (let* ((obsidian-file (concat sync0-zettelkasten-directory bibkey ".md")) 
-              (author-title (concat (unless (and
-                                      (sync0-null-p sync0-bibtex-entry-editor)
-                                      (sync0-null-p sync0-bibtex-entry-author))
-                               (concat sync0-bibtex-entry-lastname " "))
-                             sync0-bibtex-entry-date-fixed
-                             " "
-                             (sync0-bibtex-entry-select-draft-prefix)
-                             (unless (sync0-null-p sync0-bibtex-entry-chapter)
-                               (concat " Ch. " sync0-bibtex-entry-chapter " : "))
-                             sync0-bibtex-entry-title-fixed
-                             (unless (sync0-null-p sync0-bibtex-entry-edition)
-                               (concat " (" sync0-bibtex-entry-edition "e)"))))
-              (author-title-alias (concat (unless (and
-                                            (sync0-null-p sync0-bibtex-entry-editor)
-                                            (sync0-null-p sync0-bibtex-entry-author))
-                                     (concat sync0-bibtex-entry-lastname " "))
-                                   sync0-bibtex-entry-date-fixed
-                                   " "
-                                   (sync0-bibtex-entry-select-draft-prefix)
-                                   (unless (sync0-null-p sync0-bibtex-entry-chapter)
-                                     (concat " Ch. " sync0-bibtex-entry-chapter " : "))
-                                   sync0-bibtex-entry-title-aliases
-                                   (unless (sync0-null-p sync0-bibtex-entry-edition)
-                                     (concat " (" sync0-bibtex-entry-edition "e)"))))
-              (title-date (concat (sync0-bibtex-entry-select-draft-prefix)
-                           (unless (sync0-null-p sync0-bibtex-entry-chapter)
-                                    (concat " Ch. " sync0-bibtex-entry-chapter " : "))
+  (let* ((obsidian-file (concat sync0-zettelkasten-directory bibkey ".md")) 
+         (title-edition (when sync0-bibtex-entry-edition
+                          (concat (sync0-bibtex-entry-select-draft-prefix)
+                                  (when  sync0-bibtex-entry-chapter
+                                    (concat "Ch. " sync0-bibtex-entry-chapter " : "))
+                                  "*"
                                   sync0-bibtex-entry-title-aliases
-                                  (unless (sync0-null-p sync0-bibtex-entry-edition)
-                                    (concat " (" sync0-bibtex-entry-edition "e)"))
-                                  " "
-                                  sync0-bibtex-entry-date-fixed))
-              (shorttitle-date (unless (sync0-null-p sync0-bibtex-entry-shorttitle)
-                                 (concat sync0-bibtex-entry-shorttitle
-                                         (unless (sync0-null-p sync0-bibtex-entry-edition)
-                                           (concat " (" sync0-bibtex-entry-edition "e)"))
-                                         " "
-                                         sync0-bibtex-entry-date-fixed)))
-              (obsidian-yaml (concat "---\n"
-                                     "zettel_type: reference\n"
-                                     "id: " bibkey "\n"
+                                  "* (" sync0-bibtex-entry-edition "e)")))
+         (title-edition-two (when sync0-bibtex-entry-edition
+                              (concat (sync0-bibtex-entry-select-draft-prefix)
+                                      (when  sync0-bibtex-entry-chapter
+                                        (concat "Ch. " sync0-bibtex-entry-chapter " : "))
+                                      "*"
+                                      sync0-bibtex-entry-title-fixed
+                                      "* (" sync0-bibtex-entry-edition "e)")))
+         (author-title-edition (when (and title-edition
+                                          (or sync0-bibtex-entry-editor
+                                              sync0-bibtex-entry-author))
+                                 (concat sync0-bibtex-entry-lastname ", " title-edition)))
+         (author-title-edition-two (when (and title-edition-two
+                                              (or sync0-bibtex-entry-editor
+                                                  sync0-bibtex-entry-author))
+                                     (concat sync0-bibtex-entry-lastname ", " title-edition-two)))
+         (title-date (concat (sync0-bibtex-entry-select-draft-prefix)
+                             (when sync0-bibtex-entry-chapter
+                               (concat "Ch. " sync0-bibtex-entry-chapter " : "))
+                             "*" sync0-bibtex-entry-title-aliases "* "
+                             sync0-bibtex-entry-date-fixed))
+         (author-title-date (when (or sync0-bibtex-entry-editor
+                                      sync0-bibtex-entry-author)
+                              (concat sync0-bibtex-entry-lastname " "
+                                      sync0-bibtex-entry-date-fixed
+                                      " "
+                                      (sync0-bibtex-entry-select-draft-prefix)
+                                      (when sync0-bibtex-entry-chapter
+                                        (concat " Ch. " sync0-bibtex-entry-chapter " : "))
+                                      "*" sync0-bibtex-entry-title-aliases "*")))
+         (title-date-two (concat (sync0-bibtex-entry-select-draft-prefix)
+                             (when sync0-bibtex-entry-chapter
+                               (concat "Ch. " sync0-bibtex-entry-chapter " : "))
+                             "*"
+                             sync0-bibtex-entry-title-aliases
+                             "* "
+                             sync0-bibtex-entry-date-fixed))
+         (author-title-date-two (when (or sync0-bibtex-entry-editor
+                                              sync0-bibtex-entry-author)
+                                      (concat sync0-bibtex-entry-lastname " ")
+                                    sync0-bibtex-entry-date-fixed
+                                    " "
+                                    (sync0-bibtex-entry-select-draft-prefix)
+                                    (when sync0-bibtex-entry-chapter
+                                      (concat " Ch. " sync0-bibtex-entry-chapter " : "))
+                                    "*" sync0-bibtex-entry-title-fixed "*"))
+         (shorttitle-edition (when (and sync0-bibtex-entry-edition
+                                        sync0-bibtex-entry-shorttitle)
+                               (concat (sync0-bibtex-entry-select-draft-prefix)
+                                       "*"
+                                       sync0-bibtex-entry-shorttitle
+                                       "* (" sync0-bibtex-entry-edition "e)")))
+         (shorttitle-date (when sync0-bibtex-entry-shorttitle
+                            (concat (sync0-bibtex-entry-select-draft-prefix)
+                                    "*"
+                                    sync0-bibtex-entry-shorttitle
+                                    "* "
+                                    sync0-bibtex-entry-date-fixed)))
+         (title-list-raw (cl-remove nil (list title-date
+                                           title-date-two
+                                           title-edition
+                                           title-edition-two
+                                           author-title-date
+                                           author-title-edition
+                                           author-title-edition-two
+                                           shorttitle-date
+                                           shorttitle-edition)))  
+         (title-list (cl-delete-duplicates title-list-raw :test #'equal))
+         (title-list-string (sync0-show-elements-of-list title-list "\", \""))
+         (obsidian-fields-string (let (x)
+                                   (dolist (element sync0-bibtex-obsidian-fields-list x)
+                                     (let ((field (car element))
+                                           (opener (cadr element))
+                                           (closer (caddr element))
+                                           (variable (cadddr element)))
+                                       (when-let (value (eval variable))
+                                         (push (concat field ": " opener value closer) x))))
+                                   (sync0-show-elements-of-list x "\n")))
+         (obsidian-yaml (concat "---\n"
+                                "zettel_type: reference\n"
+                                "id: " bibkey "\n"
                                 "citekey: " bibkey "\n"
-                                (unless (sync0-null-p sync0-bibtex-entry-description)
-                                  (concat "description: \"" sync0-bibtex-entry-description "\"\n"))
-                                (if (sync0-null-p sync0-bibtex-entry-created)
-                                    (concat "created: " (format-time-string "%Y-%m-%d") "\n")
-                                  (concat "created: " sync0-bibtex-entry-created "\n"))
                                 "biblatex_type: " (downcase sync0-bibtex-entry-type)  "\n"
-                                (unless (sync0-null-p sync0-bibtex-entry-doctype)
-                                  (concat "doctype: \"" sync0-bibtex-entry-doctype "\"\n"))
-                                "title: \"" sync0-bibtex-entry-title "\"\n"
-                                (unless (sync0-null-p sync0-bibtex-entry-subtitle)
-                                  (concat "subtitle: \"" sync0-bibtex-entry-subtitle "\"\n"))
-                                (unless (and (sync0-null-p sync0-bibtex-entry-author)
-                                            (sync0-null-p sync0-bibtex-entry-editor))
-                                  (concat "author: [" sync0-bibtex-entry-author-fixed "]\n"))
-                                (unless (sync0-null-p sync0-bibtex-entry-crossref)
-                                  (concat "crossref: " sync0-bibtex-entry-crossref "\n"))
-                                (unless (sync0-null-p sync0-bibtex-entry-parent)
-                                  (concat "parent: \"" sync0-bibtex-entry-parent "\"\n"))
-                                (unless (sync0-null-p sync0-bibtex-entry-related)
-                                  (concat "related: [" sync0-bibtex-entry-related "]\n"))
-                                (unless (sync0-null-p sync0-bibtex-entry-relatedtype)
-                                  (concat "relatedtype: " sync0-bibtex-entry-relatedtype "\n"))
-                                (unless (sync0-null-p sync0-bibtex-entry-edition)
-                                  (concat "edition: " sync0-bibtex-entry-edition "\n"))
-                                (if (sync0-null-p sync0-bibtex-entry-subtitle)
-                                    (if shorttitle-date
-                                        (concat "aliases: [\"" author-title "\", \"" title-date "\", \"" shorttitle-date "\"]\n")
-                                      (concat "aliases: [\"" author-title "\", \"" title-date "\"]\n"))
-                                  (if shorttitle-date
-                                      (concat "aliases: [\"" author-title "\", \"" author-title-alias "\", \"" title-date "\", \"" shorttitle-date "\"]\n")
-                                    (concat "aliases: [\"" author-title "\", \"" author-title-alias "\", \"" title-date "\"]\n")))
-                                (unless (sync0-null-p sync0-bibtex-entry-url)
-                                  (concat "url: \"" sync0-bibtex-entry-url "\"\n"))
-                                (unless (sync0-null-p sync0-bibtex-entry-origdate)
-                                  (concat "origdate: " sync0-bibtex-entry-origdate "\n"))
-                                "date: " sync0-bibtex-entry-date "\n"
-                                (unless (sync0-null-p sync0-bibtex-entry-medium)
-                                  (concat "medium: [" sync0-bibtex-entry-medium-fixed "]\n"))
-                                "language: " sync0-bibtex-entry-language "\n"
-                                (unless (sync0-null-p sync0-bibtex-entry-library)
-                                  (concat "library: [\"" sync0-bibtex-entry-library "\"]\n"))
+                                obsidian-fields-string
+                                (if (sync0-null-p sync0-bibtex-entry-created)
+                                    (concat "\ncreated: " (format-time-string "%Y-%m-%d") "\n")
+                                  (concat "\ncreated: " sync0-bibtex-entry-created "\n"))
+                                (concat "aliases: [\"" title-list-string "\"]\n")
                                 "tags: [bibkey/" bibkey ", " sync0-bibtex-entry-keywords "]\n"
                                 "---\n"
-                                "# " author-title "\n"))
+                                (cond (sync0-bibtex-entry-author-fixed
+                                       (concat "# " author-title-date "\n"))
+                                      (sync0-bibtex-entry-date-fixed 
+                                       (concat "# " title-date "\n"))
+                                      (t (concat "# " sync0-bibtex-entry-title-fixed "\n")))))
          (obsidian-rest (concat  "\n## Description\n\n" 
                                  "## Progrès de la lecture\n\n"))
          (obsidian-entry (concat obsidian-yaml obsidian-rest)))
@@ -1837,6 +1870,7 @@ readable."
    ;; ("r" (sync0-bibtex-update-completion-files sync0-bibtex-completion-variables-list) "Refresh completion vars")
    (("V" sync0-visit-bibliography-in-buffer "Visit bibfile")
     ("a" sync0-bibtex-add-field "Add field")
+    ("r" sync0-bibtex-populate-keys "Populate keys")
     ("i" sync0-bibtex-convert-jpg-to-pdf "Convert jpg to pdf")
     ("k" bu-make-field-keywords "Add keyword")
     ("y" sync0-bibtex-yank-citation-from-bibkey "Yank citation.")

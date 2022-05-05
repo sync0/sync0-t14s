@@ -1322,6 +1322,9 @@ Exempt major modes are defined in `display-line-numbers-exempt-modes'."
     ;; Split windows horizontally in ediff (instead of vertically)
     (ediff-split-window-function #'split-window-vertically))
 
+(use-package unidecode
+  :straight (unidecode :type git :host github :repo "sindikat/unidecode"))
+
 (use-package org-id
   :straight nil
   :custom
@@ -2495,6 +2498,7 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
   (require 'sync0-bibtex-functions)
   (require 'sync0-bibtex-fields)
   (require 'scihub)
+  (require 'unidecode)
 
   (setq scihub-homepage "https://sci-hub.ee/")
   (setq scihub-download-directory sync0-zettelkasten-attachments-directory)
@@ -2502,7 +2506,7 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
 
   (setq bu-keywords-values sync0-bibtex-completion-keywords)
 
-  (setq bibtex-autokey-prefix-string (format-time-string "%Y%m%d%H%M%S"))
+  (setq bibtex-autokey-prefix-string (format-time-string "%Y%m%d"))
 
   (unbind-key "TAB" bibtex-mode-map)
 
@@ -2515,6 +2519,7 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
 
   (evil-define-key 'normal bibtex-mode-map
     "K" 'sync0-bibtex-previous-key
+    "zf" 'bibtex-fill-entry
     "J" 'sync0-bibtex-next-key))
 
 (use-package bibtex-completion
@@ -2531,7 +2536,7 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
   (bibtex-completion-notes-symbol "N")
   (bibtex-completion-notes-extension ".md")
   ;; (bibtex-completion-notes-extension ".org")
-  (bibtex-completion-pdf-extension '(".pdf" ".epub" ".doc" ".docx" ".org"))
+  (bibtex-completion-pdf-extension '(".pdf" ".epub" ".doc" ".docx" ".org" ".md"))
   (bibtex-completion-additional-search-fields '(origdate subtitle))
   ;; (bibtex-completion-additional-search-fields '(journaltitle origdate subtitle volume location publisher note library institution keywords edition))
   ;; (bibtex-completion-additional-search-fields '(editor journaltitle origdate subtitle volume booktitle location publisher note library medium institution keywords))

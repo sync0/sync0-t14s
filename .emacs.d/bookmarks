@@ -259,7 +259,7 @@
  (position . 5443))
 ("here"
  (filename . "~/.emacs.d/sync0/sync0-bibtex-functions.el")
- (front-context-string . ")\n\n             ")
- (rear-context-string . "entry-shorttitle")
- (position . 57842))
+ (front-context-string . ")  \n         (ti")
+ (rear-context-string . "ttitle-edition))")
+ (position . 63199))
 )

@@ -1,0 +1,68 @@
+conky.config = {
+	double_buffer = true,
+        background = false, 
+	use_xft = true,
+	font = '123:size=11',
+	update_interval = 1,
+	xftalpha = 0.5,
+        total_run_times = 0, 
+        
+        own_window = true,
+	own_window_type = 'desktop',
+	own_window_title = 'conky',
+	own_window_transparent = false,
+	own_window_argb_visual = true,
+	own_window_hints = 'undecorated,sticky,below,skip_taskbar,skip_pager',
+        own_window_argb_value = 0,
+        own_window_class = 'conky',
+
+	--own_window = false,
+	--own_window_type = 'override',
+	--own_window_transparent = true,
+	--own_window_hints = 'undecorated,below,sticky,skip_taskbar,skip_pager',
+
+	alignment = 'top_left',
+	gap_x = 60,
+	gap_y = 200,
+	minimum_width = 270,
+	minimum_height = 550,
+	maximum_width = 830,
+
+	draw_shades = false,
+	draw_outline = false,
+	draw_borders = false,
+	draw_grap_borders = true,
+
+	no_buffers = true,
+	cpu_avg_samples = 2,
+	net_avg_samples = 1,
+	override_utf8_locale = true,
+
+        times_in_seconds = true,
+
+	color0 = '#f8eeec',
+	--color0 = '#EAEAEA',
+        color1 = '#1B6AA5',
+	--color1 = '#997662',
+        color2 = '#DC143C',
+	--color1 = '#000000',
+	--color1 = '#FFFF00',
+
+};
+
+conky.text = [[
+################
+# Penguin Kernel
+################
+${image ~/.conky/logo_manjaro.png -p 250,0 -s 70x70 -n}${color0}${voffset 20}${offset 350}${font EB Garamond:pixelsize=30}${color1}${kernel}${color}
+################
+# Clock and Date
+################
+${voffset 30}${color0}${font EB Garamond:pixelsize=200}${time %H:%M}${font}${voffset -150}${offset 10}${color1}${font EB Garamond:pixelsize=130}${time %d} ${voffset 20}${color2}${font Goudy Initialen:pixelsize=100}${execpi 3600 date +'%B' | cut -b 1}${voffset -10}${offset 3}${color0}${font EB Garamond:pixelsize=60}${execpi 3600 date +'%B' | cut -b 2-} ${font}${voffset 45}${offset -415}${color2}${font Goudy Initialen:pixelsize=180}${execpi 3600 date +'%a' | cut -b 1}${offset 3}${voffset -10}${color0}${font EB Garamond:pixelsize=80}${execpi 3600 date +'%A' | cut -b 2-}${voffset -105}${offset -190}${color1}${font EB Garamond:pixelsize=130}${time %Y}${font}
+####################
+# System Information
+####################
+${voffset 110}${offset 1}${font ConkyColors:pixelsize=80}${color1}h${offset 0}$color${voffset -30}${font Fira Mono:pixelsize=30}${fs_free /} / ${fs_size /}${offset 20}${color1}${voffset -20}${font ConkyColors:pixelsize=80}g${font Fira Mono:pixelsize=30}${voffset -30}${offset 5}$color$mem / $memmax${offset -775}${voffset 80}${color1}${font ConkyColors:pixelsize=80}${voffset -13}e${offset 9}${color0}${font Fira Mono:pixelsize=30}${voffset -30}${cpu cpu0}%${offset 265}${voffset -11}${color1}${battery_bar 30, 70}${font Fira Mono:pixelsize=30}${voffset -3}${offset 3}${color0} ${battery_short} = ${format_time $battery_time "\hh \mm"} 
+
+
+]];

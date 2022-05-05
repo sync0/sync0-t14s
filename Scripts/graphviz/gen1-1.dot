@@ -1,0 +1,100 @@
+digraph RiveraCarreno {
+    compound=true;
+    rankdir=LR
+    // splines=ortho;
+    // node [fontname="Gill Sans MT Pro Book", penwidth=1.0];
+    edge [dir=none];
+    node [fontsize=11,fontname="Helvetic Neue LT Std", penwidth=1.0];
+
+    subgraph Gparents {rank=same;
+        // men
+        node [shape=box, margin=0.1];
+        Jmra [label="Jesús María\nRivera Álvarez\n1924-1987"];
+        Bca [label="Benito \nCarreño Angarita\n1936"];
+        // women
+        node [shape=oval, margin=0.05];
+        Erer [label="Elda Rubiela\nEstupiñán Rojas\n1941"];
+        Asg [penwidth=2.0, label="Aliria \nSuárez Gutiérrez\n1938"];
+        // marriage boxes
+        node [shape=plaintext];
+        JmraAsg [label="Medellín\n28-09-1968"];
+        BcaErer [label="Bucaramanga\n28-09-1998"];
+        // edges
+        Jmra -> JmraAsg -> Asg;
+        Bca -> BcaErer -> Erer;
+    }
+
+    subgraph parents {rank=same;
+        // men
+        node [shape=box, margin=0.1];
+        Cars [penwidth=3.0, label="Carlos Alberto\nRivera Suárez\n1962"];
+        node [shape=oval, margin=0.05];
+        Rpce [label="Rosa Patricia\nCarreño Estupiñán\n1966"];
+        // marriage boxes
+        node [shape=plaintext];
+        CarsRpce [label="Bucaramanga\n28-09-1998"];
+        node [shape=point,width=0];
+        CarsChild;
+        RpceChild;
+        // edges
+        CarsChild -> Cars -> CarsRpce -> Rpce -> RpceChild
+    }
+
+    JmraAsg -> CarsChild;
+    BcaErer -> RpceChild;
+
+    // dummy points
+    subgraph Dchildren {rank=same;
+        node [shape=point,width=0];
+        CarsRpceChildren;
+        CarcChild;
+        AcrcChild;
+        JfrcChild;
+        // edges
+        AcrcChild -> JfrcChild -> CarsRpceChildren -> CarcChild;
+    }
+        CarsRpce -> CarsRpceChildren;
+
+    subgraph children {rank=max;
+        // men
+        node [shape=box, margin=0.1];
+        Jfrc [label="Juan Felipe\nRivera Carreño\n1996"];
+        Carc [label="Carlos Alberto\nRivera Carreño\n1991"];
+        // women
+        node [shape=oval, margin=0.05];
+        Acrc [label="Andrea Carolina\nRivera Carreño\n1993"];
+        // marriage connecting boxes
+        // edges
+        // Carc -> CarcMjc [weight=20];
+        // CarcMjc -> Mjc[weight=20];
+        // Mjc -> CarcMjc -> Carc;
+        // Carc -> CarcMjc -> Mjc[weight=20];
+    }
+
+    subgraph spouse {rank=max;
+        node [shape=oval, margin=0.05];
+        Mjc [label="Min Jung\nChoi\n1983"];
+        node [fontsize=9,shape=plaintext];
+        CarcMjc [label="Seul\n28-09-1998"];
+        CarcMjc -> Mjc;
+    }
+
+         CarcMjc -> Carc [tailports=s];
+
+        // Carc -> CarcMjc;
+
+// {rank=same;
+        // node [shape=oval, margin=0.05];
+        // Mjc [label="Min Jung\nChoi\n1983"];
+        // node [fontsize=9,shape=plaintext];
+        // CarcMjc [label="Seul\n28-09-1998"];
+// }
+        // Carc -> CarcMjc;
+        // CarcMjc -> Mjc;
+
+        // CarcMjc -> Mjc [headport=n,tailport=s,weight=20];
+
+    CarcChild -> Carc;
+    AcrcChild -> Acrc;
+    JfrcChild -> Jfrc;
+}

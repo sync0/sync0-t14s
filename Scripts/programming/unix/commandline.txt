@@ -1,0 +1,136 @@
+
+#Code Academy's Command Line
+----------
+
+##Lesson One
+> - `pwd`
+>		- outputs the name of the current working directory.
+> - `ls`
+>		- lists all files and directories in the working directory.
+> - `cd`
+>		- switches you into the directory you specify.
+>		- `cd ..`
+>			- moves up one directory.
+>		- `cd ../..`
+>			- moves up two directories.
+> - `mkdir`
+>		- creates a new directory in the working directory.
+> - `touch`
+>		- creates a new file inside the working directory
+
+----------
+
+##Lesson Two
+> - `ls` 
+>		- lists all files and directories in the working directory.
+>		- `ls -a` 
+>			- lists all contents, including hidden files and directories
+>		- `ls -l`
+>			- lists all contents of a directory in long format
+
+
+----------
+
+
+Remember! Options can be combined:
+
+> **ex: ** `ls -alt`
+> 
+> lists all contents, including hidden files and directories, in long format, ordered by the date and time they were last modified. 
+
+----------
+
+> - `cp` 
+>		- copies files or directories.
+>		- `cp destination_1/file_name.txt destination_2/` 
+>			- copies *file_name.txt* in *destination_1* and pastes it in *destination_2*.
+>		- `cp m*.txt scifi/`
+>			- where `m*.txt` selects all files in the working directory starting with "m" and ending with ".txt", and copies them to` scifi/`
+> - `mv` 
+>		- moves and renames files.
+>	  - `mv destination_1/hello.txt destination_2` 
+>			- moves *hello.txt* to *destination_2*.
+>	  - `mv destination_1/hello.txt destination_2/mario.txt destination_3 ` 
+>			- moves *hello.txt* and *mario.txt* to *destination_3*.
+>	  - `mv hello.txt mario.txt` 
+>			- renames *hello.txt* as *mario.txt*.
+> - `rm`
+>		- removes files.
+>		- `rm hello.txt` 
+>			- removes *hello.txt*. 
+>		- `rm -r archives` 
+>			- removes directory *archives* and all its children.
+
+
+----------
+
+##Lesson Three
+
+> - `echo`
+>		- `echo "Hello" > hello.txt` 
+>			- writes *hello* to file *hello.txt*.
+>		- `echo $USER`
+>			+ returns the name of the user.
+> - `cat`
+>		- `cat hello.txt` 
+>			- outputs the contents of *hello.txt* to the terminal.
+> 		- `cat oceans.txt > continents.txt`
+>			-  overwrites the contents of *continents.txt* with those of *oceans.txt*.
+> 		- `cat glaciers.txt >> rivers.txt`
+>			-  adds the contents of *glaciers.txt* to the contents of *rivers.txt*. 
+>  - `cat volcanoes.txt | wc`
+>	   - `|` pipes the outputs from `cat volcanoes.txt` into `wc`, which in turn, outputs the number of lines, words, and characters in a file.
+>- `wc`
+>		- outputs the number of lines, words, and characters in a file. 
+> - `sort` 
+>		- sorts lines of text alphabetically.
+>		- `sort lakes.txt` 
+>		- `sort deserts.txt | uniq` 
+>			- shows the contents of  a file, while ignoring duplicates.
+> - `uniq` 
+>		- filters duplicate, adjacent lines of text.
+>		- `sort deserts.txt | uniq > uniq-deserts.txt`
+>			-  removes duplicates from *deserts.txt*, and creates a file *uniq-deserts.txt* without the duplicates. 
+> - `grep` 
+>		- searches for a text pattern and outputs it.
+>		- `grep Mount mountains.txt` 
+>			- searches *mountains.txt* for expression *Mount*, and prints as output those expressions that contain that string.
+>		- `grep -i Mount mountains.txt` 
+>			- searches *mountains.txt* for the string *Mount* (case insensitive, i.e,, `-i`), and prints those instances that include it.
+>		- `grep -R Arctic /home/ccuser/workspace/geography`
+>			- `grep -R` searches all files in a directory and outputs filenames and lines containing matched results. `-R` stands for "recursive". Here `grep -R` searches the `/home/ccuser/workspace/geography` directory for the string "Arctic" and outputs filenames and lines with matched results.
+>		- `grep -Rl Arctic /home/ccuser/workspace/geography`
+>			-  `grep -Rl` searches all files in a directory and outputs only filenames with matched results. `-R` stands for "recursive" and `l` stands for "files with matches". Here `grep -Rl` searches the `/home/ccuser/workspace/geography` directory for the string "Arctic" and outputs filenames with matched results.
+> - `sed` 
+>		- searches for a text pattern, modifies it, and outputs it.
+>		- `sed 's/snow/rain/' forests.txt` 
+>			- looks for the first instance of the word *snow* in each element of *forests.txt* and replaces it by *rain*. 
+>		- `sed 's/snow/rain/g' forests.txt` 
+>			- looks for all instances (hence, `g` for global) of *snow* and replaces them with *rain*.
+
+----------
+
+##Lesson Four
+
+> - `source`
+> 		+ `source ~/.bash_profile`
+> 			* activates the changes in `~/.bash_profile` for the current session. `source` makes the changes available right away in the current session.
+> * `alias`
+> 		- `alias pd="pwd"`
+> 			+ creates a quick shorcut for `pwd` as `pd`.
+>   * `history`
+>   	- outputs the history of commands entered in the current session.
+>   * `nano`
+>   * opens a terminal text editor.
+>   * `nano .profile` or `nano whatever.txt`
+>     - opens `.profile` or `whatever.txt` in nano.
+
+Remember:
+
+>   * `Ctrl + O`
+>     - saves file in nano.
+>   * `Ctrl + X`
+>     - exits nano.
+
+
+

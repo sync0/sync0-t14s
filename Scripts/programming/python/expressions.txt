@@ -1,0 +1,55 @@
+
+# Python 
+
+---------
+## Lesson One
+
+* `%` modulo
+    - calculates the remainder of a division.
+```python
+3 % 2 # this will output 1, as 2 fits in 3 only once and leaves out 1 as remainder
+```
+
+### Ex: Tip Calculator
+```python
+meal = 44.50
+tax = 0.0675
+tip = 0.15
+
+meal = meal + meal * tax
+total = meal + meal * tip
+
+print("%.2f" % total) # "%.2f" is for two decimal places
+```
+* `len()`
+    - gets the length (the number of characters) of a string.
+```python
+parrot = "Norwegian Blue" 
+print len(parrot).
+```
+* `lower()`
+    - gets rid of all the capitalization in your strings.
+```python
+parrot = "Norwegian Blue"
+print "Norwegian Blue".lower()
+```
+* `upper()`
+    - make a string completely upper case.
+```python
+parrot = "norwegian blue"
+print "norwegian blue".upper()
+```
+* `str()`
+    - turns non-strings into strings.
+```python
+pi = 3.14
+print str(pi)
+```
+* `%`
+    - is used to combine a string with variables. The % operator will replace a %s in the string with the string variable that comes after it.
+```python
+string_1 = "Camelot"
+string_2 = "place"
+
+print "Let's not go to %s. 'Tis a silly %s." % (string_1, string_2)
+```

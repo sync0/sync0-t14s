@@ -1,0 +1,27 @@
+# no hidden(.bla) files
+.*
+# don't track .emacs.d/
+.emacs.d/
+.config/google-chrome
+# don't track emacs backup files 
+*~
+# but do track these hidden files 
+!.emacs
+!.bashrc
+!.xinitrc
+!.bash_profile
+!.config/
+!.emacs.d/backups/
+!.emacs.d/snippets/
+!.emacs.d/abbrev_defs
+!.emacs.d/bookmarks
+!.emacs.d/custom_settings.el
+!.emacs.d/emacs_settings.org
+# ignore all files in the Documents/ directory
+Desktop/
+Documents/
+Downloads/
+Dropbox/
+Media/
+Pictures/
+Scripts/

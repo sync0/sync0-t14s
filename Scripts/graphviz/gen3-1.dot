@@ -1,0 +1,80 @@
+digraph SuarezGutierrez {
+   compound=true;
+   // forcelabels=true;
+    rankdir=LR
+    // splines=ortho
+    edge [dir=none];
+    node [fontsize=11,fontname="Helvetic Neue LT Std", penwidth=1.0];
+
+    subgraph Gparents {rank=same;
+        // men
+        node [shape=box, margin=0.1];
+        Pasa [label="Pablo Antonio \nSuárez Arias\n1932"];
+        Mgt [penwidth=2.0, label="Matías\nGutiérrez Toro\n1867-1933"];
+        // women
+        node [shape=oval, margin=0.05];
+        Adm [label="Aurelia Dionicia\nMuñoz\n1934"];
+        Mpr [label="María Petronila\nRincón\n1934"];
+        // marriage boxes
+        node [shape=plaintext];
+        PasaAdm [label="Bucaramanga\n28-09-1998"];
+        MgtMpr [label="Data desconhecida"];
+        // edges
+        Pasa -> PasaAdm -> Adm;
+        Mgt -> MgtMpr -> Mpr;
+    }
+
+    subgraph parents {rank=same;
+        // men
+        node [shape=box, margin=0.1];
+        Rasm [label="Rafael Ángel\nSuárez Muñoz\n1897-1982"];
+        // women
+        node [shape=oval, margin=0.05];
+        Mjgr [penwidth=3.0, label="María Jesús\nGutiérrez Rincón\n1930-?"];
+        // marriage boxes
+        node [shape=plaintext];
+        RasmMjgr [label="Mesopotamia\n23-10-1922"];
+        // dummy points
+        node [shape=point,width=0];
+        RasmChild;
+        MjgrChild;
+        // edges
+        RasmChild -> Rasm -> RasmMjgr -> Mjgr -> MjgrChild;
+    }
+
+    PasaAdm ->  RasmChild;
+    MgtMpr -> MjgrChild;
+
+    subgraph Dchildren {rank=same;
+        // dummy points
+        node [shape=point,width=0];
+        RasmMjgrChildren;
+    }
+
+    RasmMjgr -> RasmMjgrChildren;
+
+    subgraph children {rank=same;
+        node [shape=box, margin=0.1];
+        Arsg [label="Arturo\nSuárez Gutiérrez\n1991"];
+        Gsg [label="Gabriel\nSuárez Gutiérrez\n1991"];
+        Jsg [label="Jaime\nSuárez Gutiérrez\n1991"];
+        Jjsg [label="José Joaquín\nSuárez Gutiérrez\n1991"];
+        node [shape=oval, margin=0.05];
+        Asg [penwidth=2.0, label="Aliria \nSuárez Gutiérrez\n1938"];
+        Bsg [label="Belarmina\nSuárez Gutiérrez\n1991"];
+        Isg [label="Isaura\nSuárez Gutiérrez\n1991"];
+        Lsg [label="Leonor \nSuárez Gutiérrez\n1991"];
+        Msg [label="María \nSuárez Gutiérrez\n1991"];
+    }
+
+    RasmMjgrChildren -> Arsg;
+    RasmMjgrChildren -> Gsg;
+    RasmMjgrChildren -> Jsg;
+    RasmMjgrChildren -> Jjsg;
+    RasmMjgrChildren -> Asg;
+    RasmMjgrChildren -> Bsg;
+    RasmMjgrChildren -> Isg;
+    RasmMjgrChildren -> Lsg;
+    RasmMjgrChildren -> Msg;
+
+}

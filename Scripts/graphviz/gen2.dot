@@ -1,0 +1,77 @@
+digraph RiveraSuarez {
+    compound=true;
+    rankdir=LR
+    splines=ortho;
+    edge [dir=none];
+    node [fontsize=11,fontname="Helvetic Neue LT Std", penwidth=1.0];
+
+    subgraph Gparents {rank=same;
+        // men
+        node [shape=box, margin=0.1];
+        Marg [label="Manuel Antonio \nRivera Gil\nData desconhecida"];
+        Rasm [label="Rafael Ángel\nSuárez Muñoz\n1897-1982"];
+        // women
+        node [shape=oval, margin=0.05];
+        Mjgr [penwidth=2.0, label="María Jesús\nGutiérrez Rincón\n1930-?"];
+        Pao [label="Paulina\nÁlvarez Orrego\n1885-?"];
+        // marriage boxes
+        node [shape=plaintext];
+        MargPao [label="Guadalupe\n27-08-1904"];
+        RasmMjgr [label="Mesopotamia\n23-10-1922"];
+        // edges
+        Marg -> MargPao -> Pao;
+        Rasm -> RasmMjgr-> Mjgr;
+    }
+
+    subgraph parents {rank=same;
+        // men
+        node [shape=box, margin=0.1];
+        Jmra [label="Jesús María\nRivera Álvarez\n1924-1987"];
+        // women
+        node [shape=oval, margin=0.05];
+        // marriage boxes
+        Asg [penwidth=3.0, label="Aliria \nSuárez Gutiérrez\n1938"];
+        node [shape=plaintext];
+        JmraAsg [label="Bucaramanga\n28-09-1998"];
+        // dummy points
+        node [shape=point,width=0];
+        JmraChild;
+        AsgChild;
+        // edges
+        JmraChild -> Jmra -> JmraAsg -> Asg -> AsgChild;
+    }
+
+    MargPao -> JmraChild;
+    RasmMjgr -> AsgChild;
+
+    //     // dummy points
+    subgraph Dchildren {rank=same;
+        node [shape=point,width=0];
+        JmraAsgChildren;
+        // edges
+    }
+
+    JmraAsg -> JmraAsgChildren;
+
+    subgraph children {rank=same;
+        // men
+        node [shape=box, margin=0.1];
+        Cars [penwidth=2.0, label="Carlos Alberto\nRivera Suárez\n1962"];
+        Haaa [label="Humberto Antonio\nArboleda Arango\n1966"];
+        // women
+        node [shape=oval, margin=0.05];
+        Rpce [label="Rosa Patricia\nCarreño Estupiñán\n1966"];
+        Mirs [label="María Isabel\nRivera Suárez\n1934"];
+        // marriage boxes
+        node [shape=plaintext];
+        CarsRpce [label="Bucaramanga\n28-09-1998"];
+        HaaaMirs [label="Medellín\nData desconhecida"];
+        // edges
+        Cars -> CarsRpce -> Rpce;
+        Haaa -> HaaaMirs -> Mirs;
+    }
+
+      JmraAsgChildren -> Cars;
+      JmraAsgChildren -> Mirs;
+
+}

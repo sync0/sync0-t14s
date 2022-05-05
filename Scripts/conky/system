@@ -1,0 +1,58 @@
+conky.config = {
+	double_buffer = true,
+        background = false, 
+	use_xft = true,
+	font = '123:size=11',
+	update_interval = 1,
+	xftalpha = 0.5,
+        total_run_times = 0, 
+        
+        own_window = true,
+	own_window_type = 'desktop',
+	own_window_title = 'conky',
+	own_window_transparent = false,
+	own_window_argb_visual = true,
+	own_window_hints = 'undecorated,sticky,below,skip_taskbar,skip_pager',
+        own_window_argb_value = 0,
+        own_window_class = 'conky',
+
+	--own_window = false,
+	--own_window_type = 'override',
+	--own_window_transparent = true,
+	--own_window_hints = 'undecorated,below,sticky,skip_taskbar,skip_pager',
+
+	alignment = 'top_left',
+	gap_x = 0,
+	gap_y = 140,
+	minimum_width = 270,
+	minimum_height = 630,
+	maximum_width = 950,
+
+	draw_shades = false,
+	draw_outline = false,
+	draw_borders = false,
+	draw_grap_borders = true,
+
+	no_buffers = true,
+	cpu_avg_samples = 2,
+	net_avg_samples = 1,
+	override_utf8_locale = true,
+
+        times_in_seconds = true,
+
+	color0 = '#f8eeec',
+	--color0 = '#EAEAEA',
+        color1 = '#1B6AA5',
+	--color1 = '#997662',
+        color2 = '#DC143C',
+	--color1 = '#000000',
+	--color1 = '#FFFF00',
+
+};
+
+conky.text = [[
+####################
+# System Information
+####################
+${voffset 30}${goto 570}${font EB Garamond 12 All SC:pixelsize=45}SYSTEM${voffset 55}${goto 465}${font ConkyColors:pixelsize=50}${color1}h${goto 530}$color${voffset -18}${font Fira Mono:pixelsize=25}${fs_free /} / ${fs_size /}${goto 465}${color1}${voffset 40}${font ConkyColors:pixelsize=50}g${font Fira Mono:pixelsize=25}${voffset -18}${goto 530}$color$mem / $memmax${goto 465}${voffset 43}${color1}${font ConkyColors:pixelsize=50}e${voffset 10}${goto 530}${color0}${font Fira Mono:pixelsize=25}${voffset -30}${cpu cpu0}%${goto 465}${voffset 47}${color1}${battery_bar 20, 50}${font Fira Mono:pixelsize=25}${voffset -3}${goto 515}${color0} ${battery_short} = ${format_time $battery_time "\hh \mm"} 
+]];

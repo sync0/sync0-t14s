@@ -1,0 +1,66 @@
+conky.config = {
+	double_buffer = true,
+        background = false, 
+	use_xft = true,
+	font = '123:size=11',
+	update_interval = 1,
+	xftalpha = 0.5,
+        total_run_times = 0, 
+        
+        own_window = true,
+	own_window_type = 'desktop',
+	own_window_title = 'conky',
+	own_window_transparent = false,
+	own_window_argb_visual = true,
+	own_window_hints = 'undecorated,sticky,below,skip_taskbar,skip_pager',
+        own_window_argb_value = 0,
+        own_window_class = 'conky',
+
+	--own_window = false,
+	--own_window_type = 'override',
+	--own_window_transparent = true,
+	--own_window_hints = 'undecorated,below,sticky,skip_taskbar,skip_pager',
+
+	alignment = 'top_left',
+	gap_x = 0,
+	gap_y = 140,
+	minimum_width = 270,
+	minimum_height = 630,
+	maximum_width = 950,
+
+	draw_shades = false,
+	draw_outline = false,
+	draw_borders = false,
+	draw_grap_borders = true,
+
+	no_buffers = true,
+	cpu_avg_samples = 2,
+	net_avg_samples = 1,
+	override_utf8_locale = true,
+
+        times_in_seconds = true,
+
+	color0 = '#f8eeec',
+	--color0 = '#EAEAEA',
+        color1 = '#1B6AA5',
+	--color1 = '#997662',
+        color2 = '#DC143C',
+	--color1 = '#000000',
+	--color1 = '#FFFF00',
+
+};
+
+conky.text = [[
+####################
+# Tasks
+####################
+${color1}${voffset -330}${goto 160}${font EB Garamond 12 All SC:pixelsize=45}TASKS
+
+${color2}${voffset -90}${goto 10}${font WenQuanYi Micro Hei:pixelsize=30}行
+
+${voffset -40}${font WenQuanYi Micro Hei:pixelsize=20}${color0}${execpi 3600 cat ~/Dropbox/org/todo.org | sed 's/\**//g' | grep 行 | sed 's/行//g'}
+
+${color2}${voffset -20}${goto 10}${font WenQuanYi Micro Hei:pixelsize=30}不
+
+${voffset -40}${font WenQuanYi Micro Hei:pixelsize=20}${color0}${execpi 3600 cat ~/Dropbox/org/todo.org | sed 's/\**//g' | grep 不 | sed 's/不//g'}
+]];

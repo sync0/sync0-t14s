@@ -1,0 +1,199 @@
+> setwd('/home/sync0/Scripts/R/')
+
+> protesis <- read.csv(file='protesisedad.csv',sep=';',header=T)
+
+> summary(protesis)
+    nombre              edad           aseguradora            eps           
+ Length:140         Length:140         Length:140         Length:140        
+ Class :character   Class :character   Class :character   Class :character  
+ Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+
+ rehabilitacion_completa  amputacion        causa_amputacion  
+ Length:140              Length:140         Length:140        
+ Class :character        Class :character   Class :character  
+ Mode  :character        Mode  :character   Mode  :character  
+
+ calidad_servicio   actividad_fisica   tiempo_uso_protesis
+ Length:140         Length:140         Length:140         
+ Class :character   Class :character   Class :character   
+ Mode  :character   Mode  :character   Mode  :character   
+
+ numero_caidas_tres_meses  horas_uso         comienzo_inoportuno_terapia
+ Length:140               Length:140         Length:140                 
+ Class :character         Class :character   Class :character           
+ Mode  :character         Mode  :character   Mode  :character           
+
+    lejos           muchos_tramites_asegurador cambio_sitio_atencion
+ Length:140         Length:140                 Length:140           
+ Class :character   Class :character           Class :character     
+ Mode  :character   Mode  :character           Mode  :character     
+
+ mala_atencion_asegurador mala_atencion_ips  insuficiente_atencion
+ Length:140               Length:140         Length:140           
+ Class :character         Class :character   Class :character     
+ Mode  :character         Mode  :character   Mode  :character     
+
+ falla_comunicacion_prestador barreras_economicas    X             X.1         
+ Length:140                   Length:140          Mode:logical   Mode:logical  
+ Class :character             Class :character    NA's:140       NA's:140      
+ Mode  :character             Mode  :character                                 
+
+> edad_tipo_amp <- table(protesis$edad,protesis$amputacion)
+> edad_tipo_amp
+          
+           desarticulacion_rodilla nil transfemoral transtarso transtibial
+  20_40                          2   0           16          1          19
+  40_60                          0   1           24          0          21
+  mas_60                         1   0           15          0          27
+  menos_20                       0   0            6          1           6
+
+> edad_completitud <- table(protesis$edad,protesis$rehabilitacion_completa)
+> edad_completitud
+          
+           completa incompleta
+  20_40          30          8
+  40_60          36         10
+  mas_60         25         18
+  menos_20        9          4
+
+> edad_calidadservicio <- table(protesis$edad,protesis$calidad_servicio)
+> edad_calidadservicio
+          
+           bueno deficiente excelente malo regular
+  20_40       14          0        21    0       3
+  40_60       12          2        24    2       6
+  mas_60      12          3        24    0       4
+  menos_20     6          0         5    0       2
+
+> edad_asegurador <- table(protesis$edad,protesis$aseguradora)
+> edad_asegurador
+          
+           arl mindefensa nueva_eps otras_eps sisben soat sura_eps
+  20_40      6          4         4         1      2    2       19
+  40_60      4          9        12         6      1    0       14
+  mas_60     2          0        11         8      1    0       21
+  menos_20   0          0         2         1      1    0        9
+
+> edad_geografia <- table(protesis$edad,protesis$lejos)
+> edad_geografia
+          
+           NO SI
+  20_40    37  1
+  40_60    34 12
+  mas_60   37  6
+  menos_20 10  3
+
+> edad_mala_ips <- table(protesis$edad,protesis$mala_atencion_ips)
+> edad_mala_ips
+          
+           NO SI
+  20_40    38  0
+  40_60    40  6
+  mas_60   42  1
+  menos_20 12  1
+
+> edad_mala_asegurado <- table(protesis$edad,protesis$mala_atencion_asegurador)
+> edad_mala_asegurado
+          
+           NO SI
+  20_40    37  1
+  40_60    38  8
+  mas_60   41  2
+  menos_20 12  1
+
+> edad_comunicacion_prestador <- table(protesis$edad,protesis$falla_comunicacion_prestador)
+> edad_comunicacion_prestador
+          
+           NO SI
+  20_40    29  9
+  40_60    32 14
+  mas_60   36  7
+  menos_20 10  3
+
+> edad_bar_economicas <- table(protesis$edad,protesis$barreras_economicas)
+> edad_bar_economicas
+          
+           NO SI
+  20_40    33  5
+  40_60    36 10
+  mas_60   35  8
+  menos_20 10  3
+
+> edad_horas_uso <- table(protesis$edad,protesis$horas_uso)
+> edad_horas_uso 
+           
+           4_a_8 8_a_12 menos_de_4
+  20_40        5     31          2
+  40_60       10     31          5
+  mas_60      17     12         14
+  menos_20     1     12          0
+
+> edad_insu_equipos <- table(protesis$edad,protesis$insuficiente_atencion)
+> edad_insu_equipos 
+
+           NO SI
+  20_40    38  0
+  40_60    39  7
+  mas_60   42  1
+  menos_20 13  0
+
+> aseguradora_calidadservicio <- table(protesis$aseguradora,protesis$calidad_servicio)
+> aseguradora_calidadservicio 
+             
+             bueno deficiente excelente malo regular
+  arl            4          0         6    0       2
+  mindefensa     2          0        10    0       1
+  nueva_eps     13          2        10    0       4
+  otras_eps      3          2         6    2       3
+  sisben         0          1         2    0       2
+  soat           0          0         2    0       0
+  sura_eps      22          0        38    0       3
+
+> aseguradora_com_inoportuno <- table(protesis$aseguradora,protesis$comienzo_inoportuno_terapia)
+> aseguradora_com_inoportuno 
+
+             NO SI
+  arl         9  3
+  mindefensa 11  2
+  nueva_eps  12 17
+  otras_eps   6 10
+  sisben      1  4
+  soat        2  0
+  sura_eps   40 23
+
+> aseguradora_completitud <- table(protesis$aseguradora,protesis$rehabilitacion_completa)
+> aseguradora_completitud 
+             
+             completa incompleta
+  arl              10          2
+  mindefensa       13          0
+  nueva_eps        14         15
+  otras_eps        10          6
+  sisben            3          2
+  soat              1          1
+  sura_eps         49         14
+
+> aseguradora_falla_com <- table(protesis$aseguradora,protesis$falla_comunicacion_prestador)
+> aseguradora_falla_com 
+             
+             NO SI
+  arl         9  3
+  mindefensa 12  1
+  nueva_eps  19 10
+  otras_eps  10  6
+  sisben      2  3
+  soat        2  0
+  sura_eps   53 10
+
+> aseguradora_insu_equipos <- table(protesis$aseguradora,protesis$insuficiente_atencion)
+> aseguradora_insu_equipos 
+             
+             NO SI
+  arl        12  0
+  mindefensa 11  2
+  nueva_eps  27  2
+  otras_eps  12  4
+  sisben      5  0
+  soat        2  0
+  sura_eps   63  0
+> 

@@ -1,0 +1,284 @@
+
+# LEARNING UNIX FOR OS X
+----------
+## CH. 1
+* ps
+```shell
+ps -acx
+# lists all programs and processes being rung by the user.
+ps -ax | grep <name_of_process>
+# identifies the number of a running process.
+```
+* kill
+```shell
+kill <process_number>
+# force quits target process.
+```
+
+----------
+
+### Batch Renames and Extracting File Lists
+```shell
+cd/Volumes/MyCDROM
+# takes you to volumes directory.
+cp *-dt-* *-nt-* ~ 
+# the tilde refers to the current user's home folder. By typing cp ~, I am having it copy the files to my home directory (~).
+```
+----------
+
+### Finding Hidden Files
+* ls
+```shell
+ls -a
+# list all hidden files.
+ls -1
+# outputs a list of files in one-file-per-line format.
+ls -s
+# outputs a list of files with their sizes.
+ls -F
+# outputs a list of files, while distinguishing which are directories and which are files.
+ls -d <directory_name>
+# confirms whether *directory_name* exists.
+ls <directory_name>
+# lists the contents of *directory_name* without changing the working directory.
+ls -R <directory_name>
+# lists the contents of *directory_name* with all its children.
+ls -l <file_name>
+# lists permissions for *file_name*.
+ls -ld <directory_name>
+# lists permissions for *directory_name*.
+ls -l | grep "Jan" | sort -n -k 5
+# list by file size all files modified in January.
+```
+* open
+```shell
+open <file_name.ext>
+# opens a file (only OS X).
+```
+* pwd
+    - displays present working directory.
+* cd
+    - resets to home directory
+```shell
+cd <directory_name>
+# moves to directory "directory_name".
+cd ..
+# moves up one directory.
+```
+* exit
+    - exits the terminal.
+
+----------
+
+## CH. 2
+
+* du
+    - outputs the amount of disk space taken by its argument.
+```shell
+du <directory_name>
+# outputs amount of disk space taken by *directory_name* and its children.
+du -s <directory_name>
+# outputs amount of disk space taken by *directory_name*.
+du -sh /Applications/*.app
+# outputs amount of disk space taken by system apps. The option `-h` makes the file size more "humane" to read.
+du -sh Dropbox
+# outputs amount of disk space taken by *Dropbox*.
+```
+* chmod
+    - changes the permissions on a file.
+* df -H
+    - outputs available disk space.
+* passwd
+    - changes password.
+
+----------
+
+## CH. 4
+
+* wildcards
+    - used to select files following a specified pattern.
+    - `*` any number of characters in the filename.
+        - `*.jpg`
+        - `*ae*`
+        - `chapter*.doc`
+    - `?` any single character.
+    - `[]` selects characters.
+        - `chapter[1-10]`
+    - `{,}` select all subpatterns.
+        - `Mail/{drafts,inbox}`
+* mv
+    - renames and moves files.
+```shell
+mv <old> <new>
+# renames old as new.
+mv -i <old> <new>
+# interactively.
+mv <file_name.ext> ~/Desktop
+# moves <file_name.ext> to the Desktop.
+```
+* less
+    - read long plain-text files.
+```shell
+less <options> <files>
+less -M <file_name.ext>
+# show the contents of <file_name.ext>.
+```
+    - useful less commands:
+        - `v` starts vi.
+        - `Return` display next line.
+        - `b` move backward one page.
+        - `/word` search forward for word.
+        - `?word` search backward for word.
+        - `q` quit `less`.
+* grep
+    - searches for patterns within files.
+```shell
+grep -s
+# comment
+```
+- vi
+    + `/pattern` search forward for pattern.
+    + `:wq` or `ZZ` write out any changes, then quit.
+    + `a` append mode.
+    + `b` move backward one word.
+    + `w` move forward one word.
+    + `d1G` delete from current point back to the beginning.
+    + `dd` delete current line.
+    + `dG` delete through end of file.
+    + `dw` delete following word.
+    + `O` open up a line above current line (and switch to insert mode).
+    + `o` open up a line below current line (and switch to insert mode).
+    + `P` paste selected text before the cursor.
+    + `p` paste selected text after the cursor.
+    + `X` delete character to the left of the cursor.
+    + `x` delete character under the cursor.
+    + `yw` copy from cursor to the end of word.
+    + `yy` copy current line.
+* mkdir
+    - creates a new directory.
+```shell
+mkdir <directory_name>
+# creates <directory_name> at current location.
+mkdir -p Documents/Templates/templates{1,2,3,4,5}
+# creates directory Templates with children.
+```
+* cp
+    - copies a file(s).
+```shell
+cp <old> <new>
+# makes a copy of <old> and names it <new>.
+cp <old> <old_directory>
+# makes a copy of <old> into <old_directory>.
+cp -i <file_name.ext>
+# used in case copy can overwrite an existing file named <file_name.ext>.
+cp -R <directory_name>
+# copies <directory_name> and all its children.
+```
+* rm
+    - removes files.
+```shell
+rm <file_name.ext>
+# removes <file_name.ext>.
+rm -r <directory_name>
+# removes <directory_name> and all its children.
+rm -P <file_name.ext>
+#removes <file_name.ext> and overwrites content three times.
+rm -i <file_name.ext>
+```
+* rmdir
+    - removes a directory.
+```shell
+rmdir <directory_name>
+# removes <directory_name>.
+```
+
+----------
+
+## CH. 5
+* grep
+    - searches the contents of files that match the specified pattern.
+```shell
+grep <pattern> <file_name.ext>
+grep "Unix" *
+# search all files in working directory for the word "Unix".
+ls -l | grep "Aug"
+# search working directory for files created in August.
+grep -C<n> <pattern>
+# show <n> lines before and after the matching line.
+grep -n <pattern>
+# print the matched line and its line number.
+grep -l <pattern>
+# print only the names of files with matching lines.
+grep -i <pattern>
+# match either upper- or lowercase.
+grep -v <pattern>
+# match those files that don't match the pattern.
+grep --color=always <pattern>
+# highlight the place where the <pattern> occurs.
+grep -c <pattern>
+# counts the number of occurrences of <pattern>.
+```
+* find
+    - finds files in the entire file system.
+```shell
+find . -cmin -60 -print -type f
+# searches for files that have changed within the last 60 minutes.
+# -type f narrows the search to actual files.
+# -cmin specifies minutes. For hours use -ctime.
+find ~/Documents -type d -print | wc -l
+# count how many directories are located in ~/Documents.
+```
+* locate
+    - looks for files in the system by using a pre-defined database.
+```shell
+locate <patter> | grep "/man/"
+# look for <pattern> and choose those matches that are located in the "/man/" folder.
+```
+* mdls
+    - spotlight command line search for metadata.
+```shell
+mdls 06/Elise/affair.mp3
+# search metadata for affair.mp3.
+mdls IMG_1912.JPG | grep -E '(PixelHeight|PixelWidht)'
+# find pixel height and pixel width of IMG_1912.JPG.
+mdls "06 Elise affair.mp3" | grep Duration
+```
+
+----------
+
+## CH. 6
+
+* tr
+    - changes patterns in files.
+```shell
+tr "[:lower:]" "[:upper:]" < <file_name.ext>
+# replace all lower-case characters in <file_name.ext> with upper-case.
+tr -d "[aeiou]" < <file_name.ext>
+# delete all vowels from <file_name.ext>.
+tr -cs "[:alpha:]" "\n" < <file_name.ext> | wc -l
+# count the words in <file_name.ext>.
+tr -cs "[: alpha:]" "\ n" < alice.txt | tail -15
+# see the last 15 words in Alice in Wonderland.
+tr -cs "[: alpha:]" "\ n" < alice.txt | sort -f | uniq | wc -l
+# see all unique words in Alice in Wonderland.
+# sort -f ignores upper/lower case distinction. 
+```
+
+----------
+
+## CH. 7
+
+* top
+    - shows cpu usage of processes.
+```shell
+alias top ='/ usr/ bin/ top -s 5 -o cpu'
+# set refresh rate of top to five seconds, and list cpu usage by high to low.
+```
+- open
+    - opens a file.
+```shell
+open <file_name.ext>
+# opens <file_name.ext>.
+open -a itunes
+# opens the application itunes.
+```

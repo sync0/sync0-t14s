@@ -1,0 +1,22 @@
+* Basics
+# save session
+save.image(xxx.RData) 
+# load session
+load.image(xxx.RData)
+# launch online help
+help()
+# quit session
+q()
+# install package
+install.packages(c("xxx"))
+# update packages
+update.packages(ask=FALSE)
+# update & rebuild packages
+update.packages(ask=FALSE,checkBuilt=TRUE)
+# update, rebuild packages, & choose mirror
+update.packages(ask=FALSE,checkBuilt=TRUE,repos="https://cran.cnr.berkeley.edu/")
+* Einstellungen  :noexport:ARCHIVE:
+#+TAGS: vocabulary(v) noexport export
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+STARTUP: indent hidestars overview logdrawer

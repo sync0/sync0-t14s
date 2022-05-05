@@ -1,0 +1,608 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"pn",
+				"png"
+			],
+			[
+				"re",
+				"resfit"
+			],
+			[
+				"width",
+				"strwidth"
+			],
+			[
+				"coo",
+				"cooks.distance"
+			],
+			[
+				"ti",
+				"title"
+			],
+			[
+				"Data",
+				"Data_b"
+			],
+			[
+				"df",
+				"dffits"
+			],
+			[
+				"subs",
+				"subset"
+			],
+			[
+				"ob",
+				"objects"
+			],
+			[
+				"ld",
+				"LD"
+			],
+			[
+				"Y",
+				"Y"
+			],
+			[
+				"X",
+				"X1"
+			]
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+		[
+			[
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					""
+				],
+				[
+					"Packages/SublimeREPL/sublimerepl_build_system_hack.sublime-build",
+					""
+				]
+			],
+			[
+				"Packages/LaTeXTools/LaTeX.sublime-build",
+				""
+			]
+		],
+		[
+			[
+				[
+					"Packages/SublimeREPL/sublimerepl_build_system_hack.sublime-build",
+					""
+				],
+				[
+					"Packages/User/Markdown to PDF.sublime-build",
+					""
+				]
+			],
+			[
+				"Packages/User/Markdown to PDF.sublime-build",
+				""
+			]
+		]
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 267.0,
+		"last_filter": "insta",
+		"selected_items":
+		[
+			[
+				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"sni",
+				"Snippet: html"
+			],
+			[
+				"markm",
+				"Markmon launch"
+			],
+			[
+				"mark",
+				"Markmon launch"
+			],
+			[
+				"ins",
+				"Package Control: Install Package"
+			],
+			[
+				"remove",
+				"Package Control: Remove Package"
+			],
+			[
+				"mar",
+				"Set Syntax: Markdown Extended"
+			],
+			[
+				"instal",
+				"Package Control: Install Package"
+			],
+			[
+				"late",
+				"Set Syntax: LaTeX"
+			],
+			[
+				"Snippet: ",
+				"Snippet: section_separator"
+			],
+			[
+				"intal",
+				"Package Control: Install Package"
+			],
+			[
+				"term",
+				"Open in terminal"
+			],
+			[
+				"pak",
+				"Package Control: Install Package"
+			],
+			[
+				"r",
+				"Set Syntax: R"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"sublime",
+				"SublimeREPL: R"
+			],
+			[
+				"inst",
+				"Package Control: Install Package"
+			],
+			[
+				"remo",
+				"Package Control: Remove Package"
+			],
+			[
+				"sublime rer",
+				"SublimeREPL: R"
+			],
+			[
+				"R",
+				"SublimeREPL: R"
+			],
+			[
+				"in",
+				"Package Control: Install Package"
+			],
+			[
+				"repl",
+				"SublimeREPL: R"
+			],
+			[
+				"inta",
+				"Package Control: Install Package"
+			],
+			[
+				"pack",
+				"Preferences: Browse Packages"
+			],
+			[
+				"remov",
+				"Package Control: Remove Package"
+			],
+			[
+				"rpl",
+				"SublimeREPL: R"
+			],
+			[
+				"rpl r",
+				"SublimeREPL: R"
+			],
+			[
+				"repl r",
+				"SublimeREPL: R"
+			],
+			[
+				"rplr",
+				"SublimeREPL: R"
+			],
+			[
+				"rbo",
+				"R-Box: Choose Program"
+			],
+			[
+				"REPL R",
+				"SublimeREPL: R"
+			],
+			[
+				"INSTALL",
+				"Package Control: Install Package"
+			],
+			[
+				"intall",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 467.0
+	},
+	"console":
+	{
+		"height": 126.0,
+		"history":
+		[
+			"sublime.log_commands(False)",
+			"sublime.log_commands(True)",
+			"import urllib.request,os,hashlib; h = '2915d1851351e5ee549c20394736b442' + '8bc59f460fa1548d1514676163dafc88'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/Users/XIBALBA/Dropbox/stackedit/html"
+	],
+	"file_history":
+	[
+		"/Users/XIBALBA/Dropbox/stackedit/html/test_01.html",
+		"/Users/XIBALBA/Dropbox/stackedit/html/index.html",
+		"/Users/XIBALBA/Library/Application Support/Sublime Text 3/Packages/User/Preferences.sublime-settings",
+		"/Users/XIBALBA/Library/Application Support/Sublime Text 3/Packages/User/Markdown GFM/indented_list_code.sublime-snippet",
+		"/Users/XIBALBA/Library/Application Support/Sublime Text 3/Packages/User/MacTerminal.sublime-settings",
+		"/Users/XIBALBA/Library/Application Support/Sublime Text 3/Packages/MacTerminal/MacTerminal.sublime-settings",
+		"/Users/XIBALBA/Dropbox/stackedit/unix/os_x_commands.txt",
+		"/Users/XIBALBA/Library/Application Support/Sublime Text 3/Packages/MarkdownEditing/Markdown.sublime-settings",
+		"/Users/XIBALBA/Library/Application Support/Sublime Text 3/Packages/User/Markdown.sublime-settings",
+		"/Users/XIBALBA/Dropbox/stackedit/unix/commandline.txt",
+		"/Users/XIBALBA/Library/Application Support/Sublime Text 3/Packages/User/Markdown GFM/begin_indented_list.sublime-snippet",
+		"/Users/XIBALBA/Library/Application Support/Sublime Text 3/Packages/MarkdownEditing/Markdown (Standard).sublime-settings",
+		"/Users/XIBALBA/Library/Application Support/Sublime Text 3/Packages/User/sublime-text-markmon.sublime-settings",
+		"/Users/XIBALBA/Library/Application Support/Sublime Text 3/Packages/sublime-text-markmon/sublime-text-markmon.sublime-settings",
+		"/Users/XIBALBA/Library/Application Support/Sublime Text 3/Packages/Default/Preferences.sublime-settings",
+		"/Users/XIBALBA/Library/Application Support/Sublime Text 3/Packages/SmartMarkdown/SmartMarkdown.sublime-settings",
+		"/Users/XIBALBA/Dropbox/stackedit/os_x_commands.txt",
+		"/Users/XIBALBA/.profile",
+		"/Users/XIBALBA/Library/Application Support/Sublime Text 3/Packages/User/Markdown GFM/section_separator.sublime-snippet",
+		"/Users/XIBALBA/Documents/cv/latex/english/cv/references.tex",
+		"/Users/XIBALBA/Documents/cv/latex/english/cv/interests.tex",
+		"/Users/XIBALBA/Documents/cv/latex/english/cv.tex",
+		"/Users/XIBALBA/Documents/cv/latex/english/cv/honors.tex",
+		"/Users/XIBALBA/Documents/cv/latex/english/cv/presentation.tex",
+		"/Users/XIBALBA/Documents/cv/latex/english/cv/education.tex",
+		"/Users/XIBALBA/Documents/cv/latex/english/cv/skills.tex",
+		"/Users/XIBALBA/Documents/cv/latex/english/cv/profile.tex",
+		"/Users/XIBALBA/Documents/cv/latex/english/cv/writing.tex",
+		"/Users/XIBALBA/Documents/cv/latex/english/cv/extracurricular.tex",
+		"/Users/XIBALBA/Documents/cv/latex/english/cv/experience.tex",
+		"/Users/XIBALBA/Documents/cv/latex/english/cv/cvletter.tex",
+		"/Users/XIBALBA/Documents/cv/latex/english/cv/committees.tex",
+		"/Users/XIBALBA/Dropbox/ku/2015_2/regression/project/latex/stat_report.tex",
+		"/Users/XIBALBA/Dropbox/ku/2015_2/thinking/latex/essay.tex",
+		"/Users/XIBALBA/Dropbox/ku/2015_2/thinking/latex/essay.bbl",
+		"/usr/local/texlive/2015/texmf-dist/tex/xelatex/xecjk/xeCJK.sty",
+		"/Users/XIBALBA/Library/texmf/tex/latex/HLaTeX/latex/euc-kr.tex",
+		"/usr/local/texlive/2015/texmf-dist/tex/latex/cjk-ko/kotex.sty",
+		"/Users/XIBALBA/Library/texmf/doc/HLaTeX/hlguide-k.tex",
+		"/Users/XIBALBA/Dropbox/ku/2015_2/regression/project/latex/lab_report_1.tex",
+		"/Users/XIBALBA/Documents/projects/latex/tutorials/trial.tex",
+		"/Users/XIBALBA/Documents/cv/cv.tex",
+		"/Users/XIBALBA/Documents/cv/cv/skills.tex",
+		"/Users/XIBALBA/Documents/cv/cv/profile.tex",
+		"/Users/XIBALBA/Documents/cv/cv/education.tex",
+		"/Users/XIBALBA/Documents/projects/latex/templates/cv/Awesome-CV-master/examples/cv/education.tex",
+		"/Users/XIBALBA/Documents/projects/latex/templates/cv/Awesome-CV-master/examples/cv.tex",
+		"/Users/XIBALBA/Documents/projects/latex/templates/cv/Awesome-CV-master/examples/resume/education.tex",
+		"/Users/XIBALBA/Documents/projects/terminal/commands.txt",
+		"/Users/XIBALBA/Library/Application Support/Sublime Text 3/Packages/User/LaTeXTools.sublime-settings",
+		"/Users/XIBALBA/Library/Application Support/Sublime Text 3/Packages/User/Default (OSX).sublime-keymap",
+		"/Users/XIBALBA/Documents/projects/latex/templates/report_template/lab_report_1/lab_report_1.tex",
+		"/Users/XIBALBA/Documents/projects/latex/templates/minimal.tex",
+		"/Users/XIBALBA/Documents/projects/latex/templates/homework_template/latex-homework-master/template.tex",
+		"/Users/XIBALBA/Documents/projects/latex/tutorials/example.md",
+		"/Users/XIBALBA/Library/Application Support/Sublime Text 3/Packages/User/Markdown to PDF.sublime-build",
+		"/Users/XIBALBA/Documents/projects/latex/library.bib",
+		"/Users/XIBALBA/Documents/projects/writing/#Test.txt",
+		"/Users/XIBALBA/Dropbox/korea_university/2015_2/regression_analysis/project/latex/stat_report.tex",
+		"/Users/XIBALBA/Dropbox/korea_university/2015_2/regression_analysis/project/latex/stat_report_1.tex",
+		"/Users/XIBALBA/Documents/projects/latex/report_template/lab_report_1/lab_report_1.tex",
+		"/Users/XIBALBA/Documents/projects/latex/homework_template/latex-homework-template-master/homework.tex",
+		"/Users/XIBALBA/Dropbox/korea_university/2015_2/regression_analysis/project/latex/lab_report_1.tex",
+		"/Users/XIBALBA/Dropbox/korea_university/2015_2/regression_analysis/project/r_code_final_clean",
+		"/Users/XIBALBA/Dropbox/korea_university/2015_2/regression_analysis/project/r_code_clean",
+		"/Users/XIBALBA/Dropbox/korea_university/2015_2/regression_analysis/project/r.code_project_good_wrang.txt",
+		"/Users/XIBALBA/Dropbox/korea_university/2015_2/regression_analysis/project/master_code.R",
+		"/Users/XIBALBA/Dropbox/korea_university/2015_2/regression_analysis/project/outliers.txt",
+		"/Users/XIBALBA/Dropbox/korea_university/2015_2/regression_analysis/project/sublime_code.R",
+		"/Users/XIBALBA/Dropbox/korea_university/2015_2/regression_analysis/project/datasets/movie_data.txt",
+		"/Users/XIBALBA/Dropbox/korea_university/2015_2/regression_analysis/project/r.code_project_mod.txt",
+		"/Users/XIBALBA/Dropbox/korea_university/2015_2/regression_analysis/project/datasets/movie_master.txt",
+		"/Users/XIBALBA/Dropbox/korea_university/2015_2/regression_analysis/project/datasets/movie_master_noquarter.txt",
+		"/Users/XIBALBA/Dropbox/korea_university/2015_2/regression_analysis/project/analysis/regression_results.r",
+		"/Users/XIBALBA/Dropbox/korea_university/2015_2/regression_analysis/project/datasets/movie_var_names.txt",
+		"/Users/XIBALBA/Dropbox/korea_university/2015_2/regression_analysis/project/analysis/outliers_influential_obs.text",
+		"/Users/XIBALBA/Dropbox/korea_university/2015_2/regression_analysis/project/datasets/movie_data_plotmatrix.txt",
+		"/Users/XIBALBA/Dropbox/korea_university/2015_2/regression_analysis/project/datasets/movie_data_revised.txt",
+		"/Users/XIBALBA/Dropbox/korea_university/2015_2/regression_analysis/project/Data/movie_data.txt",
+		"/Users/XIBALBA/Dropbox/korea_university/2015_2/regression_analysis/project/Data/movie_var_names.txt",
+		"/Users/XIBALBA/Dropbox/korea_university/2015_2/regression_analysis/project/r.code_new_mod copy.txt",
+		"/Users/XIBALBA/Dropbox/korea_university/2015_2/regression_analysis/project/Data/movie.data.txt",
+		"/Users/XIBALBA/Library/Application Support/Sublime Text 3/Packages/User/SublimeREPL.sublime-settings",
+		"/Users/XIBALBA/Documents/Projects/LaTex/homework_template/latex-homework-master/template.tex",
+		"/Users/XIBALBA/Documents/Projects/LaTex/homework_template/latex-homework-template-master/homework.tex",
+		"/Users/XIBALBA/Documents/Projects/LaTex/first.tex",
+		"/Users/XIBALBA/Library/Application Support/Sublime Text 3/Packages/User/articlelatex",
+		"/Users/XIBALBA/Library/Application Support/Sublime Text 3/Packages/SublimeREPL/SublimeREPL.sublime-settings",
+		"/Users/XIBALBA/Library/Application Support/Sublime Text 3/Packages/User/R-Box.sublime-settings"
+	],
+	"find":
+	{
+		"height": 32.0
+	},
+	"find_in_files":
+	{
+		"height": 105.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"output",
+			"outputs",
+			"outputs ",
+			"outputs",
+			"directory_name",
+			"#",
+			"\n>",
+			"`",
+			"acx",
+			"`",
+			"Corea del Sur",
+			"’",
+			"‘",
+			"'",
+			"”",
+			"“",
+			"\"",
+			"-",
+			"장학제도",
+			"\\cite",
+			"0.5",
+			"thirdkorea",
+			"/",
+			"고려대학교가",
+			"/",
+			"%",
+			"법무부",
+			"cite",
+			"}",
+			"%",
+			"for",
+			"Required",
+			"}",
+			"{",
+			"POSTECH(Pohang University of Science and Technology)",
+			"POSTECH",
+			"education",
+			"Carreño",
+			"Rivera",
+			"Carreño",
+			"place",
+			"_",
+			"\\beta",
+			"_",
+			"equation",
+			"enumerate",
+			"$",
+			"can't",
+			"X5",
+			"e2",
+			"β",
+			"fit_test",
+			"x1_1_summary",
+			"x1_1_anova",
+			"8million",
+			"X1",
+			"x1_1_idx",
+			"x1_1_cook",
+			"x1_1_influence",
+			"big",
+			"Number of Days-off",
+			"increase of Wage Gain",
+			"seasonal",
+			"season",
+			"x1_0_cook",
+			"x1_0_influence",
+			"x1_1_diagnostics",
+			"x1_1_cook",
+			"x1_1_diagnostics",
+			"pooled_summary",
+			"x1_1_anova",
+			"x1_1_summary",
+			"Increase of ",
+			"Quarter",
+			"season",
+			"x1_0_test",
+			"x1_0_anova",
+			"x1_0_summary",
+			"these",
+			"remov",
+			"ve th",
+			"on",
+			"and",
+			"fit_summary",
+			"influence",
+			"x1_1_diagnostics",
+			"x1_1_summary",
+			"fit_summary",
+			"raw data",
+			"small",
+			"fit_normplot",
+			"RM",
+			"x",
+			"citation",
+			"regression mode",
+			"following",
+			"equation",
+			"pooled data",
+			"subparagraph",
+			"beta",
+			"β",
+			"figure",
+			"Figure",
+			"figure",
+			"Figure",
+			"figure",
+			"Figure",
+			"figure",
+			"Figure",
+			"figure",
+			"Figure",
+			"figure",
+			"cookd",
+			"test",
+			"obs",
+			"pooled data",
+			"e2",
+			"$X_1=",
+			"X1",
+			"x1",
+			"X1",
+			"X_1",
+			"x1",
+			"X1",
+			"e2",
+			"keepaspectratio",
+			"Residuals",
+			"X_2"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 32.0
+	},
+	"input":
+	{
+		"height": 40.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 118.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "html_edits.sublime-project",
+	"replace":
+	{
+		"height": 60.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"",
+				"~/Dropbox/stackedit/unix/os_x_commands.txt"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 150.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

@@ -1,0 +1,242 @@
+> setwd('/home/sync0/Scripts/R/')
+> protesis <- read.csv(file='protesisedad.csv',sep=';',header=T)
+> summary(protesis)
+
+    nombre              edad           aseguradora            eps           
+ Length:140         Length:140         Length:140         Length:140        
+ Class :character   Class :character   Class :character   Class :character  
+ Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+
+ rehabilitacion_completa  amputacion        causa_amputacion  
+ Length:140              Length:140         Length:140        
+ Class :character        Class :character   Class :character  
+ Mode  :character        Mode  :character   Mode  :character  
+
+ calidad_servicio   actividad_fisica   tiempo_uso_protesis
+ Length:140         Length:140         Length:140         
+ Class :character   Class :character   Class :character   
+ Mode  :character   Mode  :character   Mode  :character   
+
+ numero_caidas_tres_meses  horas_uso         comienzo_inoportuno_terapia
+ Length:140               Length:140         Length:140                 
+ Class :character         Class :character   Class :character           
+ Mode  :character         Mode  :character   Mode  :character           
+
+    lejos           muchos_tramites_asegurador cambio_sitio_atencion
+ Length:140         Length:140                 Length:140           
+ Class :character   Class :character           Class :character     
+ Mode  :character   Mode  :character           Mode  :character     
+
+ mala_atencion_asegurador mala_atencion_ips  insuficiente_atencion
+ Length:140               Length:140         Length:140           
+ Class :character         Class :character   Class :character     
+ Mode  :character         Mode  :character   Mode  :character     
+
+ falla_comunicacion_prestador barreras_economicas    X             X.1         
+ Length:140                   Length:140          Mode:logical   Mode:logical  
+ Class :character             Class :character    NA's:140       NA's:140      
+ Mode  :character             Mode  :character                                 
+
+> act.fisica_horas.uso <- table(protesis$actividad_fisica,protesis$horas_uso)
+> act.fisica_horas.uso
+          
+           4_a_8 8_a_12 menos_de_4
+  _regular     0      1          0
+  habitual     8     82          0
+  poca        25      3         21
+
+> protesis <- read.csv(file='protesisedad.csv',sep=';',header=T)
+> act.fisica_horas.uso <- table(protesis$actividad_fisica,protesis$horas_uso)
+> act.fisica_horas.uso
+          
+           4_a_8 8_a_12 menos_de_4
+  habitual     8     83          0
+  poca        25      3         21
+
+> act.fisica_alt.amputacion <- table(protesis$actividad_fisica,protesis$amputacion)
+> act.fisica_alt.amputacion 
+          
+           desarticulacion_rodilla nil transfemoral transtarso transtibial
+  habitual                       2   0           38          2          49
+  poca                           1   1           23          0          24
+
+> asegurado_tramites <- table(protesis$aseguradora,protesis$muchos_tramites_asegurador)
+> asegurado_tramites 
+            
+             NO SI
+  arl         8  4
+  mindefensa 11  2
+  nueva_eps  20  9
+  otras_eps   8  8
+  sisben      1  4
+  soat        2  0
+  sura_eps   54  9
+
+> edad_tramites <- table(protesis$edad,protesis$muchos_tramites_asegurador)
++ edad_tramites 
++ 
+>           
+           NO SI
+  20_40    31  7
+  40_60    35 11
+  mas_60   29 14
+  menos_20  9  4
+
+> calidad.servicio_falla.equipos <- table(protesis$calidad_servicio,protesis$insuficiente_atencion)
+> calidad.servicio_falla.equipos 
+            
+             NO SI
+  bueno      43  1
+  deficiente  4  1
+  excelente  74  0
+  malo        0  2
+  regular    11  4
+
+> ftable(act.fisica_horas.uso_rehab.completa) ftable(act.fisica_horas.uso_rehab.completa) 
+                     completa incompleta
+                                        
+habitual 4_a_8              6          2
+         8_a_12            66         17
+         menos_de_4         0          0
+poca     4_a_8             13         12
+         8_a_12             3          0
+         menos_de_4        12          9
+
+> edad_horas.uso_rehab.completa <- table(protesis$edad,protesis$horas_uso,protesis$rehabilitacion_completa)
++ ftable(edad_horas.uso_rehab.completa)
++ 
+>                      completa incompleta
+                                        
+20_40    4_a_8              4          1
+         8_a_12            25          6
+         menos_de_4         1          1
+40_60    4_a_8              5          5
+         8_a_12            28          3
+         menos_de_4         3          2
+mas_60   4_a_8             10          7
+         8_a_12             7          5
+         menos_de_4         8          6
+menos_20 4_a_8              0          1
+         8_a_12             9          3
+         menos_de_4         0          0
+
+> ftable(addmargins(prop.table(edad_horas.uso_rehab.completa, c(1, 2)), 3))*100
+                       completa incompleta        Sum
+                                                     
+20_40    4_a_8        80.000000  20.000000 100.000000
+         8_a_12       80.645161  19.354839 100.000000
+         menos_de_4   50.000000  50.000000 100.000000
+40_60    4_a_8        50.000000  50.000000 100.000000
+         8_a_12       90.322581   9.677419 100.000000
+         menos_de_4   60.000000  40.000000 100.000000
+mas_60   4_a_8        58.823529  41.176471 100.000000
+         8_a_12       58.333333  41.666667 100.000000
+         menos_de_4   57.142857  42.857143 100.000000
+menos_20 4_a_8         0.000000 100.000000 100.000000
+         8_a_12       75.000000  25.000000 100.000000
+         menos_de_4         NaN        NaN        NaN
+
+> ftable(addmargins(prop.table(act.fisica_horas.uso_rehab.completa, c(1, 2)), 3))*100
+                      completa incompleta       Sum
+                                                   
+habitual 4_a_8        75.00000   25.00000 100.00000
+         8_a_12       79.51807   20.48193 100.00000
+         menos_de_4        NaN        NaN       NaN
+poca     4_a_8        52.00000   48.00000 100.00000
+         8_a_12      100.00000    0.00000 100.00000
+         menos_de_4   57.14286   42.85714 100.00000
+
+> ftable(addmargins(prop.table(act.fisica_horas.uso_rehab.completa, margin=2), 3))*100
+                       completa incompleta        Sum
+                                                     
+habitual 4_a_8        18.181818   6.060606  24.242424
+         8_a_12       76.744186  19.767442  96.511628
+         menos_de_4    0.000000   0.000000   0.000000
+poca     4_a_8        39.393939  36.363636  75.757576
+         8_a_12        3.488372   0.000000   3.488372
+         menos_de_4   57.142857  42.857143 100.000000
+
+> ftable(addmargins(prop.table(edad_horas.uso_rehab.completa, margin=2), 3))*100
+                      completa incompleta       Sum
+                                                   
+20_40    4_a_8       12.121212   3.030303 15.151515
+         8_a_12      29.069767   6.976744 36.046512
+         menos_de_4   4.761905   4.761905  9.523810
+40_60    4_a_8       15.151515  15.151515 30.303030
+         8_a_12      32.558140   3.488372 36.046512
+         menos_de_4  14.285714   9.523810 23.809524
+mas_60   4_a_8       30.303030  21.212121 51.515152
+         8_a_12       8.139535   5.813953 13.953488
+         menos_de_4  38.095238  28.571429 66.666667
+menos_20 4_a_8        0.000000   3.030303  3.030303
+         8_a_12      10.465116   3.488372 13.953488
+         menos_de_4   0.000000   0.000000  0.000000
+                                                                  
+> ftable(addmargins(prop.table(amputacion_horas.uso_rehab.completa, margin=1), 3))*100
+                                      completa incompleta        Sum
+                                                                    
+desarticulacion_rodilla 4_a_8        33.333333  33.333333  66.666667
+                        8_a_12        0.000000  33.333333  33.333333
+                        menos_de_4    0.000000   0.000000   0.000000
+nil                     4_a_8         0.000000 100.000000 100.000000
+                        8_a_12        0.000000   0.000000   0.000000
+                        menos_de_4    0.000000   0.000000   0.000000
+transfemoral            4_a_8         9.836066  11.475410  21.311475
+                        8_a_12       54.098361   8.196721  62.295082
+                        menos_de_4   11.475410   4.918033  16.393443
+transtarso              4_a_8         0.000000   0.000000   0.000000
+                        8_a_12      100.000000   0.000000 100.000000
+                        menos_de_4    0.000000   0.000000   0.000000
+transtibial             4_a_8        16.438356   6.849315  23.287671
+                        8_a_12       46.575342  15.068493  61.643836
+                        menos_de_4    6.849315   8.219178  15.068493
+
+> ftable(amputacion_horas.uso_rehab.completa)
+                                    completa incompleta
+                                                       
+desarticulacion_rodilla 4_a_8              1          1
+                        8_a_12             0          1
+                        menos_de_4         0          0
+nil                     4_a_8              0          1
+                        8_a_12             0          0
+                        menos_de_4         0          0
+transfemoral            4_a_8              6          7
+                        8_a_12            33          5
+                        menos_de_4         7          3
+transtarso              4_a_8              0          0
+                        8_a_12             2          0
+                        menos_de_4         0          0
+transtibial             4_a_8             12          5
+                        8_a_12            34         11
+                        menos_de_4         5          6
+
+> amputacion_act.fisica_rehab.completa <- table(protesis$amputacion,protesis$actividad_fisica,protesis$rehabilitacion_completa)
+> ftable(amputacion_act.fisica_rehab.completa)
+                                  completa incompleta
+                                                     
+desarticulacion_rodilla habitual         1          1
+                        poca             0          1
+nil                     habitual         0          0
+                        poca             0          1
+transfemoral            habitual        32          6
+                        poca            14          9
+transtarso              habitual         2          0
+                        poca             0          0
+transtibial             habitual        37         12
+                        poca            14         10
+
+> ftable(addmargins(prop.table(amputacion_act.fisica_rehab.completa, margin=1), 3))*100
+                                    completa incompleta        Sum
+                                                                  
+desarticulacion_rodilla habitual   33.333333  33.333333  66.666667
+                        poca        0.000000  33.333333  33.333333
+nil                     habitual    0.000000   0.000000   0.000000
+                        poca        0.000000 100.000000 100.000000
+transfemoral            habitual   52.459016   9.836066  62.295082
+                        poca       22.950820  14.754098  37.704918
+transtarso              habitual  100.000000   0.000000 100.000000
+                        poca        0.000000   0.000000   0.000000
+transtibial             habitual   50.684932  16.438356  67.123288
+                        poca       19.178082  13.698630  32.876712
+
+> quit() quit() 

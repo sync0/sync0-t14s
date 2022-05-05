@@ -1,0 +1,163 @@
+digraph G {
+/* layout / format */
+  edge [dir=none];
+  node [shape=box];
+  graph [splines=ortho];
+
+  "cars"      [shape=box, regular=0, color="blue", style="filled" fillcolor="lightblue"] ;
+  "rpce"     [shape=box, regular=0, color="blue", style="bold, filled" fillcolor="lightblue"] ;
+  "carc"     [shape=oval, regular=0, color="red", style="filled" fillcolor="pink"] ;
+  "acrc"    [shape=box, regular=0, color="blue", style="filled" fillcolor="lightblue"] ;
+  "jfrc" [shape=oval, regular=0, color="red", style="filled" fillcolor="pink"] ;
+  "Abraham"   [shape=box, regular=0, color="blue", style="filled" fillcolor="lightblue"] ;
+  "Mona"      [shape=oval, regular=0, color="red", style="filled" fillcolor="pink"] ;
+  "Patty"     [shape=oval, regular=0, color="red", style="filled" fillcolor="pink"] ;
+  "Selma"     [shape=oval, regular=0, color="red", style="filled" fillcolor="pink"] ;
+  "Bart"      [shape=box, regular=0, color="blue", style="filled" fillcolor="lightblue"] ;
+  "Lisa"      [shape=oval, regular=0, color="red", style="filled" fillcolor="pink"] ;
+  "Maggie"    [shape=oval, regular=0, color="red", style="filled" fillcolor="pink"] ;
+
+  a1 [shape=diamond,label="",height=0.25,width=0.25];
+  b1 [shape=circle,label="",height=0.01,width=0.01];
+  b2 [shape=circle,label="",height=0.01,width=0.01];
+  b3 [shape=circle,label="",height=0.01,width=0.01];
+  {rank=same; Abraham -> a1 -> Mona};
+  {rank=same; b1 -> b2 -> b3};
+  {rank=same; Herb; Homer};
+  a1 -> b2
+  b1 -> Herb
+  b3 -> Homer
+
+  p1 [shape=diamond,label="",height=0.25,width=0.25];
+  q1 [shape=circle,label="",height=0.01,width=0.01];
+  q2 [shape=circle,label="",height=0.01,width=0.01];
+  q3 [shape=circle,label="",height=0.01,width=0.01];
+  {rank=same; Homer -> p1 -> Marge};
+  {rank=same; q1 -> q2 -> q3};
+  {rank=same; Bart; Lisa; Maggie};
+  p1 -> q2;
+  q1 -> Bart;
+  q2 -> Lisa;
+  q3 -> Maggie;
+
+  x1 [shape=diamond,label="",height=0.25,width=0.25];
+  y1 [shape=circle,label="",height=0.01,width=0.01];
+  y2 [shape=circle,label="",height=0.01,width=0.01];
+  y3 [shape=circle,label="",height=0.01,width=0.01];
+  {rank=same; Clancy -> x1 -> Jackeline};
+  {rank=same; y1 -> y2 -> y3};
+  {rank=same; Patty; Selma; Marge};
+  x1 -> y2;
+  y1 -> Marge;
+  y2 -> Patty;
+  y3 -> Selma;
+}
+
+digraph RiveraCarreno {
+  edge [dir=none];
+  node [shape=box, fontname="Gill Sans MT Pro Book", penwidth=2.0];
+  graph [splines=ortho];
+
+subgraph Generation1 {
+rank=same;
+ Cars [shape=box, label="Carlos Alberto\nRivera Suárez\n1962-"];
+ Rpce [shape=oval, label="Rosa Patricia\nCarreño Estupiñán\n1966"];
+ CarsRpce [shape=point];
+ Cars -> CarsRpce;
+ CarsRpce -> Rpce;
+ }
+
+subgraph Generation1Children {
+rank=same;
+ CarsRpceChildren [shape=point];
+ CarcChildren [shape=point];
+ JfrcChildren [shape=point];
+ AcrcChildren [shape=point];
+ CarcChildren -> CarsRpceChildren;
+ JfrcChildren -> CarsRpceChildren;
+ AcrcChildren -> CarsRpceChildren;
+ }
+
+CarsRpce -> CarsRpceChildren;
+ 
+subgraph Generation2 {
+rank=same;
+ Carc [shape=box, label="Carlos Alberto\nRivera Carreño\n1991-"];
+ Acrc [shape=oval, label="Andrea Carolina\nRivera Carreño\n1993"];
+ Jfrc [shape=box, label="Juan Felipe Rivera\nCarreño\n1966-"];
+ Mjc [shape=oval, label="Min Jung\nChoi\n1983-"];
+ CarcMjc [shape=point];
+ Carc -> CarcMjc;
+ Mjc -> CarcMjc;
+}
+
+ CarcChildren -> Carc;
+ JfrcChildren-> Jfrc;
+ AcrcChildren -> Acrc;
+
+}
+
+
+digraph RiveraCarreno {
+  edge [dir=none];
+  node [shape=box, fontname="Gill Sans MT Pro Book", penwidth=2.0];
+  graph [splines=ortho];
+
+subgraph Generation1 {
+rank=same;
+ Cars [shape=box, regular=true, label="Carlos Alberto\nRivera Suárez\n1962-"];
+ Rpce [shape=oval, regular=true, label="Rosa Patricia\nCarreño Estupiñán\n1966"];
+ CarsRpce [shape=point];
+ Cars -> CarsRpce;
+ CarsRpce -> Rpce;
+ }
+
+subgraph Generation1Children {
+rank=same;
+ CarsRpceChildren [shape=point];
+ CarcChildren [shape=point];
+ JfrcChildren [shape=point];
+ AcrcChildren [shape=point];
+ CarcChildren -> CarsRpceChildren;
+ JfrcChildren -> CarsRpceChildren;
+ AcrcChildren -> CarsRpceChildren;
+ }
+
+CarsRpce -> CarsRpceChildren;
+ 
+subgraph Generation2 {
+rank=same;
+ Carc [shape=box, regular=true, label="Carlos Alberto\nRivera Carreño\n1991-"];
+ Acrc [shape=oval, regular=true, label="Andrea Carolina\nRivera Carreño\n1993"];
+ Jfrc [shape=box, regular=true, label="Juan Felipe Rivera\nCarreño\n1966-"];
+ Mjc [shape=oval, regular=true, label="Min Jung\nChoi\n1983-"];
+ CarcMjc [shape=point];
+ Carc -> CarcMjc;
+ Mjc -> CarcMjc;
+}
+
+ CarcChildren -> Carc;
+ JfrcChildren-> Jfrc;
+ AcrcChildren -> Acrc;
+
+}
+
+
+{rank=same;
+ CarsRpce -> CarsRpceChildren;
+ CarcChildren -> CarsRpceChildren;
+ JfrcChildren -> CarsRpceChildren;
+ AcrcChildren -> CarsRpceChildren;
+}
+
+{rank=same;
+ Carc -> CarcMjc;
+ Mjc -> CarcMjc;
+ CarcChildren -> Carc;
+ JfrcChildren-> Jfrc;
+ AcrcChildren -> Acrc;
+}
+
+ CarcChildren [shape=point];
+ JfrcChildren [shape=point];
+ AcrcChildren [shape=point];

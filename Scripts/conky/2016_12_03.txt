@@ -1,0 +1,66 @@
+conky.config = {
+	double_buffer = true,
+        background = false, 
+	use_xft = true,
+	font = '123:size=11',
+	update_interval = 1,
+	xftalpha = 0.5,
+        total_run_times = 0, 
+        
+        own_window = true,
+	own_window_type = 'desktop',
+	own_window_title = 'conky',
+	own_window_transparent = false,
+	own_window_argb_visual = true,
+	own_window_hints = 'undecorated,sticky,below,skip_taskbar,skip_pager',
+        own_window_argb_value = 0,
+        own_window_class = 'conky',
+
+	--own_window = false,
+	--own_window_type = 'override',
+	--own_window_transparent = true,
+	--own_window_hints = 'undecorated,below,sticky,skip_taskbar,skip_pager',
+
+	alignment = 'top_left',
+	gap_x = 60,
+	gap_y = 200,
+	minimum_width = 270,
+	minimum_height = 200,
+	maximum_width = 725,
+
+	draw_shades = false,
+	draw_outline = false,
+	draw_borders = false,
+	draw_grap_borders = true,
+
+	no_buffers = true,
+	cpu_avg_samples = 2,
+	net_avg_samples = 1,
+	override_utf8_locale = true,
+
+        times_in_seconds = true,
+
+	color0 = '#f8eeec',
+	--color0 = '#EAEAEA',
+	color1 = '#997662',
+	--color1 = '#000000',
+	--color1 = '#FFFF00',
+
+};
+
+conky.text = [[
+################
+# Penguin Kernel
+################
+${offset 250}${image ~/.conky/logo_manjaro.png -p 203,0 -s 70x70 -n}${color0}${font}${offset 50}${voffset -55}${font Droid Serif:size=80}${font}${color1}${kernel}${color}
+################
+# Clock and Date
+################
+${voffset 30}${color0}${font Droid Serif:pixelsize=120}${time %H:%M}${font}${voffset -84}${offset 10}${color1}${font Droid Serif:pixelsize=42}${time %d} ${voffset -15}${color0}${font Droid Serif:pixelsize=22}${time  %B} ${time %Y}${font}${voffset 24}${font Droid Serif:pixelsize=58}${offset -148}${time %A}${font}
+####################
+# System Information
+####################
+${voffset 30}${offset 1}${font ConkyColors:pixelsize=40}${color1}h${offset 9}$color${voffset -14}${font Ubuntu:pixelsize=15}${fs_free /} / ${fs_size /}${offset 30}${color1}${voffset -14}${font ConkyColors:pixelsize=40}g${font Ubuntu:pixelsize=15}${voffset -13}${offset 9}$color$mem / $memmax${offset 30}${color1}${font ConkyColors:pixelsize=40}${voffset -13}e${offset 9}${color0}${font Ubuntu:pixelsize=15}${voffset -13}${cpu cpu0}%${offset 30}${voffset -11}${color1}${battery_bar 20, 40}${font Ubuntu:pixelsize=15}${voffset -13}${offset 9}${color0} ${battery_short} = ${format_time $battery_time "\hh \mm"} 
+
+
+]];
