@@ -214,97 +214,6 @@
       (sync0-zettelkasten-zettel-types . "~/.emacs.d/sync0-vars/zettel-types.txt")
       (sync0-zettelkasten-zettel-functions . "~/.emacs.d/sync0-vars/zettel-functions.txt")
       (sync0-zettelkasten-fiche-types . "~/.emacs.d/sync0-vars/fiche-types.txt")))
-
-  (defvar sync0-bibtex-entry-types
-    '("Article" "MvBook" "Book" "InBook" "InCollection" "MvCollection" "Collection" "Unpublished" "Thesis" "MvProceedings" "Proceedings" "InProceedings" "Online" "Report" "Manual" "Misc")
-    "List of Bibtex entry types")
-
-  (defvar sync0-bibtex-crossref-types
-    '("InBook" "InCollection" "InProceedings")
-    "List of Bibtex entry types")
-
-  (defvar sync0-bibtex-fields
-    '("title" "subtitle" "eventtitle" "date" "origdate" "eventdate" "author" "editor" "journaltitle" "edition" "booktitle" "booksubtitle" "crossref" "chapter" "volume" "number" "series" "publisher" "location" "pages" "note" "doi" "url" "urldate" "language" "langid" "medium" "institution" "library" "related" "relatedtype" "relatedstring" "file" "created" "password" "shorttitle" "doctype" "shorthand" "description" "keywords")
-    "List of Bibtex entry fields")
-
-  (defvar sync0-bibtex-full-fields
-    '("title" "subtitle" "date" "origdate" "author" "editor" "journaltitle" "booktitle" "booksubtitle" "translator" "crossref"  "eventdate" "eventtitle" "venue" "volume" "number" "chapter" "edition" "pages" "publisher" "location" "pages" "note" "url" "urldate" "language" "langid" "library" "file" "keywords")
-    "List of Bibtex entry fields")
-
-  (defvar sync0-bibtex-quick-fields
-    '("title" "subtitle" "date" "author" "editor" "note" "url" "urldate" "language" "langid" "library" "file" "keywords")
-    "List of Bibtex entry fields")
-
-  (defvar sync0-bibtex-extract-fields
-    '("title" "date" "author" "crossref" "pages" "language" "langid" "file" "keywords")
-    "List of Bibtex entry fields")
-
-  (defvar sync0-bibtex-completion-booktitle 
-    '()
-    "List of bibtex authors")
-
-  (defvar sync0-bibtex-completion-publisher 
-    '()
-    "List of bibtex authors")
-
-  (defvar sync0-bibtex-completion-journaltitle
-    '()
-    "List of bibtex authors")
-
-  (defvar sync0-bibtex-completion-title
-    '()
-    "List of bibtex authors")
-
-  (defvar sync0-bibtex-completion-location 
-    '()
-    "List of bibtex authors")
-
-  (defvar sync0-bibtex-completion-author 
-    '()
-    "List of bibtex authors")
-
-  (defvar sync0-bibtex-completion-language
-    '()
-    "List of Bibtex languages")
-
-  (defvar sync0-bibtex-completion-medium
-    '()
-    "List of Bibtex media")
-
-  (defvar sync0-bibtex-completion-library
-    '()
-    "List of Bibtex traces")
-
-  (defvar sync0-bibtex-completion-institution
-    '()
-    "List of Bibtex traces")
-
-  (defvar sync0-bibtex-completion-keywords
-    '()
-    "List of Bibtex traces")
-
-  (defvar sync0-bibtex-completion-note
-    '()
-    "List of Bibtex traces")
-
-  (defvar sync0-bibtex-completion-variables-alist
-    '((sync0-bibtex-completion-publisher . "~/.emacs.d/sync0-vars/bibtex-completion-publisher.txt")
-      (sync0-bibtex-completion-journaltitle . "~/.emacs.d/sync0-vars/bibtex-completion-journaltitle.txt")
-      (sync0-bibtex-completion-location . "~/.emacs.d/sync0-vars/bibtex-completion-location.txt")
-      (sync0-bibtex-completion-title . "~/.emacs.d/sync0-vars/bibtex-completion-title.txt")
-      (sync0-bibtex-completion-author .  "~/.emacs.d/sync0-vars/bibtex-completion-author.txt")
-      (sync0-bibtex-completion-keywords .  "~/.emacs.d/sync0-vars/bibtex-completion-keywords.txt")
-      (sync0-bibtex-completion-note .  "~/.emacs.d/sync0-vars/bibtex-completion-note.txt")
-      (sync0-bibtex-completion-library .  "~/.emacs.d/sync0-vars/bibtex-completion-library.txt")
-      (sync0-bibtex-completion-medium .  "~/.emacs.d/sync0-vars/bibtex-completion-medium.txt")
-      (sync0-bibtex-completion-institution .  "~/.emacs.d/sync0-vars/bibtex-completion-institution.txt")
-      (sync0-bibtex-completion-language .  "~/.emacs.d/sync0-vars/bibtex-completion-language.txt"))
-"Alist of variables used to define their initial values to be used in completion.")
-
-      ;; (sync0-bibtex-completion-booktitle . "~/.emacs.d/sync0-vars/bibtex-completion-booktitle.txt")
-
-        ;; sync0-zettelkasten-directory-references (concat (getenv "HOME") "/Gdrive/org/reference/")
-
   ;; define the rest
   (setq sync0-zettelkasten-directory (concat (getenv "HOME") "/Gdrive/obsidian/")
         ;; sync0-obsidian-directory (concat (getenv "HOME") "/Gdrive/obsidian/")
@@ -335,6 +244,14 @@
   "Set all variables from varlist nil"
   (mapc #'(lambda (a) (set a nil)) varlist))
 
+(require 'sync0-functions)
+
+(defun sync0-create-scratch-buffer nil
+  "create a scratch buffer"
+  (interactive)
+  (switch-to-buffer (get-buffer-create "*scratch*"))
+  (lisp-interaction-mode))
+
 (defun sync0-has-dups-p (LIST) ""
        (let ((unique1 (remove-duplicates LIST :test #'equal)))
      (if (eq LIST unique1)
@@ -356,7 +273,6 @@
           (add-to-list var (match-string-no-properties 1)))))))
 
 (sync0-set-variable-from-files sync0-zettelkasten-variables-list)
-(sync0-set-variable-from-files sync0-bibtex-completion-variables-alist)
 
 (defun sync0-downcase-and-no-whitespace (x)
   "Downcase and replace whitespace by _ in the current string"
@@ -425,7 +341,7 @@
     (sync0-zettelkasten-update-org-properties)
     (sync0-update-timestamp)))
 
-(add-hook 'before-save-hook #'sync0-before-save-actions)
+;; (add-hook 'before-save-hook #'sync0-before-save-actions)
 
 (defun sync0-copy-file-path-in-clipboard ()
   "Copy absolute path of file visited in current buffer into the clipboard and kill ring."
@@ -483,43 +399,6 @@ With prefix arg, find the previous file."
                      (length files))))
       (find-file (nth pos files)))))
 
-(defun sync0-insert-elements-of-list (list)
-  "Print each element of LIST on a line of its own."
-  (while list
-    (insert (concat (car list) "\n"))
-    (setq list (cdr list))))
-
-(defun sync0-show-elements-of-list (list sep)
-  "Print massive string with each element of list separated by sep"
-  (let (x)
-    (while list
-      (setq x (concat (car list) sep x))
-      (setq list (cdr list)))
-    (string-trim-right x sep)))
-
-(defun sync0-update-list (newelt list file)
-  "Saves my projects in my home folder."
-  (if (member newelt list)
-      (message "%s already exists in %s" newelt file)
-    (let ((file-path
-           (concat "~/.emacs.d/sync0-vars/" file ".txt"))
-          (new-list (cons newelt list)))
-      ;; (add-to-list list newelt)
-      (sync0-redefine list new-list)
-      (with-temp-file file-path
-        (sync0-insert-elements-of-list list)
-        (save-buffer)
-        (message "%s added to %s" newelt file)))))
-
-;; (defun replace-smart-quotes (beg end)
-;; "Replace 'smart quotes' in buffer or region with ascii quotes."
-;; (interactive "r")
-;; (format-replace-strings '(("\x201C" . "\"")
-;;                           ("\x201D" . "\"")
-;;                           ("\x2018" . "'")
-;;                           ("\x2019" . "'"))
-;;                         nil beg end))
-
 (setq smart-quote-regexp-replacements
       '(("\\(\\w\\)- " . "\\1")
         ("\\(\\w\\)\\(  [-—] \\|—\\)" . "\\1---")))
@@ -562,30 +441,6 @@ With prefix arg, find the previous file."
                             ("  " . " "))
                           nil   beg (min end (point-max))))
 
-(defun split-string-every (string chars)
-  "Split STRING into substrings of length CHARS characters.
-    This returns a list of strings."
-  (cond ((string-empty-p string)
-         nil)
-        ((< (length string)
-            chars)
-         (list string))
-        (t (cons (substring string 0 chars)
-                 (split-string-every (substring string chars)
-                                     chars)))))
-
-(defun sync0-split-string-with-separator (string separator)
-  "Check the presence of a separator in current string and split
-when necessary."
-  (interactive)
-;; check for the presence of a separator
-  (if (string-match-p separator string)
-      (string-trim
-       (prin1-to-string
-        (split-string-and-unquote string separator))
-       "(" ")")
-    string))
-
 (defun sync0-null-p (var)
 "General purpose predicate to determine whether an object var is
 empty (not in the lisp sense but in a human-readable sense)."
@@ -596,14 +451,6 @@ empty (not in the lisp sense but in a human-readable sense)."
           (or (null var)
               (equal var '(""))))
           (t (null var))))
-
-;; (defun sync0-null-p (var)
-;; (cond ((stringp var)
-;;   (or (null var)
-;;       (string= var "")
-;;       (string= var "nil")))
-
-(require 'sync0-functions)
 
 (use-package s)
 
@@ -709,6 +556,7 @@ empty (not in the lisp sense but in a human-readable sense)."
     "1" 'delete-other-windows
     "2" 'sync0-split-and-follow-horizontally
     "3" 'sync0-split-and-follow-vertically
+    "4" 'sync0-create-scratch-buffer
     "m" 'bookmark-set
     "q" 'keyboard-quit
     "w" 'write-file
@@ -2387,6 +2235,18 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
   (add-hook 'python-mode-hook 'py-autopep8-enable-on-save)
   (add-hook 'python-mode-hook 'flycheck-mode))
 
+(use-package nodejs-repl
+  :straight (nodejs-repl :type git :host github :repo "abicky/nodejs-repl.el") 
+  :config
+  (add-hook 'js-mode-hook
+            (lambda ()
+              (define-key js-mode-map (kbd "C-x C-e") 'nodejs-repl-send-last-expression)
+              (define-key js-mode-map (kbd "C-c C-j") 'nodejs-repl-send-line)
+              (define-key js-mode-map (kbd "C-c C-r") 'nodejs-repl-send-region)
+              (define-key js-mode-map (kbd "C-c C-c") 'nodejs-repl-send-buffer)
+              (define-key js-mode-map (kbd "C-c C-l") 'nodejs-repl-load-file)
+              (define-key js-mode-map (kbd "C-c C-z") 'nodejs-repl-switch-to-repl))))
+
   (use-package yasnippet 
     :straight (yasnippet :type git :host github :repo "joaotavora/yasnippet") 
     :config
@@ -2495,12 +2355,13 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
   (bibtex-set-dialect 'biblatex)
   (require 'bibtex-completion)
   (require 'bibtex-utils)
+  (require 'sync0-bibtex-vars)
   (require 'sync0-bibtex-functions)
   (require 'sync0-bibtex-fields)
   (require 'scihub)
   (require 'unidecode)
 
-  (setq scihub-homepage "https://sci-hub.ee/")
+  (setq scihub-homepage "https://sci-hub.se")
   (setq scihub-download-directory sync0-zettelkasten-attachments-directory)
   (setq scihub-open-after-download nil)
 
@@ -2523,6 +2384,7 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
     "J" 'sync0-bibtex-next-key))
 
 (use-package bibtex-completion
+  :after bibtex
   :custom 
   (bibtex-completion-bibliography '("~/Gdrive/bibliographies/bibliography.bib"
 				    ;; "~/Gdrive/bibliographies/doctorat.bib"
@@ -2536,7 +2398,7 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
   (bibtex-completion-notes-symbol "N")
   (bibtex-completion-notes-extension ".md")
   ;; (bibtex-completion-notes-extension ".org")
-  (bibtex-completion-pdf-extension '(".pdf" ".epub" ".doc" ".docx" ".org" ".md"))
+  (bibtex-completion-pdf-extension '(".pdf" ".epub" ".doc" ".docx" ".org" ".md" ".rtf"))
   (bibtex-completion-additional-search-fields '(origdate subtitle))
   ;; (bibtex-completion-additional-search-fields '(journaltitle origdate subtitle volume location publisher note library institution keywords edition))
   ;; (bibtex-completion-additional-search-fields '(editor journaltitle origdate subtitle volume booktitle location publisher note library medium institution keywords))
@@ -2561,7 +2423,7 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
 
   (setq bibtex-completion-notes-template-multiple-files  
         (concat 
-	   "---\n"
+	 "---\n"
          "citekey: ${=key=}\n"
          "biblatex_type: ${=type=}\n"
          "zettel_type: reference\n"
@@ -2580,12 +2442,12 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
          "## Annotations\n\n"
          "## Références\n\n"))
 
-(use-package ivy-bibtex
+  (use-package ivy-bibtex
     :config
     (setq ivy-bibtex-default-action 'ivy-bibtex-show-entry)
     (setq ivy-bibtex-default-multi-action 'ivy-bibtex-show-entry)
     (require 'sync0-ivy-bibtex-functions)
-  (evil-leader/set-key "v" 'ivy-bibtex)))
+    (evil-leader/set-key "v" 'ivy-bibtex)))
 
    (use-package pdf-tools
      :magic ("%PDF" . pdf-view-mode)

@@ -1,4 +1,3 @@
-Bibliographie générale du Périgord
 1848 la révolution oubliée
 1848, ou l’apprentissage de la République
 A Companion to Intellectuel History
@@ -8,6 +7,7 @@ Andrés Bello
 Another Aesthetics is Possible
 Aprendizaje de segundas lenguas
 Authority, Liberty \& Automatic Machinery in Early Modern Europe
+Bibliographie générale du Périgord
 Bird by Bird
 Cabet
 Charles Fourier
@@ -44,11 +44,6 @@ Including a Symposium on the Historical Epistemology of Economics
 Interaction and Market Structure
 Jean-Gustave Courcelle-Seneuil
 Journeys Toward Progress
-L’Héritage de la révolution
-L’Art de la thèse
-L’Institution du travail
-L’Intervention des pouvoirs publics dans le contrat de travail
-L’Utopie de la communication
 La Banque libre
 La Condition ouvrière
 La France ouvrière
@@ -72,6 +67,11 @@ Les métamorphoses de la question sociale
 Les uns et les autres
 Liberté et socialisme
 Louis Blanc
+L’Art de la thèse
+L’Héritage de la révolution
+L’Institution du travail
+L’Intervention des pouvoirs publics dans le contrat de travail
+L’Utopie de la communication
 Machine Dreams
 Mechanization Takes Command
 Memory Machines
@@ -134,5 +134,5 @@ What Social Classes Owe to Each Other
 What is Intellectual History?
 William Stanley Jevons and the Making of Modern Economics
 Work and Revolution in France
-“Raw Data” Is an Oxymoron
 Études sur la science sociale
+“Raw Data” Is an Oxymoron

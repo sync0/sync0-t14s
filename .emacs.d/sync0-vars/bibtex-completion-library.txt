@@ -1,114 +1,72 @@
-Z-Library
-GNU Emacs: Documentation \& Support
-David Hart’s Webpage
-Personal Collection
-Biblioteca Nacional de Chile
-None
-Google Books
-Bibliothèque Sainte Barbe
-Carnegie Mellon University Libraries Digital Collections
-Archivo Histórico de Antioquia
-Basílica Menor de Nuestra Señora del Carmen, La Ceja
-Biblioteca Luis Echavarría Villegas, Universidad EAFIT
-Archivo de la Arquidiócesis de Popayán
+AbeBooks
+Academia.edu
+Amazon.com
+Archives Bordeaux Métropole
+Archives de Paris
 Archives départementales de la Dordogne
+Archives nationales (Pierrefitte-sur-Seine)
+Archivo General de la Nación de Colombia
+Archivo Histórico de Antioquia
+Archivo Histórico de Rionegro
+Archivo de la Arquidiócesis de Popayán
+Archivo histórico de San José de la Marinilla
+Basílica Menor de Nuestra Señora del Carmen, La Ceja
+Biblioteca Carlos Gaviria Díaz, Universidad de Antioquia
+Biblioteca Luis Echavarría Villegas, Universidad EAFIT
+Biblioteca Nacional de Chile
+Biblioteca del Banco Central de Chile
+Bibliothèque Sainte Barbe
+Bibliothèque Serpente, Sorbonne Université
+Bibliothèque interuniversitaire de la Sorbonne
 Bibliothèque nationale de France
 Bibliothèque numérique patrimoniale de la ville de Périgueux
-Bibliothèque Serpente, Sorbonne Université
-Biblioteca Carlos Gaviria Díaz, Universidad de Antioquia
-Archivo Histórico de Rionegro
-Archives nationales (Pierrefitte-sur-Seine)
+Cairn.info
+Campus France Colombie
+Carnegie Mellon University Libraries Digital Collections
+Centre des Archives diplomatiques de Nantes
+Centro de Investigaciones Diego Barros Arana
+Cercle d’épistémologie économique
+Colombia Marxista Internacional
+Colpensiones
+Comprehensive TEX Archive Network
+Cour des comptes
+Curso Clássicos do Marxismo
+David Hart’s Webpage
 Duke University Libraries
-Biblioteca del Banco Central de Chile
-National Index of Wills and Administrations, 1858-1957, England and Wales
+FamilySearch
+GNU Emacs: Documentation \& Support
 Gallica
-Online Library of Liberty
-The Library of the University of Wisconsin
+Google Books
+Généalogie et histoire de la Caraïbe
+HAL science ouverte
+Hypothèses : Paleografía y ciencias afines
+Instituto Colombiano de Historia y Antropología
+Le Monde diplomatique
+Le comptoir des presses d’universités
+Library of Alexandria
+Library of Athens
+Luc Marco
+Línea Gonzalo de Palencia
+MOOC : Rédiger et publier un article scientifique
 Maison des sciences économiques, Paris I
 Marshall Library of Economics
-Comprehensive TEX Archive Network
-Retronews
-Unknown
-nil
 Memoria chilena
-Amazon.com
-Bibliothèque interuniversitaire de la Sorbonne
-Le comptoir des presses d’universités
-Archivo General de la Nación de Colombia
-FamilySearch
-FamilySearch
-FamilySearch
-FamilySearch
-Portal de Archivos Españoles
-Portal de Archivos Españoles
-Portal de Archivos Españoles
-Línea Gonzalo de Palencia
-Línea Gonzalo de Palencia
-Línea Gonzalo de Palencia
-Línea Gonzalo de Palencia
-Instituto Colombiano de Historia y Antropología
-Instituto Colombiano de Historia y Antropología
-Archivo histórico de San José de la Marinilla
-Archivo histórico de San José de la Marinilla
-Archivo histórico de San José de la Marinilla
-HAL science ouverte
-HAL science ouverte
-HAL science ouverte
-Luc Marco
-Luc Marco
-Luc Marco
-Luc Marco
-Triangle : UMR 5206
-Triangle : UMR 5206
-Cairn.info
-Cairn.info
-edX
-edX
-edX
+Museo nacional Benjamín Vicuña Mackenna
+National Index of Wills and Administrations, 1858-1957, England and Wales
+None
+Online Library of Liberty
+OpenEdition
 Paleografías Americanas
-Centre des Archives diplomatiques de Nantes
-Centre des Archives diplomatiques de Nantes
-Centre des Archives diplomatiques de Nantes
-Centre des Archives diplomatiques de Nantes
-Centre des Archives diplomatiques de Nantes
-Centre des Archives diplomatiques de Nantes
-Centre des Archives diplomatiques de Nantes
-MOOC : Rédiger et publier un article scientifique
-MOOC : Rédiger et publier un article scientifique
-Cour des comptes
-Cour des comptes
-Cour des comptes
-Cour des comptes
-Cour des comptes
-Cercle d’épistémologie économique
-Cercle d’épistémologie économique
-Archives de Paris
-Archives de Paris
-Archives de Paris
-Archives de Paris
-Archives de Paris
-Curso Clássicos do Marxismo
-Curso Clássicos do Marxismo
+Personal Collection
+Portal de Archivos Españoles
 Repositorio digital del Banco central de Chile
-Repositorio digital del Banco central de Chile
-Centro de Investigaciones Diego Barros Arana
-Centro de Investigaciones Diego Barros Arana
-Hypothèses : Paleografía y ciencias afines
-Hypothèses : Paleografía y ciencias afines
-Hypothèses : Paleografía y ciencias afines
-Hypothèses : Paleografía y ciencias afines
-Museo nacional Benjamín Vicuña Mackenna
-Museo nacional Benjamín Vicuña Mackenna
-Museo nacional Benjamín Vicuña Mackenna
-Campus France Colombie
-Campus France Colombie
-Campus France Colombie
-Academia.edu
-Academia.edu
-OpenEdition
-OpenEdition
-Colpensiones
-Archives Bordeaux Métropole
+Retronews
+The Library of the University of Wisconsin
+Triangle : UMR 5206
+Unknown
+Z-Library
+edX
+nil
 scriptoria.org
-Le Monde diplomatique
-Le Monde diplomatique
+Correspondence: Ackermann, Isabelle
+Correspondence: Marco, Luc

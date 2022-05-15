@@ -1,156 +1,148 @@
-L’Économiste français
-Romantisme
-Le Pouvoir
-Le Droit
-La Gazette du Languedoc
-La Presse
-Journal de Paris
-Le Charivari
-Tiempo \& economía
-Annals of the American Academy of Political and Social Science
-Revue des Deux Mondes
-Revista económica
-Cambridge Journal of Economics
-Épistémocritique
-Revue économique de Bordeaux
-Revue d’économie politique
-Amérique Latine : Histoire et Mémoire
-Revue internationale de droit comparé
-Cahiers d’économie politique
-Revue Historique
-The Mud
-The Crazy
-The Grand Journal
-Terrains \& Travaux
-Revue du MAUSS
-Cahiers d’histoire
-Revue Française de Socio-Économie
-Bulletin de psychologie
-Mind
-Past {\&} Present
-Revue Française d’Histoire des Idées Politiques
-History and Theory
-Le Mouvement social
 Actes de la Recherche en Sciences Sociales
-Journal of the History of Ideas
-History of Science
-Journal of Institutional Economics
-Tradition and Discovery
-Proceedings of the Royal Society of London
-Social Studies of Science
-Constellations
-Political Theology
-Jurimetrics
-The Review of Austrian Economics
-The University of Chicago Law Review
-Raisons politiques
-Mathematics Magazine
-London Review of Books
-Annales
-Cahiers du Genre
-Critical Inquiry
-Journal of Economic Perspectives
-American Journal of Sociology
-Jus Politicum
-Le Droit Ouvrier
-Le sujet dans la cité
-Philosophy of Science
-Econometrica
-Revue internationale de philosophie
-American Psychologist
-Organization Studies
-Revue de métaphysique et de morale
-Science et structure sociale
-Revue économique
-Economia e Sociedade
-British Journal of Management
-The American Economic Review
-Nature
-Sciences Sociales et Santé
-Historia (Santiago)
-Vie \& sciences de l’entreprise
-Mondes sociaux
-Revue britannique
-Excelsior
-L’Intransigeant
-Universum
-Cuadernos de Historia
 Alpha
-Canto Rodado
-La Mode
-Le Radical
-Journal des économistes
+American Journal of Sociology
+American Psychologist
+Amérique Latine : Histoire et Mémoire
 Anales de la Universidad de Chile
-Revue d’histoire moderne et contemporaine
-Polis
-History of European Ideas
-Revista del Pacífico
-Nuevo Mundo Mundos Nuevos
-Histoire, économie \& société
-Desarrollo Económico
-The Hispanic American Historical Review
-El trimestre económico
-Historia
-La Réforme
-Le Philosophoire
-Austrian Economics Newsletter
-History of Political Economy
-Review of Keynesian Economics
-International Review of Financial Analysis
+Annales
+Annales de démographie historique
+Annals of the American Academy of Political and Social Science
 Annual Review of Sociology
-The Americas
-La Nouvelle revue
-Estudios Públicos
-Le Grand Journal
-Gérer \& comprendre
-Revista de la Universidad Pontificia Bolivariana
-Séances et travaux de l’Académie des Sciences Morales et Politiques
-nil
-Theory and Society
-Journal of Social Ontology
+Austrian Economics Newsletter
+Bibliothèque de l’École des chartes
+British Journal of Management
 Bulletin de la Société Historique et Archéologique du Périgord
-Estudios Nueva Economía
+Bulletin de psychologie
+Cahiers du Genre
+Cahiers d’histoire
+Cahiers d’économie politique
+Cambridge Journal of Economics
+Canto Rodado
+Constellations
+Critical Inquiry
+Cuadernos de Historia
 Derecho y humanidades
-Política criminal
-Revista Chilena de Derecho
-Esprit de Pays
-Journal of Post Keynesian Economics
+Desarrollo Económico
+Econometrica
+Economia e Sociedade
 Economy and Society
-Psychological Review
-Operations Research
-Revista de ciencias i letras
+El trimestre económico
+Esprit de Pays
+Estudios Nueva Economía
+Estudios Públicos
+Excelsior
+Généalogie et histoire de la Caraïbe
+Gérer \& comprendre
+Histoire d’entreprises
+Histoire, économie \& société
+Historia
+Historia (Santiago)
+History and Theory
+History of European Ideas
+History of Political Economy
+History of Science
+Il Pensiero Politico
+International Review of Financial Analysis
+Journal de Paris
+Journal des économistes
+Journal of Economic Perspectives
+Journal of Institutional Economics
+Journal of Post Keynesian Economics
+Journal of Social Ontology
+Journal of the History of Ideas
+Jurimetrics
+Jus Politicum
 La Gazette
+La Gazette du Languedoc
+La Mode
+La Nouvelle revue
+La Presse
+La Revue administrative
+La Réforme
+La République
+La revue Tocqueville
+Le Charivari
+Le Droit
+Le Droit Ouvrier
+Le Grand Journal
+Le Journal du peuple
+Le Mouvement social
 Le Mémorial bordelais
+Le Philosophoire
+Le Pouvoir
+Le Radical
 Le Siècle
 Le Temps
-Le Journal du peuple
-Revue Républicaine
-La République
-Revista de Extensión Cultural
-Politix
-Revue des études coopératives
-Histoire d’entreprises
-Histoire d’entreprises
-Histoire d’entreprises
-Revue du progrès
-Revue générale du droit, de la législation et de la jurisprudence en France et à l'étranger
-Revue générale du droit, de la législation et de la jurisprudence en France et à l'étranger
-Revue administrative
-Annales de démographie historique
-Annales de démographie historique
-Revue d’histoire des facultés de droit et de la culture juridique, du monde des juristes et du livre juridique
-Revue d’histoire des facultés de droit et de la culture juridique, du monde des juristes et du livre juridique
-Revue d’histoire des facultés de droit et de la culture juridique, du monde des juristes et du livre juridique
-Revue d’histoire des facultés de droit et de la culture juridique, du monde des juristes et du livre juridique
-Revue d’histoire des facultés de droit et de la culture juridique, du monde des juristes et du livre juridique
-Revue d’histoire des facultés de droit et de la culture juridique, du monde des juristes et du livre juridique
+Le sujet dans la cité
+London Review of Books
+L’Intransigeant
+L’Économiste français
+Mathematics Magazine
+Mind
+Mondes sociaux
+Nature
 Nouvelle revue historique de droit français et étranger
-Bibliothèque de l'École des chartes
-Bibliothèque de l'École des chartes
-Bibliothèque de l'École des chartes
-Bibliothèque de l'École des chartes
-Bibliothèque de l’École des chartes
-Revue internationale de l'enseignement
-Revue internationale de l'enseignement
-Il Pensiero Politico
-Il Pensiero Politico
+Nuevo Mundo Mundos Nuevos
+Operations Research
+Organization Studies
+Past {\&} Present
+Philosophy of Science
+Polis
+Political Theology
+Politix
+Política criminal
+Proceedings of the Royal Society of London
+Psychological Review
+Raisons politiques
+Review of Keynesian Economics
+Revista Chilena de Derecho
+Revista de Extensión Cultural
+Revista de ciencias i letras
+Revista de la Universidad Pontificia Bolivariana
+Revista del Pacífico
+Revista económica
+Revue Française de Socio-Économie
+Revue Française d’Histoire des Idées Politiques
+Revue Historique
+Revue Républicaine
+Revue administrative
+Revue britannique
+Revue de métaphysique et de morale
+Revue des Deux Mondes
+Revue des études coopératives
+Revue du MAUSS
+Revue du progrès
+Revue d’histoire des facultés de droit et de la culture juridique, du monde des juristes et du livre juridique
+Revue d’histoire moderne et contemporaine
+Revue d’économie politique
+Revue générale du droit, de la législation et de la jurisprudence en France et à l’étranger
+Revue internationale de droit comparé
+Revue internationale de l’enseignement
+Revue internationale de philosophie
+Revue économique
+Revue économique de Bordeaux
+Romantisme
+Science et structure sociale
+Sciences Sociales et Santé
+Social Studies of Science
+Séances et travaux de l’Académie des Sciences Morales et Politiques
+Terrains \& Travaux
+The American Economic Review
+The Americas
+The Crazy
+The Grand Journal
+The Hispanic American Historical Review
+The Mud
+The Review of Austrian Economics
+The University of Chicago Law Review
+Theory and Society
+Tiempo \& economía
+Tradition and Discovery
+Universum
+Vie \& sciences de l’entreprise
+nil
+Épistémocritique
+Espaces et sociétés
+Journal des faillites et des liquidations judiciaires françaises et étrangères
+Plural
+Cuadernos de historia

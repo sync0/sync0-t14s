@@ -1,55 +1,84 @@
-;; (defun sync0-print-pdf (pdf)
-;;   "Print the pdf provided in the argument"
-;;   (interactive)
-;;   (let* ((copies (concat " -# " (read-string "Enter number of copies: ") " "))
-;;          (page-size (completing-read "Choose page size: " '(" -o media=a4 " " -o media=letter " " -o media=legal ")))
-;;          (layout (completing-read "Choose page layout: " '(" -o sides=one-sided " " -o sides=two-sided-long-edge " " -o sides=two-sided-short-edge ")))
-;;          (quality (completing-read "Choose print quality: " '(" -o print-quality=3 " " -o print-quality=4 " " -o print-quality=5 ")))
-;;          (command (concat "lpr" copies page-size layout quality pdf)))
-;;     (shell-command command)))
+(defun sync0-insert-elements-of-list (list)
+  "Print each element of LIST on a line of its own."
+  (while list
+    (insert (concat (car list) "\n"))
+    (setq list (cdr list))))
 
-;; (defun sync0-print-with-command (command pdf)
-;;   "Print the pdf using the provided provided in the argument"
-;;   (interactive)
-;;   (let ((full-command (concat command pdf)))
-;;     (shell-command full-command)))
+(defun sync0-show-elements-of-list (list sep)
+  "Print massive string with each element of list separated by sep"
+(unless (equal (length list) 0)
+  (let (x)
+    (while list
+      (setq x (concat (car list) sep x))
+      (setq list (cdr list)))
+    (string-trim-right x sep))))
 
-;; (defun sync0-print-pdf (pdf &optional command)
-;;   "Print the pdf provided in the argument"
-;;   (interactive)
-;;   (if command 
-;;       (shell-command (concat command pdf))
-;;     (let* ((copies (concat " -# " (read-string "Enter number of copies: ") " "))
-;;            (page-size (completing-read "Choose page size: " '(" -o media=a4 " " -o media=letter " " -o media=legal ")))
-;;            (layout (completing-read "Choose page layout: " '(" -o sides=one-sided " " -o sides=two-sided-long-edge " " -o sides=two-sided-short-edge ")))
-;;            (quality (completing-read "Choose print quality: " '(" -o print-quality=3 " " -o print-quality=4 " " -o print-quality=5 ")))
-;;            (print-command (concat "lpr" copies page-size layout quality pdf)))
-;;       (shell-command print-command))))
+(defun sync0-update-list (newelt list file)
+  "Saves my projects in my home folder."
+  (if (member newelt list)
+      (message "%s already exists in %s" newelt file)
+    (let ((file-path
+           (concat "~/.emacs.d/sync0-vars/" file ".txt"))
+          (new-list (cons newelt list)))
+      ;; (add-to-list list newelt)
+      (sync0-redefine list new-list)
+      (with-temp-file file-path
+        (sync0-insert-elements-of-list list)
+        (save-buffer)
+        (message "%s added to %s" newelt file)))))
 
+(defun sync0-split-string-with-separator (string separator)
+  "Check the presence of a separator in current string and split
+when necessary."
+  (interactive)
+;; check for the presence of a separator
+  (if (string-match-p separator string)
+      (string-trim
+       (prin1-to-string
+        (split-string-and-unquote string separator))
+       "(" ")")
+    string))
 
-;; (defun sync0-bibtex-print-single-pdf-attachment (&optional pdf)
-;;  "Print the PDFs of the entries with the given KEYS where available."
-;;   (interactive)
-;;     (let* ((copies (concat " -# " (read-string "Enter number of copies: ") " "))
-;;            (page-size (completing-read "Choose page size: " '(" -o media=a4 " " -o media=letter " " -o media=legal ")))
-;;            (layout (completing-read "Choose page layout: " '(" -o sides=one-sided " " -o sides=two-sided-long-edge " " -o sides=two-sided-short-edge ")))
-;;            (quality (completing-read "Choose print quality: " '(" -o print-quality=3 " " -o print-quality=4 " " -o print-quality=5 ")))
-;;            (print-command (concat "lpr" copies page-size layout quality pdf)))
+;; Useful function to deal with strings: 
+;; Taken from: https://emacs.stackexchange.com/questions/36200/split-line-every-n-characters
 
+(defun split-string-every (string chars)
+  "Split STRING into substrings of length CHARS characters.
+    This returns a list of strings."
+  (cond ((string-empty-p string)
+         nil)
+        ((< (length string)
+            chars)
+         (list string))
+        (t (cons (substring string 0 chars)
+                 (split-string-every (substring string chars)
+                                     chars)))))
 
-;; (defun sync0-bibtex-print-pdf-attachment (keys)
-;;   "Print the PDFs of the entries with the given KEYS where available."
-;;   (let* ((copies (concat " -# " (read-string "Enter number of copies: ") " "))
-;;          (page-size (completing-read "Choose page size: " '(" -o media=a4 " " -o media=letter " " -o media=legal ")))
-;;          (layout (completing-read "Choose page layout: " '(" -o sides=one-sided " " -o sides=two-sided-long-edge " " -o sides=two-sided-short-edge ")))
-;;          (quality (completing-read "Choose print quality: " '(" -o print-quality=3 " " -o print-quality=4 " " -o print-quality=5 ")))
-;;          (command (concat "lpr" copies page-size layout quality)))
-;;   (dolist (key keys)
-;;     (let ((pdf (bibtex-completion-find-pdf key bibtex-completion-find-additional-pdfs)))
-;;       (if pdf
-;;           (mapc 'mml-attach-file pdf)
-;;         (message "No PDF(s) found for this entry: %s"
-;;                  key)))))
+(defun sync0-string-split-with-sep-and-list (string sep &optional to-string)
+  "Split a string into a list using sep. When optional to-string is
+true, produce a string and not a list."
+  (cl-flet  ((conditional () (if to-string
+                                 string
+                               (list string))))
+    (if (string-match sep string)
+        (progn 
+          (split-string string sep)
+          (conditional))
+      (conditional))))
+
+(defun sync0-add-prefix-to-list-convert-to-string (my-string separator prefix &optional postfix)
+  "Break my-string using separator. Then, add prefix to every
+element of the resulting list. When postfix is set, also add
+postfix to every element. The product of the function is a string
+of all elements separeted by separator."
+  (let* ((old-list (split-string my-string separator))
+         (new-list (let (x)
+                     (dolist (element old-list x)
+                       (if postfix 
+                           (push (concat prefix element postfix) x)
+                         (push (concat prefix element) x))))))
+    (sync0-show-elements-of-list new-list separator)))
+
 
 (provide 'sync0-functions)
 

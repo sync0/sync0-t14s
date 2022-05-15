@@ -1,207 +1,172 @@
-nil
-Traduction de la quatrième édition anglaise
+61AJ
 8-R PIECE-27194, NUMM-3344004
-\textsc{bnc}: MC0023185
-\textsc{bnc}: MC0023186
-\textsc{bnf}: \textsc{numm}-9726392
-\textsc{bnf}: \textsc{numm}-9629874
-\textsc{bnf}: \textsc{numm}-6572007
-\textsc{bnc}: MC0023181
-\textsc{bnf}: \textsc{numm}-5523876
-\textsc{bnf}: 8-R-10880
-\textsc{bnf}: \textsc{numm}-6571568
-\textsc{bnf}: \textsc{numm}-206721
-\textsc{bnf}: \textsc{numm}-75657
-\textsc{bnf}: R-32500
-\textsc{bnf}: 8-LB57-2548
-\textsc{bnf}: V-35545
-\textsc{bnf}: R-32497
-\textsc{bnf}: V-35542
-\textsc{bnf}: \textsc{numm}-3056058
-\textsc{bnc}: MC0014882
-\textsc{bnc}: MC0064762
-\textsc{bnc}: MC0052598
-\textsc{bnc}: MC0052597
-\textsc{bnc}: MC0047453
-Répertoire numérique détaillé : D21J1-187
-JOD-228
-\textsc{bnf}: 8-R-51769
-\textsc{bnf}: V-35527
-\textsc{bnf}: V-35533, NUMM-9600789
-\textsc{bnf}: V-35528
-\textsc{bnf}: V-35536, NUMM-9604112
-\textsc{bnc}: MC0023187
-\textsc{bnf}: V-35538, NUMM-9604112
-\textsc{bnf}: FOL-LN1-232 (6096)
-\textsc{bnf}: V-35540
-\textsc{bnf}: 8-V-2925, NUMM-9713341
-\textsc{bnf}: 8-R-20966 (1), NUMM-22411
-\textsc{bnf}: 8-R-20966 (2), NUMM-22410
-\textsc{bnf}: R-7303
-\textsc{bnf}: NUMM-24294
-\textsc{bnf}: 8-Z-331
-\textsc{bnc}: MC0067553
-\textsc{bcch}: BCCh-H1924
-\textsc{bnc}: MC0018481
-\textsc{bnc}: MC0012874
-\textsc{bnc}: MC0023157
-\textsc{bnc}: MC0023189
-\textsc{bnf}: 8-LN27-41305
-https://www.diplomatie.gouv.fr/IMG/pdf/egf_po_2020_12_web_cle8ed19d.pdf
-\textsc{hal} : cel-01267486
-Archives nationales : Cote LH//610/25
-Zweite Abteilung: Band 10
-\textsc{bnf} : 8-Z-331
-Archives départementales de la Haute-Vienne : Limoges, Naissances (1846), FRAD087-3E85/183
+AHEAP, Legajo 8255/9
+Annexe au Nº 364
+Archives de Paris : VI\textsuperscript{e} arrondissement, Décès (1891), V4E 5963, No. 1765
+Archives de Paris : VI\textsuperscript{e} arrondissement, Décès (1891), V4E 5963, No. 789
+Archives de Paris : Vanxains, Décès (1837), 5 E 557/12
+Archives de Paris : XVI\textsuperscript{e} arrondissement, Décès (1892), V4E 7336, No. 789
 Archives de l’État civil de Paris : Mariages, 16e, V4E-10003
+Archives départamentales de la Dordogne antérieures à 1790
+Archives départementales de la Dordogne : Mareuil, Baptêmes Mariages Sépultures (1790), 5 E 249/2
+Archives départementales de la Dordogne : Mareuil, Baptêmes Mariages Sépultures (An XIV) ?
+Archives départementales de la Dordogne : Mareuil, Mariages (1813), 5 E 249/9
+Archives départementales de la Dordogne : Saint-Antoine-Cumond, Collection Communale
+Archives départementales de la Dordogne : Saint-Médard de Mussidan, Collection Départementale 5E 462/2
+Archives départementales de la Dordogne : Siorac-de-Ribérac, Baptêmes Mariages Sépultures (1779), Collection Communale
+Archives départementales de la Dordogne : Vanxains, (1836), FRAD024_6MI15
+Archives départementales de la Dordogne : Vanxains, Collection Communale 1777-1792
+Archives départementales de la Dordogne : Vanxains, Décès (1832), 5 E 557/11
+Archives départementales de la Dordogne : Vanxains, Décès (1837), 5 E 557/12
+Archives départementales de la Dordogne : Vanxains, Naissances (1813), 5 E 557/8
+Archives départementales de la Haute-Vienne : Limoges, Naissances (1846), FRAD087-3E85/183
 Archives nationales : Cote
-Cote LH//610/26, site de Pierrefitte-sur-Seine
-\textsc{bnc}: AE0016578
-Traduit sur la quatrième édition anglaise
-Iglesia de San José, Medellín, Antioquia, Colombia
-Notaría quinta de Bucaramanga, Santander, Colombia
-Libro 421, folio 18, Notaría segunda de Medellín, Antioquia, Colombia
-Iglesia del Sagrado Corazón, Medellín, Antioquia, Colombia
-Libro 001, folio 256, número 0496, Iglesia de La Milagrosa, Medellín, Antioquia, Colombia
-Libro 0009, folio 0137, número 00324, Parroquia la Inmaculada Concepción, Mesopotamia, La Unión, Antioquia, Colombia
-Quinto libro de bautismos, página 217, número 370, Parroquia la Inmaculada Concepción, Mesopotamia, La Unión, Antioquia, Colombia
-Libro 0002, folio 0331, número 00676, Parroquia La Inmaculada Concepción, Mesopotamia, La Unión, Antioquia, Colombia
-Libro segundo de entierros, página 160, número 512, Parroquia la Inmaculada Concepción, Mesopotamia, La Unión, Antioquia, Colombia
-Probablemente en Abejorral, Antioquia, Colombia
-Probablemente entre 1867-1886 en la Parroquia la Inmaculada Concepción, Mesopotamia, Antioquia, Colombia
-Libro primero de entierros, página 73, número 192, Parroquia La Inmaculada Concepción, Mesopotamia, Antioquia, Colombia
-Probablemente en La Ceja entre 1833 y 1850
-Libro cuarto de bautismos, número 59, Basílica Menor de Nuestra Señora del Carmen, La Ceja, Antioquia, Colombia
-Libro quinto de bautismos, página 164, Parroquia San Nicolás, Rionegro, Antioquia, Colombia
-Libro segundo de matrimonios (1809-1842), página 87, Parroquia San Nicolás, Rionegro, Antioquia, Colombia
-Libro primero de confirmaciones, folio 3, Parroquia San Nicolás, Rionegro, Antioquia, Colombia
-Libro segundo de matrimonios, folio 55, Parroquia San Nicolás, Rionegro, Antioquia, Colombia
-Libro X, Parroquia San Nicolás, Rionegro, Antioquia, Colombia
-Libro segundo (A, 1758-1805) de entierros, página 75, Parroquia San Nicolás, Rionegro, Antioquia, Colombia
-Archivo histórico de San José de la Marinilla, Registro 282, tomo 2, folios 21-30
-Libro primero de bautismos, folio 132v, Parroquia Nuestra Señora de La Candelaria, Medellín, Antioquia, Colombia
-Libro segundo de defunciones (1740-1836), Parroquia Nuestra Señora de la Asunción, Marinilla, Antioquia, Colombia
-Libro primero de bautismos, folio 90, Parroquia Nuestra Señora de La Candelaria, Medellín, Antioquia, Colombia
-Libro primero de bautismos (mixto), folio 84, Parroquia Nuestra Señora de La Candelaria, Medellín, Antioquia, Colombia
-Directora: Beatriz Patiño Millán
-Libro primero de defunciones, folio 54 del año 1690, Parroquia Nuestra Señora de la Candelaria, Medellín, Antioquia, Colombia
-Archivo Histórico de Antioquia: Nombramientos de oficios civiles, tomo 537, documento 8497, folios 60r-61r, número de ficha 161
-Hecho en Rionegro, mencionado por Fernando Panesso Posada en su estudio sobre el apellido López en Antioquia
+Archives nationales : Cote LH//610/25
+Archivo Histórico de Antioquia, tomo 54, folio 4
 Archivo Histórico de Antioquia: Censo, mestizaje, tomo 341, documento 6516, folios 144r-159v
+Archivo Histórico de Antioquia: Nombramientos de oficios civiles, tomo 537, documento 8497, folios 60r-61r, número de ficha 161
+Archivo de la Arquidiócesis de Popayán, CO.AGN.AP/APO, Legajo 7743/3
+Archivo histórico de San José de la Marinilla, Registro 282, tomo 2, folios 21-30
+Basílica Menor de Nuestra Señora del Carmen, La Ceja, Libro tercero de informaciones matrimoniales
+Box: 91, folder: 7434, \textsc{hscm}
+CO-AHR (Archivo Histórico de Rionegro), Fondo Gobierno, Época Colonia, Tomo 0225, Folios 494-87v, Número 33922
 CO-AHR (Archivo Histórico de Rionegro), Fondo Gobierno, Época República, Tomo 0038, Número 2769, Folio 71r
 CO-AHR (Archivo Histórico de Rionegro), Fondo Gobierno, Época República, Tomo 0124, Folio 136r, Número 26566
-CO-AHR (Archivo Histórico de Rionegro), Fondo Gobierno, Época Colonia, Tomo 0225, Folios 494-87v, Número 33922
 CO-AHR, Fondo Gobierno, Época República, Tomo 22, Folios 432r-v, Número 2085
-\textsc{cxliv}\textsuperscript{e} de la collection
+CO.AGN.AP/APO, Legajo 8255/9
+Capítulo XII de \textit{La América}
+Colección Manuscritos, Archivo Central Andrés Bello: AH0142
+Colección Manuscritos, Archivo Central Andrés Bello: AH0145
+Cote 5Mi1 2139
+Cote Bordeaux 1, F4
+Cote Bordeuaux 1, E89, 1e section
+Cote LH//610/26, site de Pierrefitte-sur-Seine
+Código de verificación CRQEZ20551848, Serial 6539610, Ministerio de Relaciones Exteriores de Colombia
+Directora: Beatriz Patiño Millán
+ES.28079.AHN//INQUISICIÓN, 1973, Exp.1
+ES.28079.AHN//INQUISICIÓN, 1973, Exp.1, f. 280r-v. Imágenes 672-673
+ES.28079.AHN//INQUISICIÓN,1973,Exp.1
+ES.41091.AGI/26//INDIFERENTE,1964,L.11,F.308
+ES.41091.AGI/26//INDIFERENTE,423,L.20,F.726V-727V
+ES.41091.AGI/27//JUSTICIA,978,N.2,R.2
+En el marco del coloquio Buenas prácticas en archivos históricos del siglo XIX
+Extrait de \emph{La Réforme
+Extrait de \emph{La Réforme}
+Extrait de la “Nouvelle Revue”
+Extrait du \emph{Journal des économistes}
+Folios 142
+Hecho en Rionegro, mencionado por Fernando Panesso Posada en su estudio sobre el apellido López en Antioquia
+Iglesia de San José, Medellín, Antioquia, Colombia
+Iglesia del Sagrado Corazón, Medellín, Antioquia, Colombia
+JOD-228
+Libro 0002, folio 0331, número 00676, Parroquia La Inmaculada Concepción, Mesopotamia, La Unión, Antioquia, Colombia
+Libro 0009, folio 0137, número 00324, Parroquia la Inmaculada Concepción, Mesopotamia, La Unión, Antioquia, Colombia
+Libro 001, folio 256, número 0496, Iglesia de La Milagrosa, Medellín, Antioquia, Colombia
+Libro 421, folio 18, Notaría segunda de Medellín, Antioquia, Colombia
+Libro X, Parroquia San Nicolás, Rionegro, Antioquia, Colombia
+Libro cuarto de bautismos, número 59, Basílica Menor de Nuestra Señora del Carmen, La Ceja, Antioquia, Colombia
+Libro primero de bautismos (mixto), folio 84, Parroquia Nuestra Señora de La Candelaria, Medellín, Antioquia, Colombia
+Libro primero de bautismos, folio 132v, Parroquia Nuestra Señora de La Candelaria, Medellín, Antioquia, Colombia
+Libro primero de bautismos, folio 90, Parroquia Nuestra Señora de La Candelaria, Medellín, Antioquia, Colombia
+Libro primero de confirmaciones, folio 3, Parroquia San Nicolás, Rionegro, Antioquia, Colombia
+Libro primero de defunciones, folio 54 del año 1690, Parroquia Nuestra Señora de la Candelaria, Medellín, Antioquia, Colombia
+Libro primero de entierros, página 73, número 192, Parroquia La Inmaculada Concepción, Mesopotamia, Antioquia, Colombia
+Libro quinto de bautismos, página 164
+Libro quinto de bautismos, página 164, Parroquia San Nicolás, Rionegro, Antioquia, Colombia
+Libro segundo (A, 1758-1805) de entierros, página 75, Parroquia San Nicolás, Rionegro, Antioquia, Colombia
+Libro segundo de defunciones (1740-1836), Parroquia Nuestra Señora de la Asunción, Marinilla, Antioquia, Colombia
+Libro segundo de entierros, página 160, número 512, Parroquia la Inmaculada Concepción, Mesopotamia, La Unión, Antioquia, Colombia
+Libro segundo de matrimonios (1809-1842), página 87, Parroquia San Nicolás, Rionegro, Antioquia, Colombia
+Libro segundo de matrimonios, folio 55, Parroquia San Nicolás, Rionegro, Antioquia, Colombia
+Nobleza, tomo 40, documento 1346
+Notaría quinta de Bucaramanga, Santander, Colombia
+Nro de matrícula 001-754336
+Opúsculo publicado en francés en Paris
+Ouvrage posthume
+Probablemente en Abejorral, Antioquia, Colombia
+Probablemente en La Ceja entre 1833 y 1850
+Probablemente entre 1867-1886 en la Parroquia la Inmaculada Concepción, Mesopotamia, Antioquia, Colombia
+Quinto libro de bautismos, página 217, número 370, Parroquia la Inmaculada Concepción, Mesopotamia, La Unión, Antioquia, Colombia
+Registro 1509, tomo 10, folios 1-18
+Registro 2334, tomo 21, folios 69-102
+Registro 35, tomo 1, folios 100r-100v
+Registro 84, tomo 1, folios 274r-283r
 Registro número 15241847, Notaría octava de Bucaramanga, Santander, Colombia
 Registro número 18623125, Notaría octava de Bucaramanga, Santander, Colombia
 Registro número 22375075, Notaría veinticinco de Medellín, Antioquia, Colombia
-Código de verificación CRQEZ20551848, Serial 6539610, Ministerio de Relaciones Exteriores de Colombia
-Archives départementales de la Dordogne : Vanxains, Naissances (1813), 5 E 557/8
-Archives départementales de la Dordogne : Mareuil, Mariages (1813), 5 E 249/9
-Archives départementales de la Dordogne : Vanxains, Décès (1837), 5 E 557/12
-Archives départementales de la Dordogne : Siorac-de-Ribérac, Baptêmes Mariages Sépultures (1779), Collection Communale
-Archives départementales de la Dordogne : Mareuil, Baptêmes Mariages Sépultures (1790), 5 E 249/2
-Archives départementales de la Dordogne : Mareuil, Baptêmes Mariages Sépultures (An XIV) ?
-Archives départementales de la Dordogne : Vanxains, Collection Communale 1777-1792
-Archives départementales de la Dordogne : Saint-Médard de Mussidan, Collection Départementale 5E 462/2
-Archives départementales de la Dordogne : Saint-Antoine-Cumond, Collection Communale
-Capítulo XII de \textit{La América}
-Colección Manuscritos, Archivo Central Andrés Bello: AH0142
-Archives départementales de la Dordogne : Vanxains, Décès (1832), 5 E 557/11
-Archives départementales de la Dordogne : Vanxains, (1836), FRAD024_6MI15
-Colección Manuscritos, Archivo Central Andrés Bello: AH0145
-Box: 91, folder: 7434, \textsc{hscm}
-{\textsc{bnf}: 4-H-8248 (5)}
-\textsc{bnf}: \textsc{numm}-95554
-Archivo Histórico de Antioquia, tomo 54, folio 4
-Basílica Menor de Nuestra Señora del Carmen, La Ceja, Libro tercero de informaciones matrimoniales
+Reproduced with the kind permission of the Marshall Librarian.
+Resolución No. 000485 17 Ene. 2022
+Répertoire numérique détaillé : D21J1-187
 Secretaría de Sistemas de Información y Procesos, Ciudad de Marinilla
-Archivo de la Arquidiócesis de Popayán, CO.AGN.AP/APO, Legajo 7743/3
-Archives départamentales de la Dordogne antérieures à 1790
-En el marco del coloquio Buenas prácticas en archivos históricos del siglo XIX
-\textsc{bnf}: 8-\textsc{R}-20966 (1), \textsc{numm}-22411
-\textsc{bnf}: 8-\textsc{r}-20966 (2), \textsc{numm}-22410
-\textsc{bnf}: 8-\textsc{r}-20966 (1), \textsc{numm}-22411
-Traduction de la troisième édition anglaise
-Annexe au Nº 364
-Extrait de la “Nouvelle Revue”
-Édition revue et mise à jour par André Liesse
-Opúsculo publicado en francés en Paris
-Extrait du \emph{Journal des économistes}
-Extrait de \emph{La Réforme}
-Ouvrage posthume
-Tomada de los Anales de la Universidad de Chile del 1\textsuperscript{o} de setiembre de 1892
-
-
-
-
-Youtube
-Youtube
-Youtube
-Youtube
-AHEAP, Legajo 8255/9
-AHEAP, Legajo 8255/9
-CO.AGN.AP/APO, Legajo 8255/9
-Libro quinto de bautismos, página 164
-Folios 142
-folios 142
-ES.28079.AHN//INQUISICIÓN,1973,Exp.1
-ES.28079.AHN//INQUISICIÓN, 1973, Exp.1
-ES.28079.AHN//INQUISICIÓN, 1973, Exp.1, f. 280r-v. Imágenes 672-673
-Tomo 40, documento 1348. f1r.-f45v.
-Tomo 40, documento 1348. f1r.-f45v.
-Nobleza, tomo 40, documento 1346
-\textsc{co.agn.ap/apo}, Legajo 7548/1
-Registro 1509, tomo 10, folios 1-18
-Registro 84, tomo 1, folios 274r-283r
-Registro 84, tomo 1, folios 274r-283r
-ES.41091.AGI/26//INDIFERENTE,1964,L.11,F.308
-ES.41091.AGI/27//JUSTICIA,978,N.2,R.2
-ES.41091.AGI/26//INDIFERENTE,423,L.20,F.726V-727V
-Registro 2334, tomo 21, folios 69-102
-Registro 2334, tomo 21, folios 69-102
-Registro 2334, tomo 21, folios 69-102
-Registro 35, tomo 1, folios 100r-100v
-Registro 35, tomo 1, folios 100r-100v
-Resolución No. 000485 17 Ene. 2022
-Resolución No. 000485 17 Ene. 2022
-Resolución No. 000485 17 Ene. 2022
-Cote 5Mi1 2139
-Cote 5Mi1 2139
-Archives de Paris : Vanxains, Décès (1837), 5 E 557/12
-Archives de Paris : Vanxains, Décès (1837), 5 E 557/12
-Archives de Paris : XVI\textsuperscript{e} arrondissement, Décès (1892), V4E 7336, No. 789
-código de atendimento 562959180
-código de atendimento 562959180
-Archives de Paris : VI\textsuperscript{e} arrondissement, Décès (1891), V4E 5963, No. 789
-Archives de Paris : VI\textsuperscript{e} arrondissement, Décès (1891), V4E 5963, No. 1765
-61AJ
-61AJ
-61AJ
-61AJ
-61AJ
-61AJ
-Reproduced with the kind permission of the Marshall Librarian.
-Reproduced with the kind permission of the Marshall Librarian.
-Reproduced with the kind permission of the Marshall Librarian.
+Section 1, 1817
+Section 1, Cote Bordeaux 2, E 92
+Section 1, cote Bordeaux 2, E 91
 Seneuil 1/3
 Seneuil 1/5
-Seneuil 1/5
-Section 1, 1817
-Cote Bordeuaux 1, E89, 1e section
-Cote Bordeuaux 1, E89, 1e section
-Cote Bordeuaux 1, E89, 1e section
-Cote Bordeuaux 1, E89, 1e section
-Cote Bordeaux 1, F4
-Section 1, Cote Bordeaux 2, E 92
-Section 1, Cote Bordeaux 2, E 92
-Section 1, cote Bordeaux 2, E 91
-Section 1, cote Bordeaux 2, E 91
+Tomada de los Anales de la Universidad de Chile del 1\textsuperscript{o} de setiembre de 1892
+Tomo 40, documento 1348. f1r.-f45v.
+Traduction de la quatrième édition anglaise
+Traduction de la troisième édition anglaise
+Traduit sur la quatrième édition anglaise
+Youtube
+Zweite Abteilung: Band 10
+\textsc{bcch}: BCCh-H1924
+\textsc{bnc}: AE0016578
+\textsc{bnc}: MC0012874
+\textsc{bnc}: MC0014882
+\textsc{bnc}: MC0018481
+\textsc{bnc}: MC0023157
+\textsc{bnc}: MC0023181
+\textsc{bnc}: MC0023185
+\textsc{bnc}: MC0023186
+\textsc{bnc}: MC0023187
+\textsc{bnc}: MC0023189
+\textsc{bnc}: MC0047453
+\textsc{bnc}: MC0052597
+\textsc{bnc}: MC0052598
+\textsc{bnc}: MC0064762
+\textsc{bnc}: MC0067553
+\textsc{bnf} : 8-Z-331
+\textsc{bnf}: 8-LB57-2548
+\textsc{bnf}: 8-LN27-41305
+\textsc{bnf}: 8-R-10880
+\textsc{bnf}: 8-R-20966 (1), NUMM-22411
+\textsc{bnf}: 8-R-20966 (2), NUMM-22410
+\textsc{bnf}: 8-R-51769
+\textsc{bnf}: 8-V-2925, NUMM-9713341
+\textsc{bnf}: 8-Z-331
+\textsc{bnf}: 8-\textsc{R}-20966 (1), \textsc{numm}-22411
+\textsc{bnf}: 8-\textsc{r}-20966 (1), \textsc{numm}-22411
+\textsc{bnf}: 8-\textsc{r}-20966 (2), \textsc{numm}-22410
+\textsc{bnf}: FOL-LN1-232 (6096)
+\textsc{bnf}: NUMM-24294
+\textsc{bnf}: R-32497
+\textsc{bnf}: R-32500
+\textsc{bnf}: R-7303
+\textsc{bnf}: V-35527
+\textsc{bnf}: V-35528
+\textsc{bnf}: V-35533, NUMM-9600789
+\textsc{bnf}: V-35536, NUMM-9604112
+\textsc{bnf}: V-35538, NUMM-9604112
+\textsc{bnf}: V-35540
+\textsc{bnf}: V-35542
+\textsc{bnf}: V-35545
+\textsc{bnf}: \textsc{numm}-206721
+\textsc{bnf}: \textsc{numm}-3056058
+\textsc{bnf}: \textsc{numm}-5523876
+\textsc{bnf}: \textsc{numm}-6571568
+\textsc{bnf}: \textsc{numm}-6572007
+\textsc{bnf}: \textsc{numm}-75657
+\textsc{bnf}: \textsc{numm}-95554
+\textsc{bnf}: \textsc{numm}-9629874
+\textsc{bnf}: \textsc{numm}-9726392
+\textsc{co.agn.ap/apo}, Legajo 7548/1
+\textsc{cxliv}\textsuperscript{e} de la collection
+\textsc{hal} : cel-01267486
 cote Bordeaux GG 817, Paroisse Saint-Seurin
-cote Bordeaux GG 817, Paroisse Saint-Seurin
-Extrait de \emph{La Réforme
-Extrait de \emph{La Réforme
-Extrait de \emph{La Réforme
-Nro de matrícula 001-754336
-Nro de matrícula 001-754336
+código de atendimento 562959180
+folios 142
+https://www.diplomatie.gouv.fr/IMG/pdf/egf_po_2020_12_web_cle8ed19d.pdf
+nil
+{\textsc{bnf}: 4-H-8248 (5)}
+Édition revue et mise à jour par André Liesse

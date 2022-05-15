@@ -266,6 +266,8 @@
         ("\\.mm\\'" . default)
         ("\\.x?html?\\'" . default)
         ;; ("\\.epub\\'" . emacs)
+        ("\\.odt\\'" . "libreoffice --writer %s")
+        ("\\.rtf\\'" . "libreoffice --writer %s")
         ("\\.doc\\'" . "libreoffice --writer %s")
         ("\\.docx\\'" . "libreoffice --writer %s")
         ("\\.pdf\\'" . emacs)))

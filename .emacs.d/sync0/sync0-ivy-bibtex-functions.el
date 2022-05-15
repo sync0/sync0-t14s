@@ -147,7 +147,7 @@
 (defun bibtex-completion-rewrite-notes-from-biblatex-data-list (keys)
   "Print the PDFs of the entries with the given KEYS where available."
   (dolist (key keys)
-    (when (file-exists-p (concat sync0-obsidian-directory key ".md"))
+    (when (file-exists-p (concat sync0-zettelkasten-directory key ".md"))
       (sync0-bibtex-create-note-from-entry t key t)))) 
 
 (defun bibtex-completion-archive-entries-list (keys)

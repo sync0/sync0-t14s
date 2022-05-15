@@ -41,3 +41,30 @@ var addContacts = function() {
 
 addContacts();
 console.log(contacts);
+
+
+
+
+
+
+// Set random Zettel name//
+var file_title = "";
+var postfix = "";
+var postfix_size = 2;//the size of string 
+// let alphabet = "abcdefghijkmnpqrstuvwxyz"; //from where to create //
+var alphabet = "0123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz"; //from where to create
+var prefix = tp.date.now("YYDDD");
+// let prefix = tp.date.now("YYMMDD");//
+
+function createTitle() {
+    for ( var i=0; i < postfix_size; i++ )
+        postfix += alphabet[Math.floor(Math.random() * alphabet.length)];
+    file_title = prefix + postfix;
+    if (tp.file.exists(file_title)) {
+        createTitle();
+    } else {
+        tp.file.rename(file_title);
+    }
+}
+
+createTitle();
