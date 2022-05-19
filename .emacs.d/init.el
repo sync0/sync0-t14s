@@ -1188,6 +1188,8 @@ Exempt major modes are defined in `display-line-numbers-exempt-modes'."
   ;; :straight (org-ref :type git :host github :repo "jkitchin/org-ref") 
   :custom
   (reftex-default-bibliography '("~/Gdrive/bibliographies/bibliography.bib"
+                                 "~/Gdrive/bibliographies/cabinet.bib"
+                                 "~/Gdrive/bibliographies/sync0.bib"
                                  "~/Gdrive/bibliographies/doctorat.bib"))
   (org-ref-default-bibliography reftex-default-bibliography)
   (org-ref-pdf-directory sync0-zettelkasten-attachments-directory)
@@ -2355,9 +2357,9 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
   (bibtex-set-dialect 'biblatex)
   (require 'bibtex-completion)
   (require 'bibtex-utils)
+  (require 'sync0-bibtex-fields)
   (require 'sync0-bibtex-vars)
   (require 'sync0-bibtex-functions)
-  (require 'sync0-bibtex-fields)
   (require 'scihub)
   (require 'unidecode)
 
@@ -2387,7 +2389,8 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
   :after bibtex
   :custom 
   (bibtex-completion-bibliography '("~/Gdrive/bibliographies/bibliography.bib"
-				    ;; "~/Gdrive/bibliographies/doctorat.bib"
+				     "~/Gdrive/bibliographies/doctorat.bib"
+				     "~/Gdrive/bibliographies/sync0.bib"
 				    "~/Gdrive/bibliographies/cabinet.bib")) 
   (bibtex-completion-notes-path sync0-zettelkasten-directory-sans)
   ;; (bibtex-completion-notes-path '"~/Gdrive/org/permanent")

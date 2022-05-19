@@ -1,0 +1,9 @@
+draft
+letter
+review
+archive
+certificate
+picture
+diagram
+id
+video

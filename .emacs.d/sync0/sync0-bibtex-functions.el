@@ -29,7 +29,7 @@ character at random."
 case, keys are outputed in the YYMMDDxx format, in which the last
 two characters are produced using the sync0-random-alnum function
 to produce random characters."
-  (let ((x (concat (format-time-string "%y%-m")
+  (let ((x (concat (format-time-string "%y")
                    (sync0-random-alnum)
                    (sync0-random-alnum)
                    (sync0-random-alnum))))
@@ -38,8 +38,10 @@ to produce random characters."
         ;; Call recursively the function again
         (sync0-bibtex-entry-key-define)
       (progn 
-        (push x sync0-bibtex-keys)
-        (push x sync0-bibtex-today-keys)
+        (setq sync0-bibtex-keys (cons x sync0-bibtex-keys))
+        (setq sync0-bibtex-today-keys (cons x sync0-bibtex-today-keys))
+        ;; (push x sync0-bibtex-keys)
+        ;; (push x sync0-bibtex-today-keys)
         (format "%s" x)))))
 
 (defun sync0-bibtex-entry-define-keys-list (times) 
@@ -131,6 +133,12 @@ biblatex standard instead of bibtex."
         (concat one two))
     (upcase-initials entrytype)))
 
+(defun sync0-bibtex-fix-obsidian-chars (arg)
+  "Remove or replace characters that cause trouble in obsdian
+markdown."
+  (unless (sync0-null-p arg)
+    (replace-regexp-in-string "\\\\&" "&" arg)))
+
 (setq sync0-bibtex-entry-functions
       '(("title" (lambda ()
                    (setq sync0-bibtex-entry-title
@@ -177,8 +185,7 @@ biblatex standard instead of bibtex."
                              (completing-read "Maison d'edition : " sync0-bibtex-completion-publisher))))
         ("url" (lambda ()
                  (setq sync0-bibtex-entry-url
-                       (when (sync0-null-p sync0-bibtex-entry-doi) 
-                         (read-string "Url : " nil nil nil t)))))
+                         (read-string "Url : " nil nil nil t))))
         ("urldate" (lambda ()
                      (setq sync0-bibtex-entry-urldate
                            (when (bound-and-true-p sync0-bibtex-entry-url)
@@ -322,7 +329,8 @@ biblatex standard instead of bibtex."
                                      (let (x)
                                        (dolist (element sync0-bibtex-tag-fields-list x) 
                                          (unless (sync0-null-p (symbol-value (caddr element)))
-                                           (setq x (push (concat (cadr element)  (eval (caddr element))) x))))))
+                                           (setq x (cons (concat (cadr element)  (eval (caddr element))) x))))))
+                                    ;; (push (concat (cadr element)  (eval (caddr element))) x)
                                     (extra-keywords (completing-read-multiple "Input extra keywords: " 
                                                                               sync0-bibtex-completion-keywords))
                                     (master-list (if (sync0-null-p extra-keywords)
@@ -481,21 +489,22 @@ calculate a shorter title, which here is the title-aliases."
   (setq sync0-bibtex-entry-title-compatible
         (replace-regexp-in-string "[[:blank:]]*:[[:blank:]]*" "_" sync0-bibtex-entry-title-fixed))
   (setq sync0-bibtex-entry-obsidian-title
-        (cond ((equal sync0-bibtex-entry-title-shape "author-date-title")
-               (concat sync0-bibtex-entry-lastname
-                       " "
-                       sync0-bibtex-entry-date-fixed
-                       " "
-                       sync0-bibtex-entry-title-fixed))
-              ((equal sync0-bibtex-entry-title-shape "date-title")
-               (concat sync0-bibtex-entry-date-fixed
-                       " "
-                       sync0-bibtex-entry-title-fixed))
-              ((equal sync0-bibtex-entry-title-shape "author-title")
-               (concat sync0-bibtex-entry-lastname
-                       ", "
-                       sync0-bibtex-entry-title-fixed))
-              (t sync0-bibtex-entry-title-fixed))))
+        (sync0-bibtex-fix-obsidian-chars 
+         (cond ((equal sync0-bibtex-entry-title-shape "author-date-title")
+                (concat sync0-bibtex-entry-lastname
+                        " "
+                        sync0-bibtex-entry-date-fixed
+                        " "
+                        sync0-bibtex-entry-title-fixed))
+               ((equal sync0-bibtex-entry-title-shape "date-title")
+                (concat sync0-bibtex-entry-date-fixed
+                        " "
+                        sync0-bibtex-entry-title-fixed))
+               ((equal sync0-bibtex-entry-title-shape "author-title")
+                (concat sync0-bibtex-entry-lastname
+                        ", "
+                        sync0-bibtex-entry-title-fixed))
+               (t sync0-bibtex-entry-title-fixed)))))
 
 (defun sync0-bibtex-set-author-or-editor-extra-fields ()
   "Set fields that do not appear on the biblatex entry as
@@ -854,63 +863,6 @@ function is to be used only in pipes."
                  ;; Send the element to the file.
                  (append-to-file (concat new-object "\n") nil completion-file))))))
 
-  ;; (defun sync0-bibtex-update-var (field)
-  ;;   "Update variables used for completion based on the information
-  ;;    provided by the new entry."
-  ;;   (when-let* ((my-list (assoc field sync0-bibtex-completion-variables-list))
-  ;;              (new-object  (eval (cadr my-list)))
-  ;;              (completion-list  (eval (caddr my-list)))
-  ;;              (completion-file   (cadddr my-list)))
-  ;;     (cond ((string= field "author")
-  ;;            (let (aggregate)
-  ;;            (cond ((string-match " and " new-object)
-  ;;                   ;; create a list with parts 
-  ;;                   (setq aggregate (append (split-string new-object " and ") aggregate)))
-  ;;                  ;; check when author is an organization
-  ;;                  ((string-match "^{" new-object)
-  ;;                   (push  (substring new-object 1 -1) aggregate))
-  ;;                  ;; other cases
-  ;;                  (t (push new-object aggregate)))
-  ;;            (dolist (element aggregate)
-  ;;              ;; Check whether the item to be added is already present.
-  ;;              (unless (member  element   completion-list)
-  ;;                ;; Send the element to the list.
-  ;;                (push element completion-list)
-  ;;                ;; Send the element to the file.
-  ;;                (append-to-file (concat element "\n") nil completion-file)))))
-  ;;           ((string= field "keywords")
-  ;;            (let (aggregate)
-  ;;            (if (string-match ", " new-object)
-  ;;                ;; create a list with parts 
-  ;;                (setq aggregate (append (split-string new-object ", ") aggregate))
-  ;;              ;; other cases
-  ;;              (push new-object aggregate))
-  ;;            (dolist (element aggregate)
-  ;;              (unless (member  element   completion-list)
-  ;;                ;; Send the element to the list.
-  ;;                (push element completion-list)
-  ;;                ;; Send the element to the file.
-  ;;                (append-to-file (concat element "\n") nil completion-file)))))
-  ;;           ;; Check whether the item to be added is already present.
-  ;;           (t (unless (member  new-object  completion-list)
-  ;;                ;; Send the element to the list.
-  ;;                (push new-object completion-list)
-  ;;                ;; Send the element to the file.
-  ;;                (append-to-file (concat new-object "\n") nil completion-file))))))
-
-  ;; (defun sync0-bibtex-update-var (field)
-  ;;   "Update variables used for completion based on the information
-  ;;    provided by the new entry."
-  ;;   (when-let ((my-list (assoc field sync0-bibtex-completion-variables-list)))
-  ;;     ;; Check whether the item to be added is empty.
-  ;;     (unless (or (sync0-null-p  (cadr my-list))
-  ;;                 ;; Check whether the item to be added is already present.
-  ;;                 (member  (eval (cadr my-list))   (eval (caddr my-list))))
-  ;;       ;; Send the element to the list.
-  ;;       (push (cadr my-list) (caddr my-list))
-  ;;       ;; Send the element to the file.
-  ;;       (append-to-file (concat (eval (cadr my-list)) "\n") nil (cadddr my-list)))))
-
   ;; (defun sync0-bibtex-update-vars (seqlists)
   ;;   "Update variables used for completion based on the information
   ;;    provided by the new entry."
@@ -1124,16 +1076,12 @@ function is to be used only in pipes."
                                author-shorttitle
                                author-shorthand
                                author-altertitle))
-           ;; (purged-title-list (if (equal sync0-bibtex-entry-title-shape "title")
-           ;;                        (cl-remove nil title-to-use)
-           ;;                      (if (< (length title-to-use) 3)
-           ;;                          (cl-remove nil title-to-use)
-           ;;                        (cl-remove nil (cdddr title-to-use)))))
            (purged-title-list (if (equal sync0-bibtex-entry-title-shape "title")
                                   (cl-remove nil title-to-use)
                                 (cl-remove nil (cdddr title-to-use))))
            (title-list (cl-remove-duplicates purged-title-list :test #'equal)))
-      (sync0-show-elements-of-list title-list "\", \"")))
+      (sync0-bibtex-fix-obsidian-chars
+       (sync0-show-elements-of-list title-list "\", \""))))
 
   (defun sync0-bibtex-entry-create-obsidian-note-from-entry (bibkey &optional rewrite)
     "Create new markdown note for corresponding bibkey in default
@@ -1149,7 +1097,7 @@ the note, instead of attempting to create a new note."
                                              (opener (cadr element))
                                              (closer (caddr element))
                                              (variable (cadddr element)))
-                                         (when-let (value (eval variable))
+                                         (when-let (value (sync0-bibtex-fix-obsidian-chars (eval variable)))
                                            (push (concat field ": " opener value closer) x))))
                                      (sync0-show-elements-of-list x "\n")))
            (obsidian-yaml (concat "---\n"
@@ -1256,21 +1204,23 @@ the note, instead of attempting to create a new note."
   (defun sync0-bibtex-entry-key-redefine (&optional suggester)
     "Recreate new bibtex key following a pre-defined rule."
     (if (yes-or-no-p "Create automatic key?")
-        (let ((x (concat (format-time-string "%y%-m")
+        (let ((x (concat (format-time-string "%y")
                          (sync0-random-alnum)
                          (sync0-random-alnum)
                          (sync0-random-alnum))))
-          (if (member x sync0-bibtex-today-keys)
+          (if (member x sync0-bibtex-keys)
               ;; Call recursively the function again
               (sync0-bibtex-entry-key-define)
             (progn 
-              (push x sync0-bibtex-today-keys)
-              (push x sync0-bibtex-keys)
+              (setq sync0-bibtex-keys (cons x sync0-bibtex-keys))
+              (setq sync0-bibtex-today-keys (cons x sync0-bibtex-today-keys))
               (format "%s" x))))
       (let ((x (read-string "New key : " suggester)))
         (while (member x sync0-bibtex-keys) 
           (message "Invalid key. %s is already present in database." x)
           (setq x (read-string "New key : " suggester)))
+        (setq sync0-bibtex-keys (cons x sync0-bibtex-keys))
+        (setq sync0-bibtex-today-keys (cons x sync0-bibtex-today-keys))
         (format "%s" x))))
 
   ;; (defun sync0-bibtex-update-key-in-bibfile (oldkey newkey bibfile)
@@ -1300,11 +1250,11 @@ entry under point in a .bib file"
            (type (cdr (assoc "=type=" entry)))
            (old-key (cdr (assoc "=key=" entry)))
            (suggest-key (if (string-match "[[:digit:]]\{8\}" old-key)
-                            (concat (substring old-key 2 6)
+                            (concat (substring old-key 2 4)
                                     (sync0-random-alnum)
                                     (sync0-random-alnum)
                                     (sync0-random-alnum))
-                          (concat (substring old-key 0 4)
+                          (concat (substring old-key 0 2)
                                   (sync0-random-alnum)
                                   (sync0-random-alnum)
                                   (sync0-random-alnum))))
@@ -1321,7 +1271,12 @@ entry under point in a .bib file"
            (path-list (list "file" "Attachment path" new-attachment nil)))
 ;;; end of definitions
 ;;; Go to beginning of entry
+      (sync0-bibtex-completion-load-entry old-key)
       (bibtex-beginning-of-entry)
+      (when (sync0-null-p sync0-bibtex-entry-keywords)
+        (funcall (cadr (assoc "keywords" sync0-bibtex-entry-functions)))
+        (save-excursion 
+          (bibtex-make-field (list "keywords" "Whatever string" sync0-bibtex-entry-keywords nil) t)))
 ;;; Update journal fields
       (save-excursion
         (when (re-search-forward "\\(journal\\)[[:blank:]]+=" end t 1)
@@ -1578,7 +1533,8 @@ ivy-bibtex to search for the pdf attached to a bibtex entry."
            (bibkey (cdr (assoc "=key=" entry))))
       ;; (setq sync0-bibtex-entry-key bibkey)
       (sync0-bibtex-completion-load-entry bibkey)
-      (setq sync0-bibtex-entry-file-old t)
+      (unless (sync0-null-p  sync0-bibtex-entry-file)
+        (setq sync0-bibtex-entry-file-old t))
       (funcall (cadr (assoc field sync0-bibtex-entry-functions)))
       (bibtex-beginning-of-entry)
       (bibtex-make-field (list field "Whatever string"
@@ -1623,6 +1579,22 @@ the function 1- fails to compute."
            (end (save-excursion (bibtex-end-of-entry))))
       (append-to-file beginning end sync0-bibtex-archived-bibliography)
       (delete-region beginning end)))
+
+(defun sync0-bibtex-move-entry-to-bibfile (&optional bibkey bibfile)
+  "Choose an entry to send to the archived bibliography. This
+function fails when the entry is at the top of the buffer becase
+the function 1- fails to compute."
+  (interactive)
+  (when-let* ((refkey (or bibkey
+                     (sync0-bibtex-completion-choose-key t t)))
+         (bibdestiny (or bibfile
+                         (completing-read "Which bibliography file to send to ? "
+                                          (directory-files sync0-bibtex-bibliobraphy-directory t ".+\\.bib") nil t))))
+      (bibtex-search-entry refkey)
+      (let ((beginning (save-excursion (1- (bibtex-beginning-of-entry))))
+            (end (save-excursion (bibtex-end-of-entry))))
+      (append-to-file beginning end bibdestiny)
+      (delete-region beginning end))))
 
   (defun sync0-bibtex-delete-entry (&optional bibkey)
     "Choose an entry to permanently delete. Remeber: The deleted
@@ -1789,6 +1761,7 @@ readable."
       ("e" (sync0-bibtex-define-entry t) "Quick capture")
       ("u" sync0-bibtex-update-key "Update next key")
       ("m" sync0-bibtex-define-entries-from-bibkey "Multiple entries from key")
+      ("M" sync0-bibtex-move-entry-to-bibfile "Move entry to bibfile")
       ("D" sync0-bibtex-delete-entry "Delete entry")
       ("A" sync0-bibtex-archive-entry "Archive entry"))
      "PDF editing"

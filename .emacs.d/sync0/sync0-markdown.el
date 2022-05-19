@@ -32,7 +32,8 @@ created: " (format-time-string "%Y-%m-%d")
        ;; " --resource-path=.:/home/sync0/Gdrive/typography/css:/home/sync0/Gdrive/typography/csl:/home/sync0/Gdrive/bibliographies"
        " --resource-path=.:/home/sync0/.local/share/pandoc/filters:/home/sync0/Gdrive/typography/css:/home/sync0/Gdrive/typography/csl:/home/sync0/Gdrive/bibliographies:/home/sync0/Pictures/archives"
        ;; " --resource-path=.:/home/sync0/Gdrive/typography/css:/home/sync0/Gdrive/typography/csl:/home/sync0/Gdrive/bibliographies"
-       " --shift-heading-level-by=-1" 
+       " --shift-heading-level-by=1" 
+       ;; " --shift-heading-level-by=-1" 
        " --css=markdown.css"
        ;; " --csl=history-of-political-economy.csl"
        " --csl=histoire-at-politique.csl"
@@ -98,7 +99,8 @@ created: " (format-time-string "%Y-%m-%d")
      " --standalone"
      " --pdf-engine=lualatex"
      " --resource-path=.:/home/sync0/.local/share/pandoc/filters:/home/sync0/Gdrive/typography/css:/home/sync0/Gdrive/typography/csl:/home/sync0/Gdrive/typography/pandoc:/home/sync0/Gdrive/bibliographies:/home/sync0/Gdrive/typography/pandoc:/home/sync0/Gdrive/obsidian/img:/home/sync0/Pictures/archives:/home/sync0/Documents/pdfs"
-     " --shift-heading-level-by=-1" 
+     " --shift-heading-level-by=1" 
+     ;; " --shift-heading-level-by=-1" 
      " --filter=/home/sync0/.local/share/pandoc/filters/delink.hs"
      " --lua-filter=diagram-generator.lua "
      " -H preamble.tex")
@@ -111,7 +113,8 @@ created: " (format-time-string "%Y-%m-%d")
      " --from=markdown --to=latex"
      " --standalone"
      " --resource-path=.:/home/sync0/.local/share/pandoc/filters:/home/sync0/Gdrive/typography/css:/home/sync0/Gdrive/typography/csl:/home/sync0/Gdrive/typography/pandoc:/home/sync0/Gdrive/bibliographies:/home/sync0/Gdrive/typography/pandoc:/home/sync0/Gdrive/obsidian/img:/home/sync0/Pictures/archives"
-     " --shift-heading-level-by=-1" 
+     " --shift-heading-level-by=1" 
+     ;; " --shift-heading-level-by=-1" 
      " --filter=/home/sync0/.local/share/pandoc/filters/delink.hs"
      " --lua-filter=diagram-generator.lua "
      " -H preamble.tex")
@@ -158,7 +161,7 @@ created: " (format-time-string "%Y-%m-%d")
                          (cadr (assoc type sync0-pandoc-export-md-to-pdf-settings-alist))))
          (raw-command (concat "pandoc" type-settings))
          (current-path (buffer-file-name))
-         (current-file (when (string-match "^.+/\\([0-9]+\\)\\.md$" current-path)
+         (current-file (when (string-match "^.+/\\([[:alnum:]]+\\)\\.md$" current-path)
                          (match-string-no-properties 1 current-path)))
          (command (concat raw-command " " current-file ".md -o" current-file ".pdf")))
     (shell-command command)))
@@ -194,9 +197,9 @@ created: " (format-time-string "%Y-%m-%d")
   "Open the pdf for bibtex key under point if it exists."
   (interactive)
   (let* ((full-path (buffer-file-name))
-        (current-file (when (string-match "^.+/\\([0-9]+\\)\\.md$" full-path)
+        (current-file (when (string-match "^.+/\\([[:alnum:]]+\\)\\.md$" full-path)
                         (match-string-no-properties 1 full-path)))
-        (current-path (when (string-match "\\(^.+/\\)[0-9]+\\.md$" full-path)
+        (current-path (when (string-match "\\(^.+/\\)[[:alnum:]]+\\.md$" full-path)
                         (match-string-no-properties 1 full-path)))
         (pdf-path (concat current-path current-file ".pdf")))
     (if (file-exists-p pdf-path)
@@ -209,7 +212,8 @@ created: " (format-time-string "%Y-%m-%d")
        " --from=markdown --to=docx"
        " --standalone"
        " --resource-path=.:/home/sync0/.local/share/pandoc/filters:/home/sync0/Gdrive/typography/css:/home/sync0/Gdrive/typography/csl:/home/sync0/Gdrive/pandoc/yaml:/home/sync0/Gdrive/pandoc/templates:/home/sync0/Gdrive/bibliographies"
-       " --shift-heading-level-by=-1" 
+       " --shift-heading-level-by=1" 
+       ;; " --shift-heading-level-by=-1" 
        " --metadata=reference-section-title:Références"
        " --citeproc"
        " --filter=/home/sync0/.local/share/pandoc/filters/delink.hs"
