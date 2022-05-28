@@ -7,3 +7,14 @@ picture
 diagram
 id
 video
+summary
+rubric
+schedule
+report
+tree
+proposal
+conference
+bibliography
+medical
+nil
+insurance

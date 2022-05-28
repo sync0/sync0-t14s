@@ -79,6 +79,15 @@ of all elements separeted by separator."
                          (push (concat prefix element) x))))))
     (sync0-show-elements-of-list new-list separator)))
 
+;; Taken from
+;; https://stackoverflow.com/questions/11847547/emacs-regexp-count-occurrences
+(defun how-many-str (regexp str)
+  "Count number of occurences of regexp in str."
+  (loop with start = 0
+        for count from 0
+        while (string-match regexp str start)
+        do (setq start (match-end 0))
+        finally return count))
 
 (provide 'sync0-functions)
 

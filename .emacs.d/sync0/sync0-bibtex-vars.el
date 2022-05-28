@@ -1,7 +1,7 @@
 ;; -*- lexical-binding: t -*-
 
 (defvar sync0-bibtex-fields
-  '("title" "subtitle" "origtitle" "eventtitle" "date" "origdate" "eventdate" "author" "editor" "translator" "recipient" "introduction" "journaltitle" "edition" "booktitle" "booksubtitle" "crossref" "chapter" "volume" "number" "series" "publisher" "location" "pages" "note" "doi" "url" "urldate" "language" "langid" "origlanguage" "medium" "institution" "library" "related" "relatedtype" "relatedstring" "file" "created" "password" "shorttitle" "doctype" "shorthand" "description" "keywords")
+  '("title" "subtitle" "origtitle" "eventtitle" "date" "origdate" "eventdate" "author" "editor" "translator" "recipient" "introduction" "journaltitle" "edition" "booktitle" "booksubtitle" "crossref" "chapter" "volume" "volumes" "number" "series" "publisher" "location" "pages" "note" "doi" "url" "urldate" "language" "langid" "origlanguage" "medium" "institution" "library" "related" "relatedtype" "relatedstring" "file" "created" "password" "shorttitle" "doctype" "shorthand" "description" "keywords" "foreword" "afterword")
   "List of Bibtex entry fields")
 
 (defvar sync0-bibtex-full-fields
@@ -151,6 +151,7 @@ titles and the like.")
                                      ("date" "" sync0-bibtex-entry-date-tag)
                                      ("origdate" "origdate/" sync0-bibtex-entry-origdate)
                                      ("crossref" "crossref/" sync0-bibtex-entry-crossref)
+                                     ("created" "created/" sync0-bibtex-entry-created-fixed)
                                      ("doctype" "doctype/" sync0-bibtex-entry-doctype)
                                      ("language" "language/" sync0-bibtex-entry-language)
                                      ("edition" "edition/" sync0-bibtex-entry-edition)
@@ -168,7 +169,7 @@ titles and the like.")
 ;; entry.
 (let ((prefix "sync0-bibtex-entry-")
       x)
-  (dolist (element '("type-downcase" "crossref-entry" "title-fixed" "title-aliases" "editor-over-author" "title-compatible" "date-tag" "date-fixed" "author-fixed" "translator-fixed" "introduction-fixed" "editor-fixed" "recipient-fixed" "lastname" "author-tag" "recipient-tag" "editor-tag" "translator-tag" "introduction-tag" "related-tag" "key" "medium-fixed" "file-old") x)
+  (dolist (element '("type-downcase" "crossref-entry" "title-fixed" "title-aliases" "editor-over-author" "title-compatible" "date-tag" "date-fixed" "author-fixed" "translator-fixed" "introduction-fixed" "editor-fixed" "recipient-fixed" "lastname" "author-tag" "afterword-tag" "afterword-fixed" "foreword-tag" "foreword-fixed" "recipient-tag" "editor-tag" "translator-tag" "introduction-tag" "related-tag" "key" "medium-fixed" "created-fixed" "file-old") x)
     (let ((my-var (intern (concat prefix element))))
       (set my-var nil)
       (push my-var x)))
@@ -180,13 +181,19 @@ titles and the like.")
 (defvar sync0-bibtex-entry-creation nil
   "Variable to define whether a field is being defined at entry creation or interactively from other contexts.")
 
+(defvar sync0-bibtex-lastname-abbrev-string "et al."
+  "String used to abbreviate long lists of lastnames")
+
+(defvar sync0-bibtex-maximum-lastnames 2
+  "Maximum no. of lastnames to appear in titles")
+
 (setq sync0-bibtex-base-fields
       '("title"
         "subtitle"
         "date"
         "created"
         "author"
-        "url"
+        ;; "url"
         "language"
         "file"))
 ;; "keywords"
@@ -199,160 +206,161 @@ titles and the like.")
       '(("Article" "journaltitle"
          "volume"
          "number"
-         "series"
+         ;; "series"
          "pages"
-         "doi")
+         ;; "doi"
+         "url")
         ("MvBook" "origdate"
-         "edition"
-         "volume"
-         "series"
+         ;; "edition"
+         "volumes"
+         ;; "series"
          "publisher"
-         "location"
-         "medium"
-         "library")
+         "location")
+         ;; "medium"
+         ;; "library"
         ("Book" "origdate"
          "edition"
-         "volume"
-         "series"
+         ;; "volume"
+         ;; "series"
          "publisher"
-         "location"
-         "medium"
-         "library")
+         "location")
+         ;; "medium"
+         ;; "library"
         ("MvCollection" "editor"
          "origdate"
-         "edition"
-         "volume"
-         "series"
+         ;; "edition"
+         "volumes"
+         ;; "series"
          "publisher"
-         "location"
-         "medium"
-         "library")
+         "location")
+         ;; "medium"
+         ;; "library"
         ("Collection" "editor"
          "origdate"
-         "edition"
-         "volume"
-         "series"
+         ;; "edition"
+         ;; "volume"
+         ;; "series"
          "publisher"
-         "location"
-         "medium"
-         "library")
+         "location")
+         ;; "medium"
+         ;; "library"
         ("InBook" "crossref"
          "origdate"
-         "edition"
-         "volume"
-         "series"
-         "publisher"
-         "location"
+         ;; "edition"
+         ;; "volume"
+         ;; "series"
+         ;; "publisher"
+         ;; "location"
          "chapter"
          "booktitle"
          "booksubtitle"
-         "pages"
-         "medium"
-         "library")
+         "pages")
+         ;; "medium"
+         ;; "library"
         ("InCollection" "crossref"
          "editor"
          "origdate"
-         "edition"
-         "volume"
-         "series"
-         "publisher"
-         "location"
+         ;; "edition"
+         ;; "volume"
+         ;; "series"
+         ;; "publisher"
+         ;; "location"
          "chapter"
          "booktitle"
          "booksubtitle"
-         "pages"
-         "medium"
-         "library")
+         "pages")
+         ;; "medium"
+         ;; "library"
         ("InProceedings" "crossref"
          "editor"
          "eventtitle"
          "eventdate"
          "origdate"
-         "edition"
-         "volume"
-         "series"
-         "publisher"
-         "location"
+         ;; "edition"
+         ;; "volume"
+         ;; "series"
+         ;; "publisher"
+         ;; "location"
          ;; "chapter"
          "booktitle"
          "booksubtitle"
-         "pages"
-         "medium"
-         "library")
+         "pages")
+         ;; "medium"
+         ;; "library"
         ("Manual" "institution"
          "origdate"
          "edition"
-         "volume"
-         "series"
-         "publisher"
-         "location"
-         "medium"
-         "library"
-         "note")
+         "volume")
+         ;; "series"
+         ;; "publisher"
+         ;; "location"
+         ;; "medium"
+         ;; "library"
+         ;; "note"
         ("Online" "institution"
-         "series"
-         "publisher"
-         "medium"
-         "library"
-         "note")
+         "url")
+         ;; "series"
+         ;; "publisher"
+         ;; "medium"
+         ;; "library"
+         ;; "note"
         ("Report" "institution"
-         "volume"
-         "number"
-         "series"
-         "publisher"
-         "location"
-         "medium"
-         "library"
-         "note")
+         ;; "volume"
+         ;; "number"
+         ;; "series"
+         ;; "publisher"
+         ;; "location"
+         ;; "medium"
+         ;; "note"
+         "library")
         ("Unpublished" "doctype"
          "institution"
-         "volume"
-         "number"
-         "series"
-         "publisher"
-         "location"
-         "medium"
-         "library"
-         "note")
+         ;; "volume"
+         ;; "number"
+         ;; "series"
+         ;; "publisher"
+         ;; "location"
+         ;; "medium"
+         ;; "note"
+         "library")
         ("Misc" "doctype"
          "institution"
-         "series"
-         "publisher"
-         "location"
-         "medium"
-         "library"
+         ;; "series"
+         ;; "publisher"
+         ;; "location"
+         ;; "medium"
+         ;; "library"
          "note")
         ("Thesis" "institution"
-         "number"
-         "publisher"
-         "location"
-         "medium"
-         "library"
-         "note")
+         ;; "number"
+         ;; "publisher"
+         ;; "note"
+         ;; "location"
+         ;; "medium"
+         "library")
         ("MvProceedings" "editor"
          "institution"
          "eventtitle"
          "eventdate"
          "volume"
-         "number"
-         "series"
-         "publisher"
-         "location"
-         "medium"
-         "library"
-         "note")
+         ;; "series"
+         ;; "publisher"
+         ;; "location"
+         ;; "medium"
+         ;; "library"
+         ;; "note"
+         "number")
         ("Proceedings" "editor"
          "institution"
          "eventtitle"
          "eventdate"
          "volume"
-         "number"
-         "series"
-         "publisher"
-         "location"
-         "medium"
-         "library"
-         "note")))
-
+         ;; "series"
+         ;; "publisher"
+         ;; "location"
+         ;; "medium"
+         ;; "library"
+         ;; "note"
+         "number")))
 
 (provide 'sync0-bibtex-vars)

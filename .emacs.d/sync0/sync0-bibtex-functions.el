@@ -51,6 +51,21 @@ to produce random characters."
       (push (sync0-bibtex-entry-key-define) values))
     values))
 
+(defun sync0-bibtex-abbreviate-lastnames (string)
+  "For very long lists of last names, cut it up with a chosen
+abbreviation defined in sync0-bibtex-lastname-abbrev-string. This
+function does not take lists but strings as argument, which is
+less efficient but less confusing as well, due to the fact that
+bibtex does not take lists but strings as arguments."
+  (let ((x  (1+ (how-many-str ", " string)))
+        (appearance (string-match ", " string)))
+    ;; Change the string according to the maximum number of lastnames
+    ;; defined
+    (if (> x sync0-bibtex-maximum-lastnames)
+      (concat (substring string 0 appearance) " "
+              sync0-bibtex-lastname-abbrev-string)
+      string)))
+
 (defmacro sync0-bibtex-fix-names (var)
   "Put the names of var in the right order for calculation of
 different things. The order is 'Last name, First name'. Works for
@@ -108,6 +123,7 @@ a string that can be understood to paste as a value in a BibLaTeX file."
           (crm-separator  "[ 	]*;[ 	]*")
           (initial-input  (completing-read-multiple ,completion-string
                                                     sync0-bibtex-completion-author nil nil sync0-bibtex-entry-initial-author)))
+     ;; (set (intern (concat ,(symbol-name var) "-length")) (length initial-input))
      (setq x (sync0-show-elements-of-list initial-input " and "))
      (when (string-match sync0-bibtex-author-separator x)
        (setq x
@@ -153,6 +169,8 @@ markdown."
                   (setq sync0-bibtex-entry-date
                         (read-string "Date (ex. 1890-18-12) : " sync0-bibtex-entry-initial-date))))
         ("created" (lambda ()
+                     (setq sync0-bibtex-entry-created-fixed
+                           (format-time-string "%Y/%m/%d"))
                      (setq sync0-bibtex-entry-created
                            (format-time-string "%Y-%m-%d"))))
         ("origdate" (lambda ()
@@ -168,12 +186,19 @@ markdown."
                        (sync0-bibtex-normalize-name-string sync0-bibtex-entry-recipient "Recipients: ")))
         ("introduction" (lambda ()
                           (sync0-bibtex-normalize-name-string sync0-bibtex-entry-introduction "Introductors: ")))
+        ("foreword" (lambda ()
+                      (sync0-bibtex-normalize-name-string sync0-bibtex-entry-foreword "Foreworders: ")))
+        ("afterword" (lambda ()
+                       (sync0-bibtex-normalize-name-string sync0-bibtex-entry-afterword "Afterworders: ")))
         ("edition" (lambda ()
                      (setq sync0-bibtex-entry-edition
                            (read-string "Édition : "))))
         ("volume" (lambda ()
                     (setq sync0-bibtex-entry-volume
                           (read-string "Tome : "))))
+        ("volumes" (lambda ()
+                    (setq sync0-bibtex-entry-volumes
+                          (read-string "No. de tomes : "))))
         ("number" (lambda ()
                     (setq sync0-bibtex-entry-number
                           (read-string "Numero : "))))
@@ -509,7 +534,9 @@ calculate a shorter title, which here is the title-aliases."
 (defun sync0-bibtex-set-author-or-editor-extra-fields ()
   "Set fields that do not appear on the biblatex entry as
 such (they are not present in the .bib file), but that are
-necessary for other functions."
+necessary for other functions. This function is essential to
+calculate the variables used to calculate titles in files and
+Obsidian aliases."
   (cond ((and (sync0-null-p sync0-bibtex-entry-author)
               (sync0-null-p sync0-bibtex-entry-editor))
          (setq sync0-bibtex-entry-editor-over-author nil)
@@ -520,18 +547,21 @@ necessary for other functions."
          (setq sync0-bibtex-entry-editor-over-author t)
          (setq sync0-bibtex-entry-author-or-editor-p t)
          (sync0-bibtex-fix-names sync0-bibtex-entry-editor)
-         (setq sync0-bibtex-entry-lastname sync0-bibtex-entry-editor-lastname))
+         (setq sync0-bibtex-entry-lastname
+               (sync0-bibtex-abbreviate-lastnames sync0-bibtex-entry-editor-lastname)))
         ((and (not (sync0-null-p sync0-bibtex-entry-author))
               (sync0-null-p sync0-bibtex-entry-editor))
          (setq sync0-bibtex-entry-editor-over-author nil)
          (setq sync0-bibtex-entry-author-or-editor-p t)
          (sync0-bibtex-fix-names sync0-bibtex-entry-author)
-         (setq sync0-bibtex-entry-lastname sync0-bibtex-entry-author-lastname))
+         (setq sync0-bibtex-entry-lastname
+               (sync0-bibtex-abbreviate-lastnames sync0-bibtex-entry-author-lastname)))
         (t (setq sync0-bibtex-entry-author-or-editor-p t)
            (setq sync0-bibtex-entry-editor-over-author nil)
            (sync0-bibtex-fix-names sync0-bibtex-entry-editor)
            (sync0-bibtex-fix-names sync0-bibtex-entry-author)
-           (setq sync0-bibtex-entry-lastname sync0-bibtex-entry-author-lastname))))
+           (setq sync0-bibtex-entry-lastname
+               (sync0-bibtex-abbreviate-lastnames sync0-bibtex-entry-author-lastname)))))
 
 (defun sync0-bibtex-completion-load-entry (&optional bibkey quick)
   "Load the contents of the biblatex fields corresponding to a
@@ -623,9 +653,15 @@ necessary for other functions."
     ;; Calculate the recipient field
     (unless (sync0-null-p sync0-bibtex-entry-recipient)
       (sync0-bibtex-fix-names sync0-bibtex-entry-recipient))
-      ;; Calculate the introduction field
-      (unless (sync0-null-p sync0-bibtex-entry-introduction)
-        (sync0-bibtex-fix-names sync0-bibtex-entry-introduction))
+    ;; Calculate the introduction field
+    (unless (sync0-null-p sync0-bibtex-entry-introduction)
+      (sync0-bibtex-fix-names sync0-bibtex-entry-introduction))
+    ;; Calculate the introduction field
+    (unless (sync0-null-p sync0-bibtex-entry-foreword)
+      (sync0-bibtex-fix-names sync0-bibtex-entry-foreword))
+    ;; Calculate the introduction field
+    (unless (sync0-null-p sync0-bibtex-entry-afterword)
+      (sync0-bibtex-fix-names sync0-bibtex-entry-afterword))
     ;; Calculate the translator field
     (unless (sync0-null-p sync0-bibtex-entry-translator)
       (sync0-bibtex-fix-names sync0-bibtex-entry-translator)

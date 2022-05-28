@@ -2371,6 +2371,9 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
 
   (setq bibtex-autokey-prefix-string (format-time-string "%Y%m%d"))
 
+  (minibuffer-electric-default-mode)
+  (smart-quotes-mode)
+
   (unbind-key "TAB" bibtex-mode-map)
 
   ;; (defvar sync0-bibtex-reference-keys
