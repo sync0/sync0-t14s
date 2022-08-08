@@ -57,12 +57,14 @@
      ;; Default settings for all themes.
      (custom-theme-set-faces 'user
                               ;; `(org-default ((t (:family "Minion Pro" :style display :height 1.0))))
-                              `(markdown-header-face ((t (:family "Helvetica Neue LT Std" :weight light :width condensed :background nil :inherit variable-pitch))))
+                              `(markdown-header-face ((t (:family "Futura PT" :weight normal :background nil :inherit variable-pitch))))
+                              ;; `(markdown-header-face ((t (:family "Futura PT" :weight light :width condensed :background nil :inherit variable-pitch))))
                              `(markdown-metadata-key-face ((t (:family "Inconsolata" :weight bold :height 0.9 :slant normal :spacing monospace :background nil :inherit fixed-pitch)))) 
                              `(markdown-metadata-value-face ((t (:family "Inconsolata" :height 0.9 :slant normal :spacing monospace :inherit fixed-pitch)))) 
                              `(markdown-gfm-checkbox-face ((t (:family "Inconsolata" :weight bold :spacing monospace))))
                              `(markdown-footnote-marker-face ((t (:family "Sitka Text" :style small :weight bold :height 0.7))))
-                             `(markdown-link-face ((t (:family "Sitka Text"  :underline t :background nil :height 1.0 :inherit variable-pitch))))
+                             `(markdown-link-face ((t (:family "Sitka Text"  :underline nil :foreground "#268bd2" :background nil :height 1.0 :inherit variable-pitch))))
+                             ;; `(markdown-link-face ((t (:family "Sitka Text"  :underline t :background nil :height 1.0 :inherit variable-pitch))))
                              `(markdown-markup-face ((t (:family "Sitka Text"  :underline nil :background nil :height 1.0 :inherit variable-pitch))))
                              `(markdown-url-face ((t (:family "Sitka Text"  :underline nil :background nil :height 1.0 :inherit variable-pitch))))
                              `(markdown-plain-url-face ((t (:inherit markdown-url-face))))
@@ -73,14 +75,14 @@
                              `(org-ref-cite-face ((t (:inherit org-link)))) 
                              `(org-footnote ((t (:family "Sitka Text" :style small :weight bold :height 0.7))))
                              `(org-checkbox ((t (:family "Inconsolata" :weight bold :spacing monospace))))
-                              `(org-document-title ((t (:family "Helvetica Neue LT Std" :height 2.074  :weight light :width condensed :inherit variable-pitch))))
-                              `(org-document-info ((t (:family "Helvetica Neue LT Std" :height 1.728  :weight light :width condensed :inherit variable-pitch))))
-                              `(org-level-1 ((t (:family "Helvetica Neue LT Std" :height 2.074  :weight light :width condensed :inherit variable-pitch))))
-                              `(org-level-2 ((t (:family "Helvetica Neue LT Std" :height 1.728  :weight light :width condensed :inherit variable-pitch))))
-                              `(org-level-3 ((t (:family "Helvetica Neue LT Std" :height 1.44  :weight light :width condensed :inherit variable-pitch))))
-                              `(org-level-4 ((t (:family "Helvetica Neue LT Std" :height 1.2  :weight medium :width condensed :inherit variable-pitch))))
-                              `(org-level-5 ((t (:family "Helvetica Neue LT Std" :height 1.0  :weight medium :width condensed :inherit variable-pitch))))
-                              `(org-level-6 ((t (:family "Helvetica Neue LT Std" :height 0.833  :weight medium :width condensed :inherit variable-pitch))))
+                              `(org-document-title ((t (:family "Futura PT" :height 2.074 :inherit variable-pitch))))
+                              `(org-document-info ((t (:family "Futura PT" :height 1.728 :inherit variable-pitch))))
+                              `(org-level-1 ((t (:family "Futura PT" :height 2.074 :inherit variable-pitch))))
+                              `(org-level-2 ((t (:family "Futura PT" :height 1.728 :inherit variable-pitch))))
+                              `(org-level-3 ((t (:family "Futura PT" :height 1.44 :inherit variable-pitch))))
+                              `(org-level-4 ((t (:family "Futura PT" :height 1.2 :inherit variable-pitch))))
+                              `(org-level-5 ((t (:family "Futura PT" :height 1.0 :inherit variable-pitch))))
+                              `(org-level-6 ((t (:family "Futura PT" :height 0.833 :inherit variable-pitch))))
                              `(org-meta-line ((t (:family "Inconsolata" :height 0.95 :slant normal :spacing monospace :inherit fixed-pitch)))) 
                              `(org-document-info-keyword ((t (:inherit org-meta-line))))
                              `(org-special-keywords ((t (:inherit org-meta-line))))
@@ -88,10 +90,10 @@
                              `(org-property-value ((t (:inherit org-meta-line)))) 
                              `(org-ellipsis ((t (:family "Fira Code" :underline nil :box nil)))) 
                              `(org-date ((t (:family "Inconsolata" :height 0.95 :spacing monospace :inherit fixed-pitch))))
-                              `(org-agenda-date ((t (:family "Helvetica Neue LT Std" :height 1.563  :weight light :width condensed :inherit variable-pitch))))
-                              `(org-agenda-date-weekend ((t (:family "Helvetica Neue LT Std" :height 1.563  :weight light :width condensed :inherit variable-pitch))))
-                              `(org-agenda-date-today ((t (:family "Helvetica Neue LT Std" :height 1.563  :weight light :width condensed :inherit variable-pitch))))
-                              `(org-agenda-structure ((t (:family "Helvetica Neue LT Std" :height 1.953  :weight light :width condensed :inherit variable-pitch))))
+                              `(org-agenda-date ((t (:family "Futura PT" :height 1.563  :inherit variable-pitch))))
+                              `(org-agenda-date-weekend ((t (:family "Futura PT" :height 1.563 :inherit variable-pitch))))
+                              `(org-agenda-date-today ((t (:family "Futura PT" :height 1.563  :inherit variable-pitch))))
+                              `(org-agenda-structure ((t (:family "Futura PT" :height 1.953 :inherit variable-pitch))))
                              `(org-scheduled ((t (:weight medium :slant normal))))
                              `(org-scheduled-today ((t (:family "Inconsolata" :weight medium :slant normal :spacing monospace :inherit fixed-pitch))))
                              `(org-scheduled-previously ((t (:family "Inconsolata" :weight normal :slant normal :spacing monospace :inherit fixed-pitch))))
@@ -169,6 +171,7 @@
 (advice-add 'window-splittable-p :before-while #'sync0-prevent-split-over-two-windows)
 
 ;; Font size change
+(setq text-scale-mode-step 1.05)
 (define-key global-map (kbd "C-=") 'text-scale-increase)
 (define-key global-map (kbd "C--") 'text-scale-decrease)
 ;; Cycle through buffers
@@ -180,58 +183,59 @@
 ;; EVIL friendly keybindings for previous-buffer
 ;; (global-set-key (kbd "M-l") 'previous-buffer)
 
-  (defvar sync0-zettelkasten-all-properties-list
-    '("ZETTEL_TYPE" "BIBLATEX_TYPE" "ZETTEL_FUNCTION" "FICHE_TYPE" "PROJECT_TITLE" "ANNOTATION_REFS" "ROAM_REFS" "ROAM_ALIASES" "CROSSREF" "PARENT" "WEBSITE") 
-    "List of zettel properties")
+(require 'sync0-bibtex)
 
-  (defvar sync0-zettelkasten-properties-list
-    '("PROJECT_TITLE") 
-    "List of zettel properties")
+(defvar sync0-zettelkasten-all-properties-list
+  '("ZETTEL_TYPE" "BIBLATEX_TYPE" "ZETTEL_FUNCTION" "FICHE_TYPE" "PROJECT_TITLE" "ANNOTATION_REFS" "ROAM_REFS" "ROAM_ALIASES" "CROSSREF" "PARENT" "WEBSITE") 
+  "List of zettel properties")
 
-  (defvar sync0-zettelkasten-excluded-candidates
-    '("journal" "fiche" "etc" "project" "todo" "reference"))
+(defvar sync0-zettelkasten-properties-list
+  '("PROJECT_TITLE") 
+  "List of zettel properties")
 
-  (defvar sync0-zettelkasten-project-directories '("project" "todo"))
+(defvar sync0-zettelkasten-excluded-candidates
+  '("journal" "fiche" "etc" "project" "todo" "reference"))
 
-  (defvar sync0-zettelkasten-zettel-types 
-    '()
-    "List of projects in my Zettelkasten.")
+(defvar sync0-zettelkasten-project-directories '("project" "todo"))
 
-  (defvar sync0-zettelkasten-projects 
-    '()
-    "List of projects in my Zettelkasten.")
+(defvar sync0-zettelkasten-zettel-types 
+  '()
+  "List of projects in my Zettelkasten.")
 
-  (defvar sync0-zettelkasten-zettel-functions 
-    '() 
-    "List of possible functions for a Zettel.")
+(defvar sync0-zettelkasten-projects 
+  '()
+  "List of projects in my Zettelkasten.")
 
-  (defvar sync0-zettelkasten-fiche-types 
-    '() 
-    "List of fiche types.")
+(defvar sync0-zettelkasten-zettel-functions 
+  '() 
+  "List of possible functions for a Zettel.")
 
-  (defvar sync0-zettelkasten-variables-list
-    '((sync0-zettelkasten-projects . "~/.emacs.d/sync0-vars/projects.txt")
-      (sync0-zettelkasten-zettel-types . "~/.emacs.d/sync0-vars/zettel-types.txt")
-      (sync0-zettelkasten-zettel-functions . "~/.emacs.d/sync0-vars/zettel-functions.txt")
-      (sync0-zettelkasten-fiche-types . "~/.emacs.d/sync0-vars/fiche-types.txt")))
-  ;; define the rest
-  (setq sync0-zettelkasten-directory (concat (getenv "HOME") "/Gdrive/obsidian/")
-        ;; sync0-obsidian-directory (concat (getenv "HOME") "/Gdrive/obsidian/")
-        sync0-zettelkasten-directory-sans (concat (getenv "HOME") "/Gdrive/obsidian")
-        sync0-zettelkasten-attachments-directory (concat (getenv "HOME") "/Gdrive/cabinet/")
-        ;; sync0-exported-pdfs-directory (concat (getenv "HOME") "/Gdrive/cabinet/")
-        sync0-zettelkasten-exported-pdfs-directory sync0-zettelkasten-attachments-directory
-        sync0-bibtex-bibliobraphy-directory (concat (getenv "HOME") "/Gdrive/bibliographies/")
-        sync0-bibtex-default-bibliography (concat (getenv "HOME") "/Gdrive/bibliographies/bibliography.bib")
-        sync0-emacs-directory (concat (getenv "HOME") "/.emacs.d/sync0/")
-        sync0-current-year (format-time-string "%Y")
-        sync0-current-month (format-time-string "%B")
-        sync0-current-month-downcase (downcase (format-time-string "%B"))
-        sync0-current-day (format-time-string "%d")
-        sync0-english-parts-speech '("noun" "intransitive verb" "transitive verb" "verb" "conjunction" "adjective" "adverb")
-        sync0-french-parts-speech '("nom féminin" "nom masculin" "verbe intransitif" "verbe transitif" "verbe" "conjonction" "adjectif" "adverbe")
-        sync0-portuguese-parts-speech '("sustantivo femenino" "sustantivo masculino" "verbo intransitivo" "verbo transitivo" "verbo" "conjunção" "adjetivo" "advérbio")
-        sync0-spanish-parts-speech '("sustantivo femenino" "sustantivo masculino" "verbo intransitivo" "verbo transitivo" "verbo" "conjunción" "adjectivo" "adverbio"))
+(defvar sync0-zettelkasten-fiche-types 
+  '() 
+  "List of fiche types.")
+
+(defvar sync0-zettelkasten-variables-list
+  '((sync0-zettelkasten-projects . "~/.emacs.d/sync0-vars/projects.txt")
+    (sync0-zettelkasten-zettel-types . "~/.emacs.d/sync0-vars/zettel-types.txt")
+    (sync0-zettelkasten-zettel-functions . "~/.emacs.d/sync0-vars/zettel-functions.txt")
+    (sync0-zettelkasten-fiche-types . "~/.emacs.d/sync0-vars/fiche-types.txt")))
+;; define the rest
+
+(setq sync0-zettelkasten-directory (concat (getenv "HOME") "/Gdrive/obsidian/")
+      ;; sync0-obsidian-directory (concat (getenv "HOME") "/Gdrive/obsidian/")
+      sync0-zettelkasten-directory-sans (concat (getenv "HOME") "/Gdrive/obsidian")
+      sync0-zettelkasten-attachments-directory (concat (getenv "HOME") "/Gdrive/cabinet/")
+      ;; sync0-exported-pdfs-directory (concat (getenv "HOME") "/Gdrive/cabinet/")
+      sync0-zettelkasten-exported-pdfs-directory sync0-zettelkasten-attachments-directory
+      sync0-emacs-directory (concat (getenv "HOME") "/.emacs.d/sync0/")
+      sync0-current-year (format-time-string "%Y")
+      sync0-current-month (format-time-string "%B")
+      sync0-current-month-downcase (downcase (format-time-string "%B"))
+      sync0-current-day (format-time-string "%d")
+      sync0-english-parts-speech '("noun" "intransitive verb" "transitive verb" "verb" "conjunction" "adjective" "adverb")
+      sync0-french-parts-speech '("nom féminin" "nom masculin" "verbe intransitif" "verbe transitif" "verbe" "conjonction" "adjectif" "adverbe")
+      sync0-portuguese-parts-speech '("sustantivo femenino" "sustantivo masculino" "verbo intransitivo" "verbo transitivo" "verbo" "conjunção" "adjetivo" "advérbio")
+      sync0-spanish-parts-speech '("sustantivo femenino" "sustantivo masculino" "verbo intransitivo" "verbo transitivo" "verbo" "conjunción" "adjectivo" "adverbio"))
 
 (defmacro sync0-redefine (symbol value)
   `(setf ,symbol ,value))
@@ -562,6 +566,7 @@ empty (not in the lisp sense but in a human-readable sense)."
     "w" 'write-file
     "e" 'eval-last-sexp
     "s" 'save-buffer
+    "R" 'revert-buffer
     "o" 'other-window
     "p" 'previous-buffer
     "n" 'next-buffer
@@ -866,8 +871,9 @@ empty (not in the lisp sense but in a human-readable sense)."
                                         (end (substring title -20 nil)))
                                     (concat start  "..." end))
                                 title)))
-           (propertize fixed-title 'face '(:height 1.0 :family "Helvetica Neue LT Std" :width condensed :weight medium) 'help-echo (buffer-file-name)))
-           ;; (propertize fixed-title 'face '(:height 1.0 :family "Myriad Pro" :weight medium) 'help-echo (buffer-file-name)))
+           (propertize fixed-title 'face '(:height 1.0 :family "Futura PT") 'help-echo (buffer-file-name)))
+           ;; (propertize fixed-title 'face '(:height 1.0 :family "Helvetica Neue LT Std" :width condensed :weight medium) 'help-echo (buffer-file-name))
+           ;; (propertize fixed-title 'face '(:height 1.0 :family "Myriad Pro" :weight medium) 'help-echo (buffer-file-name))
        (propertize (buffer-name) 'face '(:weight bold) 'help-echo (buffer-file-name))))
 
 
@@ -1187,11 +1193,8 @@ Exempt major modes are defined in `display-line-numbers-exempt-modes'."
 (use-package org-ref
   ;; :straight (org-ref :type git :host github :repo "jkitchin/org-ref") 
   :custom
-  (reftex-default-bibliography '("~/Gdrive/bibliographies/bibliography.bib"
-                                 "~/Gdrive/bibliographies/cabinet.bib"
-                                 "~/Gdrive/bibliographies/sync0.bib"
-                                 "~/Gdrive/bibliographies/doctorat.bib"))
-  (org-ref-default-bibliography reftex-default-bibliography)
+  (reftex-default-bibliography sync0-bibtex-bibliographies)
+  (org-ref-default-bibliography sync0-bibtex-bibliographies)
   (org-ref-pdf-directory sync0-zettelkasten-attachments-directory)
   (org-ref-completion-library 'org-ref-ivy-cite)
   (org-ref-open-pdf-function 'sync0-org-ref-open-pdf-at-point)
@@ -1210,9 +1213,10 @@ Exempt major modes are defined in `display-line-numbers-exempt-modes'."
         ("C-c [" . org-ref-ivy-insert-cite-link)))
 
 ;; disable warning
-(setq org-roam-v2-ack t) 
+;; (setq org-roam-v2-ack t) 
 
 (use-package org-roam
+  :disabled t
   :straight (org-roam :type git :host github :repo "org-roam/org-roam") 
   :init 
   (require 'org-id)
@@ -1261,6 +1265,7 @@ Exempt major modes are defined in `display-line-numbers-exempt-modes'."
     "F" 'org-roam-node-find))
 
 (use-package md-roam
+  :disabled t
   :straight '(md-roam :type git :host github :repo "nobiot/md-roam")
   :custom
   ;; default "md". Specify an extension such as "markdown"
@@ -1570,7 +1575,7 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
          (looking-back "^\\\[A-z]+{.+" (line-beginning-position))))
   ;; Define column width for auto-fill mode. 
   :config
-  (setq-local fill-column 66)
+  (setq-local fill-column 70)
   ;; Respect de la typographie française par auto-fill mode.
   ;; (setq fill-nobreak-predicate '(fill-french-nobreak-p))
   ;; Set hook for exceptions to auto-fill-mode.
@@ -1592,7 +1597,7 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
      ;; (mu4e-view-mode . visual-fill-column-mode)
      ;; (mu4e-compose-mode . visual-fill-column-mode)
      ;; (add-hook 'mu4e-view-mode-hook 'mu4e-view-fill-long-lines)
-     :config (setq visual-fill-column-width 66))
+     :config (setq visual-fill-column-width 70))
 
   (use-package abbrev
     :straight nil
@@ -1722,7 +1727,7 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
     :straight (writeroom-mode :type git :host github :repo "joostkremers/writeroom-mode")
     :hook (markdown-mode . writeroom-mode)
     :custom
-    (writeroom-width 66))
+    (writeroom-width 70))
 
 (use-package esxml
   :straight (esxml :type git :host github :repo "tali713/esxml"))
@@ -1731,7 +1736,7 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
   :straight nil
   :load-path "~/.emacs.d/sync0/nov.el" 
   ;; :custom
-  ;; (nov-text-width 66)
+  ;; (nov-text-width 70)
   :config
   (push '("\\.epub\\'" . nov-mode) auto-mode-alist)
 
@@ -1755,7 +1760,7 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
                                    ;; :height 220
                                    :height 160)
 
-          (setq nov-text-width 66)
+          (setq nov-text-width 70)
           (nov-render-document))
       ;; low resolution 
       (progn
@@ -1820,62 +1825,68 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
 ;; (use-package company-graphviz-dot
 ;;   :straight (company-graphviz-dot :type git :host github :repo "ppareit/graphviz-dot-mode"))
 
-  (use-package yaml-mode
-    :init
-    (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode))
-    (add-to-list 'auto-mode-alist '("\\.yaml\\'" . yaml-mode)))
+(use-package yaml-mode
+  :init
+  (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode))
+  (add-to-list 'auto-mode-alist '("\\.yaml\\'" . yaml-mode))
+  :config
+  (require 'sync0-yaml))
 
-  (use-package markdown-mode
-    :commands (markdown-mode gfm-mode)
-    :custom
-    (markdown-enable-wiki-links t)
-    (markdown-enable-math t)
-    (markdown-coding-system 'utf-8)
-    (markdown-asymmetric-header t)
-    (markdown-hide-markup t)
-    ;; (markdown-hide-markup nil)
-    (markdown-header-scaling t)
-    ;; (markdown-header-scaling-values '(1.953 1.563 1.25 1.0 0.8 0.64))
-    (markdown-header-scaling-values '(2.074 1.728 1.44 1.2 1.0 0.833))
-    :mode (("README\\.md\\'" . gfm-mode)
-           ("\\.md\\'" . markdown-mode)
-           ("\\.markdown\\'" . markdown-mode))
+(use-package markdown-mode
+  :commands (markdown-mode gfm-mode)
+  :custom
+  (markdown-enable-wiki-links t)
+  (markdown-enable-math t)
+  (markdown-coding-system 'utf-8)
+  (markdown-asymmetric-header t)
+  (markdown-hide-markup t)
+  ;; (markdown-hide-markup nil)
+  (markdown-header-scaling t)
+  ;; ? scale
+  ;;    (markdown-header-scaling-values '(1.953 1.563 1.25 1.0 0.8 0.64))
+  ;; major second scale
+  (markdown-header-scaling-values '(1.602 1.424 1.266 1.125 1.0 1.0))
+  ;; ?
+  ;; (markdown-header-scaling-values '(2.074 1.728 1.44 1.2 1.0 0.833))
+  :mode (("README\\.md\\'" . gfm-mode)
+         ("\\.md\\'" . markdown-mode)
+         ("\\.markdown\\'" . markdown-mode))
 
-    :config
-    (require 'sync0-markdown)
+  :config
+  (require 'sync0-markdown)
 
-    (evil-define-key 'visual markdown-mode-map
-      "z" 'markdown-insert-italic)
+  (evil-define-key 'visual markdown-mode-map
+    "z" 'markdown-insert-italic)
 
-    (evil-leader/set-key-for-mode 'markdown-mode "O" 'markdown-follow-link-at-point)
-    ;; (evil-leader/set-key-for-mode 'markdown-mode "i" 'markdown-insert-wiki-link)
-;; (evil-leader/set-key-for-mode 'markdown-mode "B" 'org-roam-buffer-toggle)
-(evil-leader/set-key-for-mode 'markdown-mode "i" 'sync0-org-roam-insert)
+  (evil-leader/set-key-for-mode 'markdown-mode "O" 'markdown-follow-link-at-point)
+  ;; (evil-leader/set-key-for-mode 'markdown-mode "i" 'markdown-insert-wiki-link)
+  ;; (evil-leader/set-key-for-mode 'markdown-mode "B" 'org-roam-buffer-toggle)
+  (evil-leader/set-key-for-mode 'markdown-mode "i" 'sync0-org-roam-insert)
 
-    (evil-define-key 'normal markdown-mode-map
-      (kbd "<tab>") 'markdown-cycle
-      "<" 'markdown-backward-same-level
-      ">" 'markdown-forward-same-level
-      (kbd "C->") 'markdown-forward-same-level
-      (kbd "C-<") 'markdown-backward-same-level
-      "H" 'markdown-promote
-      "L" 'markdown-demote
-      "K" 'markdown-move-up
-      "J" 'markdown-move-down
-      "k" 'evil-previous-visual-line
-      "j" 'evil-next-visual-line
-      ;; "o" '(lambda () (interactive) (sync0-evil-org-eol-call 'sync0-clever-insert-item))
-      ;; "O" '(lambda () (interactive) (sync0-evil-org-eol-call 'org-insert-heading))
-      "$" 'evil-end-of-visual-line
-      "^" 'evil-beginning-of-visual-line
-      "[" 'evil-backward-sentence-begin
-      "]" 'evil-forward-sentence-begin
-      "{" 'markdown-backward-paragraph
-      "}" 'markdown-forward-paragraph)
+  (evil-define-key 'normal markdown-mode-map
+    (kbd "<tab>") 'markdown-cycle
+    "<" 'markdown-backward-same-level
+    ">" 'markdown-forward-same-level
+    (kbd "C->") 'markdown-forward-same-level
+    (kbd "C-<") 'markdown-backward-same-level
+    "H" 'markdown-promote
+    "L" 'markdown-demote
+    "K" 'markdown-move-up
+    "J" 'markdown-move-down
+    "k" 'evil-previous-visual-line
+    "j" 'evil-next-visual-line
+    ;; "o" '(lambda () (interactive) (sync0-evil-org-eol-call 'sync0-clever-insert-item))
+    ;; "O" '(lambda () (interactive) (sync0-evil-org-eol-call 'org-insert-heading))
+    "$" 'evil-end-of-visual-line
+    "^" 'evil-beginning-of-visual-line
+    "[" 'evil-backward-sentence-begin
+    "]" 'evil-forward-sentence-begin
+    "{" 'markdown-backward-paragraph
+    "}" 'markdown-forward-paragraph)
 
-    :bind ((:map markdown-mode-map
-                 ("M-<right>" . markdown-demote)
-                 ("M-<left>" . markdown-promote))))
+  :bind ((:map markdown-mode-map
+               ("M-<right>" . markdown-demote)
+               ("M-<left>" . markdown-promote))))
 
 (use-package web-mode
   :straight (web-mode :type git :host github :repo "fxbois/web-mode") 
@@ -2249,6 +2260,9 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
               (define-key js-mode-map (kbd "C-c C-l") 'nodejs-repl-load-file)
               (define-key js-mode-map (kbd "C-c C-z") 'nodejs-repl-switch-to-repl))))
 
+  (use-package lua-mode 
+    :straight (lua-mode :type git :host github :repo "immerrr/lua-mode"))
+
   (use-package yasnippet 
     :straight (yasnippet :type git :host github :repo "joaotavora/yasnippet") 
     :config
@@ -2351,8 +2365,7 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
   (bibtex-align-at-equal-sign t)
   (bibtex-text-indentation 22)
   (bibtex-entry-format '(opts-or-alts page-dashes whitespace braces last-comma inherit-booktitle delimiters sort-fields realign))
-  :init
-  (add-hook 'bibtex-mode-hook (lambda () (set-fill-column 9999)))
+ ;; :init
   :config
   (bibtex-set-dialect 'biblatex)
   (require 'bibtex-completion)
@@ -2382,19 +2395,17 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
   ;;   "Completion table for BibTeX reference keys.
   ;;  The CDRs of the elements are t for header keys and nil for crossref keys.")
 
-
   (evil-define-key 'normal bibtex-mode-map
     "K" 'sync0-bibtex-previous-key
     "zf" 'bibtex-fill-entry
-    "J" 'sync0-bibtex-next-key))
+    "J" 'sync0-bibtex-next-key)
+
+  (add-hook 'bibtex-mode-hook (lambda () (setq fill-column 9999))))
 
 (use-package bibtex-completion
   :after bibtex
   :custom 
-  (bibtex-completion-bibliography '("~/Gdrive/bibliographies/bibliography.bib"
-				     "~/Gdrive/bibliographies/doctorat.bib"
-				     "~/Gdrive/bibliographies/sync0.bib"
-				    "~/Gdrive/bibliographies/cabinet.bib")) 
+  (bibtex-completion-bibliography sync0-bibtex-bibliographies)
   (bibtex-completion-notes-path sync0-zettelkasten-directory-sans)
   ;; (bibtex-completion-notes-path '"~/Gdrive/org/permanent")
   ;; (bibtex-completion-library-path '("~/Gdrive/cabinet/"))
@@ -2405,7 +2416,7 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
   (bibtex-completion-notes-extension ".md")
   ;; (bibtex-completion-notes-extension ".org")
   (bibtex-completion-pdf-extension '(".pdf" ".epub" ".doc" ".docx" ".org" ".md" ".rtf"))
-  (bibtex-completion-additional-search-fields '(origdate subtitle))
+  (bibtex-completion-additional-search-fields '(origdate date subtitle edition))
   ;; (bibtex-completion-additional-search-fields '(journaltitle origdate subtitle volume location publisher note library institution keywords edition))
   ;; (bibtex-completion-additional-search-fields '(editor journaltitle origdate subtitle volume booktitle location publisher note library medium institution keywords))
 

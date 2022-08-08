@@ -1,7 +1,11 @@
 ;; -*- lexical-binding: t -*-
 
 (defvar sync0-bibtex-fields
-  '("title" "subtitle" "origtitle" "eventtitle" "date" "origdate" "eventdate" "author" "editor" "translator" "recipient" "introduction" "journaltitle" "edition" "booktitle" "booksubtitle" "crossref" "chapter" "volume" "volumes" "number" "series" "publisher" "location" "pages" "note" "doi" "url" "urldate" "language" "langid" "origlanguage" "medium" "institution" "library" "related" "relatedtype" "relatedstring" "file" "created" "password" "shorttitle" "doctype" "shorthand" "description" "keywords" "foreword" "afterword")
+  '("title" "subtitle" "origtitle" "eventtitle" "date" "origdate" "eventdate" "author" "editor" "translator" "recipient" "introduction" "journaltitle" "edition" "booktitle" "booksubtitle" "crossref" "chapter" "volume" "volumes" "number" "series" "publisher" "location" "pages" "note" "doi" "url" "urldate" "language" "langid" "origlanguage" "medium" "institution" "library" "related" "relatedtype" "relatedstring" "file" "created" "password" "shorttitle" "doctype" "shorthand" "description" "keywords" "foreword" "afterword" "editortype" "pagetotal" "verba" "cote" "project" "site")
+  "List of Bibtex entry fields")
+
+(defvar sync0-bibtex-date-fields
+  '("date" "origdate" "eventdate" "urldate" "created")
   "List of Bibtex entry fields")
 
 (defvar sync0-bibtex-full-fields
@@ -24,30 +28,49 @@
   '("title" "date" "author" "crossref" "pages" "language" "langid" "file" "keywords")
   "List of Bibtex entry fields")
 
-;; Set completion vars
-(let ((prefix "sync0-bibtex-completion-")
-      x)
-  (dolist (element '("publisher" "journaltitle" "location" "title" "author" "keywords" "note" "library" "series" "medium" "institution" "language" "doctype") x)
-    (let ((my-var (intern (concat prefix element))))
-      (set my-var nil)
-      (push my-var x)))
-  (setq sync0-bibtex-completions-collection (nreverse x)))
+(defvar sync0-bibtex-completion-fields
+  '("publisher" "journaltitle" "location" "title" "author" "keywords" "note" "library" "series" "medium" "institution" "language" "doctype" "project" "site")
+  "List of Bibtex entry completion fields")
 
-(defvar sync0-bibtex-completion-variables-alist
-  '((sync0-bibtex-completion-publisher . "~/.emacs.d/sync0-vars/bibtex-completion-publisher.txt")
-    (sync0-bibtex-completion-journaltitle . "~/.emacs.d/sync0-vars/bibtex-completion-journaltitle.txt")
-    (sync0-bibtex-completion-location . "~/.emacs.d/sync0-vars/bibtex-completion-location.txt")
-    (sync0-bibtex-completion-title . "~/.emacs.d/sync0-vars/bibtex-completion-title.txt")
-    (sync0-bibtex-completion-author .  "~/.emacs.d/sync0-vars/bibtex-completion-author.txt")
-    (sync0-bibtex-completion-keywords .  "~/.emacs.d/sync0-vars/bibtex-completion-keywords.txt")
-    (sync0-bibtex-completion-note .  "~/.emacs.d/sync0-vars/bibtex-completion-note.txt")
-    (sync0-bibtex-completion-doctype .  "~/.emacs.d/sync0-vars/bibtex-completion-doctype.txt")
-    (sync0-bibtex-completion-library .  "~/.emacs.d/sync0-vars/bibtex-completion-library.txt")
-    (sync0-bibtex-completion-series .  "~/.emacs.d/sync0-vars/bibtex-completion-series.txt")
-    (sync0-bibtex-completion-medium .  "~/.emacs.d/sync0-vars/bibtex-completion-medium.txt")
-    (sync0-bibtex-completion-institution .  "~/.emacs.d/sync0-vars/bibtex-completion-institution.txt")
-    (sync0-bibtex-completion-language .  "~/.emacs.d/sync0-vars/bibtex-completion-language.txt"))
-  "Alist of variables used to define their initial values to be used in completion.")
+;; Set completion vars and create an alist of variables used to define their initial values to be used in completion.
+
+;; (let ((prefix "sync0-bibtex-completion-")
+;;       x)
+;;   (dolist (element sync0-bibtex-completion-fields x)
+;;     (let ((my-var (intern (concat prefix element))))
+;;       (set my-var nil)
+;;       (push my-var x))))
+
+  ;; (setq sync0-bibtex-completions-collection (nreverse x))
+
+(let ((prefix "sync0-bibtex-completion-")
+      (file-prefix (concat sync0-vars-dir "bibtex-completion-"))
+      x)
+  (dolist (element sync0-bibtex-completion-fields x)
+    (let* ((my-var (intern (concat prefix element)))
+           (file (concat file-prefix element ".txt"))
+           (cell (cons my-var file)))
+      (set my-var nil)
+      (push cell x)))
+  (setq sync0-bibtex-completion-variables-alist x))
+
+;; (defvar sync0-bibtex-completion-variables-alist
+;;   '((sync0-bibtex-completion-publisher . "~/.emacs.d/sync0-vars/bibtex-completion-publisher.txt")
+;;     (sync0-bibtex-completion-journaltitle . "~/.emacs.d/sync0-vars/bibtex-completion-journaltitle.txt")
+;;     (sync0-bibtex-completion-location . "~/.emacs.d/sync0-vars/bibtex-completion-location.txt")
+;;     (sync0-bibtex-completion-title . "~/.emacs.d/sync0-vars/bibtex-completion-title.txt")
+;;     (sync0-bibtex-completion-author .  "~/.emacs.d/sync0-vars/bibtex-completion-author.txt")
+;;     (sync0-bibtex-completion-keywords .  "~/.emacs.d/sync0-vars/bibtex-completion-keywords.txt")
+;;     (sync0-bibtex-completion-note .  "~/.emacs.d/sync0-vars/bibtex-completion-note.txt")
+;;     (sync0-bibtex-completion-doctype .  "~/.emacs.d/sync0-vars/bibtex-completion-doctype.txt")
+;;     (sync0-bibtex-completion-library .  "~/.emacs.d/sync0-vars/bibtex-completion-library.txt")
+;;     (sync0-bibtex-completion-series .  "~/.emacs.d/sync0-vars/bibtex-completion-series.txt")
+;;     (sync0-bibtex-completion-medium .  "~/.emacs.d/sync0-vars/bibtex-completion-medium.txt")
+;;     (sync0-bibtex-completion-institution .  "~/.emacs.d/sync0-vars/bibtex-completion-institution.txt")
+;;     (sync0-bibtex-completion-project .  "~/.emacs.d/sync0-vars/bibtex-completion-project.txt")
+;;     (sync0-bibtex-completion-site .  "~/.emacs.d/sync0-vars/bibtex-completion-site.txt")
+;;     (sync0-bibtex-completion-language .  "~/.emacs.d/sync0-vars/bibtex-completion-language.txt"))
+;;   "Alist of variables used to define their initial values to be used in completion.")
 
 (defvar sync0-alpha "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz"
   "Possible alphabetic characters that can appear in BibLaTeX keys.
@@ -134,28 +157,36 @@ titles and the like.")
                                           ("introduction" "[" "]" sync0-bibtex-entry-introduction-fixed)
                                           ("recipient" "[" "]" sync0-bibtex-entry-recipient-fixed)
                                           ("title" "\"" "\"" sync0-bibtex-entry-title)
+                                          ("eventtitle" "\"" "\"" sync0-bibtex-entry-eventtitle)
                                           ("subtitle" "\"" "\"" sync0-bibtex-entry-subtitle)
                                           ("crossref" "" "" sync0-bibtex-entry-crossref)
                                           ("parent" "\"" "\"" sync0-bibtex-entry-parent)
                                           ("related" "[" "]" sync0-bibtex-entry-related)
                                           ("relatedtype" "" "" sync0-bibtex-entry-relatedtype)
                                           ("edition" "" "" sync0-bibtex-entry-edition)
+                                          ("pagetotal" "" "" sync0-bibtex-entry-pagetotal)
                                           ("url" "\"" "\"" sync0-bibtex-entry-url)
                                           ("origdate" "" "" sync0-bibtex-entry-origdate)
                                           ("date" "" "" sync0-bibtex-entry-date)
+                                          ("eventdate" "" "" sync0-bibtex-entry-eventdate)
                                           ("medium" "[" "]" sync0-bibtex-entry-medium-fixed)
+                                          ("project" "[" "]" sync0-bibtex-entry-project-fixed)
+                                          ("cote" "\"" "\"" sync0-bibtex-entry-cote)
                                           ("language" "" "" sync0-bibtex-entry-language)
                                           ("library" "[\"" "\"]" sync0-bibtex-entry-library)))
 
 (setq sync0-bibtex-tag-fields-list '(("type" "reference/" sync0-bibtex-entry-type-downcase)
                                      ("date" "" sync0-bibtex-entry-date-tag)
-                                     ("origdate" "origdate/" sync0-bibtex-entry-origdate)
+                                     ("origdate" "" sync0-bibtex-entry-origdate-tag)
+                                     ("eventdate" "" sync0-bibtex-entry-eventdate-tag)
+                                     ("urldate" "" sync0-bibtex-entry-urldate-tag)
                                      ("crossref" "crossref/" sync0-bibtex-entry-crossref)
-                                     ("created" "created/" sync0-bibtex-entry-created-fixed)
+                                     ("created" "" sync0-bibtex-entry-created-tag)
                                      ("doctype" "doctype/" sync0-bibtex-entry-doctype)
                                      ("language" "language/" sync0-bibtex-entry-language)
                                      ("edition" "edition/" sync0-bibtex-entry-edition)
-                                     ("related" "" sync0-bibtex-entry-related-tag)
+                                     ("related" "related/" sync0-bibtex-entry-related-tag)
+                                     ("project" "project/" sync0-bibtex-entry-project)
                                      ("relatedtype" "relatedtype/" sync0-bibtex-entry-relatedtype)
                                      ("translator" "translator/" sync0-bibtex-entry-translator-tag)
                                      ("introduction" "introduction/" sync0-bibtex-entry-introduction-tag)
@@ -169,7 +200,7 @@ titles and the like.")
 ;; entry.
 (let ((prefix "sync0-bibtex-entry-")
       x)
-  (dolist (element '("type-downcase" "crossref-entry" "title-fixed" "title-aliases" "editor-over-author" "title-compatible" "date-tag" "date-fixed" "author-fixed" "translator-fixed" "introduction-fixed" "editor-fixed" "recipient-fixed" "lastname" "author-tag" "afterword-tag" "afterword-fixed" "foreword-tag" "foreword-fixed" "recipient-tag" "editor-tag" "translator-tag" "introduction-tag" "related-tag" "key" "medium-fixed" "created-fixed" "file-old") x)
+  (dolist (element '("type-downcase" "crossref-entry" "title-fixed" "title-aliases" "editor-over-author" "title-compatible" "eventdate-tag" "urldate-tag" "origdate-tag" "date-tag" "date-fixed" "author-fixed" "translator-fixed" "introduction-fixed" "editor-fixed" "recipient-fixed" "lastname" "author-tag" "afterword-tag" "afterword-fixed" "foreword-tag" "foreword-fixed" "recipient-tag" "editor-tag" "translator-tag" "introduction-tag" "related-tag" "key" "medium-fixed" "project-fixed" "created-tag" "file-old") x)
     (let ((my-var (intern (concat prefix element))))
       (set my-var nil)
       (push my-var x)))
@@ -209,7 +240,8 @@ titles and the like.")
          ;; "series"
          "pages"
          ;; "doi"
-         "url")
+         "url"
+         "urldate")
         ("MvBook" "origdate"
          ;; "edition"
          "volumes"
@@ -298,7 +330,8 @@ titles and the like.")
          ;; "library"
          ;; "note"
         ("Online" "institution"
-         "url")
+         "url"
+         "urldate")
          ;; "series"
          ;; "publisher"
          ;; "medium"

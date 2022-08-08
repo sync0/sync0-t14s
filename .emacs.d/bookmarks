@@ -2,7 +2,12 @@
 ;;; This format is meant to be slightly human-readable;
 ;;; nevertheless, you probably don't want to edit it.
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
-(("here4"
+(("problem"
+ (filename . "~/.emacs.d/sync0/sync0-bibtex-functions.el")
+ (front-context-string . " \n        (cond ")
+ (rear-context-string . " creating a loop")
+ (position . 24899))
+("here4"
  (filename . "~/.emacs.d/sync0/sync0-bibtex-functions.el")
  (front-context-string . ")\n\n(defun sync0-")
  (rear-context-string . "y-functions)))))")
@@ -123,10 +128,10 @@
  (rear-context-string . "Eles | têm    |\n")
  (position . 1687))
 ("here2"
- (filename . "~/.emacs.d/sync0/sync0-bibtex-functions.el")
- (front-context-string . "-bibtex-entry-au")
- (rear-context-string . "nc0-null-p sync0")
- (position . 29930))
+ (filename . "~/Gdrive/bibliographies/cabinet.bib")
+ (front-context-string . "  = {digital},\n ")
+ (rear-context-string . "medium          ")
+ (position . 54944))
 ("matonti"
  (filename . "~/Dropbox/notes/matonti2012.org")
  (front-context-string . "\n\n* 無 Conclusion")
@@ -258,8 +263,8 @@
  (rear-context-string . "\"init.el\"))))))\n")
  (position . 5443))
 ("here"
- (filename . "~/.emacs.d/sync0/sync0-bibtex-functions.el")
- (front-context-string . "set (intern (con")
- (rear-context-string . "author)))\n     (")
- (position . 5227))
+ (filename . "~/Gdrive/bibliographies/bnf.bib")
+ (front-context-string . ",\n  location    ")
+ (rear-context-string . "ie de A. Appert}")
+ (position . 354))
 )

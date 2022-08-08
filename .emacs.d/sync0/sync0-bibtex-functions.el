@@ -158,18 +158,18 @@ markdown."
 (setq sync0-bibtex-entry-functions
       '(("title" (lambda ()
                    (setq sync0-bibtex-entry-title
-                         (completing-read "Input title of new BibLaTeX entry: " sync0-bibtex-completion-title))))
+                         (completing-read "Title of BibLaTeX entry: " sync0-bibtex-completion-title))))
         ("subtitle" (lambda ()
                       (setq sync0-bibtex-entry-subtitle
-                            (read-string "Sous-titre du texte : " nil nil nil t))))
+                            (read-string "Subtitle of entry : " nil nil nil t))))
         ("origtitle" (lambda ()
                        (setq sync0-bibtex-entry-origtitle
-                             (completing-read "Input title of new BibLaTeX entry: " sync0-bibtex-completion-title))))
+                             (completing-read "Origtitle of entry: " sync0-bibtex-completion-title))))
         ("date" (lambda ()
                   (setq sync0-bibtex-entry-date
                         (read-string "Date (ex. 1890-18-12) : " sync0-bibtex-entry-initial-date))))
         ("created" (lambda ()
-                     (setq sync0-bibtex-entry-created-fixed
+                     (setq sync0-bibtex-entry-created-tag
                            (format-time-string "%Y/%m/%d"))
                      (setq sync0-bibtex-entry-created
                            (format-time-string "%Y-%m-%d"))))
@@ -190,6 +190,10 @@ markdown."
                       (sync0-bibtex-normalize-name-string sync0-bibtex-entry-foreword "Foreworders: ")))
         ("afterword" (lambda ()
                        (sync0-bibtex-normalize-name-string sync0-bibtex-entry-afterword "Afterworders: ")))
+        ("editortype" (lambda ()
+                         (setq sync0-bibtex-entry-editortype
+                               (completing-read "Type d'éditeur : "
+                                                '("editor" "compiler" "founder" "continuator" "redactor" "reviser" "collaborator" "organizer")))))
         ("edition" (lambda ()
                      (setq sync0-bibtex-entry-edition
                            (read-string "Édition : "))))
@@ -202,9 +206,12 @@ markdown."
         ("number" (lambda ()
                     (setq sync0-bibtex-entry-number
                           (read-string "Numero : "))))
+        ("verba" (lambda ()
+                    (setq sync0-bibtex-entry-verba
+                          (read-string "Add verba : "))))
         ("series" (lambda ()
                     (setq sync0-bibtex-entry-series
-                          (read-string "Series : " sync0-bibtex-completion-series))))
+                          (completing-read "Series : " sync0-bibtex-completion-series))))
         ("publisher" (lambda ()
                        (setq sync0-bibtex-entry-publisher
                              (completing-read "Maison d'edition : " sync0-bibtex-completion-publisher))))
@@ -213,7 +220,9 @@ markdown."
                          (read-string "Url : " nil nil nil t))))
         ("urldate" (lambda ()
                      (setq sync0-bibtex-entry-urldate
-                           (when (bound-and-true-p sync0-bibtex-entry-url)
+                           (if sync0-bibtex-entry-creation
+                               (when (bound-and-true-p sync0-bibtex-entry-url)
+                                 (format-time-string "%Y-%m-%d"))
                              (format-time-string "%Y-%m-%d")))))
         ("language" (lambda ()
                       (setq sync0-bibtex-entry-language
@@ -234,6 +243,9 @@ markdown."
                      (setq sync0-bibtex-entry-library
                            (completing-read "Choose location to trace back: "
                                             sync0-bibtex-completion-library nil nil nil))))
+        ("cote" (lambda ()
+                     (setq sync0-bibtex-entry-cote
+                           (read-string "Cote du document : "))))
         ("file" (lambda ()
                   (if sync0-bibtex-entry-creation
                       (setq sync0-bibtex-entry-file
@@ -263,6 +275,14 @@ markdown."
         ("journaltitle" (lambda ()
                           (setq sync0-bibtex-entry-journaltitle
                                 (completing-read "Titre du journal : " sync0-bibtex-completion-journaltitle))))
+        ("project" (lambda ()
+                     (setq sync0-bibtex-entry-project
+                           (sync0-show-elements-of-list 
+                            (completing-read-multiple "Projet(s) : " sync0-bibtex-completion-project)
+                            ", "))))
+        ("site" (lambda ()
+                      (setq sync0-bibtex-entry-site
+                            (completing-read "Site : " sync0-bibtex-completion-site))))
         ("location" (lambda ()
                       (setq sync0-bibtex-entry-location
                             (completing-read "Location : " sync0-bibtex-completion-location))))
@@ -289,6 +309,9 @@ markdown."
         ("pages" (lambda ()
                    (setq sync0-bibtex-entry-pages
                          (read-string "Pages (ex. : 90-180) : "))))
+        ("pagetotal" (lambda ()
+                   (setq sync0-bibtex-entry-pagetotal
+                         (read-string "No. de pages (ex. : 310) : "))))
         ("doi" (lambda ()
                  (setq sync0-bibtex-entry-doi
                        (read-string "DOI : " nil nil nil t))))
@@ -392,41 +415,48 @@ bibtex-completion handles crossreferences."
         (set (intern entry-element) nil)))))
 
 (defun sync0-bibtex-set-date-extra-fields ()
-  "Set fields that do not appear on the biblatex entry as
-such (they are not present in the .bib file), but that are
-necessary for other functions."
+  "Calculate date fields to be used in titles and obsidian notes.
+Set fields that do not appear on the biblatex entry as such (they
+are not present in the .bib file), but that are necessary for
+other functions."
   ;; this function needs correction to deal with composite dates of
   ;; the type 2022/2933
   (cond  ((and (sync0-null-p sync0-bibtex-entry-origdate)
+               (sync0-null-p sync0-bibtex-entry-eventdate)
                (sync0-null-p sync0-bibtex-entry-date))
           (setq sync0-bibtex-entry-date-or-origdate-p nil))
-         ((equal sync0-bibtex-entry-origdate sync0-bibtex-entry-date)
+         ((equal (or sync0-bibtex-entry-origdate
+                     sync0-bibtex-entry-eventdate)
+                 sync0-bibtex-entry-date)
           (setq sync0-bibtex-entry-date-or-origdate-p "equal"))
          ((and (sync0-null-p sync0-bibtex-entry-origdate)
+               (sync0-null-p sync0-bibtex-entry-eventdate)
                sync0-bibtex-entry-date)
           (setq sync0-bibtex-entry-date-or-origdate-p "date"))
+         ((and (sync0-null-p sync0-bibtex-entry-origdate)
+               sync0-bibtex-entry-eventdate
+               sync0-bibtex-entry-date)
+          (setq sync0-bibtex-entry-date-or-origdate-p "eventdate"))
+         ((and (sync0-null-p sync0-bibtex-entry-origdate)
+               (sync0-null-p sync0-bibtex-entry-date)
+               sync0-bibtex-entry-eventdate)
+          (setq sync0-bibtex-entry-date-or-origdate-p "eventdate-nodate"))
+         ((and (sync0-null-p sync0-bibtex-entry-date)
+               (sync0-null-p sync0-bibtex-entry-eventdate)
+               sync0-bibtex-entry-origdate)
+          (setq sync0-bibtex-entry-date-or-origdate-p "origdate-nodate"))
          (t (setq sync0-bibtex-entry-date-or-origdate-p "origdate")))
-  (setq sync0-bibtex-entry-date-tag
-        (cond ((null sync0-bibtex-entry-date-or-origdate-p)
-               "")
-              ((or (equal sync0-bibtex-entry-date-or-origdate-p "equal")
-                   (equal sync0-bibtex-entry-date-or-origdate-p "date"))
-               (let ((date (sync0-string-split-with-sep-and-list sync0-bibtex-entry-date "/"))
-                     x)
-                 (dolist (element date x)
-                   (push (concat "date/" (replace-regexp-in-string "-" "/" element)) x))
-                 (sync0-show-elements-of-list x ", ")))
-              (t (let* ((date (sync0-string-split-with-sep-and-list sync0-bibtex-entry-date "/"))
-                        (origdate (sync0-string-split-with-sep-and-list sync0-bibtex-entry-date "/"))
-                        (date-string (let (x)
-                                       (dolist (element date x)
-                                         (push (concat "date/" (replace-regexp-in-string "-" "/" element)) x))
-                                       (sync0-show-elements-of-list x ", ")))
-                        (origdate-string (let (x)
-                                           (dolist (element origdate x)
-                                             (push (concat "date/" (replace-regexp-in-string "-" "/" element)) x))
-                                           (sync0-show-elements-of-list x ", "))))
-                   (concat date-string ", " origdate-string)))))
+  ;; calculate tag date fields for use in keywords
+  (dolist (element sync0-bibtex-date-fields)
+    (when-let* ((var (intern (concat "sync0-bibtex-entry-" element)))
+                (value (symbol-value var))
+                (var-tag (intern (concat "sync0-bibtex-entry-" element "-tag")))
+                (dates (unless (sync0-null-p value) 
+                         (sync0-string-split-with-sep-and-list value "/"))))
+      (set var-tag (let (x)
+                     (dolist (date dates x)
+                       (push (concat element "/" (replace-regexp-in-string "-" "/" date)) x))
+                     (sync0-show-elements-of-list x ", ")))))
   (setq sync0-bibtex-entry-date-fixed
         (cond ((and (null sync0-bibtex-entry-author-or-editor-p)
                     (null sync0-bibtex-entry-date-or-origdate-p))
@@ -437,6 +467,12 @@ necessary for other functions."
               ((or (equal sync0-bibtex-entry-date-or-origdate-p "equal")
                    (equal sync0-bibtex-entry-date-or-origdate-p "date"))
                (concat "(" sync0-bibtex-entry-date ")"))
+              ((equal sync0-bibtex-entry-date-or-origdate-p "eventdate")
+               (concat "(" sync0-bibtex-entry-eventdate ") (" sync0-bibtex-entry-date ")"))
+              ((equal sync0-bibtex-entry-date-or-origdate-p "eventdate-nodate")
+               (concat "(" sync0-bibtex-entry-eventdate ")"))
+              ((equal sync0-bibtex-entry-date-or-origdate-p "origdate-nodate")
+               (concat "(" sync0-bibtex-entry-origdate ")"))
               (t (concat "(" sync0-bibtex-entry-origdate ") (" sync0-bibtex-entry-date ")")))))
 
 (defun sync0-bibtex-entry-select-draft-prefix ()
@@ -450,6 +486,12 @@ necessary for other functions."
           ((equal sync0-bibtex-entry-language "portuguese")
            "Esboço: ")
           (t "Draft: "))))
+
+(defun sync0-bibtex-entry-select-eventtitle-prefix ()
+  (unless (sync0-null-p sync0-bibtex-entry-eventtitle)
+    (if (equal sync0-bibtex-entry-language "french")
+        (concat sync0-bibtex-entry-eventtitle " : ")
+      (concat sync0-bibtex-entry-eventtitle ": "))))
 
 (defun sync0-bibtex-entry-select-title-separator ()
   (if (equal sync0-bibtex-entry-language "french")
@@ -505,6 +547,7 @@ calculate a shorter title, which here is the title-aliases."
   (setq sync0-bibtex-entry-title-aliases
         (concat (sync0-bibtex-entry-select-draft-prefix)
                 (sync0-bibtex-entry-select-chapter-prefix)
+                (sync0-bibtex-entry-select-eventtitle-prefix)
                 sync0-bibtex-entry-title
                 (sync0-bibtex-entry-select-volume-postfix)))
   (setq sync0-bibtex-entry-title-fixed
@@ -613,10 +656,22 @@ Obsidian aliases."
     ;; functions.
     (let (x)
       (dolist (element fields x)
-        (let ((value (if entry
+        (let* ((var (concat "sync0-bibtex-entry-" element))
+               (value (if entry
                          (bibtex-completion-get-value element entry)
-                       (funcall (cadr (assoc element sync0-bibtex-entry-functions)))))
-              (var (concat "sync0-bibtex-entry-" element)))
+                       (progn 
+                         ;; first calculate the values, this function
+                         ;; does not only calculate the value itself
+                         ;; but also some other accompanying dummy
+                         ;; variables that are necessary for
+                         ;; calculating titles and else. Be careful,
+                         ;; because the stdout of the function does
+                         ;; not neceesarily match the definition of
+                         ;; the value for "element"
+                         (funcall (cadr (assoc element sync0-bibtex-entry-functions)))
+                         ;; Retrieve the value for the corresponding
+                         ;; variable
+                         (symbol-value (intern var))))))
           ;; set the variable to the value
           (set (intern var) value)
           ;; create cons of the form  ("sync0-bibtex-entry-title" . "The good old days") for an alist
@@ -673,6 +728,11 @@ Obsidian aliases."
               (if (string-match ", " sync0-bibtex-entry-medium)
                   (sync0-add-prefix-to-list-convert-to-string sync0-bibtex-entry-medium ", " "\"" "\"")
                 (concat "\"" sync0-bibtex-entry-medium "\""))))
+      (unless (null sync0-bibtex-entry-project)
+        (setq sync0-bibtex-entry-project-fixed
+              (if (string-match ", " sync0-bibtex-entry-project)
+                  (sync0-add-prefix-to-list-convert-to-string sync0-bibtex-entry-project ", " "\"" "\"")
+                (concat "\"" sync0-bibtex-entry-project "\""))))
       ;; Set parent extra field
       (setq sync0-bibtex-entry-parent
             (cond ((string= sync0-bibtex-entry-type-downcase "article")
@@ -803,7 +863,7 @@ function is to be used only in pipes."
     (if (yes-or-no-p "Use default bibliography file?")
         (sync0-bibtex-entry-append-to-bibliography sync0-bibtex-entry-key)
       (let ((bib (completing-read "Which bibliography file to append to ? "
-                                  (directory-files sync0-bibtex-bibliobraphy-directory t ".+\\.bib"))))
+                                  sync0-bibtex-bibliographies)))
         (sync0-bibtex-entry-append-to-bibliography sync0-bibtex-entry-key bib)))
     (sync0-bibtex-entry-create-obsidian-note-from-entry sync0-bibtex-entry-key)
     ;; the function below does not work; throws an error listp that I
@@ -1580,11 +1640,10 @@ ivy-bibtex to search for the pdf attached to a bibtex entry."
     "Copy attached pdf to path and change the title to make it
 readable."
     (interactive)
-    (let* ((refkey (if bibkey
-                       bibkey
-                     (sync0-bibtex-completion-choose-key t t)))
-           (file (sync0-bibtex-choose-attachment refkey))
-           (extension (file-name-extension file t)))
+    (when-let* ((refkey (or bibkey
+                            (sync0-bibtex-completion-choose-key t t)))
+                (file (sync0-bibtex-choose-attachment refkey))
+                (extension  (file-name-extension file t)))
       (sync0-bibtex-completion-load-entry refkey)
       (if (file-exists-p file)
           (let* ((target-path (or in-path
@@ -1594,8 +1653,10 @@ readable."
                                   " \""
                                   target-path
                                   sync0-bibtex-entry-lastname
+                                  "_"
                                   (or sync0-bibtex-entry-date-fixed
-                                      " ")
+                                      "")
+                                  "_"
                                   sync0-bibtex-entry-title-compatible
                                   extension
                                   "\"")))
@@ -1625,7 +1686,7 @@ the function 1- fails to compute."
                      (sync0-bibtex-completion-choose-key t t)))
          (bibdestiny (or bibfile
                          (completing-read "Which bibliography file to send to ? "
-                                          (directory-files sync0-bibtex-bibliobraphy-directory t ".+\\.bib") nil t))))
+                                          sync0-bibtex-bibliographies nil t))))
       (bibtex-search-entry refkey)
       (let ((beginning (save-excursion (1- (bibtex-beginning-of-entry))))
             (end (save-excursion (bibtex-end-of-entry))))
@@ -1702,7 +1763,7 @@ function also creates markdown notes for the created entries."
            (current-buffer-p (yes-or-no-p "Use current bibliography file for new entry?"))
            (bibfile (if (null current-buffer-p)
                         (completing-read "Which bibliography file to append to ? "
-                                         (directory-files sync0-bibtex-bibliobraphy-directory t ".+\\.bib") nil t)
+                                         sync0-bibtex-bibliographies nil t)
                       bib-buffer))
            (keywords-list (split-string sync0-bibtex-entry-keywords ", "))
            (extra-keywords (completing-read-multiple "Input extra keywords: " 
@@ -1795,36 +1856,41 @@ readable."
      (("c" sync0-bibtex-clean-entry "Clean entry")
       ("E" sync0-bibtex-define-entry "Capture entry")
       ("e" (sync0-bibtex-define-entry t) "Quick capture")
-      ("u" sync0-bibtex-update-key "Update next key")
-      ("m" sync0-bibtex-define-entries-from-bibkey "Multiple entries from key")
+      ("u" sync0-bibtex-update-key "Update key")
+      ("m" sync0-bibtex-define-entries-from-bibkey "Capture many entries from key")
       ("M" sync0-bibtex-move-entry-to-bibfile "Move entry to bibfile")
       ("D" sync0-bibtex-delete-entry "Delete entry")
       ("A" sync0-bibtex-archive-entry "Archive entry"))
      "PDF editing"
      (("P" sync0-bibtex-copy-pdf-to-path "Copy to path")
       ("p" sync0-bibtex-print-pdf "Print att. from entry")
-      ("x" sync0-bibtex-arrange-pdf "Arrange pdf")
+      ;; This does note work for some reason
+      ;; ("x" sync0-bibtex-arrange-pdf "Arrange pdf")
       ("C" sync0-bibtex-crop-pdf "Crop attached pdf")
       ("T" sync0-bibtex-add-toc-to-pdf "Add TOC to pdf")
       ("K" sync0-bibtex-add-key-to-pdf "Add key to pdf")
-      ("d" sync0-bibtex-download-pdf "Download pdf from url")
-      ("s" sync0-bibtex-extract-subpdf "Extract subpdf"))
+      ;; ("s" sync0-bibtex-extract-subpdf "Extract subpdf")
+      ("d" sync0-bibtex-download-pdf "Download pdf from url"))
      "Visit"
-     (("v" ivy-bibtex "Visit entry")
-      ("o" sync0-bibtex-open-pdf-at-point "Open in pdfview")
-      ;; ("o" sync0-org-ref-open-pdf-at-point "Open in pdfview")
+     (("o" sync0-bibtex-open-pdf-at-point "Open in pdfview")
       ("z" (sync0-bibtex-open-pdf-at-point t) "Open in zathura")
+      ;; ("o" sync0-org-ref-open-pdf-at-point "Open in pdfview")
       ("w" sync0-bibtex-open-url "Open url")
       ("n" sync0-bibtex-open-notes "Open annotations"))
+     "Bibliographies"
+     (("s" ivy-bibtex "Search entry")
+      ("S" ivy-bibtex-with-local-bibliography "Search entry locally")
+      ("b" sync0-bibtex-recalc-bibliographies "Recalc bibliographies")
+      ("B" sync0-bibtex-recalc-master-bibliography "Recalc master bib file")
+      ("r" sync0-bibtex-populate-keys "Populate keys")
+      ("v" sync0-bibtex-visit-bibliography "Visit bibfile"))
      "Etc"
      ;; ("r" (sync0-bibtex-update-completion-files sync0-bibtex-completion-variables-list) "Refresh completion vars")
-     (("V" sync0-visit-bibliography-in-buffer "Visit bibfile")
-      ("a" sync0-bibtex-add-field "Add field")
-      ("r" sync0-bibtex-populate-keys "Populate keys")
+     (("a" sync0-bibtex-add-field "Add field")
       ("i" sync0-bibtex-convert-jpg-to-pdf "Convert jpg to pdf")
       ("k" bu-make-field-keywords "Add keyword")
       ("y" sync0-bibtex-yank-citation-from-bibkey "Yank citation.")
-      ("N" sync0-bibtex-create-note-from-entry "Create md from entry")
-      ("R" (sync0-bibtex-create-note-from-entry t) "Rewrite md from entry"))))
+      ("N" sync0-bibtex-create-note-from-entry "Create md note for entry")
+      ("R" (sync0-bibtex-create-note-from-entry t) "Rewrite md for entry"))))
 
   (provide 'sync0-bibtex-functions)

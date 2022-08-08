@@ -228,11 +228,11 @@ Springer
 Talence, France
 Taylor & Francis
 The Bodley Head
-The Glorious Univeristy Publisher
-The Rumford Press
-The University of Chicago Press
-The University of Michigan Press
-The University of North Carolina Press
+Glorious Univeristy Publisher
+Rumford Press
+University of Chicago Press
+University of Michigan Press
+University of North Carolina Press
 Tinta Limón
 Twentieth Century Fund
 Universidad Gabriela Mistral
@@ -275,3 +275,21 @@ Instituto de Investigaciones Sociológicas
 F. Larcier
 ni;
 Taurus
+Baioneta
+Ch. Bouret
+Imprimérie de A. Davy
+Planetalector
+A. Lévy et Cie
+Brill
+Demopolis
+Jean Frédéric Bernard
+J. Greenwood
+Fritsch et Böhm
+Yale University Press
+Iberoamericana - Vervuert
+University of Alabama Press
+CNRS Éditions
+University of North Carolina Press
+C. Gosselin
+Presses universitaires d'Aix-Marseille
+Imprimerie de A. Appert

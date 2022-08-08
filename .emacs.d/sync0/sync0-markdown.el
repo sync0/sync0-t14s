@@ -1,4 +1,9 @@
 (require 'sync0-print)
+(require 'sync0-yaml)
+
+;; (setq markdown-list-item-bullets '("●" "◎" "○" "◆" "◇" "►" "•"))
+(setq markdown-list-item-bullets '("•"))
+
 
 (setq sync0-markdown-zettel-template 
       (concat
@@ -41,6 +46,7 @@ created: " (format-time-string "%Y-%m-%d")
        ;; " --quiet"
        ;; " --number-sections"
        ;; " --lua-filter=lua.lua"
+       ;; " --lua-filter=/home/sync0/.local/share/pandoc/filters/noexport-subtrees.lua"
        " --metadata=reference-section-title:Références"
        " --citeproc"
        " --filter=/home/sync0/.local/share/pandoc/filters/delink.hs"
@@ -150,8 +156,12 @@ created: " (format-time-string "%Y-%m-%d")
   
 (defun sync0-pandoc-export-md-to-pdf ()
   (interactive)
-  (let* ((type (completing-read "Choose document type for export: " sync0-pandoc-export-md-to-pdf-settings-alist))
-         (lang (if (progn
+  (let* ((type (if (save-excursion
+                     (goto-char (point-min))
+                     (re-search-forward "^export_template: \\([A-z-]+\\)\n" nil t 1))
+                   (match-string-no-properties 1)
+                 (completing-read "Choose document type for export: " sync0-pandoc-export-md-to-pdf-settings-alist)))
+         (lang (if (save-excursion
                      (goto-char (point-min))
                      (re-search-forward "^lang: \\([A-z-]+\\)\n" nil t 1))
                    (match-string-no-properties 1)
@@ -285,6 +295,25 @@ readable."
           (message "PDF moved to target location"))
       (message "No PDF found"))))
 
+(defun sync0-markdown-save-exported-pdf-in-cabinet ()
+  "Create a copy of pdf corresponding to current file in our
+cabinet (defined by sync0-zettelkasten-exported-pdfs-directory)."
+  (interactive)
+  (let* ((current-path (file-name-directory buffer-file-name))
+         (current-file (sync0-yaml-get-property "id"))
+         (current-pdf (concat current-path current-file ".pdf"))
+         (target-pdf (concat sync0-zettelkasten-exported-pdfs-directory current-file ".pdf"))
+         (command (concat "cp " current-pdf " " target-pdf)))
+    (cond ((and  (file-exists-p current-pdf)
+                 (file-exists-p target-pdf)
+                 (yes-or-no-p "Overwrite copy in cabinet with Obsidian vault version?"))
+           (shell-command command))
+          ((and  (file-exists-p current-pdf)
+                 (not (file-exists-p target-pdf))
+                 (yes-or-no-p "Create copy in cabinet from Obsidian vault version?"))
+           (shell-command command))
+          (t (message "Command failed. Probably no pdf corresponds to current file.")))))
+
 (major-mode-hydra-define markdown-mode nil 
   ("Links"
    ;; ("s" org-store-link)
@@ -309,6 +338,7 @@ readable."
    "Etc"
    (("a" sync0-define-local-abbrev "Define abbrev")
    ("P" sync0-markdown-print-pdf "Corresp. pdf")
+   ("C" sync0-markdown-save-exported-pdf-in-cabinet "Copy pdf to cabinet")
    ("M" sync0-markdown-copy-pdf-to-path "Move to path"))))
 ;; ("d" org-insert-drawer)
 

@@ -54,17 +54,28 @@ when necessary."
                  (split-string-every (substring string chars)
                                      chars)))))
 
+;; (defun sync0-string-split-with-sep-and-list (string sep &optional to-string)
+;;   "Split a string into a list using sep. When optional to-string is
+;; true, produce a string and not a list."
+;;   (cl-flet  ((conditional () (if to-string
+;;                                  string
+;;                                (list string))))
+;;     (if (string-match sep string)
+;;         (progn 
+;;           (split-string string sep)
+;;           (conditional))
+;;       (conditional))))
+
 (defun sync0-string-split-with-sep-and-list (string sep &optional to-string)
   "Split a string into a list using sep. When optional to-string is
 true, produce a string and not a list."
-  (cl-flet  ((conditional () (if to-string
-                                 string
-                               (list string))))
-    (if (string-match sep string)
-        (progn 
-          (split-string string sep)
-          (conditional))
-      (conditional))))
+  (if (string-match sep string)
+      (if to-string
+          (format "%s" (split-string string sep))
+        (split-string string sep))
+    (if to-string
+        string
+      (list string))))
 
 (defun sync0-add-prefix-to-list-convert-to-string (my-string separator prefix &optional postfix)
   "Break my-string using separator. Then, add prefix to every
@@ -88,6 +99,15 @@ of all elements separeted by separator."
         while (string-match regexp str start)
         do (setq start (match-end 0))
         finally return count))
+
+;; Taken from
+;; https://stackoverflow.com/questions/34432246/how-to-read-contents-of-the-file-programmatically-in-emacs
+
+(defun sync0-read-file-contents (filename)
+  "Return the contents of FILENAME."
+  (with-temp-buffer
+    (insert-file-contents filename)
+    (buffer-string)))
 
 (provide 'sync0-functions)
 

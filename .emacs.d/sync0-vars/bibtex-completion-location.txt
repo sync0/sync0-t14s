@@ -113,3 +113,10 @@ Westport, Connecticut
 nil
 Bucaramanga, Santander, Colombia
 43-59
+Seoul, South Korea
+Chicago, Illinois, \textsc{USA
+Amsterdam
+Rotterdam
+New Haven, London
+Madrid, Frankfurt
+Aix-en-Provence

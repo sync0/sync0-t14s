@@ -7,6 +7,7 @@ export ZSH="/home/sync0/.oh-my-zsh"
 # Add more variables to the PATH
 # PATH=$HOME/.luarocks/bin/digestif:$PATH
 PATH="/home/sync0/.local/share/pandoc/filters/:$PATH"
+PATH="/home/sync0/bin/:$PATH"
 PATH="/opt/tropy/:$PATH"
 MERMAID_BIN="/home/sync0/node_modules/.bin/mmdc"
 # Set name of the theme to load --- if set to "random", it will
