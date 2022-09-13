@@ -20,9 +20,18 @@
   '("InBook" "InCollection" "InProceedings")
   "List of Bibtex entry types")
 
-(defvar sync0-bibtex-quick-fields
-  '("title" "subtitle" "date" "author" "editor" "note" "url" "urldate" "language" "langid" "library" "file" "keywords")
-  "List of Bibtex entry fields")
+;; (defvar sync0-bibtex-quick-fields
+;;   '("title" "subtitle" "date" "author" "editor" "note" "url" "urldate" "language" "langid" "library" "file" "keywords")
+;;   "List of Bibtex entry fields")
+
+(setq sync0-bibtex-quick-fields
+      '("title"
+        "subtitle"
+        "date"
+        "created"
+        ;; "author"
+        ;; "url"
+        "file"))
 
 (defvar sync0-bibtex-extract-fields
   '("title" "date" "author" "crossref" "pages" "language" "langid" "file" "keywords")
@@ -54,24 +63,6 @@
       (push cell x)))
   (setq sync0-bibtex-completion-variables-alist x))
 
-;; (defvar sync0-bibtex-completion-variables-alist
-;;   '((sync0-bibtex-completion-publisher . "~/.emacs.d/sync0-vars/bibtex-completion-publisher.txt")
-;;     (sync0-bibtex-completion-journaltitle . "~/.emacs.d/sync0-vars/bibtex-completion-journaltitle.txt")
-;;     (sync0-bibtex-completion-location . "~/.emacs.d/sync0-vars/bibtex-completion-location.txt")
-;;     (sync0-bibtex-completion-title . "~/.emacs.d/sync0-vars/bibtex-completion-title.txt")
-;;     (sync0-bibtex-completion-author .  "~/.emacs.d/sync0-vars/bibtex-completion-author.txt")
-;;     (sync0-bibtex-completion-keywords .  "~/.emacs.d/sync0-vars/bibtex-completion-keywords.txt")
-;;     (sync0-bibtex-completion-note .  "~/.emacs.d/sync0-vars/bibtex-completion-note.txt")
-;;     (sync0-bibtex-completion-doctype .  "~/.emacs.d/sync0-vars/bibtex-completion-doctype.txt")
-;;     (sync0-bibtex-completion-library .  "~/.emacs.d/sync0-vars/bibtex-completion-library.txt")
-;;     (sync0-bibtex-completion-series .  "~/.emacs.d/sync0-vars/bibtex-completion-series.txt")
-;;     (sync0-bibtex-completion-medium .  "~/.emacs.d/sync0-vars/bibtex-completion-medium.txt")
-;;     (sync0-bibtex-completion-institution .  "~/.emacs.d/sync0-vars/bibtex-completion-institution.txt")
-;;     (sync0-bibtex-completion-project .  "~/.emacs.d/sync0-vars/bibtex-completion-project.txt")
-;;     (sync0-bibtex-completion-site .  "~/.emacs.d/sync0-vars/bibtex-completion-site.txt")
-;;     (sync0-bibtex-completion-language .  "~/.emacs.d/sync0-vars/bibtex-completion-language.txt"))
-;;   "Alist of variables used to define their initial values to be used in completion.")
-
 (defvar sync0-alpha "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz"
   "Possible alphabetic characters that can appear in BibLaTeX keys.
 Use format of base58 encoding.")
@@ -91,6 +82,12 @@ Use format of base58 encoding.")
   "Bibliography to store entries that are not needed at the moment for whatever reason.")
 
 (defvar sync0-bibtex-archive-directory "/home/sync0/Pictures/archives/"
+  "Bibliography to store entries that are not needed at the moment for whatever reason.")
+
+(defvar sync0-bibtex-keys-file "/home/sync0/.emacs.d/sync0-vars/bibtex-completion-key.txt"
+  "Bibliography to store entries that are not needed at the moment for whatever reason.")
+
+(defvar sync0-bibtex-keys-backup-file "/home/sync0/Gdrive/vars/bibtex-completion-key.txt"
   "Bibliography to store entries that are not needed at the moment for whatever reason.")
 
 (defvar sync0-bibtex-tocs-directory "/home/sync0/Documents/tocs/"
@@ -150,7 +147,7 @@ titles and the like.")
 (setq sync0-bibtex-entry-crossref-crosscheck-fields-list '("subtitle" "volume" "edition" "shorttitle")) 
 
 (setq sync0-bibtex-obsidian-fields-list '(("description" "\"" "\"" sync0-bibtex-entry-description)
-                                          ("doctype" "\"" "\"" sync0-bibtex-entry-doctype)
+                                          ("doctype" "[" "]" sync0-bibtex-entry-doctype-fixed)
                                           ("author" "[" "]" sync0-bibtex-entry-author-fixed)
                                           ("editor" "[" "]" sync0-bibtex-entry-editor-fixed)
                                           ("translator" "[" "]" sync0-bibtex-entry-translator-fixed)
@@ -182,7 +179,7 @@ titles and the like.")
                                      ("urldate" "" sync0-bibtex-entry-urldate-tag)
                                      ("crossref" "crossref/" sync0-bibtex-entry-crossref)
                                      ("created" "" sync0-bibtex-entry-created-tag)
-                                     ("doctype" "doctype/" sync0-bibtex-entry-doctype)
+                                     ("doctype" "" sync0-bibtex-entry-doctype-tag)
                                      ("language" "language/" sync0-bibtex-entry-language)
                                      ("edition" "edition/" sync0-bibtex-entry-edition)
                                      ("related" "related/" sync0-bibtex-entry-related-tag)
@@ -200,7 +197,7 @@ titles and the like.")
 ;; entry.
 (let ((prefix "sync0-bibtex-entry-")
       x)
-  (dolist (element '("type-downcase" "crossref-entry" "title-fixed" "title-aliases" "editor-over-author" "title-compatible" "eventdate-tag" "urldate-tag" "origdate-tag" "date-tag" "date-fixed" "author-fixed" "translator-fixed" "introduction-fixed" "editor-fixed" "recipient-fixed" "lastname" "author-tag" "afterword-tag" "afterword-fixed" "foreword-tag" "foreword-fixed" "recipient-tag" "editor-tag" "translator-tag" "introduction-tag" "related-tag" "key" "medium-fixed" "project-fixed" "created-tag" "file-old") x)
+  (dolist (element '("type-downcase" "crossref-entry" "title-fixed" "title-aliases" "editor-over-author" "title-compatible" "eventdate-tag" "urldate-tag" "origdate-tag" "date-tag" "date-fixed" "author-fixed" "translator-fixed" "introduction-fixed" "editor-fixed" "recipient-fixed" "lastname" "author-tag" "afterword-tag" "afterword-fixed" "foreword-tag" "foreword-fixed" "recipient-tag" "editor-tag" "translator-tag" "introduction-tag" "related-tag" "doctype-fixed" "doctype-tag" "key" "medium-fixed" "project-fixed" "created-tag" "file-old") x)
     (let ((my-var (intern (concat prefix element))))
       (set my-var nil)
       (push my-var x)))
@@ -223,7 +220,7 @@ titles and the like.")
         "subtitle"
         "date"
         "created"
-        "author"
+        ;; "author"
         ;; "url"
         "language"
         "file"))
@@ -234,7 +231,8 @@ titles and the like.")
 ;; calculated correctly
 
 (setq sync0-bibtex-type-fields
-      '(("Article" "journaltitle"
+      '(("Article" "author"
+         "journaltitle"
          "volume"
          "number"
          ;; "series"
@@ -242,24 +240,26 @@ titles and the like.")
          ;; "doi"
          "url"
          "urldate")
-        ("MvBook" "origdate"
-         ;; "edition"
+        ("MvBook" "author"
          "volumes"
+         ;; "origdate"
+         ;; "edition"
          ;; "series"
          "publisher"
          "location")
          ;; "medium"
          ;; "library"
-        ("Book" "origdate"
-         "edition"
+        ("Book" "author"
+         "publisher"
+         ;; "origdate"
+         ;; "edition"
          ;; "volume"
          ;; "series"
-         "publisher"
          "location")
          ;; "medium"
          ;; "library"
         ("MvCollection" "editor"
-         "origdate"
+         ;; "origdate"
          ;; "edition"
          "volumes"
          ;; "series"
@@ -268,7 +268,7 @@ titles and the like.")
          ;; "medium"
          ;; "library"
         ("Collection" "editor"
-         "origdate"
+         ;; "origdate"
          ;; "edition"
          ;; "volume"
          ;; "series"
@@ -276,8 +276,9 @@ titles and the like.")
          "location")
          ;; "medium"
          ;; "library"
-        ("InBook" "crossref"
-         "origdate"
+        ("InBook" "author"
+         "crossref"
+         ;; "origdate"
          ;; "edition"
          ;; "volume"
          ;; "series"
@@ -289,9 +290,10 @@ titles and the like.")
          "pages")
          ;; "medium"
          ;; "library"
-        ("InCollection" "crossref"
+        ("InCollection" "author"
+         "crossref"
          "editor"
-         "origdate"
+         ;; "origdate"
          ;; "edition"
          ;; "volume"
          ;; "series"
@@ -303,7 +305,8 @@ titles and the like.")
          "pages")
          ;; "medium"
          ;; "library"
-        ("InProceedings" "crossref"
+        ("InProceedings" "author"
+         "crossref"
          "editor"
          "eventtitle"
          "eventdate"
@@ -319,7 +322,8 @@ titles and the like.")
          "pages")
          ;; "medium"
          ;; "library"
-        ("Manual" "institution"
+        ("Manual" "author"
+         "institution"
          "origdate"
          "edition"
          "volume")
@@ -329,7 +333,8 @@ titles and the like.")
          ;; "medium"
          ;; "library"
          ;; "note"
-        ("Online" "institution"
+        ("Online" "author"
+         "institution"
          "url"
          "urldate")
          ;; "series"
@@ -337,16 +342,7 @@ titles and the like.")
          ;; "medium"
          ;; "library"
          ;; "note"
-        ("Report" "institution"
-         ;; "volume"
-         ;; "number"
-         ;; "series"
-         ;; "publisher"
-         ;; "location"
-         ;; "medium"
-         ;; "note"
-         "library")
-        ("Unpublished" "doctype"
+        ("Report" "author"
          "institution"
          ;; "volume"
          ;; "number"
@@ -356,7 +352,19 @@ titles and the like.")
          ;; "medium"
          ;; "note"
          "library")
-        ("Misc" "doctype"
+        ("Unpublished" "author"
+         "doctype"
+         "institution"
+         ;; "volume"
+         ;; "number"
+         ;; "series"
+         ;; "publisher"
+         ;; "location"
+         ;; "medium"
+         ;; "note"
+         "library")
+        ("Misc" "author"
+         "doctype"
          "institution"
          ;; "series"
          ;; "publisher"
@@ -364,7 +372,8 @@ titles and the like.")
          ;; "medium"
          ;; "library"
          "note")
-        ("Thesis" "institution"
+        ("Thesis" "author"
+         "institution"
          ;; "number"
          ;; "publisher"
          ;; "note"

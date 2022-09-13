@@ -57,7 +57,7 @@
           (progn
             (string-match "\\([[:digit:]]+\\)\\.org$"   file-path)
             (match-string 1 file-path))))
-    (concat sync0-exported-pdfs-directory file-name ".pdf")))
+    (concat sync0-zettelkasten-attachments-directory file-name ".pdf")))
 
 (defun sync0-overview-tree-window ()
   "Open a clone of the current buffer to the left, resize it to 30 columns, and bind <mouse-1> to jump to the same position in the base buffer."
@@ -111,9 +111,9 @@
   (let* ((file-path (buffer-file-name))
          (file-name 
           (progn
-            (string-match "\\([[:digit:]]+\\)\\.org$"   file-path)
+            (string-match "\\([[:alnum:]]+\\)\\.org$" file-path)
             (match-string 1 file-path)))
-         (pdf-path (concat sync0-exported-pdfs-directory file-name ".pdf")))
+         (pdf-path (concat sync0-zettelkasten-attachments-directory file-name ".pdf")))
     (if (file-exists-p pdf-path)
         (org-open-file pdf-path)
       (message "No PDF found for %s.org" file-name))))

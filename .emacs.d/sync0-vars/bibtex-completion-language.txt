@@ -94,4 +94,4 @@ xhosa
 yangben
 yiddish
 yoruba
-
+hungarian

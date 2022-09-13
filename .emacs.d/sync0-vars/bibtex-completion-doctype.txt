@@ -25,3 +25,4 @@ database
 request
 template
 publicity
+cv

@@ -10,3 +10,7 @@ Première Série
 Deuxième Série
 Huitième Série
 Troisième année
+Municipios de Antioquia
+Serie I: Storia, Letteratura, Paleografia
+Les Cahiers de la \textsc{mshe} Ledoux
+Boletín del Grupo de Trabajo Crítica jurídica y conflictos sociopolíticos

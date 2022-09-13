@@ -214,6 +214,14 @@
   '() 
   "List of fiche types.")
 
+(defvar sync0-func-dir
+  (concat (getenv "HOME") "/.emacs.d/sync0/")
+  "Directory with all my custom functions.")
+
+(defvar sync0-vars-dir
+  (concat (getenv "HOME") "/.emacs.d/sync0-vars/")
+  "Directory with all my custom variables.")
+
 (defvar sync0-zettelkasten-variables-list
   '((sync0-zettelkasten-projects . "~/.emacs.d/sync0-vars/projects.txt")
     (sync0-zettelkasten-zettel-types . "~/.emacs.d/sync0-vars/zettel-types.txt")
@@ -262,19 +270,34 @@
          nil
        t)))
 
-(defun sync0-set-variable-from-files  (varlist)
+;; (defun sync0-set-variable-from-files  (varlist)
+;;   "From a list of pairs of variable and files, define all of them
+;;   with a loop"
+;;   (dolist (element varlist) 
+;;     (let ((var (car element))
+;;           (file (cdr element)))
+;;       ;; (sync0-nullify-variable var)
+;;       (with-temp-buffer
+;;         (insert-file-contents file)
+;;         (goto-char (point-min))
+;;         ;; (keep-lines "contexts" (point-min) (point-max)) 
+;;         (while (re-search-forward "^\\([[:print:]]+\\)\n" (point-max) t)
+;;           (add-to-list var (match-string-no-properties 1)))))))
+
+(defun sync0-set-variable-from-files (varlist)
   "From a list of pairs of variable and files, define all of them
   with a loop"
   (dolist (element varlist) 
     (let ((var (car element))
-          (file (cdr element)))
-      ;; (sync0-nullify-variable var)
+          (file (cdr element))
+          x)
       (with-temp-buffer
         (insert-file-contents file)
         (goto-char (point-min))
         ;; (keep-lines "contexts" (point-min) (point-max)) 
         (while (re-search-forward "^\\([[:print:]]+\\)\n" (point-max) t)
-          (add-to-list var (match-string-no-properties 1)))))))
+          (push (match-string-no-properties 1) x)))
+      (set var (reverse x)))))
 
 (sync0-set-variable-from-files sync0-zettelkasten-variables-list)
 
@@ -2415,7 +2438,7 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
   (bibtex-completion-notes-symbol "N")
   (bibtex-completion-notes-extension ".md")
   ;; (bibtex-completion-notes-extension ".org")
-  (bibtex-completion-pdf-extension '(".pdf" ".epub" ".doc" ".docx" ".org" ".md" ".rtf"))
+  (bibtex-completion-pdf-extension '(".pdf" ".epub" ".doc" ".docx" ".org" ".md" ".rtf" ".tex"))
   (bibtex-completion-additional-search-fields '(origdate date subtitle edition))
   ;; (bibtex-completion-additional-search-fields '(journaltitle origdate subtitle volume location publisher note library institution keywords edition))
   ;; (bibtex-completion-additional-search-fields '(editor journaltitle origdate subtitle volume booktitle location publisher note library medium institution keywords))

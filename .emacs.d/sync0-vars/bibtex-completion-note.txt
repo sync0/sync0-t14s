@@ -176,3 +176,5 @@ Libro 421, folio 18
 Código de marcação: 798672
 \textsc{co.agn.ap/apo}, Legajo 8255/9
 Código de marcação: C5DB4C
+Communication présentée au 19\textsuperscript{e} Colloque Charles Gide
+Translated from the 4\textsuperscript{th} Hungarian edition
