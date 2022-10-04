@@ -138,10 +138,10 @@
  (rear-context-string . "Eles | têm    |\n")
  (position . 1687))
 ("here2"
- (filename . "~/.emacs.d/sync0/sync0-bibtex-functions.el")
- (front-context-string . "\"\n              ")
- (rear-context-string . "              \" ")
- (position . 33123))
+ (filename . "~/Gdrive/bibliographies/cabinet.bib")
+ (front-context-string . " 2022-2023},\n  d")
+ (rear-context-string . "cription : année")
+ (position . 52178))
 ("matonti"
  (filename . "~/Dropbox/notes/matonti2012.org")
  (front-context-string . "\n\n* 無 Conclusion")

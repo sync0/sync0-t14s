@@ -123,3 +123,6 @@ Aix-en-Provence
 Firenze
 Turnhout
 Berkeley, Kyoto
+Pisa
+Antverpiae
+Villeurbanne

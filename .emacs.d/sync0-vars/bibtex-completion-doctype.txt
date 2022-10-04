@@ -26,3 +26,6 @@ request
 template
 publicity
 cv
+brochure
+visa
+card
