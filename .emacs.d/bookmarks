@@ -273,8 +273,8 @@
  (rear-context-string . "\"init.el\"))))))\n")
  (position . 5443))
 ("here"
- (filename . "~/Gdrive/bibliographies/cabinet.bib")
- (front-context-string . " Antioquia, Colo")
- (rear-context-string . "    = {Medellín,")
- (position . 42818))
+ (filename . "~/.emacs.d/sync0/sync0-bibtex-vars.el")
+ (front-context-string . "ix \"sync0-bibtex")
+ (rear-context-string . "ry.\n(let* ((pref")
+ (position . 7251))
 )

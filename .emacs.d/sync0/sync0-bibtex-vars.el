@@ -1,16 +1,21 @@
 ;; -*- lexical-binding: t -*-
 
 (defvar sync0-bibtex-fields
-  '("title" "subtitle" "origtitle" "eventtitle" "date" "origdate" "eventdate" "author" "editor" "translator" "recipient" "introduction" "journaltitle" "edition" "booktitle" "booksubtitle" "crossref" "chapter" "volume" "volumes" "number" "series" "publisher" "location" "pages" "note" "doi" "url" "urldate" "language" "langid" "origlanguage" "medium" "institution" "library" "related" "relatedtype" "relatedstring" "file" "created" "password" "shorttitle" "doctype" "shorthand" "description" "keywords" "foreword" "afterword" "editortype" "pagetotal" "verba" "cote" "project" "site" "version" "people" "country")
+  '("title" "subtitle" "origtitle" "eventtitle" "date" "origdate" "eventdate" "author" "editor" "translator" "recipient" "introduction" "journaltitle" "edition" "booktitle" "booksubtitle" "crossref" "chapter" "volume" "volumes" "number" "series" "publisher" "location" "pages" "note" "doi" "url" "urldate" "language" "langid" "origlanguage" "medium" "institution" "library" "related" "relatedtype" "relatedstring" "file" "created" "password" "shorttitle" "doctype" "shorthand" "description" "keywords" "foreword" "afterword" "editortype" "pagetotal" "verba" "cote" "project" "site" "version" "people" "country" "lecture" "seminar")
   "List of Bibtex entry fields")
 
 (defvar sync0-bibtex-string-fields
-  '("subtitle" "eventtitle" "eventdate" "edition" "chapter" "volume" "volumes" "number" "pages" "pagetotal" "doi" "password" "shorttitle" "shorthand" "description" "verba" "cote" "version")
-  "List of Bibtex entry fields that use read-string for being defined")
+  '("subtitle" "eventtitle" "eventdate" "edition" "chapter" "volume" "volumes" "number" "pages" "pagetotal" "doi" "password" "shorttitle" "shorthand" "description" "verba" "cote" "version" "url")
+  "List of Bibtex entry fields that use read-string without
+accompanying completion variable for being defined. The lambda functions for their
+definition are automatically calculated and added to the variable
+sync0-bibtex-entry-functions.")
 
 (defvar sync0-bibtex-string-multiple-fields
-  '("medium" "doctype" "project" "country")
-  "List of Bibtex entry fields that use completing-read-multiple for being defined")
+  '("medium" "doctype" "project" "country" "keywords")
+  "List of Bibtex entry fields that use completing-read-multiple
+for being defined. The only exception is the field keywords
+because it requires a special treatment.")
 
 (defvar sync0-bibtex-date-fields
   '("date" "origdate" "eventdate" "urldate" "created")
@@ -20,11 +25,9 @@
   '("author" "editor" "people" "recipient" "translator" "introduction" "foreword" "afterword")
   "List of Bibtex entry fields")
 
-  ;; '("author" "editor" "editorone" "people" "recipient" "translator" "introduction" "foreword" "afterword")
-
-(defvar sync0-bibtex-full-fields
-  '("title" "subtitle" "date" "origdate" "author" "editor" "journaltitle" "booktitle" "booksubtitle" "translator" "crossref"  "eventdate" "eventtitle" "venue" "volume" "number" "chapter" "edition" "pages" "publisher" "location" "pages" "note" "url" "urldate" "language" "langid" "library" "file" "keywords")
-  "List of Bibtex entry fields")
+;; (defvar sync0-bibtex-full-fields
+;;   '("title" "subtitle" "date" "origdate" "author" "editor" "journaltitle" "booktitle" "booksubtitle" "translator" "crossref"  "eventdate" "eventtitle" "venue" "volume" "number" "chapter" "edition" "pages" "publisher" "location" "pages" "note" "url" "urldate" "language" "langid" "library" "file" "keywords")
+;;   "List of Bibtex entry fields")
 
 (defvar sync0-bibtex-entry-types
   '("Article" "MvBook" "Book" "InBook" "InCollection" "MvCollection" "Collection" "Unpublished" "Thesis" "MvProceedings" "Proceedings" "InProceedings" "Online" "Report" "Manual" "Misc")
@@ -69,21 +72,28 @@
   '("title" "date" "author" "crossref" "pages" "language" "langid" "file" "keywords")
   "List of Bibtex entry fields")
 
+(defvar sync0-bibtex-completion-single-fields
+  '("publisher" "journaltitle" "location" "title" "note" "library" "series" "institution" "language" "site" "relatedtype" "editortype" "lecture" "seminar")
+   "List of biblatex fields that are set with the completing-read
+function---as opposed to those defined with
+completing-read-multiple, which appear in
+sync0-bibtex-string-multiple-fields.")
+
 (defvar sync0-bibtex-completion-fields
-  '("publisher" "journaltitle" "location" "title" "author" "keywords" "note" "library" "series" "medium" "institution" "language" "doctype" "project" "site" "country")
-  "List of Bibtex entry completion fields")
+  (append sync0-bibtex-completion-single-fields
+          sync0-bibtex-string-multiple-fields
+          (list "author"))
+  "List of Bibtex entry completion fields. This variable does not
+hold all the bibtlatex fields that take completion, but rather
+those variables that should provide the template for other
+similar biblatex fields that may employ the same base completion
+file in the sync0-vars directory. This varialbe is important for
+the creation of sync0-bibtex-completion-variables-alist, which is
+used to set up the initial values of the completion vars to be
+used by my biblatex functions.")
 
-;; Set completion vars and create an alist of variables used to define their initial values to be used in completion.
-
-;; (let ((prefix "sync0-bibtex-completion-")
-;;       x)
-;;   (dolist (element sync0-bibtex-completion-fields x)
-;;     (let ((my-var (intern (concat prefix element))))
-;;       (set my-var nil)
-;;       (push my-var x))))
-
-  ;; (setq sync0-bibtex-completions-collection (nreverse x))
-
+;; Set completion vars and create an alist of variables used to define
+;; their initial values to be used in completion.
 (let ((prefix "sync0-bibtex-completion-")
       (file-prefix (concat sync0-vars-dir "bibtex-completion-"))
       x)
@@ -94,6 +104,37 @@
       (set my-var nil)
       (push cell x)))
   (setq sync0-bibtex-completion-variables-alist x))
+
+  ;; (setq sync0-bibtex-completions-collection (nreverse x))
+
+(defvar sync0-bibtex-completion-variables-list nil
+  "List of variables used for updating completion files.")
+
+;; Configure people variables and add them to var
+;; sync0-bibtex-completion-variables-list
+(dolist (element sync0-bibtex-people-fields)
+  (let* ((my-var (intern (concat "sync0-bibtex-entry-" element)))
+         (comp-file (concat sync0-vars-dir "bibtex-completion-author.txt"))
+         (my-list-elem (list element my-var 'sync0-bibtex-completion-author comp-file)))  
+    (unless (file-exists-p comp-file)
+      (make-empty-file comp-file))
+    (push my-list-elem sync0-bibtex-completion-variables-list)))
+
+(let* ((exceptions (list "author"))
+       (x (cl-set-difference sync0-bibtex-completion-fields exceptions :test 'string=)))
+  ;; Remove languages to prevent overwriting the function it currently has
+  (dolist (element x)
+    (let* ((my-var (intern (concat "sync0-bibtex-entry-" element)))
+           (comp-var (intern (concat "sync0-bibtex-completion-" element)))
+           (comp-file (concat sync0-vars-dir "bibtex-completion-" element ".txt"))
+           (my-list-elem (list element my-var comp-var comp-file)))  
+      (unless (file-exists-p comp-file)
+        (make-empty-file comp-file))
+      (push my-list-elem sync0-bibtex-completion-variables-list))))
+
+;; Check existance of completion files and create those that are
+;; missing.
+;; CREATE THIS FUNC
 
 ;; Create certain helper variables used for calculating various things
 ;; for all the variables that correspond to the objects in the var
@@ -107,12 +148,18 @@ a Bibtex entry.")
 ;; bibtex entries. these do not appear in the bibtex entry but are
 ;; used for calculating certain things that appear on notes or the
 ;; entry.
-(let ((prefix "sync0-bibtex-entry-"))
-  (dolist (element '("type-downcase" "crossref-entry" "title-fixed" "title-aliases" "editor-over-author" "title-compatible" "lastname" "related-tag" "doctype-fixed" "doctype-tag" "key" "medium-fixed" "project-fixed" "file-old" "country-tag"))
+(let* ((prefix "sync0-bibtex-entry-")
+       (no-key-list (remove "keywords" sync0-bibtex-string-multiple-fields))
+       (mult-var-tag (mapcar (lambda (x) (concat x "-tag")) no-key-list))
+       (mult-var-fix (mapcar (lambda (x) (concat x "-fixed")) no-key-list))
+       (raw-list (list "type-downcase" "crossref-entry" "title-fixed" "title-aliases" "editor-over-author" "title-compatible" "lastname" "related-tag" "key" "file-old"))
+       (full-list (append mult-var-tag mult-var-fix raw-list)))
+  (dolist (element full-list) 
     (let ((my-var (intern (concat prefix element))))
       (set my-var nil)
       (push my-var sync0-bibtex-entry-helper-fields-list))))
 
+;; Define helper fields for people and date fields. 
 (defvar sync0-bibtex-entry-people-helper-fields-list nil
   "Bibtex dummy fields used for calculation purposes of values for
 a Bibtex entry.")
@@ -246,13 +293,15 @@ titles and the like.")
     ("pagetotal" "" "" sync0-bibtex-entry-pagetotal)
     ("url" "\"" "\"" sync0-bibtex-entry-url)
     ("medium" "[" "]" sync0-bibtex-entry-medium-fixed)
-    ("country" "[" "]" sync0-bibtex-entry-country)
+    ;; ("country" "[" "]" sync0-bibtex-entry-country-fixed)
     ("project" "[" "]" sync0-bibtex-entry-project-fixed)
     ("cote" "\"" "\"" sync0-bibtex-entry-cote)
     ("language" "" "" sync0-bibtex-entry-language)
     ("library" "[\"" "\"]" sync0-bibtex-entry-library))
   "Variable that commands how certain bibtex fields of an entry are
-to appear in Obsidian markdown notes corresponding to it.")
+to appear in Obsidian markdown notes corresponding to it. It is
+very to set this variable explicitly to avoid mishandlings by
+Obsidian of produced markdown (corrupt YAML frontmatters).")
 
 ;; Add author and date helper fields to variable
 ;; sync0-bibtex-obsidian-fields-list
@@ -267,25 +316,14 @@ to appear in Obsidian markdown notes corresponding to it.")
 
 (defvar sync0-bibtex-tag-fields-list
   '(("type" "reference/" sync0-bibtex-entry-type-downcase)
-    ;; ("date" "" sync0-bibtex-entry-date-tag)
-    ;; ("origdate" "" sync0-bibtex-entry-origdate-tag)
-    ;; ("eventdate" "" sync0-bibtex-entry-eventdate-tag)
-    ;; ("urldate" "" sync0-bibtex-entry-urldate-tag)
     ("crossref" "crossref/" sync0-bibtex-entry-crossref)
-    ;; ("created" "" sync0-bibtex-entry-created-tag)
     ("doctype" "" sync0-bibtex-entry-doctype-tag)
     ("language" "language/" sync0-bibtex-entry-language)
-    ("country" "country/" sync0-bibtex-entry-country-tag)
+    ("country" "" sync0-bibtex-entry-country-tag)
     ("edition" "edition/" sync0-bibtex-entry-edition)
     ("related" "related/" sync0-bibtex-entry-related-tag)
     ("project" "project/" sync0-bibtex-entry-project)
     ("relatedtype" "relatedtype/" sync0-bibtex-entry-relatedtype))
-    ;; ("translator" "translator/" sync0-bibtex-entry-translator-tag)
-    ;; ("introduction" "introduction/" sync0-bibtex-entry-introduction-tag)
-    ;; ("recipient" "recipient/" sync0-bibtex-entry-recipient-tag)
-    ;; ("people" "people/" sync0-bibtex-entry-people-tag)
-    ;; ("editor" "editor/" sync0-bibtex-entry-editor-tag)
-    ;; ("author" "author/" sync0-bibtex-entry-author-tag)
   "Variable that commands how certain bibtex fields of an entry are
 to appear in tags of Obsidian markdown notes corresponding to
 it.")
@@ -311,6 +349,9 @@ it.")
 
 (defvar sync0-bibtex-maximum-lastnames 2
   "Maximum no. of lastnames to appear in titles")
+
+
+
 
 (setq sync0-bibtex-base-fields
       '("title"

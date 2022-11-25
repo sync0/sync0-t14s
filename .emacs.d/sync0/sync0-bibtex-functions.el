@@ -95,8 +95,23 @@ bibtex does not take lists but strings as arguments."
               sync0-bibtex-lastname-abbrev-string)
       string)))
 
-(defmacro sync0-bibtex-quotify-var (var)
-  "Put the values of var with quotes."
+(defun sync0-bibtex-obsidian-tagify (sep my-string)
+  "Make my-string compatible with the tags of obsidian by
+downcasing and removing whitespace from tags to be included as
+keywords in biblatex entries and obsidian markdown files."
+  (let* ((nospace (s-trim sep))
+         (regex (concat "[^" nospace "]\\([[:space:]]+\\)"))
+         (nospace (replace-regexp-in-string regex "-" my-string nil t 1)))
+        (downcase nospace)))
+
+(defmacro sync0-bibtex-tagify-var (var)
+  "Put the values of var with quotes. This function prepares two
+helper variables for biblatex fields that have multiple
+completion options such as medium and doctype (keywords is
+special, thus it should not be subjected to this functions).
+Specifically, the helper variables that end in -tag and -fixed,
+which are used for various functions, are created with this
+function."
   `(unless (sync0-null-p ,var)
      ;; first remove the sync0-bibtex-entry- prefix to use later
      (set (intern (concat ,(symbol-name var) "-fixed"))
@@ -113,9 +128,10 @@ bibtex does not take lists but strings as arguments."
           (let* ((var-end (when (string-match "sync0-bibtex-entry-\\([[:alnum:]]+\\)" ,(symbol-name var))
                             (match-string-no-properties 1 ,(symbol-name var))))
                  (tag-prefix (concat var-end "/")))
-            (if (string-match ", " ,var)
-                (sync0-add-prefix-to-list-convert-to-string ,var ", " tag-prefix)
-              (concat tag-prefix ,var))))))
+            (sync0-bibtex-obsidian-tagify ", "
+                                          (if (string-match ", " ,var)
+                                              (sync0-add-prefix-to-list-convert-to-string ,var ", " tag-prefix)
+                                            (concat tag-prefix ,var)))))))
 
 (defmacro sync0-bibtex-fix-names (var)
   "Put the names of var in the right order for calculation of
@@ -200,28 +216,6 @@ biblatex standard instead of bibtex."
         (concat one two))
     (upcase-initials entrytype)))
 
-;; (defun sync0-bibtex-add-missing-braces (string)
-;;   "Function to correct an error in bibtex-completion-get-value from
-;; bibtex-completion package, in which the latex forms \textbf{...}
-;; are retrieved without the last matching brace, which causes a lot
-;; of crazy problems"
-;;   (if (and (string-match "\\textit{[[:graph:] ]+}" string)
-;;            (not (string-match "\\textit{[[:graph:] ]+[^}]" string)))
-;;       string
-;;     (if (string-match "\\textit{[[:graph:] ]+[^}]$" string)
-;;         (concat string "}")
-;;       string)))
-
-;; (defun sync0-bibtex-add-missing-braces (string)
-;;   "Function to correct an error in bibtex-completion-get-value from
-;; bibtex-completion package, in which the latex forms \textbf{...}
-;; are retrieved without the last matching brace, which causes a lot
-;; of crazy problems"
-;;   (if (and (string-match "\\textit{[[:graph:] ]+}" string)
-;;            (not (string-match "\\textit{[[:graph:] ]+[^}]" string)))
-;;       string
-;;     (concat string "}")))
-
 (defun sync0-bibtex-add-missing-braces (string)
   "Function to correct an error in bibtex-completion-get-value from
 bibtex-completion package, in which the latex forms \textbf{...}
@@ -230,32 +224,6 @@ of crazy problems"
   (if (string-match "\\textit{[[:graph:] ]+[^}]" string)
       (concat string "}")
     string))
-
-;; (defun sync0-bibtex-fix-obsidian-chars (arg)
-;;   "Remove or replace characters that cause trouble in obsdian
-;; markdown."
-;;   (unless (sync0-null-p arg)
-;;     (setq arg 
-;;           (xah-replace-regexp-pairs-in-string
-;;            (sync0-bibtex-add-missing-braces arg)
-;;            [["\\textit{\\([[:graph:] ]+\\)}" "*\\1*"]
-;;             ["\textit{\\([[:graph:] ]+\\)}" "*\\1*"]]))
-;;     (xah-replace-pairs-in-string
-;;      arg
-;;      [["\\*" "*"]])))
-
-;; (defun sync0-bibtex-fix-obsidian-chars (arg)
-;;   "Remove or replace characters that cause trouble in obsdian
-;; markdown."
-;;   (unless (sync0-null-p arg)
-;;     (setq arg 
-;;           (xah-replace-pairs-in-string-recursive
-;;            (sync0-bibtex-add-missing-braces arg)
-;;            [["\\textit{" "*"]
-;;             ["}" "*"]]))
-;;     (xah-replace-pairs-in-string-recursive
-;;      arg
-;;      [["\\*" "*"]])))
 
 (defun sync0-bibtex-fix-obsidian-chars (arg)
   "Remove or replace characters that cause trouble in obsdian
@@ -268,174 +236,142 @@ markdown."
       ["}" "*"]])))
 
 (defvar sync0-bibtex-entry-functions
-      '(("title" (lambda ()
-                   (setq sync0-bibtex-entry-title
-                         (completing-read "Title of BibLaTeX entry: " sync0-bibtex-completion-title))))
-        ("origtitle" (lambda ()
-                       (setq sync0-bibtex-entry-origtitle
-                             (completing-read "Origtitle of entry: " sync0-bibtex-completion-title))))
-        ("date" (lambda ()
-                  (setq sync0-bibtex-entry-date
-                        (read-string "Date (ex. 1890-18-12) : " sync0-bibtex-entry-initial-date))))
-        ("created" (lambda ()
-                     (setq sync0-bibtex-entry-created-tag
-                           (format-time-string "%Y/%m/%d"))
-                     (setq sync0-bibtex-entry-created
-                           (format-time-string "%Y-%m-%d"))))
-        ("origdate" (lambda ()
-                      (setq sync0-bibtex-entry-origdate
-                            (read-string "Origdate (ex. 1890-18-12) : " sync0-bibtex-entry-initial-origdate))))
-        ("editortype" (lambda ()
-                         (setq sync0-bibtex-entry-editortype
-                               (completing-read "Type d'éditeur : "
-                                                '("editor" "compiler" "founder" "continuator" "redactor" "reviser" "collaborator" "organizer")))))
-        ("series" (lambda ()
-                    (setq sync0-bibtex-entry-series
-                          (completing-read "Series : " sync0-bibtex-completion-series))))
-        ("publisher" (lambda ()
-                       (setq sync0-bibtex-entry-publisher
-                             (completing-read "Maison d'edition : " sync0-bibtex-completion-publisher))))
-        ("url" (lambda ()
-                 (unless sync0-bibtex-entry-urldate
-                   (setq sync0-bibtex-entry-urldate 
-                           (format-time-string "%Y-%m-%d")))
-                 (setq sync0-bibtex-entry-url
-                       (read-string "Url : " nil nil nil t))))
-        ("urldate" (lambda ()
-                     (setq sync0-bibtex-entry-urldate
-                           (if sync0-bibtex-entry-creation
-                               (when (bound-and-true-p sync0-bibtex-entry-url)
-                                 (format-time-string "%Y-%m-%d"))
-                             (format-time-string "%Y-%m-%d")))))
-        ("language" (lambda ()
-                      (setq sync0-bibtex-entry-language
-                            (completing-read "Choose language : "
-                                             sync0-bibtex-completion-language nil nil sync0-bibtex-entry-initial-language))
-                      (setq sync0-bibtex-entry-langid sync0-bibtex-entry-language)))
-        ("langid" (lambda ()
-                    (if (sync0-null-p sync0-bibtex-entry-language)
-                        (setq sync0-bibtex-entry-langid
-                              (completing-read "Choose language : "
-                                               sync0-bibtex-completion-language nil nil sync0-bibtex-entry-initial-language))
-                      (setq sync0-bibtex-entry-langid sync0-bibtex-entry-language))))
-        ("origlanguage" (lambda ()
-                          (setq sync0-bibtex-entry-origlanguage
-                                (completing-read "Choose original language : "
-                                                 sync0-bibtex-completion-language nil nil sync0-bibtex-entry-initial-language))))
-        ("library" (lambda ()
-                     (setq sync0-bibtex-entry-library
-                           (completing-read "Choose location to trace back: "
-                                            sync0-bibtex-completion-library nil nil nil))))
-        ("file" (lambda ()
-                  (if sync0-bibtex-entry-creation
-                      (setq sync0-bibtex-entry-file
-                            (concat ":" sync0-zettelkasten-attachments-directory sync0-bibtex-entry-key ".pdf:PDF"))
-                    (if sync0-bibtex-entry-file-old
-                        (setq sync0-bibtex-entry-file
-                              (let* ((attachments (bibtex-completion-find-pdf sync0-bibtex-entry-key))
-                                     (new-extension (completing-read "Choose extension to add" bibtex-completion-pdf-extension))
-                                     (new-extension-caps (upcase (substring new-extension 1)))
-                                     (new-attach (concat ":" sync0-zettelkasten-attachments-directory sync0-bibtex-entry-key new-extension ":" new-extension-caps)))
-                                (cond ((> (length attachments) 1)
-                                       (let (x)
-                                         (dolist (element attachments x)
-                                           (let* ((extension (file-name-extension element t))
-                                                  (extension-sans (upcase (substring extension 1 nil))))
-                                             (setq x (concat x ":" element extension ":" extension-sans ";"))))
-                                         (concat x new-attach)))
-                                      ((equal (length attachments) 1)
-                                       (let* ((single-attach (car attachments))
-                                              (old-extension-caps (upcase (file-name-extension single-attach))))
-                                         (concat ":" single-attach ":" old-extension-caps ";" new-attach)))
-                                      (t new-attach))))
-                      (setq sync0-bibtex-entry-file
-                            (let* ((extension (completing-read "Choose extension to add" bibtex-completion-pdf-extension))
-                                   (extension-sans (upcase (substring extension 1))))
-                              (concat ":" sync0-zettelkasten-attachments-directory sync0-bibtex-entry-key extension ":" extension-sans)))))))
-        ("journaltitle" (lambda ()
-                          (setq sync0-bibtex-entry-journaltitle
-                                (completing-read "Titre du journal : " sync0-bibtex-completion-journaltitle))))
-        ("site" (lambda ()
-                      (setq sync0-bibtex-entry-site
-                            (completing-read "Site : " sync0-bibtex-completion-site))))
-        ("location" (lambda ()
-                      (setq sync0-bibtex-entry-location
-                            (completing-read "Location : " sync0-bibtex-completion-location))))
-        ("note" (lambda ()
-                  (setq sync0-bibtex-entry-note
-                        (completing-read "Quelle note ou addenda ? : "
-                                         sync0-bibtex-completion-note))))
-        ("booktitle" (lambda ()
-                       (setq sync0-bibtex-entry-booktitle
-                             (if sync0-bibtex-entry-crossref 
-                                 (bibtex-completion-get-value "title" sync0-bibtex-entry-crossref-entry)
-                               (read-string "Book title : ")))))
-        ("booksubtitle" (lambda ()
-                          (setq sync0-bibtex-entry-booksubtitle
-                                (if sync0-bibtex-entry-crossref 
-                                    (bibtex-completion-get-value "subtitle" sync0-bibtex-entry-crossref-entry)
-                                  (read-string "Book subtitle : ")))))
-        ("institution" (lambda ()
-                         (setq sync0-bibtex-entry-institution
-                               (completing-read "Institution : " sync0-bibtex-completion-institution))))
-        ("crossref" (lambda ()
-                      (when (yes-or-no-p "Load crossref? ")
-                        (setq sync0-bibtex-entry-crossref 
-                              (sync0-bibtex-completion-choose-key t t))
-                        (setq sync0-bibtex-entry-crossref-entry
-                              (bibtex-completion-get-entry sync0-bibtex-entry-crossref))
-                        (setq sync0-bibtex-entry-initial-date
-                              (bibtex-completion-get-value "date" sync0-bibtex-entry-crossref-entry)
-                              sync0-bibtex-entry-initial-origdate
-                              (bibtex-completion-get-value "origdate" sync0-bibtex-entry-crossref-entry)
-                              sync0-bibtex-entry-initial-author
-                              (if (or (string= sync0-bibtex-entry-type-downcase "collection")
-                                      (string= sync0-bibtex-entry-type-downcase "incollection")
-                                      (string= sync0-bibtex-entry-type-downcase "proceedings")
-                                      (string= sync0-bibtex-entry-type-downcase "inproceedings"))
-                                  (bibtex-completion-get-value "editor" sync0-bibtex-entry-crossref-entry)
-                                (bibtex-completion-get-value "author" sync0-bibtex-entry-crossref-entry))
-                              sync0-bibtex-entry-initial-language
-                              (bibtex-completion-get-value "language" sync0-bibtex-entry-crossref-entry)))))
-        ("related" (lambda ()
-                     (setq sync0-bibtex-entry-related (sync0-bibtex-completion-choose-key nil t))))
-        ("relatedtype" (lambda ()
-                         (setq sync0-bibtex-entry-relatedtype
-                               (completing-read "Type de relation : "
-                                                '("multivolume" "origpubas" "reviewof" "reprintof" "reprintas" "reprintfrom" "translationas" "translationfrom" "translationof")))))
-        ("keywords" (lambda ()
-                      ;; Requires package unidecode for conversion to
-                      ;; ASCII. See:
-                      ;; https://github.com/sindikat/unidecode
-                      (setq sync0-bibtex-entry-keywords
-                            (unidecode
-                             (let* ((actual-fields-list
-                                     (let (x)
-                                       (dolist (element sync0-bibtex-tag-fields-list x) 
-                                         (unless (sync0-null-p (symbol-value (caddr element)))
-                                           (setq x (cons (concat (cadr element)  (eval (caddr element))) x))))))
-                                    ;; (push (concat (cadr element)  (eval (caddr element))) x)
-                                    (extra-keywords (completing-read-multiple "Input extra keywords: " 
-                                                                              sync0-bibtex-completion-keywords))
-                                    (master-list (if (sync0-null-p extra-keywords)
-                                                     actual-fields-list
-                                                   (cl-union actual-fields-list extra-keywords))))
-                               (sync0-show-elements-of-list master-list ", ")))))))
-      "List of lists in which the car of each list is bibtex-field and
+  '(("origtitle" (lambda ()
+                   (setq sync0-bibtex-entry-origtitle
+                         (completing-read "Origtitle of entry: " sync0-bibtex-completion-title))))
+    ("date" (lambda ()
+              (setq sync0-bibtex-entry-date
+                    (read-string "Date (ex. 1890-18-12) : " sync0-bibtex-entry-initial-date))))
+    ("created" (lambda ()
+                 (setq sync0-bibtex-entry-created-tag
+                       (format-time-string "%Y/%m/%d"))
+                 (setq sync0-bibtex-entry-created
+                       (format-time-string "%Y-%m-%d"))))
+    ("origdate" (lambda ()
+                  (setq sync0-bibtex-entry-origdate
+                        (read-string "Origdate (ex. 1890-18-12) : " sync0-bibtex-entry-initial-origdate))))
+    ;; ("url" (lambda ()
+    ;;          (unless sync0-bibtex-entry-urldate
+    ;;            (setq sync0-bibtex-entry-urldate 
+    ;;                  (format-time-string "%Y-%m-%d")))
+    ;;          (setq sync0-bibtex-entry-url
+    ;;                (read-string "Url : " nil nil nil t))))
+    ("urldate" (lambda ()
+                 (setq sync0-bibtex-entry-urldate
+                       (if sync0-bibtex-entry-creation
+                           (when (bound-and-true-p sync0-bibtex-entry-url)
+                             (format-time-string "%Y-%m-%d"))
+                         (format-time-string "%Y-%m-%d")))))
+    ("language" (lambda ()
+                  (setq sync0-bibtex-entry-language
+                        (completing-read "Choose language : "
+                                         sync0-bibtex-completion-language nil nil sync0-bibtex-entry-initial-language))
+                  (setq sync0-bibtex-entry-langid sync0-bibtex-entry-language)))
+    ("langid" (lambda ()
+                (if (sync0-null-p sync0-bibtex-entry-language)
+                    (setq sync0-bibtex-entry-langid
+                          (completing-read "Choose language : "
+                                           sync0-bibtex-completion-language nil nil sync0-bibtex-entry-initial-language))
+                  (setq sync0-bibtex-entry-langid sync0-bibtex-entry-language))))
+    ("origlanguage" (lambda ()
+                      (setq sync0-bibtex-entry-origlanguage
+                            (completing-read "Choose original language : "
+                                             sync0-bibtex-completion-language nil nil sync0-bibtex-entry-initial-language))))
+    ("file" (lambda ()
+              (if sync0-bibtex-entry-creation
+                  (setq sync0-bibtex-entry-file
+                        (concat ":" sync0-zettelkasten-attachments-directory sync0-bibtex-entry-key ".pdf:PDF"))
+                (if sync0-bibtex-entry-file-old
+                    (setq sync0-bibtex-entry-file
+                          (let* ((attachments (bibtex-completion-find-pdf sync0-bibtex-entry-key))
+                                 (new-extension (completing-read "Choose extension to add" bibtex-completion-pdf-extension))
+                                 (new-extension-caps (upcase (substring new-extension 1)))
+                                 (new-attach (concat ":" sync0-zettelkasten-attachments-directory sync0-bibtex-entry-key new-extension ":" new-extension-caps)))
+                            (cond ((> (length attachments) 1)
+                                   (let (x)
+                                     (dolist (element attachments x)
+                                       (let* ((extension (file-name-extension element t))
+                                              (extension-sans (upcase (substring extension 1 nil))))
+                                         (setq x (concat x ":" element extension ":" extension-sans ";"))))
+                                     (concat x new-attach)))
+                                  ((equal (length attachments) 1)
+                                   (let* ((single-attach (car attachments))
+                                          (old-extension-caps (upcase (file-name-extension single-attach))))
+                                     (concat ":" single-attach ":" old-extension-caps ";" new-attach)))
+                                  (t new-attach))))
+                  (setq sync0-bibtex-entry-file
+                        (let* ((extension (completing-read "Choose extension to add" bibtex-completion-pdf-extension))
+                               (extension-sans (upcase (substring extension 1))))
+                          (concat ":" sync0-zettelkasten-attachments-directory sync0-bibtex-entry-key extension ":" extension-sans)))))))
+    ("booktitle" (lambda ()
+                   (setq sync0-bibtex-entry-booktitle
+                         (if sync0-bibtex-entry-crossref 
+                             (bibtex-completion-get-value "title" sync0-bibtex-entry-crossref-entry)
+                           (read-string "Book title : ")))))
+    ("booksubtitle" (lambda ()
+                      (setq sync0-bibtex-entry-booksubtitle
+                            (if sync0-bibtex-entry-crossref 
+                                (bibtex-completion-get-value "subtitle" sync0-bibtex-entry-crossref-entry)
+                              (read-string "Book subtitle : ")))))
+    ("crossref" (lambda ()
+                  (when (yes-or-no-p "Load crossref? ")
+                    (setq sync0-bibtex-entry-crossref 
+                          (sync0-bibtex-completion-choose-key t t))
+                    (setq sync0-bibtex-entry-crossref-entry
+                          (bibtex-completion-get-entry sync0-bibtex-entry-crossref))
+                    (setq sync0-bibtex-entry-initial-date
+                          (bibtex-completion-get-value "date" sync0-bibtex-entry-crossref-entry)
+                          sync0-bibtex-entry-initial-origdate
+                          (bibtex-completion-get-value "origdate" sync0-bibtex-entry-crossref-entry)
+                          sync0-bibtex-entry-initial-author
+                          (if (or (string= sync0-bibtex-entry-type-downcase "collection")
+                                  (string= sync0-bibtex-entry-type-downcase "incollection")
+                                  (string= sync0-bibtex-entry-type-downcase "proceedings")
+                                  (string= sync0-bibtex-entry-type-downcase "inproceedings"))
+                              (bibtex-completion-get-value "editor" sync0-bibtex-entry-crossref-entry)
+                            (bibtex-completion-get-value "author" sync0-bibtex-entry-crossref-entry))
+                          sync0-bibtex-entry-initial-language
+                          (bibtex-completion-get-value "language" sync0-bibtex-entry-crossref-entry)))))
+    ("related" (lambda ()
+                 (setq sync0-bibtex-entry-related (sync0-bibtex-completion-choose-key nil t))))
+    ("keywords" (lambda ()
+                  ;; Requires package unidecode for conversion to
+                  ;; ASCII. See:
+                  ;; https://github.com/sindikat/unidecode
+                  (setq sync0-bibtex-entry-keywords
+                        (unidecode
+                         (let* ((actual-fields-list
+                                 (let (x)
+                                   (dolist (element sync0-bibtex-tag-fields-list x) 
+                                     (unless (sync0-null-p (symbol-value (caddr element)))
+                                       (setq x (cons (concat (cadr element)  (eval (caddr element))) x))))))
+                                ;; (push (concat (cadr element)  (eval (caddr element))) x)
+                                (extra-keywords (completing-read-multiple "Input extra keywords: " 
+                                                                          sync0-bibtex-completion-keywords))
+                                (master-list (if (sync0-null-p extra-keywords)
+                                                 actual-fields-list
+                                               (cl-union actual-fields-list extra-keywords))))
+                           (sync0-show-elements-of-list master-list ", ")))))))
+  "List of lists in which the car of each list is bibtex-field and
 the cdr is a lambda function with all the actions that should be
 carried to calculate the value it will take in a BibLaTeX entry.")
 
-(dolist (element sync0-bibtex-string-multiple-fields)
-  (let* ((my-var (intern (concat "sync0-bibtex-entry-" element)))
-         (comp-var (intern (concat "sync0-bibtex-completion-" element)))
-         (help-string (concat (upcase-initials element) ": "))
-         (my-base-func  (list  'completing-read-multiple help-string comp-var)) 
-         (my-list-string (list 'sync0-show-elements-of-list my-base-func ", "))
-         (my-macro  (list 'setq my-var  my-list-string)) 
-         (my-func (list 'lambda () my-macro))
-         (my-cons (cons element (list my-func))))
-    (push my-cons sync0-bibtex-entry-functions)))
+;; Set functions for biblatex fields that require completion of multiple
+;; things.
+(let ((x (remove "keywords" sync0-bibtex-string-multiple-fields)))
+  ;; Remove keywords to prevent overwriting the function it currently has
+  (dolist (element x)
+    (let* ((my-var (intern (concat "sync0-bibtex-entry-" element)))
+           (comp-var (intern (concat "sync0-bibtex-completion-" element)))
+           (help-string (concat (upcase-initials element) ": "))
+           (my-base-func  (list  'completing-read-multiple help-string comp-var)) 
+           (my-list-string (list 'sync0-show-elements-of-list my-base-func ", "))
+           (my-macro  (list 'setq my-var  my-list-string)) 
+           (my-func (list 'lambda () my-macro))
+           (my-cons (cons element (list my-func))))
+      (push my-cons sync0-bibtex-entry-functions))))
 
+;; Set functions for biblatex fields that are defined with read-string
 (dolist (element sync0-bibtex-string-fields)
   (let* ((my-var (intern (concat "sync0-bibtex-entry-" element)))
          (help-string (concat (upcase-initials element) ": "))
@@ -445,6 +381,7 @@ carried to calculate the value it will take in a BibLaTeX entry.")
          (my-cons (cons element (list my-func))))
     (push my-cons sync0-bibtex-entry-functions)))
 
+;; Set functions for biblatex fields that require completion of people
 (dolist (element sync0-bibtex-people-fields)
   (let* ((my-var (intern (concat "sync0-bibtex-entry-" element)))
          (help-string (concat (upcase-initials element) "(s): "))
@@ -453,6 +390,20 @@ carried to calculate the value it will take in a BibLaTeX entry.")
          (my-cons (cons element (list my-func))))
     (push my-cons sync0-bibtex-entry-functions)))
 
+;; Set functions for biblatex fields that require completion of single
+;; things.
+(let* ((exceptions (list "language"))
+       (x (cl-set-difference sync0-bibtex-completion-single-fields exceptions :test 'string=)))
+  ;; Remove languages to prevent overwriting the function it currently has
+  (dolist (element x)
+    (let* ((my-var (intern (concat "sync0-bibtex-entry-" element)))
+           (comp-var (intern (concat "sync0-bibtex-completion-" element)))
+           (help-string (concat (upcase-initials element) ": "))
+           (my-base-func  (list  'completing-read help-string comp-var)) 
+           (my-macro  (list 'setq my-var  my-base-func)) 
+           (my-func (list 'lambda () my-macro))
+           (my-cons (cons element (list my-func))))
+      (push my-cons sync0-bibtex-entry-functions))))
 
 (defun sync0-bibtex-correct-crossref-fields ()
   "Correct crossref fields to prevent errors generated by the way
@@ -768,9 +719,13 @@ prevent undesired results."
     ;; present in an entry.
     (when sync0-bibtex-entry-crossref
       (sync0-bibtex-correct-crossref-fields))
-      ;;; Configure the author dummy variables avoiding conflicts with
-      ;;; the editor field. This part is also necessary to calculate
-      ;;; the name of the person used in calculating entries. 
+      ;;; The following three functions are used to calculate the titles
+      ;;; (and their accompanying dummy variables) of the Obsidian
+      ;;; markdown notes and others.
+       ;;; Configure the author dummy
+       ;;; variables avoiding conflicts with the editor field. This
+       ;;; part is also necessary to calculate the name of the person
+       ;;; used in calculating entries.
     ;; Set author or editor fields
     (sync0-bibtex-set-author-or-editor-extra-fields)
     ;; Set date fields
@@ -786,23 +741,28 @@ prevent undesired results."
                    (sync0-add-prefix-to-list-convert-to-string sync0-bibtex-entry-related ", " "related/"))
                   (t sync0-bibtex-entry-related))))
     ;; Fix problems with calculation of doctype tag.
-    ;; (when sync0-bibtex-entry-doctype
-    (unless (sync0-null-p sync0-bibtex-entry-doctype)
-      (sync0-bibtex-quotify-var sync0-bibtex-entry-doctype))
-    ;; Calculate the people fields
-    ;; (let* ((to-remove (list "author" "editor" "translator"))
-    ;;        (my-list (cl-set-difference sync0-bibtex-people-fields to-remove :test 'string=)))
-    ;;   (dolist (element my-list)
-    ;;     (let* ((my-var-string (concat "sync0-bibtex-entry-" element))
-    ;;            (my-var (intern my-var-string))) 
-    ;;       (unless (sync0-null-p my-var)
-    ;;         (sync0-bibtex-fix-names my-var)))))
+    ;;;; (when sync0-bibtex-entry-doctype
+    ;; (unless (sync0-null-p sync0-bibtex-entry-doctype)
+    ;; (sync0-bibtex-tagify-var sync0-bibtex-entry-doctype))
+    ;;
+    ;; Fix problems with calculation of tags for biblatex fields that
+    ;; allow multiple completion.
+    (let* ((to-remove (list "keywords"))
+           (my-list (cl-set-difference sync0-bibtex-string-multiple-fields to-remove :test 'string=)))
+      (dolist (element my-list)
+        (let ((my-var (intern (concat "sync0-bibtex-entry-" element))))
+          (eval `(sync0-bibtex-tagify-var ,my-var)))))
+    ;; Calculate the people fields; the reason for excluding author,
+    ;; editor and translator fields is that these are necessary for
+    ;; the cumbersome calculation of titles. 
     (let* ((to-remove (list "author" "editor" "translator"))
            (my-list (cl-set-difference sync0-bibtex-people-fields to-remove :test 'string=)))
       (dolist (element my-list)
         (let ((my-var (intern (concat "sync0-bibtex-entry-" element))))
           (eval `(sync0-bibtex-fix-names ,my-var)))))
-    ;; Calculate the translator field
+    ;; Calculate the translator field. This is calculated separately
+    ;; to allow for some flexibility in including the translator
+    ;; field, when present, in Obsidian markdown notes.
     (unless (sync0-null-p sync0-bibtex-entry-translator)
       (sync0-bibtex-fix-names sync0-bibtex-entry-translator)
       (setq sync0-bibtex-entry-translator-lastname
@@ -973,27 +933,6 @@ function is to be used only in pipes."
   ;;         (setq sync0-bibtex-entry-relatedtype
   ;;               (completing-read "Type de relation : " '("multivolume" "origpubas" "reviewof" "reprintof" "reprintas" "reprintfrom" "translationas" "translationfrom" "translationof"))))))
 
-  (defvar sync0-bibtex-completion-variables-list
-    '(("publisher" sync0-bibtex-entry-publisher sync0-bibtex-completion-publisher "~/.emacs.d/sync0-vars/bibtex-completion-publisher.txt")
-      ("journaltitle" sync0-bibtex-entry-journaltitle sync0-bibtex-completion-journaltitle "~/.emacs.d/sync0-vars/bibtex-completion-journaltitle.txt")
-      ("location" sync0-bibtex-entry-location sync0-bibtex-completion-location "~/.emacs.d/sync0-vars/bibtex-completion-location.txt")
-      ("series" sync0-bibtex-entry-series sync0-bibtex-completion-series "~/.emacs.d/sync0-vars/bibtex-completion-series.txt")
-      ("title" sync0-bibtex-entry-title sync0-bibtex-completion-title "~/.emacs.d/sync0-vars/bibtex-completion-title.txt")
-      ("doctype" sync0-bibtex-entry-doctype sync0-bibtex-completion-doctype "~/.emacs.d/sync0-vars/bibtex-completion-doctype.txt")
-      ("note" sync0-bibtex-entry-note sync0-bibtex-completion-note "~/.emacs.d/sync0-vars/bibtex-completion-note.txt")
-      ("library" sync0-bibtex-entry-library sync0-bibtex-completion-library "~/.emacs.d/sync0-vars/bibtex-completion-library.txt")
-      ("institution" sync0-bibtex-entry-institution sync0-bibtex-completion-institution "~/.emacs.d/sync0-vars/bibtex-completion-institution.txt")
-      ("country" sync0-bibtex-entry-country sync0-bibtex-completion-country "~/.emacs.d/sync0-vars/bibtex-completion-country.txt")
-      ("keywords" sync0-bibtex-entry-keywords sync0-bibtex-completion-keywords "~/.emacs.d/sync0-vars/bibtex-completion-keywords.txt")
-      ("language" sync0-bibtex-entry-language sync0-bibtex-completion-language  "~/.emacs.d/sync0-vars/bibtex-completion-language.txt"))
-    "List of variables used for updating completion files.")
-
-;; Configure people variables and add them to var sync0-bibtex-completion-variables-list
-(dolist (element sync0-bibtex-people-fields)
-  (let* ((my-var (intern (concat "sync0-bibtex-entry-" element)))
-         (my-list-elem (list element my-var 'sync0-bibtex-completion-author "~/.emacs.d/sync0-vars/bibtex-completion-author.txt")))  
-    (push my-list-elem sync0-bibtex-completion-variables-list)))
-
   (defun sync0-bibtex-update-var (field)
     "Update variables used for completion based on the information
    provided by the new entry."
@@ -1021,8 +960,7 @@ function is to be used only in pipes."
                    (set completion-var completion-list)
                    ;; Send the element to the file.
                    (append-to-file (concat element "\n") nil completion-file)))))
-            ((or (string= field "keywords")
-                 (string= field "doctype"))
+            ((member field sync0-bibtex-string-multiple-fields)
              (let (x)
                (if (string-match ", " new-object)
                    ;; create a list with parts 
