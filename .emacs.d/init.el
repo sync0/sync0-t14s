@@ -481,6 +481,9 @@ empty (not in the lisp sense but in a human-readable sense)."
 
 (use-package s)
 
+(use-package f
+  :straight (f :type git :host github :repo "rejeep/f.el"))
+
   (use-package undo-tree
     :custom
     (undo-tree-enable-undo-in-region nil)
@@ -756,6 +759,9 @@ empty (not in the lisp sense but in a human-readable sense)."
 ;; L'éducation sentimentale (1885)
 ;; "
 )
+
+(require 'echo-bell)
+(echo-bell-mode)
 
 (defun sync0-toggle-mode-line () 
   "toggles the modeline on and off"
@@ -2388,7 +2394,10 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
   (bibtex-align-at-equal-sign t)
   (bibtex-text-indentation 22)
   (bibtex-entry-format '(opts-or-alts page-dashes whitespace braces last-comma inherit-booktitle delimiters sort-fields realign))
- ;; :init
+  ;; :init
+  :hook
+  (bibtex-mode . (lambda ()
+                   (setq fill-column 9999)))
   :config
   (bibtex-set-dialect 'biblatex)
   (require 'bibtex-completion)

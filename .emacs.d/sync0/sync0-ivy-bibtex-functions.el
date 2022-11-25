@@ -168,6 +168,27 @@
     (dolist (key keys)
         (sync0-bibtex-add-key-to-pdf key)))
 
+(defun bibtex-completion-concatenate-pdf-list (keys)
+  "Concatenate pdfs corresponding to keys"
+  (let* ((output (concat sync0-zettelkasten-attachments-directory "temp.pdf"))
+         (raw-command (concat "gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -sOutputFile=" output " "))
+         (pdf (if (yes-or-no-p "Choose key from bibliographies?")
+                  (let ((bibref (sync0-bibtex-completion-choose-key t)))
+                    (concat sync0-zettelkasten-attachments-directory bibref ".pdf"))
+                (read-string "Input full path with name of output pdf: ")))
+         x
+         command)
+    (dolist (key keys)
+      (let  ((file (sync0-bibtex-choose-attachment key "pdf")))
+        (push file x)))
+    (if (null x)
+        (message "One or more bibkeys have no attached pdfs.")
+      (progn 
+        (shell-command (concat raw-command (sync0-show-elements-of-list x " ")))
+        (rename-file output pdf t)
+            (message "Concatenated pdf has been created at " pdf)))))
+
+
 ;; Before being able to call custom functions from ivy-bibtex, these
 ;; have to be manually added to ivy-bibtex. 
 
@@ -185,6 +206,8 @@
 
 (ivy-bibtex-ivify-action bibtex-completion-add-key-to-pdf-list ivy-bibtex-add-key-to-pdf-list)
 
+(ivy-bibtex-ivify-action bibtex-completion-concatenate-pdf-list ivy-bibtex-concatenate-pdf-list)
+
 ;; This is the way to add actions to ivy-bibtex wituhout overwriting
 ;; those already defined.
 (ivy-add-actions
@@ -195,6 +218,7 @@
    ("w" ivy-bibtex-archive-entries-list "Archive Biblatex entries" ivy-bibtex-archive-entries-list)
    ("M" ivy-bibtex-move-entries-to-bibfile-list "Move Biblatex entries to bibfile" ivy-bibtex-move-entries-to-bibfile-list)
    ("K" ivy-bibtex-add-key-to-pdf-list "Add bibkeys to pdfs" ivy-bibtex-add-key-to-pdf-list)
+   ("C" ivy-bibtex-concatenate-pdf-list "Concatenate attached pdfs" ivy-bibtex-concatenate-pdf-list)
    ("x" ivy-bibtex-crop-pdf-list "Crop attachments using model cropbox" ivy-bibtex-crop-pdf-list)))
 
 (defun sync0-ivy-bibtex-with-local-bibliography ()

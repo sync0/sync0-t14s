@@ -1,12 +1,26 @@
 ;; -*- lexical-binding: t -*-
 
 (defvar sync0-bibtex-fields
-  '("title" "subtitle" "origtitle" "eventtitle" "date" "origdate" "eventdate" "author" "editor" "translator" "recipient" "introduction" "journaltitle" "edition" "booktitle" "booksubtitle" "crossref" "chapter" "volume" "volumes" "number" "series" "publisher" "location" "pages" "note" "doi" "url" "urldate" "language" "langid" "origlanguage" "medium" "institution" "library" "related" "relatedtype" "relatedstring" "file" "created" "password" "shorttitle" "doctype" "shorthand" "description" "keywords" "foreword" "afterword" "editortype" "pagetotal" "verba" "cote" "project" "site")
+  '("title" "subtitle" "origtitle" "eventtitle" "date" "origdate" "eventdate" "author" "editor" "translator" "recipient" "introduction" "journaltitle" "edition" "booktitle" "booksubtitle" "crossref" "chapter" "volume" "volumes" "number" "series" "publisher" "location" "pages" "note" "doi" "url" "urldate" "language" "langid" "origlanguage" "medium" "institution" "library" "related" "relatedtype" "relatedstring" "file" "created" "password" "shorttitle" "doctype" "shorthand" "description" "keywords" "foreword" "afterword" "editortype" "pagetotal" "verba" "cote" "project" "site" "version" "people" "country")
   "List of Bibtex entry fields")
+
+(defvar sync0-bibtex-string-fields
+  '("subtitle" "eventtitle" "eventdate" "edition" "chapter" "volume" "volumes" "number" "pages" "pagetotal" "doi" "password" "shorttitle" "shorthand" "description" "verba" "cote" "version")
+  "List of Bibtex entry fields that use read-string for being defined")
+
+(defvar sync0-bibtex-string-multiple-fields
+  '("medium" "doctype" "project" "country")
+  "List of Bibtex entry fields that use completing-read-multiple for being defined")
 
 (defvar sync0-bibtex-date-fields
   '("date" "origdate" "eventdate" "urldate" "created")
   "List of Bibtex entry fields")
+
+(defvar sync0-bibtex-people-fields
+  '("author" "editor" "people" "recipient" "translator" "introduction" "foreword" "afterword")
+  "List of Bibtex entry fields")
+
+  ;; '("author" "editor" "editorone" "people" "recipient" "translator" "introduction" "foreword" "afterword")
 
 (defvar sync0-bibtex-full-fields
   '("title" "subtitle" "date" "origdate" "author" "editor" "journaltitle" "booktitle" "booksubtitle" "translator" "crossref"  "eventdate" "eventtitle" "venue" "volume" "number" "chapter" "edition" "pages" "publisher" "location" "pages" "note" "url" "urldate" "language" "langid" "library" "file" "keywords")
@@ -16,6 +30,9 @@
   '("Article" "MvBook" "Book" "InBook" "InCollection" "MvCollection" "Collection" "Unpublished" "Thesis" "MvProceedings" "Proceedings" "InProceedings" "Online" "Report" "Manual" "Misc")
   "List of Bibtex entry types")
 
+(defvar sync0-bibtex-entry-types-correction '("mvbook" "inbook" "incollection" "mvcollection" "mvproceedings" "inproceedings")
+  "Entry types used to correct case problems when extracting entries from Obsidian into BibLaTex.")
+
 (defvar sync0-bibtex-crossref-types
   '("InBook" "InCollection" "InProceedings")
   "List of Bibtex entry types")
@@ -23,6 +40,21 @@
 ;; (defvar sync0-bibtex-quick-fields
 ;;   '("title" "subtitle" "date" "author" "editor" "note" "url" "urldate" "language" "langid" "library" "file" "keywords")
 ;;   "List of Bibtex entry fields")
+
+(setq sync0-bibtex-obsidian-reference-template-top
+      (concat  "\n## Description\n\n" 
+               "## Progrès de la lecture\n\n"
+               "## Annotations\n\n"
+               "```dataview\n"
+               "TABLE WITHOUT ID\n"
+               "link(file.name, title) AS \"Title\", created AS \"Created\"\n"
+               ;; "title AS \"Titre\"\n"
+               "FROM #permanent/annotation AND #bibkey/"))
+
+(setq sync0-bibtex-obsidian-reference-template-bottom
+      (concat "\n"
+              "SORT created DESC\n"
+              "```\n\n"))
 
 (setq sync0-bibtex-quick-fields
       '("title"
@@ -38,7 +70,7 @@
   "List of Bibtex entry fields")
 
 (defvar sync0-bibtex-completion-fields
-  '("publisher" "journaltitle" "location" "title" "author" "keywords" "note" "library" "series" "medium" "institution" "language" "doctype" "project" "site")
+  '("publisher" "journaltitle" "location" "title" "author" "keywords" "note" "library" "series" "medium" "institution" "language" "doctype" "project" "site" "country")
   "List of Bibtex entry completion fields")
 
 ;; Set completion vars and create an alist of variables used to define their initial values to be used in completion.
@@ -63,7 +95,61 @@
       (push cell x)))
   (setq sync0-bibtex-completion-variables-alist x))
 
-(defvar sync0-alpha "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz"
+;; Create certain helper variables used for calculating various things
+;; for all the variables that correspond to the objects in the var
+;; sync0-bibtex-people-fields
+
+(defvar sync0-bibtex-entry-helper-fields-list nil
+  "Bibtex dummy fields used for calculation purposes of values for
+a Bibtex entry.")
+
+;; use this to define all the dummy fields required for creating
+;; bibtex entries. these do not appear in the bibtex entry but are
+;; used for calculating certain things that appear on notes or the
+;; entry.
+(let ((prefix "sync0-bibtex-entry-"))
+  (dolist (element '("type-downcase" "crossref-entry" "title-fixed" "title-aliases" "editor-over-author" "title-compatible" "lastname" "related-tag" "doctype-fixed" "doctype-tag" "key" "medium-fixed" "project-fixed" "file-old" "country-tag"))
+    (let ((my-var (intern (concat prefix element))))
+      (set my-var nil)
+      (push my-var sync0-bibtex-entry-helper-fields-list))))
+
+(defvar sync0-bibtex-entry-people-helper-fields-list nil
+  "Bibtex dummy fields used for calculation purposes of values for
+a Bibtex entry.")
+
+(defvar sync0-bibtex-entry-date-helper-fields-list nil
+  "Bibtex dummy fields used for calculation purposes of values for
+a Bibtex entry.")
+
+;; Define helper fields for people and date fields. 
+(let ((prefix "sync0-bibtex-entry-")
+      (suffix-fixed "-fixed") 
+      (suffix-tag "-tag"))
+  (dolist (element sync0-bibtex-people-fields)
+    (let ((fixed-var (intern (concat prefix element suffix-fixed)))
+          (tag-var (intern (concat prefix element suffix-tag))))
+      (set fixed-var nil)
+      (set tag-var nil)
+      (push fixed-var sync0-bibtex-entry-helper-fields-list)
+      (push fixed-var sync0-bibtex-entry-people-helper-fields-list)
+      (push tag-var sync0-bibtex-entry-helper-fields-list)
+      (push tag-var sync0-bibtex-entry-people-helper-fields-list)))
+  (dolist (element sync0-bibtex-date-fields)
+    (let ((fixed-var (intern (concat prefix element suffix-fixed)))
+          (tag-var (intern (concat prefix element suffix-tag))))
+      (set fixed-var nil)
+      (set tag-var nil)
+      (push fixed-var sync0-bibtex-entry-helper-fields-list)
+      (push fixed-var sync0-bibtex-entry-date-helper-fields-list)
+      (push tag-var sync0-bibtex-entry-helper-fields-list)
+      (push tag-var sync0-bibtex-entry-date-helper-fields-list))))
+
+;; (defvar sync0-alpha "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz"
+;;   "Possible alphabetic characters that can appear in BibLaTeX keys.
+;; Use format of base58 encoding.")
+
+
+(defvar sync0-alpha "abcdefghijkmnpqrstuvwxyz"
   "Possible alphabetic characters that can appear in BibLaTeX keys.
 Use format of base58 encoding.")
 
@@ -146,62 +232,73 @@ titles and the like.")
 
 (setq sync0-bibtex-entry-crossref-crosscheck-fields-list '("subtitle" "volume" "edition" "shorttitle")) 
 
-(setq sync0-bibtex-obsidian-fields-list '(("description" "\"" "\"" sync0-bibtex-entry-description)
-                                          ("doctype" "[" "]" sync0-bibtex-entry-doctype-fixed)
-                                          ("author" "[" "]" sync0-bibtex-entry-author-fixed)
-                                          ("editor" "[" "]" sync0-bibtex-entry-editor-fixed)
-                                          ("translator" "[" "]" sync0-bibtex-entry-translator-fixed)
-                                          ("introduction" "[" "]" sync0-bibtex-entry-introduction-fixed)
-                                          ("recipient" "[" "]" sync0-bibtex-entry-recipient-fixed)
-                                          ("title" "\"" "\"" sync0-bibtex-entry-title)
-                                          ("eventtitle" "\"" "\"" sync0-bibtex-entry-eventtitle)
-                                          ("subtitle" "\"" "\"" sync0-bibtex-entry-subtitle)
-                                          ("crossref" "" "" sync0-bibtex-entry-crossref)
-                                          ("parent" "\"" "\"" sync0-bibtex-entry-parent)
-                                          ("related" "[" "]" sync0-bibtex-entry-related)
-                                          ("relatedtype" "" "" sync0-bibtex-entry-relatedtype)
-                                          ("edition" "" "" sync0-bibtex-entry-edition)
-                                          ("pagetotal" "" "" sync0-bibtex-entry-pagetotal)
-                                          ("url" "\"" "\"" sync0-bibtex-entry-url)
-                                          ("origdate" "" "" sync0-bibtex-entry-origdate)
-                                          ("date" "" "" sync0-bibtex-entry-date)
-                                          ("eventdate" "" "" sync0-bibtex-entry-eventdate)
-                                          ("medium" "[" "]" sync0-bibtex-entry-medium-fixed)
-                                          ("project" "[" "]" sync0-bibtex-entry-project-fixed)
-                                          ("cote" "\"" "\"" sync0-bibtex-entry-cote)
-                                          ("language" "" "" sync0-bibtex-entry-language)
-                                          ("library" "[\"" "\"]" sync0-bibtex-entry-library)))
+(defvar sync0-bibtex-obsidian-fields-list 
+  '(("description" "\"" "\"" sync0-bibtex-entry-description)
+    ("doctype" "[" "]" sync0-bibtex-entry-doctype-fixed)
+    ("title" "\"" "\"" sync0-bibtex-entry-title)
+    ("eventtitle" "\"" "\"" sync0-bibtex-entry-eventtitle)
+    ("subtitle" "\"" "\"" sync0-bibtex-entry-subtitle)
+    ("crossref" "" "" sync0-bibtex-entry-crossref)
+    ("parent" "\"" "\"" sync0-bibtex-entry-parent)
+    ("related" "[" "]" sync0-bibtex-entry-related)
+    ("relatedtype" "" "" sync0-bibtex-entry-relatedtype)
+    ("edition" "" "" sync0-bibtex-entry-edition)
+    ("pagetotal" "" "" sync0-bibtex-entry-pagetotal)
+    ("url" "\"" "\"" sync0-bibtex-entry-url)
+    ("medium" "[" "]" sync0-bibtex-entry-medium-fixed)
+    ("country" "[" "]" sync0-bibtex-entry-country)
+    ("project" "[" "]" sync0-bibtex-entry-project-fixed)
+    ("cote" "\"" "\"" sync0-bibtex-entry-cote)
+    ("language" "" "" sync0-bibtex-entry-language)
+    ("library" "[\"" "\"]" sync0-bibtex-entry-library))
+  "Variable that commands how certain bibtex fields of an entry are
+to appear in Obsidian markdown notes corresponding to it.")
 
-(setq sync0-bibtex-tag-fields-list '(("type" "reference/" sync0-bibtex-entry-type-downcase)
-                                     ("date" "" sync0-bibtex-entry-date-tag)
-                                     ("origdate" "" sync0-bibtex-entry-origdate-tag)
-                                     ("eventdate" "" sync0-bibtex-entry-eventdate-tag)
-                                     ("urldate" "" sync0-bibtex-entry-urldate-tag)
-                                     ("crossref" "crossref/" sync0-bibtex-entry-crossref)
-                                     ("created" "" sync0-bibtex-entry-created-tag)
-                                     ("doctype" "" sync0-bibtex-entry-doctype-tag)
-                                     ("language" "language/" sync0-bibtex-entry-language)
-                                     ("edition" "edition/" sync0-bibtex-entry-edition)
-                                     ("related" "related/" sync0-bibtex-entry-related-tag)
-                                     ("project" "project/" sync0-bibtex-entry-project)
-                                     ("relatedtype" "relatedtype/" sync0-bibtex-entry-relatedtype)
-                                     ("translator" "translator/" sync0-bibtex-entry-translator-tag)
-                                     ("introduction" "introduction/" sync0-bibtex-entry-introduction-tag)
-                                     ("recipient" "recipient/" sync0-bibtex-entry-recipient-tag)
-                                     ("editor" "editor/" sync0-bibtex-entry-editor-tag)
-                                     ("author" "author/" sync0-bibtex-entry-author-tag)))
+;; Add author and date helper fields to variable
+;; sync0-bibtex-obsidian-fields-list
+(dolist (element sync0-bibtex-people-fields)
+  (let* ((my-var (intern (concat "sync0-bibtex-entry-" element "-fixed")))
+         (my-list-elem (list element "[" "]" my-var)))  
+    (push my-list-elem sync0-bibtex-obsidian-fields-list)))
+(dolist (element sync0-bibtex-date-fields)
+  (let* ((my-var (intern (concat "sync0-bibtex-entry-" element)))
+         (my-list-elem (list element "" "" my-var)))  
+    (push my-list-elem sync0-bibtex-obsidian-fields-list)))
 
-;; use this to define all the dummy fields required for creating
-;; bibtex entries. these do not appear in the bibtex entry but are
-;; used for calculating certain things that appear on notes or the
-;; entry.
-(let ((prefix "sync0-bibtex-entry-")
-      x)
-  (dolist (element '("type-downcase" "crossref-entry" "title-fixed" "title-aliases" "editor-over-author" "title-compatible" "eventdate-tag" "urldate-tag" "origdate-tag" "date-tag" "date-fixed" "author-fixed" "translator-fixed" "introduction-fixed" "editor-fixed" "recipient-fixed" "lastname" "author-tag" "afterword-tag" "afterword-fixed" "foreword-tag" "foreword-fixed" "recipient-tag" "editor-tag" "translator-tag" "introduction-tag" "related-tag" "doctype-fixed" "doctype-tag" "key" "medium-fixed" "project-fixed" "created-tag" "file-old") x)
-    (let ((my-var (intern (concat prefix element))))
-      (set my-var nil)
-      (push my-var x)))
-  (setq sync0-bibtex-entry-helper-fields-list x))
+(defvar sync0-bibtex-tag-fields-list
+  '(("type" "reference/" sync0-bibtex-entry-type-downcase)
+    ;; ("date" "" sync0-bibtex-entry-date-tag)
+    ;; ("origdate" "" sync0-bibtex-entry-origdate-tag)
+    ;; ("eventdate" "" sync0-bibtex-entry-eventdate-tag)
+    ;; ("urldate" "" sync0-bibtex-entry-urldate-tag)
+    ("crossref" "crossref/" sync0-bibtex-entry-crossref)
+    ;; ("created" "" sync0-bibtex-entry-created-tag)
+    ("doctype" "" sync0-bibtex-entry-doctype-tag)
+    ("language" "language/" sync0-bibtex-entry-language)
+    ("country" "country/" sync0-bibtex-entry-country-tag)
+    ("edition" "edition/" sync0-bibtex-entry-edition)
+    ("related" "related/" sync0-bibtex-entry-related-tag)
+    ("project" "project/" sync0-bibtex-entry-project)
+    ("relatedtype" "relatedtype/" sync0-bibtex-entry-relatedtype))
+    ;; ("translator" "translator/" sync0-bibtex-entry-translator-tag)
+    ;; ("introduction" "introduction/" sync0-bibtex-entry-introduction-tag)
+    ;; ("recipient" "recipient/" sync0-bibtex-entry-recipient-tag)
+    ;; ("people" "people/" sync0-bibtex-entry-people-tag)
+    ;; ("editor" "editor/" sync0-bibtex-entry-editor-tag)
+    ;; ("author" "author/" sync0-bibtex-entry-author-tag)
+  "Variable that commands how certain bibtex fields of an entry are
+to appear in tags of Obsidian markdown notes corresponding to
+it.")
+
+(dolist (element sync0-bibtex-people-fields)
+  (let* ((my-var (intern (concat "sync0-bibtex-entry-" element "-tag")))
+         (tag-prefix (concat element "/"))
+         (my-list-elem (list element tag-prefix my-var)))  
+    (push my-list-elem sync0-bibtex-tag-fields-list)))
+(dolist (element sync0-bibtex-date-fields)
+  (let* ((my-var (intern (concat "sync0-bibtex-entry-" element "-tag")))
+         (my-list-elem (list element "" my-var)))  
+    (push my-list-elem sync0-bibtex-tag-fields-list)))
 
 (defvar sync0-bibtex-entry-extraction-fields-list 
   '(sync0-bibtex-entry-crossref-entry))

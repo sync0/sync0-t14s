@@ -8,7 +8,9 @@
 
 (defvar sync0-print-page-quality nil)
 
-(defvar sync0-print-command "lpr -P HP_Deskjet_4640_series -o fit-to-page -o position=center") 
+;; (defvar sync0-print-command "lpr -P HP_Deskjet_4640_series -o fit-to-page -o position=center") 
+
+(defvar sync0-print-command "lpr -o fit-to-page -o position=center") 
 
 ;; (defun sync0-print-define-file (&optional)
 ;;   "Define the language for new BibLaTeX entry."

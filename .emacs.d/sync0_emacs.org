@@ -603,6 +603,12 @@ empty (not in the lisp sense but in a human-readable sense)."
 (use-package s)
 #+END_SRC
 
+** f 
+#+BEGIN_SRC emacs-lisp
+(use-package f
+  :straight (f :type git :host github :repo "rejeep/f.el"))
+#+END_SRC
+
 ** undo-tree
 #+BEGIN_SRC emacs-lisp
   (use-package undo-tree
@@ -934,6 +940,15 @@ Have Emacs use the same aliases as my zsh shell.
 ;; "
 )
 #+END_SRC 
+** echo-bell
+Echo bell is a minor mode to replace the annoying Emacs default beep,
+when there is an error, with a "visual" beep.
+
+#+BEGIN_SRC emacs-lisp
+(require 'echo-bell)
+(echo-bell-mode)
+#+END_SRC 
+
 ** Toolbars
    Define a function to toggle mode line. 
 
@@ -2910,16 +2925,19 @@ Auto-close delimiters and blocks as you type
   (bibtex-align-at-equal-sign t)
   (bibtex-text-indentation 22)
   (bibtex-entry-format '(opts-or-alts page-dashes whitespace braces last-comma inherit-booktitle delimiters sort-fields realign))
- ;; :init
+  ;; :init
+  :hook
+  (bibtex-mode . (lambda ()
+                   (setq fill-column 9999)))
   :config
   (bibtex-set-dialect 'biblatex)
   (require 'bibtex-completion)
   (require 'bibtex-utils)
+  (require 'unidecode)
   (require 'sync0-bibtex-fields)
   (require 'sync0-bibtex-vars)
   (require 'sync0-bibtex-functions)
   (require 'scihub)
-  (require 'unidecode)
 
   (setq scihub-homepage "https://sci-hub.se")
   (setq scihub-download-directory sync0-zettelkasten-attachments-directory)

@@ -273,8 +273,8 @@
  (rear-context-string . "\"init.el\"))))))\n")
  (position . 5443))
 ("here"
- (filename . "~/.emacs.d/sync0/sync0-bibtex-functions.el")
- (front-context-string . "\n    (cond ((equ")
- (rear-context-string . "-entry-doctype)\n")
- (position . 32398))
+ (filename . "~/Gdrive/bibliographies/cabinet.bib")
+ (front-context-string . " Antioquia, Colo")
+ (rear-context-string . "    = {Medellín,")
+ (position . 42818))
 )
