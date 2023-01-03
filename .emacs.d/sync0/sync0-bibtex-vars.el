@@ -1,28 +1,28 @@
 ;; -*- lexical-binding: t -*-
 
 (defvar sync0-bibtex-fields
-  '("title" "subtitle" "origtitle" "eventtitle" "date" "origdate" "eventdate" "author" "editor" "translator" "recipient" "introduction" "journaltitle" "edition" "booktitle" "booksubtitle" "crossref" "chapter" "volume" "volumes" "number" "series" "publisher" "location" "pages" "note" "doi" "url" "urldate" "language" "langid" "origlanguage" "medium" "institution" "library" "related" "relatedtype" "relatedstring" "file" "created" "password" "shorttitle" "doctype" "shorthand" "description" "keywords" "foreword" "afterword" "editortype" "pagetotal" "verba" "cote" "project" "site" "version" "people" "country" "lecture" "seminar")
+  '("title" "subtitle" "origtitle" "eventtitle" "date" "origdate" "eventdate" "author" "editor" "translator" "recipient" "introduction" "journaltitle" "edition" "booktitle" "booksubtitle" "crossref" "chapter" "volume" "volumes" "number" "series" "publisher" "location" "pages" "note" "doi" "url" "urldate" "language" "langid" "origlanguage" "medium" "institution" "library" "related" "relatedtype" "relatedstring" "file" "created" "password" "shorttitle" "doctype" "shorthand" "description" "keywords" "foreword" "afterword" "editortype" "pagetotal" "verba" "cote" "project" "site" "version" "people" "country" "lecture" "seminar" "theme" "currency" "value" "recommender" "podcast" "visibility" "source" "year" "status" "alive" "expages")
   "List of Bibtex entry fields")
 
 (defvar sync0-bibtex-string-fields
-  '("subtitle" "eventtitle" "eventdate" "edition" "chapter" "volume" "volumes" "number" "pages" "pagetotal" "doi" "password" "shorttitle" "shorthand" "description" "verba" "cote" "version" "url")
+  '("subtitle" "eventtitle" "eventdate" "edition" "chapter" "volume" "volumes" "number" "expages" "pages" "pagetotal" "doi" "password" "shorttitle" "shorthand" "description" "verba" "cote" "version" "url" "value")
   "List of Bibtex entry fields that use read-string without
 accompanying completion variable for being defined. The lambda functions for their
 definition are automatically calculated and added to the variable
 sync0-bibtex-entry-functions.")
 
 (defvar sync0-bibtex-string-multiple-fields
-  '("medium" "doctype" "project" "country" "keywords")
+  '("medium" "doctype" "project" "country" "theme" "currency" "keywords")
   "List of Bibtex entry fields that use completing-read-multiple
 for being defined. The only exception is the field keywords
 because it requires a special treatment.")
 
 (defvar sync0-bibtex-date-fields
-  '("date" "origdate" "eventdate" "urldate" "created")
+  '("date" "origdate" "eventdate" "urldate" "created" "year")
   "List of Bibtex entry fields")
 
 (defvar sync0-bibtex-people-fields
-  '("author" "editor" "people" "recipient" "translator" "introduction" "foreword" "afterword")
+  '("author" "editor" "people" "recipient" "translator" "introduction" "foreword" "afterword" "recommender")
   "List of Bibtex entry fields")
 
 ;; (defvar sync0-bibtex-full-fields
@@ -47,6 +47,7 @@ because it requires a special treatment.")
 (setq sync0-bibtex-obsidian-reference-template-top
       (concat  "\n## Description\n\n" 
                "## Progrès de la lecture\n\n"
+               "## Notes\n\n"
                "## Annotations\n\n"
                "```dataview\n"
                "TABLE WITHOUT ID\n"
@@ -57,12 +58,14 @@ because it requires a special treatment.")
 (setq sync0-bibtex-obsidian-reference-template-bottom
       (concat "\n"
               "SORT created DESC\n"
-              "```\n\n"))
+              "```\n\n"
+              "## Relations\n\n"))
 
 (setq sync0-bibtex-quick-fields
       '("title"
         "subtitle"
         "date"
+        "year"
         "created"
         ;; "author"
         ;; "url"
@@ -73,7 +76,7 @@ because it requires a special treatment.")
   "List of Bibtex entry fields")
 
 (defvar sync0-bibtex-completion-single-fields
-  '("publisher" "journaltitle" "location" "title" "note" "library" "series" "institution" "language" "site" "relatedtype" "editortype" "lecture" "seminar")
+  '("publisher" "journaltitle" "location" "title" "note" "library" "series" "institution" "language" "site" "relatedtype" "editortype" "lecture" "seminar" "podcast" "visibility" "source" "status" "alive")
    "List of biblatex fields that are set with the completing-read
 function---as opposed to those defined with
 completing-read-multiple, which appear in
@@ -282,11 +285,20 @@ titles and the like.")
 (defvar sync0-bibtex-obsidian-fields-list 
   '(("description" "\"" "\"" sync0-bibtex-entry-description)
     ("doctype" "[" "]" sync0-bibtex-entry-doctype-fixed)
+    ("author" "[" "]" sync0-bibtex-entry-author-fixed)
+    ("editor" "[" "]" sync0-bibtex-entry-editor-fixed)
+    ("people" "[" "]" sync0-bibtex-entry-people-fixed)
     ("title" "\"" "\"" sync0-bibtex-entry-title)
+    ("date" "" "" sync0-bibtex-entry-date)
+    ("year" "" "" sync0-bibtex-entry-year)
+    ("origdate" "" "" sync0-bibtex-entry-origdate)
     ("eventtitle" "\"" "\"" sync0-bibtex-entry-eventtitle)
     ("subtitle" "\"" "\"" sync0-bibtex-entry-subtitle)
     ("crossref" "" "" sync0-bibtex-entry-crossref)
     ("parent" "\"" "\"" sync0-bibtex-entry-parent)
+    ("journaltitle" "\"" "\"" sync0-bibtex-entry-journaltitle)
+    ("volume" "" "" sync0-bibtex-entry-volume)
+    ("number" "" "" sync0-bibtex-entry-number)
     ("related" "[" "]" sync0-bibtex-entry-related)
     ("relatedtype" "" "" sync0-bibtex-entry-relatedtype)
     ("edition" "" "" sync0-bibtex-entry-edition)
@@ -316,10 +328,15 @@ Obsidian of produced markdown (corrupt YAML frontmatters).")
 
 (defvar sync0-bibtex-tag-fields-list
   '(("type" "reference/" sync0-bibtex-entry-type-downcase)
+    ("journaltitle" "journaltitle/" sync0-bibtex-entry-journaltitle)
+;;    ("publication" "publication/" sync0-bibtex-entry-publication)
     ("crossref" "crossref/" sync0-bibtex-entry-crossref)
     ("doctype" "" sync0-bibtex-entry-doctype-tag)
-    ("language" "language/" sync0-bibtex-entry-language)
+    ("visibility" "visibility/" sync0-bibtex-entry-visibility)
+    ("source" "source/" sync0-bibtex-entry-source)
+    ("theme" "" sync0-bibtex-entry-theme-tag)
     ("country" "" sync0-bibtex-entry-country-tag)
+    ("language" "language/" sync0-bibtex-entry-language)
     ("edition" "edition/" sync0-bibtex-entry-edition)
     ("related" "related/" sync0-bibtex-entry-related-tag)
     ("project" "project/" sync0-bibtex-entry-project)
@@ -350,9 +367,6 @@ it.")
 (defvar sync0-bibtex-maximum-lastnames 2
   "Maximum no. of lastnames to appear in titles")
 
-
-
-
 (setq sync0-bibtex-base-fields
       '("title"
         "subtitle"
@@ -361,6 +375,7 @@ it.")
         ;; "author"
         ;; "url"
         "language"
+        "theme"
         "file"))
 ;; "keywords"
 
@@ -376,8 +391,8 @@ it.")
          ;; "series"
          "pages"
          ;; "doi"
-         "url"
-         "urldate")
+         ;; "urldate"
+         "url")
         ("MvBook" "author"
          "volumes"
          ;; "origdate"

@@ -273,6 +273,8 @@
         ("\\.rtf\\'" . "libreoffice --writer %s")
         ("\\.doc\\'" . "libreoffice --writer %s")
         ("\\.docx\\'" . "libreoffice --writer %s")
+        ("\\.ppt\\'" . "libreoffice --impress %s")
+        ("\\.pptx\\'" . "libreoffice --impress %s")
         ("\\.pdf\\'" . emacs)))
 
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))

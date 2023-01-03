@@ -14,3 +14,9 @@ family
 english
 colombia
 south_korea
+2022_minjung-col-visa
+2023_ysi-workshop
+2022_seminar_soft-skills
+2022_formation-python
+2022_classiques-sciences-sociales
+45_rue_des_rancy

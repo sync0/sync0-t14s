@@ -1,3 +1,4 @@
+
 (defun sync0-update-bibtex-authors ()
   (interactive)
   (let ((current-authors)
@@ -188,6 +189,15 @@
         (rename-file output pdf t)
             (message "Concatenated pdf has been created at " pdf)))))
 
+(defun bibtex-completion-file-exists-p (keys)
+  "Print the PDFs of the entries with the given KEYS where available."
+  (let ((extension (completing-read "Choose extension to check: " bibtex-completion-pdf-extension))
+        messages)
+    (dolist (key keys messages)
+      (let ((my-message
+             (sync0-bibtex-file-exists-p key extension t)))
+        (push my-message messages)))
+    (message-or-box (sync0-show-elements-of-list messages "\n"))))
 
 ;; Before being able to call custom functions from ivy-bibtex, these
 ;; have to be manually added to ivy-bibtex. 
@@ -208,6 +218,8 @@
 
 (ivy-bibtex-ivify-action bibtex-completion-concatenate-pdf-list ivy-bibtex-concatenate-pdf-list)
 
+(ivy-bibtex-ivify-action bibtex-completion-file-exists-p ivy-bibtex-file-exists-p)
+
 ;; This is the way to add actions to ivy-bibtex wituhout overwriting
 ;; those already defined.
 (ivy-add-actions
@@ -219,6 +231,7 @@
    ("M" ivy-bibtex-move-entries-to-bibfile-list "Move Biblatex entries to bibfile" ivy-bibtex-move-entries-to-bibfile-list)
    ("K" ivy-bibtex-add-key-to-pdf-list "Add bibkeys to pdfs" ivy-bibtex-add-key-to-pdf-list)
    ("C" ivy-bibtex-concatenate-pdf-list "Concatenate attached pdfs" ivy-bibtex-concatenate-pdf-list)
+   ("f" ivy-bibtex-file-exists-p "Check whether attached files exist" ivy-bibtex-file-exists-p)
    ("x" ivy-bibtex-crop-pdf-list "Crop attachments using model cropbox" ivy-bibtex-crop-pdf-list)))
 
 (defun sync0-ivy-bibtex-with-local-bibliography ()

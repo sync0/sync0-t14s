@@ -11,6 +11,8 @@
 (require 'sync0-print)
 (require 'sync0-pdf)
 (require 'sync0-yaml)
+(require 'sync0-pandoc)
+(require 'sync0-bibtex-diagnostics)
 (require 'xah-replace-pairs)
 
 (sync0-set-variable-from-files sync0-bibtex-completion-variables-alist)
@@ -63,7 +65,7 @@ character at random."
 case, keys are outputed in the YYMMDDxx format, in which the last
 two characters are produced using the sync0-random-alnum function
 to produce random characters."
-  (let ((x (concat (format-time-string "%y%j")
+  (let ((x (concat (format-time-string "%y%-j") 
                    (sync0-random-alnum)
                    (sync0-random-alnum))))
     (if (sync0-bibtex-duplicate-entry-key-p x daily)
@@ -95,13 +97,22 @@ bibtex does not take lists but strings as arguments."
               sync0-bibtex-lastname-abbrev-string)
       string)))
 
+(defun sync0-bibtex-obsidian-keyword-tagify (my-string)
+  "Make my-string compatible with the tags of obsidian by
+downcasing and removing whitespace from tags to be included as
+keywords in biblatex entries and obsidian markdown files."
+  (if (string-match-p ",[[:space:]]" my-string)
+      my-string
+    (let ((nospace (replace-regexp-in-string "[[:space:]]+" "_" my-string)))
+      (downcase nospace))))
+
 (defun sync0-bibtex-obsidian-tagify (sep my-string)
   "Make my-string compatible with the tags of obsidian by
 downcasing and removing whitespace from tags to be included as
 keywords in biblatex entries and obsidian markdown files."
   (let* ((nospace (s-trim sep))
          (regex (concat "[^" nospace "]\\([[:space:]]+\\)"))
-         (nospace (replace-regexp-in-string regex "-" my-string nil t 1)))
+         (nospace (replace-regexp-in-string regex "_" my-string nil t 1)))
         (downcase nospace)))
 
 (defmacro sync0-bibtex-tagify-var (var)
@@ -242,6 +253,9 @@ markdown."
     ("date" (lambda ()
               (setq sync0-bibtex-entry-date
                     (read-string "Date (ex. 1890-18-12) : " sync0-bibtex-entry-initial-date))))
+    ("year" (lambda ()
+              (when sync0-bibtex-entry-date
+                (setq sync0-bibtex-entry-year (substring-no-properties sync0-bibtex-entry-date 0 4)))))
     ("created" (lambda ()
                  (setq sync0-bibtex-entry-created-tag
                        (format-time-string "%Y/%m/%d"))
@@ -250,12 +264,6 @@ markdown."
     ("origdate" (lambda ()
                   (setq sync0-bibtex-entry-origdate
                         (read-string "Origdate (ex. 1890-18-12) : " sync0-bibtex-entry-initial-origdate))))
-    ;; ("url" (lambda ()
-    ;;          (unless sync0-bibtex-entry-urldate
-    ;;            (setq sync0-bibtex-entry-urldate 
-    ;;                  (format-time-string "%Y-%m-%d")))
-    ;;          (setq sync0-bibtex-entry-url
-    ;;                (read-string "Url : " nil nil nil t))))
     ("urldate" (lambda ()
                  (setq sync0-bibtex-entry-urldate
                        (if sync0-bibtex-entry-creation
@@ -339,19 +347,11 @@ markdown."
                   ;; ASCII. See:
                   ;; https://github.com/sindikat/unidecode
                   (setq sync0-bibtex-entry-keywords
-                        (unidecode
-                         (let* ((actual-fields-list
-                                 (let (x)
-                                   (dolist (element sync0-bibtex-tag-fields-list x) 
-                                     (unless (sync0-null-p (symbol-value (caddr element)))
-                                       (setq x (cons (concat (cadr element)  (eval (caddr element))) x))))))
-                                ;; (push (concat (cadr element)  (eval (caddr element))) x)
-                                (extra-keywords (completing-read-multiple "Input extra keywords: " 
-                                                                          sync0-bibtex-completion-keywords))
-                                (master-list (if (sync0-null-p extra-keywords)
-                                                 actual-fields-list
-                                               (cl-union actual-fields-list extra-keywords))))
-                           (sync0-show-elements-of-list master-list ", ")))))))
+                        (unidecode (let (x)
+                                     (dolist (element sync0-bibtex-tag-fields-list x) 
+                                       (unless (sync0-null-p (symbol-value (caddr element)))
+                                         (setq x (cons (concat (cadr element)  (sync0-bibtex-obsidian-keyword-tagify (eval (caddr element)))) x))))
+                                     (sync0-show-elements-of-list x ", ")))))))
   "List of lists in which the car of each list is bibtex-field and
 the cdr is a lambda function with all the actions that should be
 carried to calculate the value it will take in a BibLaTeX entry.")
@@ -806,7 +806,9 @@ bibtex-completion to be loaded; otherwise, fails."
   (let* ((refkey (or bibkey
                      (sync0-bibtex-completion-choose-key t t)))
          (predicate (when extension
-                      (lambda (x) (string-match (concat ".+\\." extension) x))))
+                      (if (string-match-p "^\\." extension)
+                          (lambda (x) (string-match extension x))
+                        (lambda (x) (string-match (concat ".+\\." extension) x)))))
          (attach-list  (bibtex-completion-find-pdf refkey)))
     (cond ((> (length attach-list) 1)
            (completing-read "Choose an attachment to open: " attach-list predicate))
@@ -936,7 +938,7 @@ function is to be used only in pipes."
   (defun sync0-bibtex-update-var (field)
     "Update variables used for completion based on the information
    provided by the new entry."
-    (when-let* ((my-list (assoc field sync0-bibtex-completion-variables-list))
+     (when-let* ((my-list (assoc field sync0-bibtex-completion-variables-list))
                 (new-object  (eval (cadr my-list)))
                 (completion-var  (caddr my-list))
                 (completion-list  (symbol-value completion-var))
@@ -1260,7 +1262,7 @@ the note, instead of attempting to create a new note."
                                   ;; (if (sync0-null-p sync0-bibtex-entry-created)
                                   ;;     (concat "\ncreated: " (format-time-string "%Y-%m-%d") "\n")
                                   ;;   (concat "\ncreated: " sync0-bibtex-entry-created "\n"))
-                                  (concat "aliases: [\"" title-list-string "\"]\n")
+                                  (concat "\naliases: [\"" title-list-string "\"]\n")
                                   "tags: [bibkey/" bibkey ", " sync0-bibtex-entry-keywords "]\n"
                                   "---\n"
                                   (concat "# " sync0-bibtex-entry-obsidian-title "\n")))
@@ -1817,7 +1819,7 @@ etc.)."
                                         " ")
                                     sync0-bibtex-entry-title-compatible
                                     "?"))
-             (trash-attach-message (format "Entry has %s attachments. Do you want to send these to trash?" attachments))
+             (trash-attach-message (format "Entry %s has %s attachments. Do you want to send these to trash?" refkey attachments))
              (end (save-excursion (bibtex-end-of-entry))))
         (when (yes-or-no-p trash-message)
           (delete-region beginning end))
@@ -1868,7 +1870,8 @@ function also creates markdown notes for the created entries."
                         (buffer-file-name)
                       (completing-read "Which bibliography file to append to ? "
                                        sync0-bibtex-bibliographies nil t)))
-           (keywords-list (split-string sync0-bibtex-entry-keywords ", "))
+           (keywords-list (when sync0-bibtex-entry-keywords
+                                 (split-string sync0-bibtex-entry-keywords ", ")))
            (extra-keywords (completing-read-multiple "Input extra keywords: " 
                                                      sync0-bibtex-completion-keywords))
            (master-list (if (sync0-null-p extra-keywords)
@@ -1994,6 +1997,42 @@ readable."
           (sync0-bibtex-entry-append-to-bibliography sync0-bibtex-entry-key))
       (message "No Obsidian file found for %s" obsidian-id))))
 
+(defun sync0-add-field-theme (&optional arg)
+  "Make a keywords field.
+If ARG is nil, ask for each keyword and offer completion over
+keywords that are already available in the buffer.  Inserting 
+the empty string will quit the prompt. If the keyword is not already
+present in the buffer, it will be added to the local variable
+bu-keywords-values. Note that if you use ido-ubiquitous, the value of
+  `ido-ubiquitous-enable-old-style-default' is temporarily set to t within
+the body of this command."
+  (interactive "P")
+  (let ((elist (save-excursion (bibtex-beginning-of-entry)
+			       (bibtex-parse-entry)))
+        (ido-ubiquitous-enable-old-style-default t)
+	append)
+    (if (assoc "theme" elist)
+	(progn (setq append t)
+	       (bibtex-beginning-of-entry)
+	       (goto-char 
+		(car (last (or (bibtex-search-forward-field "theme" t)
+                               (progn (setq append nil)
+                                      (bibtex-search-forward-field "OPTtheme" t)))))))
+      (bibtex-make-field "theme" t nil))
+    (skip-chars-backward "}\n")
+    (unless arg
+      (let ((cnt 0)
+            k)
+	(while (and (setq k (completing-read 
+                             "Theme (RET to quit): " sync0-bibtex-completion-theme nil))
+		    (not (equal k "")))
+	  (when append (insert ", ")
+                (setq append nil))
+	  (setq cnt (1+ cnt))
+	  (insert (format "%s%s" (if (> cnt 1) ", " "") k))
+          ;; (add-to-list 'sync0-bibtex-completion-theme k)
+          )))))
+
   (major-mode-hydra-define bibtex-mode nil 
     ("Entries"
      (("c" sync0-bibtex-clean-entry "Clean entry")
@@ -2005,7 +2044,8 @@ readable."
       ("f" sync0-bibtex-define-entries-from-bibkey "Capture many entries from key")
       ("M" sync0-bibtex-move-entry-to-bibfile "Move entry to bibfile")
       ("D" sync0-bibtex-delete-entry "Delete entry")
-      ("A" sync0-bibtex-archive-entry "Archive entry"))
+      ("A" sync0-bibtex-archive-entry "Archive entry")
+     ("1" sync0-bibtex-file-exists-p "Check file exists"))
      "PDF editing"
      (("P" sync0-bibtex-copy-pdf-to-path "Copy to path")
       ("p" sync0-bibtex-print-pdf "Print att. from entry")
@@ -2033,7 +2073,7 @@ readable."
      ;; ("r" (sync0-bibtex-update-completion-files sync0-bibtex-completion-variables-list) "Refresh completion vars")
      (("a" sync0-bibtex-add-field "Add field")
       ("i" sync0-bibtex-convert-jpg-to-pdf "Convert jpg to pdf")
-      ("k" bu-make-field-keywords "Add keyword")
+      ("k" sync0-add-field-theme "Add theme")
       ("y" sync0-bibtex-yank-citation-from-bibkey "Yank citation.")
       ("N" sync0-bibtex-create-note-from-entry "Create md note for entry")
       ("R" (sync0-bibtex-create-note-from-entry t) "Rewrite md for entry"))))

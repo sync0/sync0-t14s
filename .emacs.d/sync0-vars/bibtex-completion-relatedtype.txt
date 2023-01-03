@@ -1,0 +1,10 @@
+multivolume
+origpubas
+partof
+reprintas
+reprintfrom
+reprintof
+reviewof
+translationas
+translationfrom
+translationof

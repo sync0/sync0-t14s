@@ -35,3 +35,9 @@ transcription
 payslip
 dossier
 civil
+contract
+account_statement
+rib
+form
+passport
+podcast

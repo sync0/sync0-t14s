@@ -149,7 +149,7 @@ Cuadernos de historia
 Revista de crítica literaria latinoamericana
 Políticas de la Memoria
 Istor
-Revue générale du droit, de la législation et de la jurisprudence en France et à l'étranger
+Revue générale du droit, de la législation et de la jurisprudence en France et à l’étranger
 Sociologica
 Gesnerus
 Études Normandes
@@ -159,7 +159,7 @@ Revue républicaine
 Le Constitutionnel
 Le Réformateur
 Le Monde
-L'Année sociologique
+L’Année sociologique
 Littérature
 American Anthropologist
 Revue des sciences philosophiques et théologiques
@@ -167,3 +167,10 @@ Intellectual History Review
 Henri Lefebvre et la géographie
 La Pensée
 Hermès
+Journal of Economic Methodology
+Journal of Economic Literature
+zeitenblicke
+Spektrum Freizeit
+Jahresband
+Revue générale du droit, de la législation et de la jurisprudence en France et à l'étranger
+Revue internationale de l'enseignement

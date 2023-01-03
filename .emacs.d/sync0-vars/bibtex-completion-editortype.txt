@@ -1,0 +1,8 @@
+collaborator
+compiler
+continuator
+editor
+founder
+organizer
+redactor
+reviser
