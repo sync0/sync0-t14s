@@ -1,11 +1,11 @@
 ;; -*- lexical-binding: t -*-
 
 (defvar sync0-bibtex-fields
-  '("title" "subtitle" "origtitle" "eventtitle" "date" "origdate" "eventdate" "author" "editor" "translator" "recipient" "introduction" "journaltitle" "edition" "booktitle" "booksubtitle" "crossref" "chapter" "volume" "volumes" "number" "series" "publisher" "location" "pages" "note" "doi" "url" "urldate" "language" "langid" "origlanguage" "medium" "institution" "library" "related" "relatedtype" "relatedstring" "file" "created" "password" "shorttitle" "doctype" "shorthand" "description" "keywords" "foreword" "afterword" "editortype" "pagetotal" "verba" "cote" "project" "site" "version" "people" "country" "lecture" "seminar" "theme" "currency" "value" "recommender" "podcast" "visibility" "source" "year" "status" "alive" "expages")
+  '("title" "subtitle" "origtitle" "eventtitle" "date" "origdate" "eventdate" "author" "editor" "translator" "recipient" "introduction" "journaltitle" "edition" "booktitle" "booksubtitle" "crossref" "chapter" "volume" "volumes" "number" "series" "publisher" "location" "pages" "note" "doi" "url" "urldate" "language" "langid" "origlanguage" "medium" "institution" "library" "related" "relatedtype" "relatedstring" "file" "created" "password" "shorttitle" "doctype" "shorthand" "description" "keywords" "foreword" "afterword" "editortype" "pagetotal" "verba" "cote" "project" "site" "version" "people" "country" "lecture" "seminar" "theme" "currency" "value" "recommender" "podcast" "visibility" "source" "year" "status" "alive" "expages" "century" "aliases" "scanstatus")
   "List of Bibtex entry fields")
 
 (defvar sync0-bibtex-string-fields
-  '("subtitle" "eventtitle" "eventdate" "edition" "chapter" "volume" "volumes" "number" "expages" "pages" "pagetotal" "doi" "password" "shorttitle" "shorthand" "description" "verba" "cote" "version" "url" "value")
+  '("subtitle" "eventtitle" "eventdate" "edition" "chapter" "volume" "volumes" "number" "expages" "pages" "pagetotal" "doi" "password" "shorttitle" "shorthand" "description" "verba" "cote" "version" "url" "value" "aliases")
   "List of Bibtex entry fields that use read-string without
 accompanying completion variable for being defined. The lambda functions for their
 definition are automatically calculated and added to the variable
@@ -66,6 +66,7 @@ because it requires a special treatment.")
         "subtitle"
         "date"
         "year"
+        "century"
         "created"
         ;; "author"
         ;; "url"
@@ -76,7 +77,7 @@ because it requires a special treatment.")
   "List of Bibtex entry fields")
 
 (defvar sync0-bibtex-completion-single-fields
-  '("publisher" "journaltitle" "location" "title" "note" "library" "series" "institution" "language" "site" "relatedtype" "editortype" "lecture" "seminar" "podcast" "visibility" "source" "status" "alive")
+  '("publisher" "journaltitle" "location" "title" "note" "library" "series" "institution" "language" "site" "relatedtype" "editortype" "lecture" "seminar" "podcast" "visibility" "source" "status" "alive" "scanstatus")
    "List of biblatex fields that are set with the completing-read
 function---as opposed to those defined with
 completing-read-multiple, which appear in
@@ -291,6 +292,8 @@ titles and the like.")
     ("title" "\"" "\"" sync0-bibtex-entry-title)
     ("date" "" "" sync0-bibtex-entry-date)
     ("year" "" "" sync0-bibtex-entry-year)
+    ("scanstatus" "" "" sync0-bibtex-entry-scanstatus)
+    ("century" "" "" sync0-bibtex-entry-century)
     ("origdate" "" "" sync0-bibtex-entry-origdate)
     ("eventtitle" "\"" "\"" sync0-bibtex-entry-eventtitle)
     ("subtitle" "\"" "\"" sync0-bibtex-entry-subtitle)
@@ -299,6 +302,7 @@ titles and the like.")
     ("journaltitle" "\"" "\"" sync0-bibtex-entry-journaltitle)
     ("volume" "" "" sync0-bibtex-entry-volume)
     ("number" "" "" sync0-bibtex-entry-number)
+    ("library" "" "" sync0-bibtex-entry-library)
     ("related" "[" "]" sync0-bibtex-entry-related)
     ("relatedtype" "" "" sync0-bibtex-entry-relatedtype)
     ("edition" "" "" sync0-bibtex-entry-edition)
@@ -333,9 +337,12 @@ Obsidian of produced markdown (corrupt YAML frontmatters).")
     ("crossref" "crossref/" sync0-bibtex-entry-crossref)
     ("doctype" "" sync0-bibtex-entry-doctype-tag)
     ("visibility" "visibility/" sync0-bibtex-entry-visibility)
-    ("source" "source/" sync0-bibtex-entry-source)
+    ("source" "century/" sync0-bibtex-entry-century)
+    ("century" "source/" sync0-bibtex-entry-source)
     ("theme" "" sync0-bibtex-entry-theme-tag)
+    ("scanstatus" "scanstatus/" sync0-bibtex-entry-scanstatus)
     ("country" "" sync0-bibtex-entry-country-tag)
+    ("library" "library/" sync0-bibtex-entry-library)
     ("language" "language/" sync0-bibtex-entry-language)
     ("edition" "edition/" sync0-bibtex-entry-edition)
     ("related" "related/" sync0-bibtex-entry-related-tag)
@@ -371,6 +378,8 @@ it.")
       '("title"
         "subtitle"
         "date"
+        "year"
+        "century"
         "created"
         ;; "author"
         ;; "url"

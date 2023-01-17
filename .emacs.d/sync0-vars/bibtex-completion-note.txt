@@ -180,3 +180,4 @@ Communication présentée au 19\textsuperscript{e} Colloque Charles Gide
 Translated from the 4\textsuperscript{th} Hungarian edition
 Numéro étudiant 5206371
 Capítulo XII de \textit{La América
+Extrait du \emph{Journal des économistes

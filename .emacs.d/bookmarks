@@ -273,8 +273,8 @@
  (rear-context-string . "\"init.el\"))))))\n")
  (position . 5443))
 ("here"
- (filename . "~/.emacs.d/sync0/sync0-bibtex-vars.el")
- (front-context-string . "ix \"sync0-bibtex")
- (rear-context-string . "ry.\n(let* ((pref")
- (position . 7251))
+ (filename . "~/Gdrive/bibliographies/doctorat.bib")
+ (front-context-string . "@InCollection{20")
+ (rear-context-string . " = {spanish},\n}\n")
+ (position . 592))
 )

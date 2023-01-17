@@ -68,3 +68,10 @@ function createTitle() {
 }
 
 createTitle();
+
+
+function linkRelated(bibkey) {
+    let x = "[[" + bibkey + "]]"
+    return x
+}
+

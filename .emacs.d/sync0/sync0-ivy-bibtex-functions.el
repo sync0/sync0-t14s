@@ -148,8 +148,9 @@
 (defun bibtex-completion-rewrite-notes-from-biblatex-data-list (keys)
   "Print the PDFs of the entries with the given KEYS where available."
   (dolist (key keys)
-    (when (file-exists-p (concat sync0-zettelkasten-directory key ".md"))
-      (sync0-bibtex-create-note-from-entry t key t)))) 
+    (if (file-exists-p (concat sync0-zettelkasten-directory key ".md"))
+        (sync0-bibtex-create-note-from-entry t key t)
+        (sync0-bibtex-create-note-from-entry nil key t)))) 
 
 (defun bibtex-completion-archive-entries-list (keys)
   "Print the PDFs of the entries with the given KEYS where available."
@@ -199,6 +200,16 @@
         (push my-message messages)))
     (message-or-box (sync0-show-elements-of-list messages "\n"))))
 
+(defun bibtex-completion-download-pdf-from-url (keys)
+  "Print the PDFs of the entries with the given KEYS where available."
+    (dolist (key keys)
+        (sync0-bibtex-download-pdf key)))
+
+(defun bibtex-completion-extract-pdf-from-crossref (keys)
+  "Print the PDFs of the entries with the given KEYS where available."
+    (dolist (key keys)
+        (sync0-bibtex-extract-from-crossref key t)))
+
 ;; Before being able to call custom functions from ivy-bibtex, these
 ;; have to be manually added to ivy-bibtex. 
 
@@ -220,6 +231,10 @@
 
 (ivy-bibtex-ivify-action bibtex-completion-file-exists-p ivy-bibtex-file-exists-p)
 
+(ivy-bibtex-ivify-action bibtex-completion-download-pdf-from-url ivy-bibtex-download-pdf-from-url)
+
+(ivy-bibtex-ivify-action bibtex-completion-extract-pdf-from-crossref ivy-bibtex-extract-pdf-from-crossref)
+
 ;; This is the way to add actions to ivy-bibtex wituhout overwriting
 ;; those already defined.
 (ivy-add-actions
@@ -232,6 +247,8 @@
    ("K" ivy-bibtex-add-key-to-pdf-list "Add bibkeys to pdfs" ivy-bibtex-add-key-to-pdf-list)
    ("C" ivy-bibtex-concatenate-pdf-list "Concatenate attached pdfs" ivy-bibtex-concatenate-pdf-list)
    ("f" ivy-bibtex-file-exists-p "Check whether attached files exist" ivy-bibtex-file-exists-p)
+   ("d" ivy-bibtex-file-download-pdf-from-url "Download attached pdf from URL" ivy-bibtex-download-pdf-from-url)
+   ("e" ivy-bibtex-file-extract-pdf-from-crossref "Extract pdf from crossref pdf" ivy-bibtex-extract-pdf-from-crossref)
    ("x" ivy-bibtex-crop-pdf-list "Crop attachments using model cropbox" ivy-bibtex-crop-pdf-list)))
 
 (defun sync0-ivy-bibtex-with-local-bibliography ()

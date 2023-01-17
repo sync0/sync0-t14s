@@ -57,32 +57,32 @@
      ;; Default settings for all themes.
      (custom-theme-set-faces 'user
                               ;; `(org-default ((t (:family "Minion Pro" :style display :height 1.0))))
-                              `(markdown-header-face ((t (:family "Futura PT" :weight normal :background nil :inherit variable-pitch))))
-                              ;; `(markdown-header-face ((t (:family "Futura PT" :weight light :width condensed :background nil :inherit variable-pitch))))
+                              `(markdown-header-face ((t (:family "Verlag" :weight normal :background nil :inherit variable-pitch))))
+                              ;; `(markdown-header-face ((t (:family "Verlag" :weight light :width condensed :background nil :inherit variable-pitch))))
                              `(markdown-metadata-key-face ((t (:family "Inconsolata" :weight bold :height 0.9 :slant normal :spacing monospace :background nil :inherit fixed-pitch)))) 
                              `(markdown-metadata-value-face ((t (:family "Inconsolata" :height 0.9 :slant normal :spacing monospace :inherit fixed-pitch)))) 
                              `(markdown-gfm-checkbox-face ((t (:family "Inconsolata" :weight bold :spacing monospace))))
-                             `(markdown-footnote-marker-face ((t (:family "Sitka Text" :style small :weight bold :height 0.7))))
-                             `(markdown-link-face ((t (:family "Sitka Text"  :underline nil :foreground "#268bd2" :background nil :height 1.0 :inherit variable-pitch))))
-                             ;; `(markdown-link-face ((t (:family "Sitka Text"  :underline t :background nil :height 1.0 :inherit variable-pitch))))
-                             `(markdown-markup-face ((t (:family "Sitka Text"  :underline nil :background nil :height 1.0 :inherit variable-pitch))))
-                             `(markdown-url-face ((t (:family "Sitka Text"  :underline nil :background nil :height 1.0 :inherit variable-pitch))))
+                             `(markdown-footnote-marker-face ((t (:family "Literata" :style small :weight normal :height 0.7))))
+                             `(markdown-link-face ((t (:family "Literata" :weight light :underline nil :foreground "#268bd2" :background nil :height 1.0 :inherit variable-pitch))))
+                             ;; `(markdown-link-face ((t (:family "Literata"  :underline t :background nil :height 1.0 :inherit variable-pitch))))
+                             `(markdown-markup-face ((t (:family "Literata" :weight light  :underline nil :background nil :height 1.0 :inherit variable-pitch))))
+                             `(markdown-url-face ((t (:family "Literata" :weight light  :underline nil :background nil :height 1.0 :inherit variable-pitch))))
                              `(markdown-plain-url-face ((t (:inherit markdown-url-face))))
                              `(markdown-code-face ((t (:family "Inconsolata"  :height 1.0 :spacing monospace :inherit fixed-pitch))))
                              `(markdown-reference-face ((t (:inherit markdown-code-face))))
-                             `(org-default ((t (:family "Sitka Text"  :inherit variable-pitch))))
+                             `(org-default ((t (:family "Literata" :weight light  :inherit variable-pitch))))
                              `(org-link ((t (:inherit org-default :underline t))))
                              `(org-ref-cite-face ((t (:inherit org-link)))) 
-                             `(org-footnote ((t (:family "Sitka Text" :style small :weight bold :height 0.7))))
+                             `(org-footnote ((t (:family "Literata" :style small :weight normal :height 0.7))))
                              `(org-checkbox ((t (:family "Inconsolata" :weight bold :spacing monospace))))
-                              `(org-document-title ((t (:family "Futura PT" :height 2.074 :inherit variable-pitch))))
-                              `(org-document-info ((t (:family "Futura PT" :height 1.728 :inherit variable-pitch))))
-                              `(org-level-1 ((t (:family "Futura PT" :height 2.074 :inherit variable-pitch))))
-                              `(org-level-2 ((t (:family "Futura PT" :height 1.728 :inherit variable-pitch))))
-                              `(org-level-3 ((t (:family "Futura PT" :height 1.44 :inherit variable-pitch))))
-                              `(org-level-4 ((t (:family "Futura PT" :height 1.2 :inherit variable-pitch))))
-                              `(org-level-5 ((t (:family "Futura PT" :height 1.0 :inherit variable-pitch))))
-                              `(org-level-6 ((t (:family "Futura PT" :height 0.833 :inherit variable-pitch))))
+                              `(org-document-title ((t (:family "Verlag" :height 2.074 :inherit variable-pitch))))
+                              `(org-document-info ((t (:family "Verlag" :height 1.728 :inherit variable-pitch))))
+                              `(org-level-1 ((t (:family "Verlag" :height 2.074 :inherit variable-pitch))))
+                              `(org-level-2 ((t (:family "Verlag" :height 1.728 :inherit variable-pitch))))
+                              `(org-level-3 ((t (:family "Verlag" :height 1.44 :inherit variable-pitch))))
+                              `(org-level-4 ((t (:family "Verlag" :height 1.2 :inherit variable-pitch))))
+                              `(org-level-5 ((t (:family "Verlag" :height 1.0 :inherit variable-pitch))))
+                              `(org-level-6 ((t (:family "Verlag" :height 0.833 :inherit variable-pitch))))
                              `(org-meta-line ((t (:family "Inconsolata" :height 0.95 :slant normal :spacing monospace :inherit fixed-pitch)))) 
                              `(org-document-info-keyword ((t (:inherit org-meta-line))))
                              `(org-special-keywords ((t (:inherit org-meta-line))))
@@ -90,10 +90,10 @@
                              `(org-property-value ((t (:inherit org-meta-line)))) 
                              `(org-ellipsis ((t (:family "Fira Code" :underline nil :box nil)))) 
                              `(org-date ((t (:family "Inconsolata" :height 0.95 :spacing monospace :inherit fixed-pitch))))
-                              `(org-agenda-date ((t (:family "Futura PT" :height 1.563  :inherit variable-pitch))))
-                              `(org-agenda-date-weekend ((t (:family "Futura PT" :height 1.563 :inherit variable-pitch))))
-                              `(org-agenda-date-today ((t (:family "Futura PT" :height 1.563  :inherit variable-pitch))))
-                              `(org-agenda-structure ((t (:family "Futura PT" :height 1.953 :inherit variable-pitch))))
+                              `(org-agenda-date ((t (:family "Verlag" :height 1.563  :inherit variable-pitch))))
+                              `(org-agenda-date-weekend ((t (:family "Verlag" :height 1.563 :inherit variable-pitch))))
+                              `(org-agenda-date-today ((t (:family "Verlag" :height 1.563  :inherit variable-pitch))))
+                              `(org-agenda-structure ((t (:family "Verlag" :height 1.953 :inherit variable-pitch))))
                              `(org-scheduled ((t (:weight medium :slant normal))))
                              `(org-scheduled-today ((t (:family "Inconsolata" :weight medium :slant normal :spacing monospace :inherit fixed-pitch))))
                              `(org-scheduled-previously ((t (:family "Inconsolata" :weight normal :slant normal :spacing monospace :inherit fixed-pitch))))
@@ -900,7 +900,7 @@ empty (not in the lisp sense but in a human-readable sense)."
                                         (end (substring title -20 nil)))
                                     (concat start  "..." end))
                                 title)))
-           (propertize fixed-title 'face '(:height 1.0 :family "Futura PT") 'help-echo (buffer-file-name)))
+           (propertize fixed-title 'face '(:height 1.0 :family "Verlag") 'help-echo (buffer-file-name)))
            ;; (propertize fixed-title 'face '(:height 1.0 :family "Helvetica Neue LT Std" :width condensed :weight medium) 'help-echo (buffer-file-name))
            ;; (propertize fixed-title 'face '(:height 1.0 :family "Myriad Pro" :weight medium) 'help-echo (buffer-file-name))
        (propertize (buffer-name) 'face '(:weight bold) 'help-echo (buffer-file-name))))
@@ -992,12 +992,12 @@ empty (not in the lisp sense but in a human-readable sense)."
     (if (> (display-pixel-width) 1900)
         ;; high resolution font size (t14s)
         (progn
-          (setq buffer-face-mode-face '(:family "Sitka Text" :height 165))
+          (setq buffer-face-mode-face '(:family "Literata" :height 165))
           (setq line-spacing 0.5))
       ;; low resolution font size
       (progn
         ;; (setq buffer-face-mode-face '(:family "Minion Pro" :height 155 :spacing proportional))
-        (setq buffer-face-mode-face '(:family "Sitka Text" :height 130))
+        (setq buffer-face-mode-face '(:family "Literata" :height 130))
         ;; (setq line-spacing 0.2)
         (setq line-spacing 0.225)))
     (buffer-face-mode))
@@ -1513,82 +1513,86 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
   (evil-leader/set-key
     "D" 'sync0-hydra-org-download-functions/body))
 
-  (use-package org 
-    :after evil
-    :custom
-    (org-hide-leading-stars t)
-    ;; Leave one line between headlines 
-    (org-cycle-separator-lines 0)
-    ;; (org-cycle-separator-lines 2)
-    ;; Don't fontify the whole damn line
-    (org-fontify-whole-block-delimiter-line nil)
-    ;; Disable word wrap in org mode.
-    ;; (org-startup-truncated t)
-    ;; Initial indentation
-    (org-startup-indented t)         
-    ;; Necessary to avoid crazy inconsistenscies using org-download and org-roam
-    (org-link-file-path-type 'absolute)
-    ;; Begin displaying entire trees.
-    (org-startup-folded nil)
-    ;; Better display of italics & bold.
-    (org-hide-emphasis-markers t)
-    ;; Define org-tags.
-    (org-tag-alist '(("urgent" . ?u)
-                     ("current" . ?c)
-                     ("next" . ?n)
-                     ("skim" . ?s)
-                     ("exegesis" . ?e)
-                     ("waiting" . ?w)
-                     ;; ("postponed" . ?p)
-                     ("revise" . ?r)
-                     ("someday" . ?a)
-                     ("fetch" . ?f)
-                     ("@office" . ?o)
-                     ("@home" . ?h)
-                     ("@deepwork" . ?p)
-                     ("transcribe" . ?t)
-                     ("ignore" . ?i)
-                     ("delegated" . ?d)))
-    ;; Hide inherited tags from Org's agenda view.
-    ;; org-agenda-show-inherited-tags nil
-    ;; Define todo keywords.
-    ;; (org-blank-before-new-entry '((heading . nil)(plain-list-item . nil)))
-    ;; Stop emacs asking for confirmation
-    (org-confirm-babel-evaluate nil)
-    (org-ellipsis "  ⌄ ") ;; folding symbol
-    ;; Do not show export buffer.
-    (org-export-show-temporary-export-buffer nil)
-    ;; Set path for org default directory (necessary for refile and agenda).
-    (org-directory (concat (getenv "HOME") "/Gdrive/org"))
-    (org-refile-use-outline-path 'file)
-    (org-outline-path-complete-in-steps nil)
-    (org-startup-with-inline-images t)
-    (org-refile-use-cache nil)
-    ;; Have org-mode indent elisp sections.
-    (org-src-tab-acts-natively t)
-    (org-src-preserve-indentation t)
-    (org-edit-src-content-indentation 0)
-    ;; Color embeded source code
-    (org-src-fontify-natively t)
-    (org-fontify-done-headline t) 
-    (org-fontify-whole-heading-line t)
-    (org-fontify-quote-and-verse-blocks t)
-    ;; Don't fontify sub and superscripts.
-    (org-pretty-entities-include-sub-superscripts nil)
-    ;; Limit inheritance for certain tags. 
-    (org-tags-exclude-from-inheritance (quote ("crypt" "ignore" "next" "current" "waiting" "someday" "delegated" "urgent")))
-    (org-log-done 'time)
-    :config 
-    (require 'sync0-org)
-    ;; This is necessary to avoid conflict with my motion bindings. 
-    (unbind-key "M-h" org-mode-map)
+(use-package org 
+  :after evil
+  :custom
+  (org-hide-leading-stars t)
+  ;; Leave one line between headlines 
+  (org-cycle-separator-lines 0)
+  ;; (org-cycle-separator-lines 2)
+  ;; Don't fontify the whole damn line
+  (org-fontify-whole-block-delimiter-line nil)
+  ;; Disable word wrap in org mode.
+  ;; (org-startup-truncated t)
+  ;; Initial indentation
+  (org-startup-indented t)         
+  ;; Necessary to avoid crazy inconsistenscies using org-download and org-roam
+  (org-link-file-path-type 'absolute)
+  ;; Begin displaying entire trees.
+  (org-startup-folded nil)
+  ;; Better display of italics & bold.
+  (org-hide-emphasis-markers t)
+  ;; Define org-tags.
+  (org-tag-alist '(("urgent" . ?u)
+                   ("current" . ?c)
+                   ("next" . ?n)
+                   ("skim" . ?s)
+                   ("exegesis" . ?e)
+                   ("waiting" . ?w)
+                   ;; ("postponed" . ?p)
+                   ("revise" . ?r)
+                   ("someday" . ?a)
+                   ("fetch" . ?f)
+                   ("@office" . ?o)
+                   ("@home" . ?h)
+                   ("@deepwork" . ?p)
+                   ("transcribe" . ?t)
+                   ("ignore" . ?i)
+                   ("delegated" . ?d)))
+  ;; Hide inherited tags from Org's agenda view.
+  ;; org-agenda-show-inherited-tags nil
+  ;; Define todo keywords.
+  ;; (org-blank-before-new-entry '((heading . nil)(plain-list-item . nil)))
+  ;; Stop emacs asking for confirmation
+  (org-confirm-babel-evaluate nil)
+  (org-ellipsis "  ⌄ ") ;; folding symbol
+  ;; Do not show export buffer.
+  (org-export-show-temporary-export-buffer nil)
+  ;; Set path for org default directory (necessary for refile and agenda).
+  (org-directory (concat (getenv "HOME") "/Gdrive/org"))
+  (org-refile-use-outline-path 'file)
+  (org-outline-path-complete-in-steps nil)
+  (org-startup-with-inline-images t)
+  (org-refile-use-cache nil)
+  ;; Have org-mode indent elisp sections.
+  (org-src-tab-acts-natively t)
+  (org-src-preserve-indentation t)
+  (org-edit-src-content-indentation 0)
+  ;; Color embeded source code
+  (org-src-fontify-natively t)
+  (org-fontify-done-headline t) 
+  (org-fontify-whole-heading-line t)
+  (org-fontify-quote-and-verse-blocks t)
+  ;; Don't fontify sub and superscripts.
+  (org-pretty-entities-include-sub-superscripts nil)
+  ;; Limit inheritance for certain tags. 
+  (org-tags-exclude-from-inheritance (quote ("crypt" "ignore" "next" "current" "waiting" "someday" "delegated" "urgent")))
+  (org-log-done 'time)
+  :config 
+  (require 'sync0-org)
+  ;; This is necessary to avoid conflict with my motion bindings. 
+  (unbind-key "M-h" org-mode-map)
 
-    :bind (;;("<f5>" . sync0-hydra-file-access/body)
-           ("C-x 2" . sync0-split-and-follow-horizontally)
-           ("C-x 3" . sync0-split-and-follow-vertically)
-           (:map org-mode-map
-                 ("M-<return>" . sync0-org-meta-return-dwim)
-                 ("M-S-<return>" . sync0-org-insert-todo-heading-dwim))))
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((python . t)))
+
+  :bind (;;("<f5>" . sync0-hydra-file-access/body)
+         ("C-x 2" . sync0-split-and-follow-horizontally)
+         ("C-x 3" . sync0-split-and-follow-vertically)
+         (:map org-mode-map
+               ("M-<return>" . sync0-org-meta-return-dwim)
+               ("M-S-<return>" . sync0-org-insert-todo-heading-dwim))))
 
 (use-package auto-fill
   :straight nil
@@ -1784,7 +1788,7 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
         ;; high resolution (t14s)
         (progn
           (face-remap-add-relative 'variable-pitch
-                                   :family "Sitka Text"
+                                   :family "Literata"
                                    ;; :height 200
                                    ;; :height 220
                                    :height 160)
@@ -1794,7 +1798,7 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
       ;; low resolution 
       (progn
         (face-remap-add-relative 'variable-pitch
-                                 :family "Sitka Text"
+                                 :family "Literata"
                                  ;; :height 200
                                  ;; :height 155
                                  ;; :height 130
@@ -2259,7 +2263,7 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
   :straight (lsp-jedi :type git :host github :repo "fredcamps/lsp-jedi")
   :config
   (with-eval-after-load "lsp-mode"
-    ;; (add-to-list 'lsp-enabled-clients 'jedi)
+    (add-to-list 'lsp-enabled-clients 'jedi)
     (add-to-list 'lsp-disabled-clients 'pyls)))
 
 (use-package py-autopep8
@@ -2267,13 +2271,55 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
   :config
   (setq py-autopep8-options '("--max-line-length=100")))
 
+(use-package pyenv-mode
+  :straight (pyenv-mode :type git :host github :repo "pythonic-emacs/pyenv-mode") 
+  ;; :preface
+  ;; (defun projectile-pyenv-mode-set ()
+  ;;   "Set pyenv version matching project name."
+  ;;   (let ((project (projectile-project-name)))
+  ;;     (if (member project (pyenv-mode-versions))
+  ;;         (pyenv-mode-set project)
+  ;;       (pyenv-mode-unset))))
+  :init
+  ;; (add-to-list 'exec-path "~/.pyenv/shims")
+  ;; (setenv "WORKON_HOME" "~/.pyenv/versions/")
+  ;; :config
+  ;; (pyenv-mode)
+  :hook (python-mode . pyenv-mode))
+  ;; :hook ((python-mode . pyenv-mode)
+  ;;        (projectile-switch-project . projectile-pyenv-mode-set))
+;; :bind
+;; ("C-x p e" . pyenv-activate-current-project)
+
+(use-package pyvenv
+  :straight (pyenv :type git :host github :repo "jorgenschaefer/pyvenv")
+  :hook (python-mode . pyvenv-mode)
+  :custom
+  ;;   (pyvenv-default-virtual-env-name "env")
+  (pyvenv-mode-line-indicator '(pyvenv-virtual-env-name ("[venv:"
+                                                         pyvenv-virtual-env-name "]"))))
+
+(use-package auto-virtualenv
+  :after pyenv
+  :straight (auto-virtualenv :type git :host github :repo "marcwebbie/auto-virtualenv") 
+  :config
+  (add-hook 'python-mode-hook 'auto-virtualenv-set-virtualenv)
+  ;; If using projectile
+  (add-hook 'projectile-after-switch-project-hook 'auto-virtualenv-set-virtualenv))
+
+(use-package elpy
+  :straight (elpy :type git :host github :repo "jorgenschaefer/elpy")
+  :init
+  (advice-add 'python-mode :before 'elpy-enable))
+
 (use-package python
   :straight nil
-  ;; :custom 
+  :custom 
+  (python-shell-interpreter "python3")
   ;; (jedi:setup-keys t)
   ;; (jedi:complete-on-dot t)
   :config
-  ;; (add-hook 'python-mode-hook 'jedi:setup)
+  (add-hook 'python-mode-hook 'jedi:setup)
   (add-hook 'python-mode-hook 'py-autopep8-enable-on-save)
   (add-hook 'python-mode-hook 'flycheck-mode))
 
@@ -2402,11 +2448,11 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
   (bibtex-set-dialect 'biblatex)
   (require 'bibtex-completion)
   (require 'bibtex-utils)
+  (require 'unidecode)
   (require 'sync0-bibtex-fields)
   (require 'sync0-bibtex-vars)
   (require 'sync0-bibtex-functions)
   (require 'scihub)
-  (require 'unidecode)
 
   (setq scihub-homepage "https://sci-hub.se")
   (setq scihub-download-directory sync0-zettelkasten-attachments-directory)
@@ -2447,7 +2493,7 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
   (bibtex-completion-notes-symbol "N")
   (bibtex-completion-notes-extension ".md")
   ;; (bibtex-completion-notes-extension ".org")
-  (bibtex-completion-pdf-extension '(".pdf" ".epub" ".doc" ".docx" ".org" ".md" ".rtf" ".tex"))
+  (bibtex-completion-pdf-extension '(".pdf" ".epub" ".doc" ".docx" ".org" ".ppt" ".pptx" ".md" ".rtf" ".tex" ".mp3" ".mp4" ".png" ".jpg"))
   (bibtex-completion-additional-search-fields '(origdate date subtitle edition))
   ;; (bibtex-completion-additional-search-fields '(journaltitle origdate subtitle volume location publisher note library institution keywords edition))
   ;; (bibtex-completion-additional-search-fields '(editor journaltitle origdate subtitle volume booktitle location publisher note library medium institution keywords))

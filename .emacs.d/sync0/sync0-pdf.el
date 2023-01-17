@@ -106,21 +106,19 @@ the crop boxes will not produce the expected result."
            (sync0-pdf-convert-dimensions-percentage-to-points (read-string "Enter bottom margin (in percentage): ") height))))
     (concat " -c \"[/CropBox [" l-margin " " b-margin " " r-margin " " t-margin "]")))
 
-(defun sync0-pdf-download-from-url (url filename &optional pirate)
+(defun sync0-pdf-download-from-url (url filepath)
   "Download a paper from url with filename. When pirate is true,
 download the pdf from Sci-hub. File name and url must be absolute
 values since no error protection is taken into account."
   (interactive "sEnter url: \nFFile name to save to: ")
-  (if pirate 
-      (if (file-exists-p filename)
-          (message "Error: File %s already exists" filename)
-        (progn (scihub url filename)
-               (message "AARGHHH! PDF downloaded from %s" url)))
-    (let ((command (concat "wget  -O " filename " \"" url "\"")))
-      (if (file-exists-p filename)
-          (message "Error: File %s already exists" filename)
-        (progn 
-          (shell-command command)
-          (message "PDF downloaded from %s" url))))))
+  (let ((command (concat "wget  -O " filepath " \"" url "\"")))
+    (if (file-exists-p filepath)
+        (message "Error: File %s already exists" filepath)
+      (progn 
+        (if (url-file-exists-p url)
+            (progn 
+              (shell-command command)
+              (message "PDF downloaded from %s" url))
+          (message "No PDF exists for %s" url))))))
 
 (provide 'sync0-pdf)

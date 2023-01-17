@@ -109,6 +109,10 @@ of all elements separeted by separator."
     (insert-file-contents filename)
     (buffer-string)))
 
+(defun sync0-duplicates-p (list)
+  "Check existence of duplicates in list"
+  (not (equal (remove-duplicates list) list)))
+
 (provide 'sync0-functions)
 
 
