@@ -1,11 +1,11 @@
 ;; -*- lexical-binding: t -*-
 
 (defvar sync0-bibtex-fields
-  '("title" "subtitle" "origtitle" "eventtitle" "date" "origdate" "eventdate" "author" "editor" "translator" "recipient" "introduction" "journaltitle" "edition" "booktitle" "booksubtitle" "crossref" "chapter" "volume" "volumes" "number" "series" "publisher" "location" "pages" "note" "doi" "url" "urldate" "language" "langid" "origlanguage" "medium" "institution" "library" "related" "relatedtype" "relatedstring" "file" "created" "password" "shorttitle" "doctype" "shorthand" "description" "keywords" "foreword" "afterword" "editortype" "pagetotal" "verba" "cote" "project" "site" "version" "people" "country" "lecture" "seminar" "theme" "currency" "value" "recommender" "podcast" "visibility" "source" "year" "status" "alive" "expages" "century" "aliases" "scanstatus")
+  '("title" "subtitle" "origtitle" "eventtitle" "date" "origdate" "eventdate" "author" "editor" "translator" "recipient" "introduction" "journaltitle" "edition" "booktitle" "booksubtitle" "crossref" "chapter" "volume" "volumes" "number" "series" "publisher" "location" "pages" "note" "doi" "url" "urldate" "language" "langid" "origlanguage" "medium" "institution" "library" "related" "relatedtype" "relatedstring" "file" "created" "password" "shorttitle" "doctype" "shorthand" "description" "keywords" "foreword" "afterword" "editortype" "pagetotal" "verba" "cote" "project" "site" "version" "people" "country" "lecture" "seminar" "theme" "currency" "value" "recommender" "podcast" "visibility" "source" "year" "status" "alive" "expages" "century" "aliases" "scanstatus" "issuetitle")
   "List of Bibtex entry fields")
 
 (defvar sync0-bibtex-string-fields
-  '("subtitle" "eventtitle" "eventdate" "edition" "chapter" "volume" "volumes" "number" "expages" "pages" "pagetotal" "doi" "password" "shorttitle" "shorthand" "description" "verba" "cote" "version" "url" "value" "aliases")
+  '("subtitle" "eventtitle" "eventdate" "edition" "chapter" "volume" "volumes" "number" "expages" "pages" "pagetotal" "doi" "password" "shorttitle" "shorthand" "description" "verba" "cote" "version" "url" "value" "aliases" "issuetitle")
   "List of Bibtex entry fields that use read-string without
 accompanying completion variable for being defined. The lambda functions for their
 definition are automatically calculated and added to the variable
@@ -296,6 +296,7 @@ titles and the like.")
     ("century" "" "" sync0-bibtex-entry-century)
     ("origdate" "" "" sync0-bibtex-entry-origdate)
     ("eventtitle" "\"" "\"" sync0-bibtex-entry-eventtitle)
+    ("location" "\"" "\"" sync0-bibtex-entry-location)
     ("subtitle" "\"" "\"" sync0-bibtex-entry-subtitle)
     ("crossref" "" "" sync0-bibtex-entry-crossref)
     ("parent" "\"" "\"" sync0-bibtex-entry-parent)

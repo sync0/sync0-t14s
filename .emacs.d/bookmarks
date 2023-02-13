@@ -2,7 +2,12 @@
 ;;; This format is meant to be slightly human-readable;
 ;;; nevertheless, you probably don't want to edit it.
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
-(("quotify"
+(("jde"
+ (filename . "~/Gdrive/bibliographies/courcelle-seneuil_jde.bib")
+ (front-context-string . "20210531231014,\n")
+ (rear-context-string . "DF},\n}\n@Article{")
+ (position . 22744))
+("quotify"
  (filename . "~/.emacs.d/sync0/sync0-bibtex-functions.el")
  (front-context-string . "\" ,var \"\\\"\")))\n ")
  (rear-context-string . "     (concat \"\\\"")
@@ -273,8 +278,8 @@
  (rear-context-string . "\"init.el\"))))))\n")
  (position . 5443))
 ("here"
- (filename . "~/Gdrive/bibliographies/doctorat.bib")
- (front-context-string . "@InCollection{20")
- (rear-context-string . " = {spanish},\n}\n")
- (position . 592))
+ (filename . "~/Gdrive/bibliographies/bibliography.bib")
+ (front-context-string . "3, origdate/1969")
+ (rear-context-string . "reated/2021/05/0")
+ (position . 26817))
 )

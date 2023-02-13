@@ -43,7 +43,8 @@
 
 (defun sync0-bibtex-entry-select-volume-postfix ()
   (unless (or (sync0-null-p sync0-bibtex-entry-volume)
-              (string= sync0-bibtex-entry-type "Article"))
+              (string= sync0-bibtex-entry-type "Article")
+              (string= sync0-bibtex-entry-type "InCollection"))
     (cond ((equal sync0-bibtex-entry-language "french")
            (concat ", T. " sync0-bibtex-entry-volume))
           ((equal sync0-bibtex-entry-language "english")
@@ -364,8 +365,8 @@ markdown."
     (xah-replace-pairs-in-string-recursive
      (sync0-bibtex-add-missing-braces arg)
      [["\\textit{" "*"]
-      ["d'" ""]
-      ["d’" ""]
+      ;; ["d'" ""]
+      ;; ["d’" ""]
       ["\\&" "&"]
       ["}" "*"]])))
 

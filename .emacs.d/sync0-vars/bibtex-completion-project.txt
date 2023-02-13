@@ -21,3 +21,8 @@ south_korea
 2022_classiques-sciences-sociales
 45_rue_des_rancy
 21342Cg
+2023_afep
+2023_journees-gide
+2023_alahpe
+2023_rehpere
+2023_eshet

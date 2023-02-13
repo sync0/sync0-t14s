@@ -2494,20 +2494,22 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
   (bibtex-completion-notes-extension ".md")
   ;; (bibtex-completion-notes-extension ".org")
   (bibtex-completion-pdf-extension '(".pdf" ".epub" ".doc" ".docx" ".org" ".ppt" ".pptx" ".md" ".rtf" ".tex" ".mp3" ".mp4" ".png" ".jpg"))
-  (bibtex-completion-additional-search-fields '(origdate date subtitle edition))
+  (bibtex-completion-additional-search-fields '(date volume edition))
+  ;; (bibtex-completion-additional-search-fields '(origdate date volume edition))
+  ;; (bibtex-completion-additional-search-fields '(origdate date subtitle edition))
   ;; (bibtex-completion-additional-search-fields '(journaltitle origdate subtitle volume location publisher note library institution keywords edition))
   ;; (bibtex-completion-additional-search-fields '(editor journaltitle origdate subtitle volume booktitle location publisher note library medium institution keywords))
 
   :config 
   (setq bibtex-completion-display-formats
-	'((article       . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title}: ${subtitle} @ ${journaltitle} [${=type=}:${=key=}]")
-	  (mvbook          . "${=has-pdf=:1}${=has-note=:1}| ${author} [${origdate}](${date:4}) ${title} ${volume}: ${subtitle} Ed. ${edition} [${=type=}:${=key=}]")
-	  (book          . "${=has-pdf=:1}${=has-note=:1}| ${author} [${origdate}](${date:4}) ${title} ${volume}: ${subtitle} Ed. ${edition} [${=type=}:${=key=}]")
-	  (inbook        . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title:55} [${=type=}:${=key=}]")
-	  (incollection  . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title:55} [${=type=}:${=key=}]")
-	  (collection    . "${=has-pdf=:1}${=has-note=:1}| ${editor} (${date:4}) ${title:55} ${volume}: ${subtitle} [${=type=}:${=key=}]")
-	  (mvcollection    . "${=has-pdf=:1}${=has-note=:1}| ${editor} (${date:4}) ${title:55} ${volume}: ${subtitle} [${=type=}:${=key=}]")
-	  (inproceedings . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date:4}) ${title:55} [${=type=}:${=key=}]")
+	'((article       . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date}) ${title}: ${subtitle} @ ${journaltitle} [${=type=}:${=key=}]")
+	  (mvbook          . "${=has-pdf=:1}${=has-note=:1}| ${author} [${origdate:4}](${date}) ${title} ${volume}: ${subtitle} Ed. ${edition} [${=type=}:${=key=}]")
+	  (book          . "${=has-pdf=:1}${=has-note=:1}| ${author} [${origdate:4}](${date}) ${title} ${volume}: ${subtitle} Ed. ${edition} [${=type=}:${=key=}]")
+	  (inbook        . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date}) ${title:55} [${=type=}:${=key=}]")
+	  (incollection  . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date}) ${title:55} [${=type=}:${=key=}]")
+	  (collection    . "${=has-pdf=:1}${=has-note=:1}| ${editor} (${date}) ${title:55} ${volume}: ${subtitle} [${=type=}:${=key=}]")
+	  (mvcollection    . "${=has-pdf=:1}${=has-note=:1}| ${editor} (${date}) ${title:55} ${volume}: ${subtitle} [${=type=}:${=key=}]")
+	  (inproceedings . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date}) ${title:55} [${=type=}:${=key=}]")
 	  (t             . "${=has-pdf=:1}${=has-note=:1}| ${author} (${date}) ${title}: ${subtitle} [${=type=}:${=key=}]")))
 
   (setq bibtex-completion-format-citation-functions

@@ -3069,7 +3069,9 @@ Default Emacs mode for editing python code.
   (bibtex-completion-notes-extension ".md")
   ;; (bibtex-completion-notes-extension ".org")
   (bibtex-completion-pdf-extension '(".pdf" ".epub" ".doc" ".docx" ".org" ".ppt" ".pptx" ".md" ".rtf" ".tex" ".mp3" ".mp4" ".png" ".jpg"))
-  (bibtex-completion-additional-search-fields '(origdate date subtitle edition))
+  (bibtex-completion-additional-search-fields '(date volume edition))
+  ;; (bibtex-completion-additional-search-fields '(origdate date volume edition))
+  ;; (bibtex-completion-additional-search-fields '(origdate date subtitle edition))
   ;; (bibtex-completion-additional-search-fields '(journaltitle origdate subtitle volume location publisher note library institution keywords edition))
   ;; (bibtex-completion-additional-search-fields '(editor journaltitle origdate subtitle volume booktitle location publisher note library medium institution keywords))
 

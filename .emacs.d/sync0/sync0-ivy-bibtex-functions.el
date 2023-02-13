@@ -149,8 +149,8 @@
   "Print the PDFs of the entries with the given KEYS where available."
   (dolist (key keys)
     (if (file-exists-p (concat sync0-zettelkasten-directory key ".md"))
-        (sync0-bibtex-create-note-from-entry t key t)
-        (sync0-bibtex-create-note-from-entry nil key t)))) 
+        (sync0-bibtex-create-note-from-entry t key)
+        (sync0-bibtex-create-note-from-entry nil key)))) 
 
 (defun bibtex-completion-archive-entries-list (keys)
   "Print the PDFs of the entries with the given KEYS where available."

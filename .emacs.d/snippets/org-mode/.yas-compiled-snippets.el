@@ -27,6 +27,7 @@
                        ("ricetta" "*** ${1:Ricetta}\n**** Ingredienti\n\\begin{ingredienti} \n$0 \\\\\n\\end{ingredienti}\n**** Preparazione\n" "ricetta" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/ricetta" nil nil)
                        ("flushleft" "\\begin{FlushLeft}\n${1:enter_text_here}\n\\end{FlushLeft}" "ragged2e_flushleft" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/ragged2e_flushleft" nil nil)
                        ("<q" "#+begin_quote\n$0\n#+end_quote" "quote" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/quote" nil nil)
+                       ("lit_python" "#+BEGIN_SRC python :noweb yes :tangle literate_python/literate.py\n    \"\"\"A docstring for the literate.py module\"\"\"\n\n    # imports\n    import sys\n    <<literate-main-imports>>\n\n    # constants\n\n    # exception classes\n\n    # interface funchtions\n\n    # classes\n\n\n    <<LiterateClass-definition>>\n\n    # internal functions & classes\n\n    <<literate-main>>\n\n\n    if __name__ == \"__main__\":\n        status = main()\n        sys.exit(status)\n  #+END_SRC" "python-literate-src-block" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/python-literate-src-block" nil nil)
                        ("py_" "#+begin_src python\n$0\n#+end_src" "python" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/python" nil nil)
                        ("func" "*${1:function_name}:* ${2:function_definition}\n/example:/ ~${3:code}~\n/output:/ ${4:output}\n$0" "programming function" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/programming_function" nil nil)
                        ("timeline" "#+ATTR_LATEX: :booktabs :environment tabular :align @{\\,}r<{\\hskip 2pt} !{\\timebullet} p{7cm} \n|${1:1492}|${2:Arrivee de Chirstophe Colombus}|" "org-tabular-timeline" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/org_tabular_timeline" nil nil)
@@ -148,4 +149,4 @@
                        ("<au" "#+author: $0" "author" nil nil nil "/home/sync0/.emacs.d/snippets/org-mode/author" nil nil)))
 
 
-;;; Do not edit! File generated at Sun Jan 30 12:38:14 2022
+;;; Do not edit! File generated at Thu Feb  9 16:34:23 2023

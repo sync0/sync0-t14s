@@ -480,22 +480,46 @@ ivy-bibtex to search for the pdf attached to a bibtex entry."
             (message "Crop box has been redefined for %s" pdf))
         (message "No pdf found for %s" pdf))))
 
-  (defun sync0-bibtex-add-field ()
-    (interactive)
-    (setq sync0-bibtex-entry-creation nil)
-    (sync0-bibtex-nullify-all-variables)
-    (let* ((field (completing-read "Choose Bibtex field: " sync0-bibtex-fields))
-           (entry (save-excursion (bibtex-beginning-of-entry)
-			          (bibtex-parse-entry)))
-           (bibkey (cdr (assoc "=key=" entry))))
-      ;; (setq sync0-bibtex-entry-key bibkey)
-      (sync0-bibtex-completion-load-entry bibkey)
-      (unless (sync0-null-p  sync0-bibtex-entry-file)
-        (setq sync0-bibtex-entry-file-old t))
-      (funcall (cadr (assoc field sync0-bibtex-entry-functions)))
+;; Experimental!!! very hacky and could be improved but works so far
+(defun sync0-bibtex-add-field ()
+  (interactive)
+  (setq sync0-bibtex-entry-creation nil)
+  (sync0-bibtex-nullify-all-variables)
+  (let* ((field (completing-read "Choose Bibtex field: " sync0-bibtex-fields))
+         (entry (save-excursion (bibtex-beginning-of-entry)
+			        (bibtex-parse-entry)))
+         (bibkey (cdr (assoc "=key=" entry))))
+    ;; load the variables 
+    (sync0-bibtex-completion-load-entry bibkey)
+    (unless (sync0-null-p  sync0-bibtex-entry-file)
+      (setq sync0-bibtex-entry-file-old t))
+    ;; (setq sync0-bibtex-entry-key bibkey)
+    ;; call new value
+    (funcall (cadr (assoc field sync0-bibtex-entry-functions)))
+    (let* ((keywords-p (when (string= field "keywords")
+                         t))
+           ;; (file-p (when (string= field "file")
+           ;;               t))
+           (old-value (when (assoc field entry)
+                        (unless keywords-p
+                      (substring (cdr (assoc field entry)) 1 -1))))
+           (assigned-value (eval (intern (concat "sync0-bibtex-entry-" field))))
+           (separator (when old-value
+                        (cond ((member field sync0-bibtex-people-fields)
+                                " and ")
+                               ((string= field "file"
+                                         ";"))
+                               (t ", "))))
+           (new-value (if old-value
+                          (concat old-value separator assigned-value)
+                        assigned-value))
+           (bib-list (list field "Whatever string" new-value nil)))
       (bibtex-beginning-of-entry)
-      (bibtex-make-field (list field "Whatever string"
-                               (eval (intern (concat "sync0-bibtex-entry-" field))) nil) t)))
+      (save-excursion
+        (when old-value
+          (re-search-forward (concat "[[:space:]]+" field "[[:space:]]+="))
+          (bibtex-kill-field nil t)))
+      (bibtex-make-field bib-list t))))
 
   (defun sync0-bibtex-copy-pdf-to-path (&optional in-path bibkey)
     "Copy attached pdf to path and change the title to make it
