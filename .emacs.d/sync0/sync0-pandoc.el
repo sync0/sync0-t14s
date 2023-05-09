@@ -27,12 +27,12 @@
         ("scrartcl" (lambda ()
                      (concat
                       " --defaults=/home/sync0/Gdrive/typography/pandoc/defaults_scrartcl.yaml")))
+        ("scrartcl_numbered" (lambda ()
+                     (concat
+                      " --defaults=/home/sync0/Gdrive/typography/pandoc/defaults_scrartcl_numbered.yaml")))
         ("scrartcl_a5" (lambda ()
                      (concat
                       " --defaults=/home/sync0/Gdrive/typography/pandoc/defaults_scrartcl_a5.yaml")))
-        ("zettel" (lambda ()
-                     (concat
-                      " --defaults=/home/sync0/Gdrive/typography/pandoc/defaults_zettel.yaml")))
         ("scrlttr2" (lambda ()
                      (concat
                       " --template scrlttr2")))
@@ -41,7 +41,19 @@
                       " --defaults=/home/sync0/Gdrive/typography/pandoc/defaults_scrbook.yaml")))
         ("scrreprt" (lambda ()
                      (concat
-                      " --defaults=/home/sync0/Gdrive/typography/pandoc/defaults_scrreprt.yaml"))))
+                      " --defaults=/home/sync0/Gdrive/typography/pandoc/defaults_scrreprt.yaml")))
+        ("zettel" (lambda ()
+                     (concat
+                      " --defaults=/home/sync0/Gdrive/typography/pandoc/defaults_zettel.yaml")))
+        ("zkn_literature_notes" (lambda ()
+                     (concat
+                      " --defaults=/home/sync0/Gdrive/typography/pandoc/defaults_zkn_lit.yaml"))))
+      "List of concatenated strings defining the styles for markdown to pdf export")
+
+(defvar sync0-pandoc-export-epub-to-pdf-settings-alist
+      '(("scrbook" (lambda ()
+                     (concat
+                      " --defaults=/home/sync0/Gdrive/typography/pandoc/defaults_epub-scrbook.yaml"))))
       "List of concatenated strings defining the styles for markdown to pdf export")
 
   (defvar sync0-pandoc-md-to-pdf-command-base
@@ -54,7 +66,7 @@
      " --shift-heading-level-by=1" 
      ;; " --shift-heading-level-by=-1" 
      " --filter=/home/sync0/.local/share/pandoc/filters/delink.hs"
-     " --lua-filter=diagram-generator.lua "
+     ;; " --lua-filter=diagram-generator.lua "
      " -H preamble.tex")
      ;; " --filter pandoc-xnos"
     "String of basic export settings for pandoc to convert from markdown to pdf.")
@@ -68,8 +80,8 @@
      " --resource-path=.:/home/sync0/.local/share/pandoc/filters:/home/sync0/Gdrive/typography/css:/home/sync0/Gdrive/typography/csl:/home/sync0/Gdrive/typography/pandoc:/home/sync0/Gdrive/bibliographies:/home/sync0/Gdrive/typography/pandoc:/home/sync0/Gdrive/obsidian/img:/home/sync0/Pictures/archives:/home/sync0/Documents/pdfs"
      ;; " --shift-heading-level-by=1" 
      ;; " --shift-heading-level-by=-1" 
-     " --filter=/home/sync0/.local/share/pandoc/filters/delink.hs"
-     " --lua-filter=diagram-generator.lua "
+     ;; " --filter=/home/sync0/.local/share/pandoc/filters/delink.hs"
+     ;; " --lua-filter=diagram-generator.lua "
      " -H preamble.tex")
      ;; " --filter pandoc-xnos"
     "String of basic export settings for pandoc to convert from markdown to pdf.")
@@ -119,12 +131,12 @@
   (interactive)
   (let* ((type (if (save-excursion
                      (goto-char (point-min))
-                     (re-search-forward "^export_template: \\([A-z-]+\\)\n" nil t 1))
+                     (re-search-forward "^export_template: \\([[:graph:]]+\\)$" nil t 1))
                    (match-string-no-properties 1)
                  (completing-read "Choose document type for export: " sync0-pandoc-export-md-to-pdf-settings-alist)))
          (lang (if (save-excursion
                      (goto-char (point-min))
-                     (re-search-forward "^lang: \\([A-z-]+\\)\n" nil t 1))
+                     (re-search-forward "^lang: \\([[:graph:]]+\\)$" nil t 1))
                    (match-string-no-properties 1)
                  (completing-read "Choose export language: " 
                                   '("en-US" "en-GB" "pt-BR" "pt-PT" "de-DE" "fr-FR" "es-CO"))))
@@ -143,7 +155,7 @@
          ;; (citationp (yes-or-no-p "Use citations module? "))
          (lang (if (progn
                      (goto-char (point-min))
-                     (re-search-forward "^lang: \\([A-z-]+\\)\n" nil t 1))
+                     (re-search-forward "^lang: \\([[:graph:]]+\\)$" nil t 1))
                    (match-string-no-properties 1)
                  (completing-read "Choose export language: " 
                                   '("en-US" "en-GB" "pt-BR" "pt-PT" "de-DE" "fr-FR" "es-CO"))))
@@ -158,7 +170,7 @@
          ;;                (concat base type-settings)))
          (raw-command (concat "pandoc" type-settings))
          (current-path (buffer-file-name))
-         (current-file (when (string-match "^.+/\\([0-9]+\\)\\.md$" current-path)
+         (current-file (when (string-match "^.+/\\([[:alnum:]]+\\)\\.md$" current-path)
                          (match-string-no-properties 1 current-path)))
          ;; (file (read-string "Which file to convert to PDF? " current-file))
          (command (concat raw-command " " current-file ".md -o" current-file ".tex")))
@@ -212,27 +224,5 @@
 ;;        ))
 
 ;; Epub to pdf export settings
-
-(defun sync0-pandoc-export-epub-to-pdf ()
-  (interactive)
-  (let* ((type (if (save-excursion
-                     (goto-char (point-min))
-                     (re-search-forward "^export_template: \\([A-z-]+\\)\n" nil t 1))
-                   (match-string-no-properties 1)
-                 (completing-read "Choose document type for export: " sync0-pandoc-export-md-to-pdf-settings-alist)))
-         (lang (if (save-excursion
-                     (goto-char (point-min))
-                     (re-search-forward "^lang: \\([A-z-]+\\)\n" nil t 1))
-                   (match-string-no-properties 1)
-                 (completing-read "Choose export language: " 
-                                  '("en-US" "en-GB" "pt-BR" "pt-PT" "de-DE" "fr-FR" "es-CO"))))
-         (type-settings (funcall
-                         (cadr (assoc type sync0-pandoc-export-md-to-pdf-settings-alist))))
-         (raw-command (concat "pandoc" type-settings))
-         (current-path (buffer-file-name))
-         (current-file (when (string-match "^.+/\\([[:alnum:]]+\\)\\.md$" current-path)
-                         (match-string-no-properties 1 current-path)))
-         (command (concat raw-command " " current-file ".md -o" current-file ".pdf")))
-    (shell-command command)))
 
 (provide 'sync0-pandoc)

@@ -25,7 +25,7 @@
       (progn
         (setq sync0-language-active "french")
         (setq local-abbrev-table french-mode-abbrev-table)
-        (set-input-method "french-prefix")
+        (set-input-method "french-postfix")
         (ispell-change-dictionary "fr_FR")))
      ((string-equal lang "it")
       (progn
@@ -67,7 +67,7 @@
                  (setq  guess-language-current-language 'fr)
                  (setq sync0-language-active "french")
                  (setq local-abbrev-table french-mode-abbrev-table)
-                 (set-input-method "french-prefix")
+                 (set-input-method "french-postfix")
                  (ispell-change-dictionary "fr_FR"))))
     (?5 "it" (lambda ()
                (progn

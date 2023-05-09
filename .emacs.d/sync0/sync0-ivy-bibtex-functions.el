@@ -140,17 +140,24 @@
 
 (defun bibtex-completion-copy-pdf-to-path-list (keys)
   "Print the PDFs of the entries with the given KEYS where available."
-  (let ((path (read-string "Où envoyer ce pdf ? (finir en /) ")))
-    (dolist (key keys)
-      (when-let ((pdf (car (bibtex-completion-find-pdf key))))
-        (sync0-bibtex-copy-pdf-to-path path key)))))
+  (let ((path (read-string "Où envoyer ce pdf ? (finir en /) " sync0-goodreads-directory)))
+    (if (file-accessible-directory-p path)
+        (dolist (key keys)
+          (when-let ((pdf (car (bibtex-completion-find-pdf key))))
+            (sync0-bibtex-copy-pdf-to-path path key)))
+    (message "%s is unaccesable or does not exist." path))))
 
 (defun bibtex-completion-rewrite-notes-from-biblatex-data-list (keys)
   "Print the PDFs of the entries with the given KEYS where available."
   (dolist (key keys)
-    (if (file-exists-p (concat sync0-zettelkasten-directory key ".md"))
+    (if (file-exists-p (concat sync0-zettelkasten-references-directory key ".md"))
         (sync0-bibtex-create-note-from-entry t key)
         (sync0-bibtex-create-note-from-entry nil key)))) 
+
+(defun bibtex-completion-recalc-tags (keys)
+  "Print the PDFs of the entries with the given KEYS where available."
+  (dolist (key keys)
+    (sync0-bibtex-recalc-tags-and-mdnote key)))
 
 (defun bibtex-completion-archive-entries-list (keys)
   "Print the PDFs of the entries with the given KEYS where available."
@@ -169,6 +176,11 @@
   "Print the PDFs of the entries with the given KEYS where available."
     (dolist (key keys)
         (sync0-bibtex-add-key-to-pdf key)))
+
+(defun bibtex-completion-open-url (keys)
+  "Print the PDFs of the entries with the given KEYS where available."
+    (dolist (key keys)
+        (sync0-bibtex-open-url key)))
 
 (defun bibtex-completion-concatenate-pdf-list (keys)
   "Concatenate pdfs corresponding to keys"
@@ -210,6 +222,44 @@
     (dolist (key keys)
         (sync0-bibtex-extract-from-crossref key t)))
 
+(defun bibtex-completion-delete-entry (keys)
+  "Print the PDFs of the entries with the given KEYS where available."
+    (dolist (key keys)
+        (sync0-bibtex-delete-entry key)))
+
+(defun bibtex-completion-open-pdf-external (keys)
+  "Print the PDFs of the entries with the given KEYS where available."
+    (dolist (key keys)
+        (sync0-bibtex-open-pdf key)))
+
+(defun bibtex-completion-string-keys-with-sep (keys)
+  "Produce strin of concatenated KEYS with separator."
+  (let ((separator ", ")
+        (x ""))
+    (dolist (key keys x)
+      (setq x (concat key separator x)))
+    (string-trim-right x ", ")))
+
+(defun bibtex-completion-add-field-and-recalc-mdnote (keys)
+  "Add "
+  (let* ((field (completing-read "Choose Bibtex field: " (remove "keywords" sync0-bibtex-fields)))
+         (separator (cond ((member field sync0-bibtex-people-fields)
+                           " and ")
+                          ((string= field "file")
+                           ";")
+                          (t ", ")))
+         (unique-p (member field sync0-bibtex-unique-fields))
+         (assigned-value (progn (funcall (cadr (assoc field sync0-bibtex-entry-functions)))
+                                (eval (intern (concat "sync0-bibtex-entry-" field)))))
+         (assigned-values (when (and assigned-value
+                                     (null unique-p))
+                            (split-string assigned-value separator)))
+         (multiple-new-p (when assigned-values
+                           (> (length assigned-values) 1))))
+    ;; Loop
+    (dolist (key keys)
+      (sync0-bibtex-add-field-and-recalc-keywords-and-mdnote key field unique-p multiple-new-p separator assigned-value assigned-values))))
+
 ;; Before being able to call custom functions from ivy-bibtex, these
 ;; have to be manually added to ivy-bibtex. 
 
@@ -235,21 +285,52 @@
 
 (ivy-bibtex-ivify-action bibtex-completion-extract-pdf-from-crossref ivy-bibtex-extract-pdf-from-crossref)
 
+(ivy-bibtex-ivify-action bibtex-completion-add-field-and-recalc-mdnote ivy-bibtex-add-field-and-recalc-mdnote)
+
+(ivy-bibtex-ivify-action bibtex-completion-delete-entry ivy-bibtex-delete-entry)
+
+(ivy-bibtex-ivify-action bibtex-completion-open-url ivy-bibtex-open-url)
+
+(ivy-bibtex-ivify-action bibtex-completion-string-keys-with-sep ivy-bibtex-string-keys-with-sep)
+
+(ivy-bibtex-ivify-action bibtex-completion-open-pdf-external ivy-bibtex-open-pdf-external)
+
+(ivy-bibtex-ivify-action bibtex-completion-recalc-tags ivy-bibtex-recalc-tags)
+
+ ;; '(("p" ivy-bibtex-open-pdf "Open PDF file (if present)" ivy-bibtex-open-pdf)
+ ;;   ("u" ivy-bibtex-open-url-or-doi "Open URL or DOI in browser" ivy-bibtex-open-url-or-doi)
+ ;;   ("c" ivy-bibtex-insert-citation "Insert citation" ivy-bibtex-insert-citation)
+ ;;   ("r" ivy-bibtex-insert-reference "Insert reference" ivy-bibtex-insert-reference)
+ ;;   ("k" ivy-bibtex-insert-key "Insert BibTeX key" ivy-bibtex-insert-key)
+ ;;   ("b" ivy-bibtex-insert-bibtex "Insert BibTeX entry" ivy-bibtex-insert-bibtex)
+ ;;   ("a" ivy-bibtex-add-PDF-attachment "Attach PDF to email" ivy-bibtex-add-PDF-attachment)
+ ;;   ("e" ivy-bibtex-edit-notes "Edit notes" ivy-bibtex-edit-notes)
+ ;;   ("s" ivy-bibtex-show-entry "Show entry" ivy-bibtex-show-entry)
+ ;;   ("l" ivy-bibtex-add-pdf-to-library "Add PDF to library" ivy-bibtex-add-pdf-to-library)
+ ;;   ("f" (lambda (_candidate) (ivy-bibtex-fallback ivy-text)) "Fallback options")))
+
+
 ;; This is the way to add actions to ivy-bibtex wituhout overwriting
 ;; those already defined.
 (ivy-add-actions
  'ivy-bibtex
- '(("z" ivy-bibtex-print-pdf-list "Print attachments with default printer" ivy-bibtex-print-pdf-list)
-   ("Z" ivy-bibtex-copy-pdf-to-path-list "Copy attached pdf to target path" ivy-bibtex-copy-pdf-to-path-list)
-   ("Y" ivy-bibtex-rewrite-notes-from-biblatex-data-list "Rewrite note metadata from Biblatex entry" ivy-bibtex-rewrite-notes-from-biblatex-data-list)
-   ("w" ivy-bibtex-archive-entries-list "Archive Biblatex entries" ivy-bibtex-archive-entries-list)
-   ("M" ivy-bibtex-move-entries-to-bibfile-list "Move Biblatex entries to bibfile" ivy-bibtex-move-entries-to-bibfile-list)
-   ("K" ivy-bibtex-add-key-to-pdf-list "Add bibkeys to pdfs" ivy-bibtex-add-key-to-pdf-list)
-   ("C" ivy-bibtex-concatenate-pdf-list "Concatenate attached pdfs" ivy-bibtex-concatenate-pdf-list)
-   ("f" ivy-bibtex-file-exists-p "Check whether attached files exist" ivy-bibtex-file-exists-p)
-   ("d" ivy-bibtex-file-download-pdf-from-url "Download attached pdf from URL" ivy-bibtex-download-pdf-from-url)
-   ("e" ivy-bibtex-file-extract-pdf-from-crossref "Extract pdf from crossref pdf" ivy-bibtex-extract-pdf-from-crossref)
-   ("x" ivy-bibtex-crop-pdf-list "Crop attachments using model cropbox" ivy-bibtex-crop-pdf-list)))
+ '(("z" ivy-bibtex-print-pdf-list "Print PDF with default printer" ivy-bibtex-print-pdf-list)
+   ("Z" ivy-bibtex-copy-pdf-to-path-list "Copy PDF to target path" ivy-bibtex-copy-pdf-to-path-list)
+   ("Y" ivy-bibtex-rewrite-notes-from-biblatex-data-list "Rewrite mdnote metadata" ivy-bibtex-rewrite-notes-from-biblatex-data-list)
+   ("A" ivy-bibtex-archive-entries-list "Archive entry" ivy-bibtex-archive-entries-list)
+   ("p" ivy-bibtex-open-pdf-external "Open PDF" ivy-bibtex-open-pdf-external)
+   ("w" ivy-bibtex-open-url "Open URL" ivy-bibtex-open-url)
+   ("M" ivy-bibtex-move-entries-to-bibfile-list "Move entry to bibfile" ivy-bibtex-move-entries-to-bibfile-list)
+   ("S" ivy-bibtex-string-keys-with-sep "Produce string of keys" ivy-bibtex-string-keys-with-sep)
+   ("K" ivy-bibtex-add-key-to-pdf-list "Mark bibkey onto PDF" ivy-bibtex-add-key-to-pdf-list)
+   ("C" ivy-bibtex-concatenate-pdf-list "Concatenate PDFs" ivy-bibtex-concatenate-pdf-list)
+   ("f" ivy-bibtex-file-exists-p "Check existence of attachment" ivy-bibtex-file-exists-p)
+   ("d" ivy-bibtex-download-pdf-from-url "Download attachement from URL" ivy-bibtex-download-pdf-from-url)
+   ("D" ivy-bibtex-delete-entry "Delete entry" ivy-bibtex-delete-entry)
+   ("E" ivy-bibtex-file-extract-pdf-from-crossref "Extract PDF from crossref" ivy-bibtex-extract-pdf-from-crossref)
+   ("a" ivy-bibtex-add-field-and-recalc-mdnote "Add field and recalc mdnote" ivy-bibtex-add-field-and-recalc-mdnote)
+   ("T" ivy-bibtex-recalc-tags "Recalc tags and mdnote" ivy-bibtex-recalc-tags)
+   ("x" ivy-bibtex-crop-pdf-list "Crop PDF with cropbox" ivy-bibtex-crop-pdf-list)))
 
 (defun sync0-ivy-bibtex-with-local-bibliography ()
   ""

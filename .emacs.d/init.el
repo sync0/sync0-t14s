@@ -229,7 +229,10 @@
     (sync0-zettelkasten-fiche-types . "~/.emacs.d/sync0-vars/fiche-types.txt")))
 ;; define the rest
 
-(setq sync0-zettelkasten-directory (concat (getenv "HOME") "/Gdrive/obsidian/")
+(setq sync0-cloud-directory (concat (getenv "HOME") "/Gdrive/")
+      sync0-zettelkasten-directory (concat sync0-cloud-directory "obsidian/")
+      sync0-goodreads-directory (concat sync0-cloud-directory "goodreads/")
+      sync0-zettelkasten-references-directory (concat sync0-zettelkasten-directory "references/")
       ;; sync0-obsidian-directory (concat (getenv "HOME") "/Gdrive/obsidian/")
       sync0-zettelkasten-directory-sans (concat (getenv "HOME") "/Gdrive/obsidian")
       sync0-zettelkasten-attachments-directory (concat (getenv "HOME") "/Gdrive/cabinet/")
@@ -380,6 +383,29 @@
   "In dired buffers, copy the full path of file at point." 
   (interactive)
   (dired-copy-filename-as-kill 0))
+
+;; https://superuser.com/questions/176627/in-emacs-dired-how-can-i-run-a-command-on-multiple-marked-files
+(defun sync0-dired-do-command (command)
+  "Run COMMAND on marked files. Any files not already open will be opened.
+After this command has been run, any buffers it's modified will remain
+open and unsaved."
+  (interactive "CRun on marked files M-x ")
+  (save-window-excursion
+    (mapc (lambda (filename)
+            (find-file filename)
+            (call-interactively command))
+          (dired-get-marked-files))))
+
+(defun sync0-dired-delete-duplicate-lines ()
+  "Run COMMAND on marked files. Any files not already open will be opened.
+After this command has been run, any buffers it's modified will remain
+open and unsaved."
+  (interactive)
+  (save-window-excursion
+    (mapc (lambda (filename)
+            (find-file filename)
+            (delete-duplicate-lines (point-min) (point-max) nil nil nil nil))
+          (dired-get-marked-files))))
 
 ;; Another one to copy file name to clipboard:
 ;; https://emacsredux.com/blog/2013/03/27/copy-filename-to-the-clipboard/
@@ -2440,10 +2466,11 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
   (bibtex-align-at-equal-sign t)
   (bibtex-text-indentation 22)
   (bibtex-entry-format '(opts-or-alts page-dashes whitespace braces last-comma inherit-booktitle delimiters sort-fields realign))
-  ;; :init
-  :hook
-  (bibtex-mode . (lambda ()
-                   (setq fill-column 9999)))
+  :init
+  (add-hook 'bibtex-mode-hook (lambda () (setq fill-column 9999)))
+  ;; :hook
+  ;; (bibtex-mode . (lambda ()
+  ;;                  (setq fill-column 9999)))
   :config
   (bibtex-set-dialect 'biblatex)
   (require 'bibtex-completion)
@@ -2454,7 +2481,7 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
   (require 'sync0-bibtex-functions)
   (require 'scihub)
 
-  (setq scihub-homepage "https://sci-hub.se")
+  (setq scihub-homepage "https://sci-hub.ru")
   (setq scihub-download-directory sync0-zettelkasten-attachments-directory)
   (setq scihub-open-after-download nil)
 
@@ -2476,15 +2503,13 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
   (evil-define-key 'normal bibtex-mode-map
     "K" 'sync0-bibtex-previous-key
     "zf" 'bibtex-fill-entry
-    "J" 'sync0-bibtex-next-key)
-
-  (add-hook 'bibtex-mode-hook (lambda () (setq fill-column 9999))))
+    "J" 'sync0-bibtex-next-key))
 
 (use-package bibtex-completion
   :after bibtex
   :custom 
   (bibtex-completion-bibliography sync0-bibtex-bibliographies)
-  (bibtex-completion-notes-path sync0-zettelkasten-directory-sans)
+  (bibtex-completion-notes-path sync0-zettelkasten-references-directory)
   ;; (bibtex-completion-notes-path '"~/Gdrive/org/permanent")
   ;; (bibtex-completion-library-path '("~/Gdrive/cabinet/"))
   (bibtex-completion-library-path (list sync0-zettelkasten-attachments-directory))

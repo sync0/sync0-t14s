@@ -181,3 +181,4 @@ Translated from the 4\textsuperscript{th} Hungarian edition
 Numéro étudiant 5206371
 Capítulo XII de \textit{La América
 Extrait du \emph{Journal des économistes
+\textsc{co.agn.ap/apo}, Legajo 7743/3

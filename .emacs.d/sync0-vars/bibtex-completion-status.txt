@@ -1,0 +1,13 @@
+toread
+toexcerpt
+toskim
+topermanent
+done
+cancelled
+excerpted
+toipad
+to_ipad
+fetch
+annotate
+inspect
+scan

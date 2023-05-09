@@ -35,8 +35,14 @@
            ;;                    (concat shorthand " " sync0-bibtex-entry-date-fixed)))
            (title-date (when sync0-bibtex-entry-date-or-origdate-p
                          (concat title " " sync0-bibtex-entry-date-fixed)))
+           (title-journal-date (when (and  sync0-bibtex-entry-date-or-origdate-p
+                                           sync0-bibtex-entry-journaltitle)
+                         (concat title " (" sync0-bibtex-entry-journaltitle  ") " sync0-bibtex-entry-date-fixed)))
            (date-title (when sync0-bibtex-entry-date-or-origdate-p
                          (concat sync0-bibtex-entry-date-fixed " " title)))
+           (date-title-journal (when (and sync0-bibtex-entry-date-or-origdate-p
+                                           sync0-bibtex-entry-journaltitle)
+                         (concat sync0-bibtex-entry-date-fixed " (" sync0-bibtex-entry-journaltitle ") ")))
            (date-shorttitle (when (and sync0-bibtex-entry-date-or-origdate-p
                                        sync0-bibtex-entry-shorttitle)
                          (concat sync0-bibtex-entry-date-fixed " " shorttitle)))
@@ -45,8 +51,14 @@
            ;;               (concat sync0-bibtex-entry-date-fixed " " shorthand)))
            (altertitle-date (when sync0-bibtex-entry-date-or-origdate-p
                               (concat altertitle " " sync0-bibtex-entry-date-fixed)))
+           (altertitle-journal-date (when (and sync0-bibtex-entry-date-or-origdate-p
+                                           sync0-bibtex-entry-journaltitle)
+                                      (concat altertitle " (" sync0-bibtex-entry-journaltitle  ") " sync0-bibtex-entry-date-fixed)))
            (date-altertitle (when sync0-bibtex-entry-date-or-origdate-p
                               (concat sync0-bibtex-entry-date-fixed " " altertitle)))
+           (date-altertitle-journal (when (and sync0-bibtex-entry-date-or-origdate-p
+                                           sync0-bibtex-entry-journaltitle)
+                                      (concat sync0-bibtex-entry-date-fixed " " altertitle " (" sync0-bibtex-entry-journaltitle ") ")))
            (altertitle-edition (unless (sync0-null-p  sync0-bibtex-entry-edition)
                                  (concat altertitle " (" sync0-bibtex-entry-edition "e)")))
            (title-edition (unless (sync0-null-p  sync0-bibtex-entry-edition)
@@ -57,6 +69,11 @@
            ;; (shorthand-edition (when (and shorthand
            ;;                                sync0-bibtex-entry-edition)
            ;;                       (concat shorthand " (" sync0-bibtex-entry-edition "e)")))
+           (author-key (when  sync0-bibtex-entry-author-or-editor-p
+                         (concat sync0-bibtex-entry-lastname ", " sync0-bibtex-entry-key)))
+           (journaltitle-key (when (and sync0-bibtex-entry-journaltitle
+                                        (not sync0-bibtex-entry-author-or-editor-p))
+                               (concat sync0-bibtex-entry-journaltitle ", " sync0-bibtex-entry-key)))
            (author-title-edition (when (and  sync0-bibtex-entry-author-or-editor-p
                                              (not (sync0-null-p sync0-bibtex-entry-edition)))
                                    (concat sync0-bibtex-entry-lastname ", " title-edition)))
@@ -103,21 +120,57 @@
                                           (or (null sync0-bibtex-entry-date-or-origdate-p)
                                               (null sync0-bibtex-entry-edition)))
                                 (concat sync0-bibtex-entry-lastname ", " altertitle)))
+           (author-date-key (when (and  sync0-bibtex-entry-author-or-editor-p
+                                        sync0-bibtex-entry-date-or-origdate-p)
+                              (concat sync0-bibtex-entry-lastname " " sync0-bibtex-entry-date-fixed " " sync0-bibtex-entry-key)))
+           (date-author-key (when (and  sync0-bibtex-entry-author-or-editor-p
+                                        sync0-bibtex-entry-date-or-origdate-p)
+                              (concat sync0-bibtex-entry-date-fixed " "sync0-bibtex-entry-lastname " "  sync0-bibtex-entry-key)))
+           (author-date (unless (or (string= sync0-bibtex-entry-type-downcase "incollection")
+                                    (string= sync0-bibtex-entry-type-downcase "inproceedings")
+                                    (string= sync0-bibtex-entry-type-downcase "inbook"))
+                          (when (and  sync0-bibtex-entry-author-or-editor-p
+                                      sync0-bibtex-entry-date-or-origdate-p)
+                            (if (and sync0-bibtex-entry-volume 
+                                     (not (string= sync0-bibtex-entry-type-downcase "article")))
+                                (concat sync0-bibtex-entry-lastname " " sync0-bibtex-entry-date-fixed ", T. " sync0-bibtex-entry-volume)
+                              (concat sync0-bibtex-entry-lastname " " sync0-bibtex-entry-date-fixed)))))
+           (author-year (when author-date
+                          (unless (string= sync0-bibtex-entry-date sync0-bibtex-entry-year)
+                            (if sync0-bibtex-entry-origdate 
+                                (if (and sync0-bibtex-entry-volume 
+                                         (not (string= sync0-bibtex-entry-type-downcase "article")))
+                                    (concat sync0-bibtex-entry-lastname " (" sync0-bibtex-entry-origdate ") (" sync0-bibtex-entry-date "), T. " sync0-bibtex-entry-volume)
+                                  (concat sync0-bibtex-entry-lastname " (" sync0-bibtex-entry-origdate ") (" sync0-bibtex-entry-date ")"))
+                              (if (and sync0-bibtex-entry-volume 
+                                       (not (string= sync0-bibtex-entry-type-downcase "article")))
+                                  (concat sync0-bibtex-entry-lastname " (" sync0-bibtex-entry-date "), T. " sync0-bibtex-entry-volume)
+                                (concat sync0-bibtex-entry-lastname " (" sync0-bibtex-entry-date ")"))))))
            (title-to-use (list title
                                altertitle
                                shorttitle
                                shorthand
                                title-date
+                               title-journal-date
                                shorttitle-date
                                ;; shorthand-date
                                date-title
+                               date-title-journal
                                date-shorttitle
                                altertitle-date
+                               altertitle-journal-date
                                date-altertitle
+                               date-altertitle-journal
                                altertitle-edition
                                title-edition
                                shorttitle-edition
                                ;; shorthand-edition
+                               author-key
+                               journaltitle-key
+                               author-date
+                               author-date-key
+                               date-author-key
+                               author-year
                                author-title-edition
                                author-shorttitle-edition
                                ;; author-shorthand-edition
@@ -133,7 +186,8 @@
            (purged-title-list (if (equal sync0-bibtex-entry-title-shape "title")
                                   (cl-remove nil title-to-use)
                                 (cl-remove nil (cdddr title-to-use))))
-           (title-list (cl-remove-duplicates purged-title-list :test #'equal)))
+           (title-corrected (mapcar 'sync0-bibtex-fix-obsidian-chars purged-title-list))
+           (title-list (cl-remove-duplicates title-corrected :test #'equal)))
        (sync0-show-elements-of-list title-list "\", \"")))
 
   (defun sync0-bibtex-entry-create-obsidian-note-from-entry (bibkey &optional rewrite)
@@ -142,10 +196,10 @@ obsidian vault. This function in not intended for interactive
 use, but as a function to be included in pipes. When optional
 rewrite is true, this function rewrites the YAML frontmatter of
 the note, instead of attempting to create a new note."
-    (let* ((obsidian-file (concat sync0-zettelkasten-directory bibkey ".md")) 
+    (let* ((obsidian-file (concat sync0-zettelkasten-references-directory bibkey ".md")) 
            (title-automated-list (sync0-bibtex-entry-calculate-obsidian-title-aliases))
            (title-list-string (if sync0-bibtex-entry-aliases 
-                                  (concat sync0-bibtex-entry-aliases ", " title-automated-list)
+                                  (concat sync0-bibtex-entry-aliases "\", \"" title-automated-list)
                                 title-automated-list))
            (obsidian-fields-string (let (x)
                                      (dolist (element sync0-bibtex-obsidian-fields-list x)
@@ -162,11 +216,14 @@ the note, instead of attempting to create a new note."
                                   "id: " bibkey "\n"
                                   "citekey: " bibkey "\n"
                                   "biblatex_type: " (downcase sync0-bibtex-entry-type)  "\n"
+                                  "export_template: zkn_literature_notes\n"
+                                  "lang: fr-FR\n"
                                   obsidian-fields-string
                                   (concat "\naliases: [\"" title-list-string "\"]\n")
                                   "tags: [bibkey/" bibkey ", " sync0-bibtex-entry-keywords "]\n"
                                   "---\n"
-                                  (concat "# " sync0-bibtex-entry-obsidian-title "\n")))
+                                  ;; (concat "# " sync0-bibtex-entry-obsidian-title "\n")
+                                  (concat "# " sync0-bibtex-entry-key "\n")))
            (obsidian-rest (concat
                            sync0-bibtex-obsidian-reference-template-top
                            bibkey

@@ -43,3 +43,5 @@ passport
 podcast
 obituary
 souvenir
+call
+slides

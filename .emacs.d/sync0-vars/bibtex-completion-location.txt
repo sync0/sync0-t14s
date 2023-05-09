@@ -129,3 +129,7 @@ Villeurbanne
 Paderborn
 Philadelphia
 Chicoutimi
+Rosario
+Turin
+MSH Triangle
+Bibliothèque Chevreul de Lyon

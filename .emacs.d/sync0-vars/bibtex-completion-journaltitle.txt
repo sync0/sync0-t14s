@@ -1,5 +1,7 @@
+1848. Revue des révolutions contemporaines
 Actes de la Recherche en Sciences Sociales
 Alpha
+American Anthropologist
 American Journal of Sociology
 American Psychologist
 Amérique Latine : Histoire et Mémoire
@@ -8,47 +10,74 @@ Annales
 Annales de démographie historique
 Annals of the American Academy of Political and Social Science
 Annual Review of Sociology
+Atenea
 Austrian Economics Newsletter
+Berichte zur Wissenschaftgeschichte
 Bibliothèque de l’École des chartes
 British Journal of Management
 Bulletin de la Société Historique et Archéologique du Périgord
+Bulletin de la Société d’histoire de la Révolution de 1848
 Bulletin de psychologie
 Cahiers du Genre
 Cahiers d’histoire
+Cahiers d’économie Politique
 Cahiers d’économie politique
 Cambridge Journal of Economics
 Canto Rodado
 Constellations
+Courrier de la Côte-d’Or
 Critical Inquiry
 Cuadernos de Historia
+Cuadernos de historia
 Derecho y humanidades
 Desarrollo Económico
 Econometrica
 Economia e Sociedade
 Economy and Society
 El trimestre económico
+Entreprises et histoire
+Erudition and the Republic of Letters
+Espaces et sociétés
 Esprit de Pays
 Estudios Nueva Economía
 Estudios Públicos
 Excelsior
+Financial History Review
+French Historical Studies
+Gesnerus
+Guillaumin, éditeur d’économie politique 1801--1864
 Généalogie et histoire de la Caraïbe
 Gérer \& comprendre
+Henri Lefebvre et la géographie
+Hermès
 Histoire d’entreprises
 Histoire, économie \& société
 Historia
 Historia (Santiago)
 History and Theory
+History of Economic Ideas
 History of European Ideas
 History of Political Economy
 History of Science
 Il Pensiero Politico
+Intellectual History Review
 International Review of Financial Analysis
+Istor
+Jahresband
 Journal de Paris
+Journal des chemins de fer
+Journal des débats
+Journal des faillites et des liquidations judiciaires françaises et étrangères
 Journal des économistes
+Journal du cher
+Journal of Economic Literature
+Journal of Economic Methodology
 Journal of Economic Perspectives
 Journal of Institutional Economics
+Journal of Political Ideologies
 Journal of Post Keynesian Economics
 Journal of Social Ontology
+Journal of the History of Economic Thought
 Journal of the History of Ideas
 Jurimetrics
 Jus Politicum
@@ -56,48 +85,71 @@ La Gazette
 La Gazette du Languedoc
 La Mode
 La Nouvelle revue
+La Pensée
 La Presse
+La Quotidienne
 La Revue administrative
 La Réforme
+La Réforme économique
 La République
+La République française
 La revue Tocqueville
 Le Charivari
+Le Constitutionnel
+Le Courrier français
 Le Droit
 Le Droit Ouvrier
 Le Grand Journal
 Le Journal du peuple
+Le Monde
 Le Mouvement social
 Le Mémorial bordelais
+Le Persévérant
 Le Philosophoire
 Le Pouvoir
 Le Radical
+Le Réformateur
 Le Siècle
+Le Sémaphore de Marseille
 Le Temps
 Le sujet dans la cité
+Les Cahiers ALHIM
+Littérature
 London Review of Books
+L’Année sociologique
 L’Intransigeant
+L’Opinion nationale
 L’Économiste français
+L’Émancipation
 Mathematics Magazine
 Mind
+Modern /& Contemporary France
 Mondes sociaux
+Moniteur Industriel
+Moniteur industriel
 Nature
+Noesis
 Nouvelle revue historique de droit français et étranger
 Nuevo Mundo Mundos Nuevos
 Operations Research
 Organization Studies
 Past {\&} Present
 Philosophy of Science
+Plural
 Polis
 Political Theology
 Politix
 Política criminal
+Políticas de la Memoria
 Proceedings of the Royal Society of London
 Psychological Review
+Questions de communication
 Raisons politiques
 Review of Keynesian Economics
 Revista Chilena de Derecho
 Revista de Extensión Cultural
 Revista de ciencias i letras
+Revista de crítica literaria latinoamericana
 Revista de la Universidad Pontificia Bolivariana
 Revista del Pacífico
 Revista económica
@@ -109,27 +161,41 @@ Revue administrative
 Revue britannique
 Revue de métaphysique et de morale
 Revue des Deux Mondes
+Revue des sciences de gestion
+Revue des sciences philosophiques et théologiques
 Revue des études coopératives
 Revue du MAUSS
 Revue du progrès
+Revue d’histoire de la pensée économique
 Revue d’histoire des facultés de droit et de la culture juridique, du monde des juristes et du livre juridique
+Revue d’histoire du XIXe siècle
 Revue d’histoire moderne et contemporaine
+Revue d’histoire économique et sociale
 Revue d’économie politique
+Revue encyclopédique
+Revue générale du droit
 Revue générale du droit, de la législation et de la jurisprudence en France et à l’étranger
 Revue internationale de droit comparé
 Revue internationale de l’enseignement
 Revue internationale de philosophie
+Revue républicaine
 Revue économique
 Revue économique de Bordeaux
 Romantisme
+Science /& Society
 Science et structure sociale
 Sciences Sociales et Santé
 Social Studies of Science
-Séances et travaux de l’Académie des Sciences Morales et Politiques
+Socio-logos
+Sociologica
+Spektrum Freizeit
+Studia Aurea
+Séances et travaux de l’Académie des sciences morales et politiques
 Terrains \& Travaux
 The American Economic Review
 The Americas
 The Crazy
+The European Journal of the History of Economic Thought
 The Grand Journal
 The Hispanic American Historical Review
 The Mud
@@ -138,61 +204,14 @@ The University of Chicago Law Review
 Theory and Society
 Tiempo \& economía
 Tradition and Discovery
+USAbroad
 Universum
 Vie \& sciences de l’entreprise
+Western Political Quarterly
 nil
-Épistémocritique
-Espaces et sociétés
-Journal des faillites et des liquidations judiciaires françaises et étrangères
-Plural
-Cuadernos de historia
-Revista de crítica literaria latinoamericana
-Políticas de la Memoria
-Istor
-Revue générale du droit, de la législation et de la jurisprudence en France et à l’étranger
-Sociologica
-Gesnerus
-Études Normandes
-Revue encyclopédique
-La Quotidienne
-Revue républicaine
-Le Constitutionnel
-Le Réformateur
-Le Monde
-L’Année sociologique
-Littérature
-American Anthropologist
-Revue des sciences philosophiques et théologiques
-Intellectual History Review
-Henri Lefebvre et la géographie
-La Pensée
-Hermès
-Journal of Economic Methodology
-Journal of Economic Literature
 zeitenblicke
-Spektrum Freizeit
-Jahresband
-Revue générale du droit, de la législation et de la jurisprudence en France et à l'étranger
-Revue internationale de l'enseignement
-Journal des chemins de fer
-Revue générale du droit
-Le Persévérant
-Journal du cher
-Financial History Review
-USAbroad
-L'Opinion nationale
-L’Opinion nationale
-Journal des débats
-L'Émancipation
-L’Émancipation
-Bulletin de la Société d'histoire de la Révolution de 1848
-Bulletin de la Société d’histoire de la Révolution de 1848
-Erudition and the Republic of Letters
-Berichte zur Wissenschaftgeschichte
-Journal of the History of Economic Thought
-Séances et travaux de l’Académie des sciences morales et politiques
-Les Cahiers ALHIM
-Revue d'histoire du XIXe siècle
-Revue d’histoire du XIXe siècle
-Revue des sciences de gestion
-Noesis
+Épistémocritique
+Études Normandes
+Les Cahiers du dictionnaire
+Innovations
+Political Science Quarterly

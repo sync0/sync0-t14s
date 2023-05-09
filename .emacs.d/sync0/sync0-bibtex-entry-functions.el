@@ -12,12 +12,19 @@ prevent undesired results."
 (defvar sync0-bibtex-entry-functions
   '(("origtitle" (lambda ()
                    (setq sync0-bibtex-entry-origtitle
-                         (completing-read "Origtitle of entry: " sync0-bibtex-completion-title))))
+                         (sync0-bibtex-correct-smartquotes 
+                          (completing-read "Origtitle of entry: " sync0-bibtex-completion-title)))))
     ("date" (lambda ()
               (setq sync0-bibtex-entry-date
                     (read-string "Date (ex. 1890-18-12) : " sync0-bibtex-entry-initial-date))))
+    ("scheduled" (lambda ()
+              (setq sync0-bibtex-entry-scheduled
+                    (read-string "Scheduled : " (format-time-string "%Y-%m-%d")))))
+    ("deadline" (lambda ()
+              (setq sync0-bibtex-entry-deadline
+                    (read-string "Deadline : " (format-time-string "%Y-%m-%d")))))
     ("year" (lambda ()
-              (when sync0-bibtex-entry-date
+              (unless (sync0-null-p sync0-bibtex-entry-date)
                 (setq sync0-bibtex-entry-year (substring-no-properties sync0-bibtex-entry-date 0 4)))))
     ("century" (lambda ()
                  (when sync0-bibtex-entry-date
@@ -80,16 +87,22 @@ prevent undesired results."
                         (let* ((extension (completing-read "Choose extension to add" bibtex-completion-pdf-extension))
                                (extension-sans (upcase (substring extension 1))))
                           (concat ":" sync0-zettelkasten-attachments-directory sync0-bibtex-entry-key extension ":" extension-sans)))))))
+    ("subtitle" (lambda ()
+                   (setq sync0-bibtex-entry-subtitle
+                         (sync0-bibtex-correct-smartquotes 
+                         (completing-read "Subtitle : " sync0-bibtex-completion-title)))))
     ("booktitle" (lambda ()
                    (setq sync0-bibtex-entry-booktitle
-                         (if sync0-bibtex-entry-crossref 
-                             (bibtex-completion-get-value "title" sync0-bibtex-entry-crossref-entry)
-                           (read-string "Book title : ")))))
+                         (sync0-bibtex-correct-smartquotes 
+                          (if sync0-bibtex-entry-crossref 
+                              (bibtex-completion-get-value "title" sync0-bibtex-entry-crossref-entry)
+                            (completing-read "Booktitle : " sync0-bibtex-completion-title))))))
     ("booksubtitle" (lambda ()
                       (setq sync0-bibtex-entry-booksubtitle
-                            (if sync0-bibtex-entry-crossref 
-                                (bibtex-completion-get-value "subtitle" sync0-bibtex-entry-crossref-entry)
-                              (read-string "Book subtitle : ")))))
+                            (sync0-bibtex-correct-smartquotes 
+                             (if sync0-bibtex-entry-crossref 
+                                 (bibtex-completion-get-value "subtitle" sync0-bibtex-entry-crossref-entry)
+                               (completing-read "Booksubtitle : " sync0-bibtex-completion-title))))))
     ("crossref" (lambda ()
                   (when (yes-or-no-p "Load crossref? ")
                     (setq sync0-bibtex-entry-crossref 
@@ -110,7 +123,7 @@ prevent undesired results."
                           sync0-bibtex-entry-initial-language
                           (bibtex-completion-get-value "language" sync0-bibtex-entry-crossref-entry)))))
     ("related" (lambda ()
-                 (setq sync0-bibtex-entry-related (sync0-bibtex-completion-choose-key nil t))))
+                 (setq sync0-bibtex-entry-related (sync0-bibtex-completion-choose-key t t))))
     ("keywords" (lambda ()
                   ;; Requires package unidecode for conversion to
                   ;; ASCII. See:
@@ -168,8 +181,9 @@ carried to calculate the value it will take in a BibLaTeX entry.")
     (let* ((my-var (intern (concat "sync0-bibtex-entry-" element)))
            (comp-var (intern (concat "sync0-bibtex-completion-" element)))
            (help-string (concat (upcase-initials element) ": "))
-           (my-base-func  (list  'completing-read help-string comp-var)) 
-           (my-macro  (list 'setq my-var  my-base-func)) 
+           (my-base-func  (list 'completing-read help-string comp-var)) 
+           (correc-func  (list 'sync0-bibtex-correct-smartquotes my-base-func)) 
+           (my-macro  (list 'setq my-var correc-func)) 
            (my-func (list 'lambda () my-macro))
            (my-cons (cons element (list my-func))))
       (push my-cons sync0-bibtex-entry-functions))))
@@ -202,7 +216,9 @@ carried to calculate the value it will take in a BibLaTeX entry.")
          (fields (cond (bibkey
                         sync0-bibtex-fields)
                        (quick
-                        (cons "author" sync0-bibtex-base-fields))
+                        (if (string= type (or "Collection" "MvCollection" "Proceedings"))
+                          (cons "editor" sync0-bibtex-base-fields)
+                          (cons "author" sync0-bibtex-base-fields)))
                        (t (append
                            (cdr (assoc type sync0-bibtex-type-fields))
                            sync0-bibtex-base-fields)))))

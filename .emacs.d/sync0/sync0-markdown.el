@@ -154,7 +154,7 @@ cabinet (defined by sync0-zettelkasten-exported-pdfs-directory)."
    ;; ("E" sync0-org-export-headlines-to-latex)
    "Etc"
    (("a" sync0-define-local-abbrev "Define abbrev")
-   ("P" sync0-markdown-print-pdf "Corresp. pdf")
+   ("P" sync0-markdown-print-pdf "Print corresp. pdf")
    ("C" sync0-markdown-save-exported-pdf-in-cabinet "Copy pdf to cabinet")
    ("M" sync0-markdown-copy-pdf-to-path "Move to path"))))
 ;; ("d" org-insert-drawer)

@@ -14,12 +14,39 @@
 (require 'sync0-pdf)
 (require 'sync0-yaml)
 (require 'sync0-pandoc)
+(require 'doi-utils)
 (require 'sync0-bibtex-var-functions)
 (require 'sync0-bibtex-extraction)
 (require 'sync0-bibtex-diagnostics)
 (require 'sync0-bibtex-corrections)
 (require 'sync0-bibtex-obsidian)
+(require 'sync0-bibtex-pandoc)
 (require 'xah-replace-pairs)
+
+
+(defun sync0-bibtex-create-field-at-entry (field value &optional replace)
+  "Create bibtex field with value at entry at point. When optional
+old-value, search for and replace the string with the old value."
+  (unless (null value)
+    (let ((field-list (list field "Whatever string" value nil))
+          (end (save-excursion (bibtex-end-of-entry)))
+          (regex (concat "^[[:space:]]+" field "[[:space:]]+=")))
+      (save-excursion
+        (bibtex-beginning-of-entry)
+        (when replace
+          (re-search-forward regex end nil 1)
+          (bibtex-kill-field nil t))
+        (bibtex-make-field field-list t)))))
+
+(defun sync0-bibtex-delete-field-at-entry (field)
+  "Create bibtex field with value at entry at point. When optional
+old-value, search for and replace the string with the old value."
+  (let ((end (save-excursion (bibtex-end-of-entry)))
+        (regex (concat "^[[:space:]]+" field "[[:space:]]+=")))
+    (save-excursion
+      (bibtex-beginning-of-entry)
+        (re-search-forward regex end nil 1)
+        (bibtex-kill-field nil t))))
 
 (defun sync0-bibtex-buffer-p ()
   "Check whether current buffer is visiting a bibtex file."
@@ -78,11 +105,13 @@ function is to be used only in pipes."
     (setq sync0-bibtex-entry-creation t)
     (setq sync0-bibtex-entry-file-old nil)
     (sync0-bibtex-completion-load-entry nil quick)
-    (when (and (or (string= sync0-bibtex-entry-type-downcase "incollection")
-                   (string= sync0-bibtex-entry-type-downcase "inbook")
-                   (string= sync0-bibtex-entry-type-downcase "inproceedings"))
-               (yes-or-no-p "Extract  PDF from existing entry?"))
-      (sync0-bibtex-extract-pdf-from-crossref))
+    (unless (null sync0-bibtex-entry-crossref)
+      (when (and (member sync0-bibtex-entry-type sync0-bibtex-crossref-types)
+                 (file-exists-p (concat sync0-zettelkasten-attachments-directory sync0-bibtex-entry-crossref ".pdf"))
+                 (yes-or-no-p "Extract  PDF from crossref?"))
+        (sync0-bibtex-extract-pdf-from-crossref)))
+    ;; Set some default values
+    (setq sync0-bibtex-entry-status "inspect")
     ;; Insert entry in default bibliography file
     (sync0-bibtex-entry-append-to-bibliography sync0-bibtex-entry-key)
     (sync0-bibtex-entry-create-obsidian-note-from-entry sync0-bibtex-entry-key)
@@ -163,17 +192,26 @@ function is to be used only in pipes."
         (append-to-file bibtex-entry nil bibliography-file)
         (sync0-bibtex-entry-inform-new-entry))))
 
+
 (defun sync0-bibtex-download-pdf (&optional refkey creation)
   (interactive)
   (if creation
-      (sync0-pdf-download-from-url sync0-bibtex-entry-url (string-trim sync0-bibtex-entry-file ":" ":PDF"))
-    (when-let*    ((bibkey (or refkey 
-                               (sync0-bibtex-completion-choose-key t t)))
-                   (entry (bibtex-completion-get-entry bibkey))
-                   (url (bibtex-completion-get-value "url" entry))
-                   (pdf (concat sync0-zettelkasten-attachments-directory bibkey ".pdf")))
-      (sync0-pdf-download-from-url url pdf))))
-
+      (let ((file (string-trim sync0-bibtex-entry-file ":" ":PDF"))
+            (url sync0-bibtex-entry-url))
+        (sync0-pdf-download-from-url url file))
+    (let*    ((bibkey (or refkey 
+                          (sync0-bibtex-completion-choose-key t t)))
+              (entry (bibtex-completion-get-entry bibkey))
+              (url (bibtex-completion-get-value "url" entry))
+              (doi (bibtex-completion-get-value "doi" entry))
+              (file (concat sync0-zettelkasten-attachments-directory bibkey ".pdf")))
+      (if (yes-or-no-p "Call the pirates?")
+          (if doi
+              (scihub doi file)
+            (scihub url file))
+        (if (file-exists-p file)
+            (message "Cannot download. Attachment exists for key %s" bibkey)
+          (sync0-pdf-download-from-url url file))))))
 
   ;; (defun sync0-bibtex-update-key-in-bibfile (oldkey newkey bibfile)
   ;;   "Change bibtex key at point with a key using the format provided
@@ -245,42 +283,82 @@ entry under point in a .bib file"
       (sync0-bibtex-update-key-in-buffer old-key new-key)
       (message "Key for entry %s has been replaced with key %s" old-key new-key)))
 
-  (defun sync0-bibtex-clean-entry ()
-    "Change bibtex key at point with a key using the format provided
-by org-roam files"
-    (interactive)
-    (let* ((new-key (sync0-bibtex-entry-key-define))
-           (directory sync0-zettelkasten-attachments-directory)
-           (new-path (concat directory new-key ".pdf"))
-           (regex "^@\\([[A-z]+\\){[[:alnum:]]+,")
-           (beg (save-excursion (bibtex-beginning-of-entry)))
-           (end (save-excursion (bibtex-end-of-entry)))
-           (type
-            (save-excursion
-              (re-search-forward regex end t 1)
-              (match-string-no-properties 1)))
-           (language (completing-read "Choose language : "
-                                      sync0-bibtex-completion-language))
-           (language-string
-            (concat "  language          = {"
-                    language
-                    "},\n  langid          = {"
-                    language
-                    "},\n" 
-                    ))
-           (type-string
-            (concat "@" (upcase-initials type) "{" new-key ",\n")))
-      (re-search-forward regex end t 1) 
-      (kill-whole-line 1)
-      (insert type-string)
-      (save-excursion
-        (when (re-search-forward "\\(journal\\)[[:blank:]]+=" end t 1)
-          (replace-match "journaltitle" nil nil nil 1)))
-      (save-excursion
-        (when (re-search-forward "\\(year\\)[[:blank:]]+=" end t 1)
-          (replace-match "date" nil nil nil 1)))
-      (forward-line)
-      (insert language-string)))
+(defun sync0-bibtex-get-field-value-at-point (field entry) 
+  "Entry is the super list created by bibtex-mode function
+bibtex-parse-entry, which requires that the pointer be placed a
+the beginning of entry with bibtex-beginning-of-entry in order to
+parse correctly."
+  (when-let ((x (assoc field entry)))
+    (sync0-bibtex-correct-smartquotes
+     (substring (cdr x) 1 -1))))
+
+(defun sync0-bibtex-clean-entry ()
+  "Change bibtex key at point with a key using the
+format provided by org-roam files"
+  (interactive)
+  (let* ((entry (save-excursion (bibtex-beginning-of-entry)
+			        (bibtex-parse-entry)))
+         (bibkey (cdr (assoc "=key=" entry)))
+         (type (cdr (assoc "=type=" entry)))
+         (type-lowcase (downcase type))
+         (author-full (when-let ((person (cdr (assoc "author" entry))))
+                        (unless (string-match "^[[:print:]]+, " person)
+                        (substring person 1 -1))))
+         (author-list 
+          (when author-full
+            (split-string author-full " ")))
+         (author-first (when author-list
+                  (string-trim-whitespace (car author-list))))
+         (author-last (when author-list
+                  (string-trim-whitespace (cadr author-list))))
+         (author (when (and author-first author-last)
+                   (concat author-last ", " author-first)))
+         (date (unless (assoc "date" entry)
+                 (substring (cdr (assoc "year" entry)) 1 -1)))
+         (journaltitle (when (string= type-lowcase "article")
+                         (unless (assoc "journaltitle" entry)
+                           (sync0-bibtex-get-field-value-at-point "journal" entry))))
+          ;; "^[0-9]+[a-z]\{2\}"
+         (new-key (if (string-match "[[:digit:]]+[[:alpha:]]+" bibkey)
+                      bibkey
+                    (sync0-bibtex-entry-key-define)))
+         (created (unless  (assoc "created" entry)
+                    (format-time-string "%Y-%m-%d")))
+         (new-path (unless (assoc "file" entry)
+                     (concat ":" sync0-zettelkasten-attachments-directory new-key ".pdf:PDF")))
+         (regex "^@\\([[A-z]+\\){[[:alnum:]]+,$")
+         (beg (save-excursion (bibtex-beginning-of-entry)))
+         (end (save-excursion (bibtex-end-of-entry)))
+         (language (unless (assoc "language" entry)
+                     (completing-read "Choose language : "
+                                      sync0-bibtex-completion-language)))
+         (title-full (sync0-bibtex-get-field-value-at-point "title" entry))
+         (title-list 
+          (when title-full
+            (split-string title-full ":")))
+         (title (when title-list
+                  (string-trim-whitespace (car title-list))))
+         (subtitle (when (> (length title-list) 1)
+                     (string-trim-whitespace (cadr title-list))))
+         (status (unless  (assoc "status" entry)
+                   "inspect"))
+         (type-string (concat "@" (upcase-initials type) "{" new-key ",\n")))
+    (bibtex-beginning-of-entry)
+    (re-search-forward regex end t 1) 
+    (kill-whole-line 1)
+    (insert type-string)
+    (sync0-bibtex-create-field-at-entry "author" author t)
+    (sync0-bibtex-create-field-at-entry "title" title t)
+    (when subtitle
+      (sync0-bibtex-create-field-at-entry "subtitle" subtitle))
+    (sync0-bibtex-create-field-at-entry "journaltitle" journaltitle)
+    (sync0-bibtex-create-field-at-entry "date" date)
+    (sync0-bibtex-create-field-at-entry "created" created)
+    (sync0-bibtex-create-field-at-entry "file" new-path)
+    (sync0-bibtex-create-field-at-entry "language" language)
+    (sync0-bibtex-create-field-at-entry "langid" language)
+    (sync0-bibtex-create-field-at-entry "status" status)
+    (bibtex-fill-entry)))
 
   (defun sync0-bibtex-create-note-from-entry (&optional rewrite refkey)
     "Create a new Obsidian markdown note from an existing BibLaTeX
@@ -374,58 +452,82 @@ by org-roam files"
           (shell-command command)
         (message "No PDF found for %s" bibkey))))
 
-  (defun sync0-bibtex-open-pdf-at-point (&optional zathura)
-    "Open the pdf for bibtex key under point if it exists. If
+(defun sync0-bibtex-open-pdf (&optional bibkey)
+  "Open the pdf for bibtex key under point if it exists. If
    optional zathura is t, use zathura to open the pdf."
-    (interactive)
-    (let* ((bibkey (sync0-bibtex-completion-choose-key t t))
-           ;; (entry (bibtex-completion-get-entry  bibkey))
-           ;; (raw-file (bibtex-completion-get-value "file" entry))
-           ;; (file (sync0-bibtex-choose-attachment raw-file)))
-           ;; (file (let ((attachments  (bibtex-completion-find-pdf bibkey)))
-           ;;         (if (equal (length attachments) 1)
-           ;;             (car attachments)
-           ;;           (completing-read "Which attachment to open? " attachments))))
-           (file (sync0-bibtex-choose-attachment bibkey)))
-      (cond ((and zathura
-                  (file-exists-p file))
-             (call-process "zathura" nil 0 nil file))
-            ((file-exists-p file)
-             (org-open-file file))
-            (t (message "No PDF found for %s" bibkey)))))
+  (interactive)
+  (let* ((bibkey (or bibkey
+                     (sync0-bibtex-completion-choose-key t t)))
+         (file (sync0-bibtex-choose-attachment bibkey))
+         (program
+          (completing-read "Which softare to open attachment ?" sync0-bibtex-attachment-programs)))
+    (cond ((and (sync0-null-p program)
+                (file-exists-p file))
+           (org-open-file file))
+          ((file-exists-p file)
+           (call-process program nil 0 nil file))
+          (t (message "No PDF found for %s" bibkey)))))
 
-  (defun sync0-bibtex-open-crossref-pdf (&optional zathura)
-    "Open the pdf for bibtex key under point if it exists. If
+(defun sync0-bibtex-open-pdf-at-point (&optional op-crossref)
+  "Open the pdf for bibtex key under point if it exists. If
    optional zathura is t, use zathura to open the pdf."
-    (interactive)
-    (let* ((bibkey (sync0-bibtex-completion-choose-key t t))
-           (file (sync0-bibtex-choose-attachment sync0-bibtex-entry-crossref)))
-      (cond ((and zathura
+  (interactive)
+  (let* ((entry (save-excursion (bibtex-beginning-of-entry)
+			        (bibtex-parse-entry)))
+         (bibkey (cdr (assoc "=key=" entry)))
+         (crossref (when op-crossref
+                     (cdr (assoc "crossref" entry))))
+         (program
+          (completing-read "Which softare to open attachment ?" sync0-bibtex-attachment-programs))
+         (file (sync0-bibtex-choose-attachment bibkey))
+         (crossref-file (when op-crossref
+                          (sync0-bibtex-choose-attachment crossref))))
+    (if op-crossref 
+        (cond ((and (sync0-null-p program)
+                    (file-exists-p crossref-file))
+               (org-open-file crossref-file))
+              ((file-exists-p crossref-file)
+               (call-process program nil 0 nil crossref-file))
+              (t (message "No attachment found for key %s" crossref)))
+      (cond ((and (sync0-null-p program)
                   (file-exists-p file))
-             (call-process "zathura" nil 0 nil file))
-            ((file-exists-p file)
              (org-open-file file))
-            (t (message "No PDF found for %s" bibkey)))))
+            ((file-exists-p file)
+             (call-process program nil 0 nil file))
+            (t (message "No attachment found for key %s" bibkey))))))
 
-  (defun sync0-bibtex-open-url ()
-    "Open the url for bibtex key under point if it exists."
-    (interactive)
-    (let* ((bibkey (sync0-bibtex-completion-choose-key t t))
-           (entry (bibtex-completion-get-entry bibkey))
-           (url  (bibtex-completion-get-value "url" entry)))
-      (if (not (sync0-null-p url))
-          (bibtex-url)
-        (message "No url found for %s" bibkey))))
+      (defun sync0-bibtex-open-url (&optional bibkey)
+        "Open the url for bibtex key under point if it exists."
+        (interactive)
+        (let* ((bibkey (or bibkey 
+                           (sync0-bibtex-completion-choose-key t t)))
+               (entry (bibtex-completion-get-entry bibkey))
+               (url  (bibtex-completion-get-value "url" entry)))
+          (if (not (sync0-null-p url))
+              (bibtex-url)
+            (message "No url found for %s" bibkey))))
 
-  (defun sync0-bibtex-open-notes ()
-    "Open the notes for bibtex key under point in a cite link in a
+;;   (defun sync0-bibtex-open-notes-at-point ()
+;;     "Open the notes for bibtex key under point in a cite link in a
+;; buffer. Can also be called with key."
+;;     (interactive)
+;;     (let* ((bibkey (sync0-bibtex-completion-choose-key t t))
+;;            (notes-file  (concat sync0-zettelkasten-references-directory  bibkey ".md")))
+;;       (if (file-exists-p notes-file)
+;;           (find-file notes-file)
+;;         (message "No markdown notes file found for entry %s" bibkey))))
+
+(defun sync0-bibtex-open-notes-at-point ()
+  "Open the notes for bibtex key under point in a cite link in a
 buffer. Can also be called with key."
-    (interactive)
-    (let* ((bibkey (sync0-bibtex-completion-choose-key t t))
-           (notes-file  (concat sync0-zettelkasten-directory  bibkey ".md")))
-      (if (file-exists-p notes-file)
-          (find-file notes-file)
-        (message "No markdown notes file found for entry %s" bibkey))))
+  (interactive)
+  (let* ((entry (save-excursion (bibtex-beginning-of-entry)
+			        (bibtex-parse-entry)))
+         (bibkey (cdr (assoc "=key=" entry)))
+         (notes-file  (concat sync0-zettelkasten-references-directory  bibkey ".md")))
+    (if (file-exists-p notes-file)
+        (find-file notes-file)
+      (message "No mdnotes found for key %s" bibkey))))
 
   (defun sync0-bibtex-print-pdf (&optional pdf command)
     "Print the pdf provided in the argument. Generalized for
@@ -481,45 +583,118 @@ ivy-bibtex to search for the pdf attached to a bibtex entry."
         (message "No pdf found for %s" pdf))))
 
 ;; Experimental!!! very hacky and could be improved but works so far
-(defun sync0-bibtex-add-field ()
+(defun sync0-bibtex-add-field-at-point (&optional reload-mdnote)
+  "Add field to single field to bibkey at point. With optional
+reload-mdnote, it recalculates keywords and the corresponding
+notes file in vault to reflect metadata changes."
   (interactive)
   (setq sync0-bibtex-entry-creation nil)
   (sync0-bibtex-nullify-all-variables)
-  (let* ((field (completing-read "Choose Bibtex field: " sync0-bibtex-fields))
+  (let* ((field (completing-read "Choose Bibtex field: " (remove "keywords" sync0-bibtex-fields)))
          (entry (save-excursion (bibtex-beginning-of-entry)
 			        (bibtex-parse-entry)))
-         (bibkey (cdr (assoc "=key=" entry))))
+         (bibkey (cdr (assoc "=key=" entry)))
+         (unique-p (member field sync0-bibtex-unique-fields))
+         ;; (multiple-p (member field sync0-bibtex-string-multiple-fields))
+         (separator (cond ((member field sync0-bibtex-people-fields)
+                           " and ")
+                          ((string= field "file")
+                           ";")
+                          (t ", "))))
     ;; load the variables 
     (sync0-bibtex-completion-load-entry bibkey)
     (unless (sync0-null-p  sync0-bibtex-entry-file)
       (setq sync0-bibtex-entry-file-old t))
-    ;; (setq sync0-bibtex-entry-key bibkey)
     ;; call new value
     (funcall (cadr (assoc field sync0-bibtex-entry-functions)))
-    (let* ((keywords-p (when (string= field "keywords")
-                         t))
+    (let* ((keywords-p (assoc "keywords" entry))
            ;; (file-p (when (string= field "file")
            ;;               t))
-           (old-value (when (assoc field entry)
-                        (unless keywords-p
-                      (substring (cdr (assoc field entry)) 1 -1))))
            (assigned-value (eval (intern (concat "sync0-bibtex-entry-" field))))
-           (separator (when old-value
-                        (cond ((member field sync0-bibtex-people-fields)
-                                " and ")
-                               ((string= field "file"
-                                         ";"))
-                               (t ", "))))
-           (new-value (if old-value
-                          (concat old-value separator assigned-value)
-                        assigned-value))
-           (bib-list (list field "Whatever string" new-value nil)))
-      (bibtex-beginning-of-entry)
-      (save-excursion
-        (when old-value
-          (re-search-forward (concat "[[:space:]]+" field "[[:space:]]+="))
-          (bibtex-kill-field nil t)))
-      (bibtex-make-field bib-list t))))
+           (assigned-values (when (and assigned-value
+                                       (null unique-p))
+                           (split-string assigned-value separator)))
+           (old-value (when (assoc field entry)
+                        (substring (cdr (assoc field entry)) 1 -1)))
+           (old-values (unless unique-p
+                         (when old-value
+                           (split-string old-value separator))))
+           (multiple-new-p (when assigned-values
+                                 (> (length assigned-values) 1)))
+           (already-present-p (unless multiple-new-p 
+                                (if unique-p
+                                    (string= old-value assigned-value)
+                                  (member assigned-value old-values))))
+           (new-value (cond ((and multiple-new-p
+                                  (null unique-p))
+                             (let ((new-list (cl-union old-values assigned-values :test #'string=)))
+                               (sync0-show-elements-of-list new-list separator)))
+                            ((and old-value
+                                  (null unique-p))
+                             (concat old-value separator assigned-value))
+                            (t assigned-value))))
+      (if already-present-p
+          (error "%s already present or assigned for %s in %s " assigned-value bibkey field)
+        (progn 
+          ;; position the cursor at beg of entry
+          (bibtex-beginning-of-entry)
+          (sync0-bibtex-create-field-at-entry field new-value old-value)
+          ;; save newly created field
+          (when reload-mdnote
+            (save-buffer)
+            ;; reload entry
+            (sync0-bibtex-nullify-all-variables)
+            (sync0-bibtex-completion-load-entry bibkey)
+            ;; recalc tags
+            (funcall (cadr (assoc "keywords" sync0-bibtex-entry-functions)))
+            (sync0-bibtex-create-field-at-entry "keywords" sync0-bibtex-entry-keywords keywords-p)
+            ;; save newly created keywords
+            (save-buffer)
+            (sync0-bibtex-create-note-from-entry t bibkey)))))))
+
+;; (defun sync0-bibtex-add-field ()
+;;   (interactive)
+;;   (setq sync0-bibtex-entry-creation nil)
+;;   (sync0-bibtex-nullify-all-variables)
+;;   (let* ((field (completing-read "Choose Bibtex field: " sync0-bibtex-fields))
+;;          (entry (save-excursion (bibtex-beginning-of-entry)
+;; 			        (bibtex-parse-entry)))
+;;          (bibkey (cdr (assoc "=key=" entry))))
+;;     ;; load the variables 
+;;     (sync0-bibtex-completion-load-entry bibkey)
+;;     (unless (sync0-null-p  sync0-bibtex-entry-file)
+;;       (setq sync0-bibtex-entry-file-old t))
+;;     ;; (setq sync0-bibtex-entry-key bibkey)
+;;     ;; call new value
+;;     (funcall (cadr (assoc field sync0-bibtex-entry-functions)))
+;;     (let* ((keywords-p (when (string= field "keywords")
+;;                          t))
+;;            (prev-keywords-p (when keywords-p
+;;                               (assoc "keywords" entry)))
+;;            ;; (file-p (when (string= field "file")
+;;            ;;               t))
+;;            (old-value (when (assoc field entry)
+;;                         (unless keywords-p
+;;                       (substring (cdr (assoc field entry)) 1 -1))))
+;;            (assigned-value (eval (intern (concat "sync0-bibtex-entry-" field))))
+;;            (separator (when old-value
+;;                         (cond ((member field sync0-bibtex-people-fields)
+;;                                 " and ")
+;;                                ((string= field "file")
+;;                                          ";")
+;;                                (t ", "))))
+;;            (new-value (if old-value
+;;                           (concat old-value separator assigned-value)
+;;                         assigned-value))
+;;            (bib-list (list field "Whatever string" new-value nil)))
+;;       (bibtex-beginning-of-entry)
+;;       (when (or old-value
+;;                 (and prev-keywords-p
+;;                      keywords-p)) 
+;;         (save-excursion
+;;           (re-search-forward (concat "[[:space:]]+" field "[[:space:]]+="))
+;;           (bibtex-kill-field nil t)))
+;;       (bibtex-make-field bib-list t))))
 
   (defun sync0-bibtex-copy-pdf-to-path (&optional in-path bibkey)
     "Copy attached pdf to path and change the title to make it
@@ -537,6 +712,8 @@ readable."
                                   file
                                   " \""
                                   target-path
+                                  refkey
+                                  "_"
                                   sync0-bibtex-entry-lastname
                                   "_"
                                   (or sync0-bibtex-entry-date-fixed
@@ -578,32 +755,32 @@ the function 1- fails to compute."
       (append-to-file beginning end bibdestiny)
       (delete-region beginning end))))
 
-  (defun sync0-bibtex-delete-entry (&optional bibkey)
-    "Choose an entry to permanently delete. Remeber: The deleted
+(defun sync0-bibtex-delete-entry (&optional bibkey)
+  "Choose an entry to permanently delete. Remeber: The deleted
 entry could be recovered if previously commited on a
 version-controlled file. The attachments are sent to the system
 trash, as defined by the desktop environments (KDE, Gnome,
 etc.)."
-    (interactive)
-    (let ((refkey (or bibkey
-                      (sync0-bibtex-completion-choose-key t t))))
-      (bibtex-search-entry refkey)
-      (sync0-bibtex-completion-load-entry refkey)
-      (let* ((beginning (save-excursion (1- (bibtex-beginning-of-entry))))
-             (attachments (bibtex-completion-find-pdf refkey))
-             (num-of-attachments (length attachments))
-             (trash-message (concat "Send to trash entry "
-                                    sync0-bibtex-entry-lastname
-                                    (or sync0-bibtex-entry-date-fixed
-                                        " ")
-                                    sync0-bibtex-entry-title-compatible
-                                    "?"))
-             (trash-attach-message (format "Entry %s has %s attachments. Do you want to send these to trash?" refkey attachments))
-             (end (save-excursion (bibtex-end-of-entry))))
-        (when (yes-or-no-p trash-message)
-          (delete-region beginning end))
-        (when (yes-or-no-p trash-attach-message)
-          (mapc #'move-file-to-trash attachments)))))
+  (interactive)
+  (let ((refkey (or bibkey
+                    (sync0-bibtex-completion-choose-key t t))))
+    (bibtex-search-entry refkey)
+    (sync0-bibtex-completion-load-entry refkey)
+    (let* ((beginning (save-excursion (1- (bibtex-beginning-of-entry))))
+           (attachments (bibtex-completion-find-pdf refkey))
+           (num-of-attachments (length attachments))
+           (trash-message (concat "Send to trash entry "
+                                  sync0-bibtex-entry-lastname
+                                  (or sync0-bibtex-entry-date-fixed
+                                      " ")
+                                  sync0-bibtex-entry-title-compatible
+                                  "?"))
+           (trash-attach-message (format "Entry %s has %s attachments. Do you want to send these to trash?" refkey attachments))
+           (end (save-excursion (bibtex-end-of-entry))))
+      (when (yes-or-no-p trash-message)
+        (delete-region beginning end))
+      (when (yes-or-no-p trash-attach-message)
+        (mapc #'move-file-to-trash attachments)))))
 
 (defun sync0-bibtex-delete-attachments (&optional bibkey)
   "Choose an entry to permanently delete. Remeber: The deleted
@@ -766,7 +943,7 @@ readable."
   (setq sync0-bibtex-entry-keywords nil)
   ;; (sync0-bibtex-completion-load-entry nil quick)
   (let* ((obsidian-id (read-string "Which Obsidian file to use as base for new entry?"))
-         (obsidian-file (concat sync0-zettelkasten-directory obsidian-id ".md"))
+         (obsidian-file (concat sync0-zettelkasten-references-directory obsidian-id ".md"))
          (obsidian-file-string (f-read-text obsidian-file))
          x)
     (if (file-exists-p obsidian-file)
@@ -829,48 +1006,177 @@ the body of this command."
           ;; (add-to-list 'sync0-bibtex-completion-theme k)
           )))))
 
+(defun sync0-bibtex-recalc-tags-and-mdnote-at-point ()
+  (interactive)
+  (setq sync0-bibtex-entry-creation nil)
+  (let* ((entry (save-excursion (bibtex-beginning-of-entry)
+			        (bibtex-parse-entry)))
+         (prev-keywords-p (assoc "keywords" entry))
+         (bibkey (cdr (assoc "=key=" entry))))
+    ;; load the variables 
+    (sync0-bibtex-completion-load-entry bibkey)
+    ;; (setq sync0-bibtex-entry-key bibkey)
+    ;; call new value
+    (funcall (cadr (assoc "keywords" sync0-bibtex-entry-functions)))
+    (sync0-bibtex-create-field-at-entry "keywords" sync0-bibtex-entry-keywords prev-keywords-p)
+    (save-buffer)
+    (sync0-bibtex-create-note-from-entry t bibkey)))
+
+(defun sync0-bibtex-recalc-tags-and-mdnote (refkey)
+  (interactive)
+  (setq sync0-bibtex-entry-creation nil)
+  (let* ((bibkey (or refkey
+                     (sync0-bibtex-completion-choose-key t t)))
+         (bib-file (sync0-bibtex-find-key-in-bibfiles bibkey)))
+    ;; load the variables 
+    (sync0-bibtex-completion-load-entry bibkey)
+    ;; call new value
+    (let ((old-value sync0-bibtex-entry-keywords)
+          (new-keys (funcall (cadr (assoc "keywords" sync0-bibtex-entry-functions)))))
+      (if (string= new-keys old-value)
+          (message "Keywords already calculated for bibkey %s" bibkey)
+        (unless (null bib-file)
+          ;; position the cursor at beg of entry
+          ;; problem bib search function
+          (find-file bib-file)
+          (goto-char (point-min))
+          (re-search-forward (concat "^@[[:alpha:]]+{" bibkey ",") nil t 1)
+          (bibtex-beginning-of-entry)
+          (sync0-bibtex-create-field-at-entry "keywords" new-keys old-value)
+          ;; save newly created field
+          (save-buffer)
+          (sync0-bibtex-create-note-from-entry t bibkey))))))
+
+;; (defun sync0-bibtex-recalc-keywords ()
+;;   (interactive)
+;;   (setq sync0-bibtex-entry-creation nil)
+;;   (sync0-bibtex-nullify-all-variables)
+;;   (let* ((field "keywords")
+;;          (entry (save-excursion (bibtex-beginning-of-entry)
+;; 			        (bibtex-parse-entry)))
+;;          (bibkey (cdr (assoc "=key=" entry))))
+;;     ;; load the variables 
+;;     (sync0-bibtex-completion-load-entry bibkey)
+;;     ;; (setq sync0-bibtex-entry-key bibkey)
+;;     ;; call new value
+;;     (funcall (cadr (assoc field sync0-bibtex-entry-functions)))
+;;     (let* ((assigned-value (eval (intern (concat "sync0-bibtex-entry-" field))))
+;;            (bib-list (list field "Whatever string" assigned-value nil)))
+;;       (bibtex-beginning-of-entry)
+;;       (save-excursion
+;;         (re-search-forward (concat "[[:space:]]+" field "[[:space:]]+="))
+;;         (bibtex-kill-field nil t))
+;;       (bibtex-make-field bib-list t))
+;;     (save-buffer)))
+
+(defun sync0-bibtex-find-key-in-bibfiles (key)
+    "Search key in bibfile. Output the full path of the bibliography
+file where it was found."
+    (let (x)
+      (catch 'break
+        (dolist (bib-file sync0-bibtex-bibliographies)
+          (with-temp-buffer
+            (insert-file-contents bib-file)
+            (goto-char (point-min))
+            (when (re-search-forward (concat "^@[[:alpha:]]+{" key ",") nil t 1)
+              (setq x bib-file)
+              (throw 'break t)))))
+      x))
+
+;; Attention! Do not call this function directly without ivy-bibtex
+(defun sync0-bibtex-add-field-and-recalc-keywords-and-mdnote (bibkey field unique-p multiple-new-p separator assigned-value assigned-values) 
+  (interactive)
+  (setq sync0-bibtex-entry-creation nil)
+  (sync0-bibtex-nullify-all-variables)
+  ;; load the variables 
+  (sync0-bibtex-completion-load-entry bibkey)
+  (let* ((old-value (eval (intern (concat "sync0-bibtex-entry-" field))))
+         (old-values (unless unique-p
+                       (when old-value
+                         (split-string old-value separator))))
+         (already-present-p (unless multiple-new-p 
+                              (if unique-p
+                                  (string= old-value assigned-value)
+                                (member assigned-value old-values))))
+         (keywords-p sync0-bibtex-entry-keywords)
+         (new-value (cond ((and multiple-new-p
+                                (null unique-p))
+                           (let ((new-list (cl-union old-values assigned-values :test #'string=)))
+                             (sync0-show-elements-of-list new-list separator)))
+                          ((and old-value
+                                (null unique-p))
+                           (concat old-value separator assigned-value))
+                          (t assigned-value)))
+         (bib-file (sync0-bibtex-find-key-in-bibfiles bibkey)))
+    (if already-present-p
+        (message "%s already present or assigned for %s in %s " assigned-value bibkey field)
+      (unless (null bib-file)
+        ;; position the cursor at beg of entry
+        ;; problem bib search function
+        (find-file bib-file)
+        (goto-char (point-min))
+        (re-search-forward (concat "^@[[:alpha:]]+{" bibkey ",") nil t 1)
+        (bibtex-beginning-of-entry)
+        (sync0-bibtex-create-field-at-entry field new-value old-value)
+        ;; save newly created field
+        (save-buffer)
+        ;; reload entry
+        (sync0-bibtex-nullify-all-variables)
+        (sync0-bibtex-completion-load-entry bibkey)
+        ;; recalc tags
+        (funcall (cadr (assoc "keywords" sync0-bibtex-entry-functions)))
+        (sync0-bibtex-create-field-at-entry "keywords" sync0-bibtex-entry-keywords keywords-p)
+        ;; save newly created keywords
+        (save-buffer)
+        (sync0-bibtex-create-note-from-entry t bibkey)))))
+
+
   (major-mode-hydra-define bibtex-mode nil 
     ("Entries"
-     (("c" sync0-bibtex-clean-entry "Clean entry")
-      ("E" sync0-bibtex-define-entry "Capture entry")
-      ("e" (sync0-bibtex-define-entry t) "Quick capture")
-      ("m" sync0-bibtex-define-multiple-entries "Multiple entries")
-      ("t" sync0-bibtex-transplant-obsidian-ref-into-biblatex "Get from Obsidian")
+     (("c" sync0-bibtex-clean-entry "Clean this entry")
+      ("E" sync0-bibtex-define-entry "New entry")
+      ("e" (sync0-bibtex-define-entry t) "Quick new entry")
+      ("d" doi-utils-add-bibtex-entry-from-doi "Entry from DOI")
+      ("m" sync0-bibtex-define-multiple-entries "Define entries")
+      ("t" sync0-bibtex-transplant-obsidian-ref-into-biblatex "Entry from mdnote")
       ("u" sync0-bibtex-update-key "Update key")
-      ("f" sync0-bibtex-define-entries-from-bibkey "Capture many entries from key")
-      ("M" sync0-bibtex-move-entry-to-bibfile "Move entry to bibfile")
-      ("D" sync0-bibtex-delete-entry "Delete entry")
-      ("A" sync0-bibtex-archive-entry "Archive entry")
-      ("1" sync0-bibtex-file-exists-p "Check file exists"))
+      ("n" sync0-bibtex-open-notes-at-point "Open notes")
+      ("f" sync0-bibtex-define-entries-from-bibkey "Define multiple from this entry"))
+      ;; ("w" sync0-bibtex-open-url "Open url")
+      ;; ("M" sync0-bibtex-move-entry-to-bibfile "Move entry to bibfile")
+      ;; ("D" sync0-bibtex-delete-entry "Delete entry")
+      ;; ("A" sync0-bibtex-archive-entry "Archive entry")
+      ;; ("1" sync0-bibtex-file-exists-p "Check file exists")
      "PDF editing"
-     (("x" sync0-bibtex-extract-from-crossref "Extract from crossref")
-      ("X" sync0-bibtex-delete-attachments "Delete attachments")
-      ("P" sync0-bibtex-copy-pdf-to-path "Copy to path")
-      ("p" sync0-bibtex-print-pdf "Print att. from entry")
+     (("X" sync0-bibtex-delete-attachments "Delete attachments")
+      ("P" sync0-pandoc-export-epub-to-pdf "EPUB to PDF")
+      ("C" sync0-bibtex-crop-pdf "Crop attached PDF")
+      ("T" sync0-bibtex-recalc-tags-and-mdnote-at-point "Recalc keywords at point")
+      ("o" sync0-bibtex-open-pdf-at-point "Show PDF")
+      ("O" (sync0-bibtex-open-pdf-at-point t) "Show crossref PDF"))
+      ;; ("x" sync0-bibtex-extract-from-crossref "Extract from crossref")
+      ;; ("P" sync0-bibtex-copy-pdf-to-path "Copy to path")
+      ;; ("p" sync0-bibtex-print-pdf "Print att. from entry")
       ;; This does note work for some reason
       ;; ("x" sync0-bibtex-arrange-pdf "Arrange pdf")
-      ("C" sync0-bibtex-crop-pdf "Crop attached pdf")
-      ("T" sync0-bibtex-add-toc-to-pdf "Add TOC to pdf")
-      ("K" sync0-bibtex-add-key-to-pdf "Add key to pdf")
+      ;; ("T" sync0-bibtex-add-toc-to-pdf "Add TOC to PDF")
+      ;; ("K" sync0-bibtex-add-key-to-pdf "Add key to PDF")
       ;; ("s" sync0-bibtex-extract-subpdf "Extract subpdf")
-      ("d" sync0-bibtex-download-pdf "Download pdf from url"))
-     "Visit"
-     (("o" sync0-bibtex-open-pdf-at-point "Open in pdfview")
-      ("z" (sync0-bibtex-open-pdf-at-point t) "Open in zathura")
-      ("Z" (sync0-bibtex-open-crossref-pdf t) "Open in zathura")
+      ;; ("d" sync0-bibtex-download-pdf "Download pdf from url")
+     ;; "Visit"
       ;; ("o" sync0-org-ref-open-pdf-at-point "Open in pdfview")
-      ("w" sync0-bibtex-open-url "Open url")
-      ("n" sync0-bibtex-open-notes "Open annotations"))
+      ;; ("n" sync0-bibtex-open-notes "Open annotations")
      "Bibliographies"
-     (("s" ivy-bibtex "Search entry")
-      ("S" ivy-bibtex-with-local-bibliography "Search entry locally")
+     (("S" ivy-bibtex "Search entry")
+      ("s" ivy-bibtex-with-local-bibliography "Search entry locally")
       ("b" sync0-bibtex-recalc-bibliographies "Recalc bibliographies")
       ("B" sync0-bibtex-recalc-master-bibliography "Recalc master bib file")
       ("r" sync0-bibtex-populate-keys "Populate keys")
       ("v" sync0-bibtex-visit-bibliography "Visit bibfile"))
      "Etc"
      ;; ("r" (sync0-bibtex-update-completion-files sync0-bibtex-completion-variables-list) "Refresh completion vars")
-     (("a" sync0-bibtex-add-field "Add field")
+     (("a" sync0-bibtex-add-field-at-point "Add field")
+      ("A" (sync0-bibtex-add-field-at-point t) "Add field and recalc")
       ("i" sync0-bibtex-convert-jpg-to-pdf "Convert jpg to pdf")
       ("k" sync0-add-field-theme "Add theme")
       ("y" sync0-bibtex-yank-citation-from-bibkey "Yank citation.")
