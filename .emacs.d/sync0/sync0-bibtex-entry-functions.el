@@ -114,10 +114,7 @@ prevent undesired results."
                           sync0-bibtex-entry-initial-origdate
                           (bibtex-completion-get-value "origdate" sync0-bibtex-entry-crossref-entry)
                           sync0-bibtex-entry-initial-author
-                          (if (or (string= sync0-bibtex-entry-type-downcase "collection")
-                                  (string= sync0-bibtex-entry-type-downcase "incollection")
-                                  (string= sync0-bibtex-entry-type-downcase "proceedings")
-                                  (string= sync0-bibtex-entry-type-downcase "inproceedings"))
+                          (if (member sync0-bibtex-entry-type sync0-bibtex-entry-editor-types)
                               (bibtex-completion-get-value "editor" sync0-bibtex-entry-crossref-entry)
                             (bibtex-completion-get-value "author" sync0-bibtex-entry-crossref-entry))
                           sync0-bibtex-entry-initial-language
@@ -129,11 +126,12 @@ prevent undesired results."
                   ;; ASCII. See:
                   ;; https://github.com/sindikat/unidecode
                   (setq sync0-bibtex-entry-keywords
+                      (sync0-bibtex-obsidian-keyword-cleanup
                         (unidecode (let (x)
                                      (dolist (element sync0-bibtex-tag-fields-list x) 
                                        (unless (sync0-null-p (symbol-value (caddr element)))
                                          (setq x (cons (concat (cadr element)  (sync0-bibtex-obsidian-keyword-tagify (eval (caddr element)))) x))))
-                                     (sync0-show-elements-of-list x ", ")))))))
+                                     (sync0-show-elements-of-list x ", "))))))))
   "List of lists in which the car of each list is bibtex-field and
 the cdr is a lambda function with all the actions that should be
 carried to calculate the value it will take in a BibLaTeX entry.")
@@ -289,6 +287,9 @@ carried to calculate the value it will take in a BibLaTeX entry.")
                   ((string-match ", " sync0-bibtex-entry-related)
                    (sync0-add-prefix-to-list-convert-to-string sync0-bibtex-entry-related ", " "related/"))
                   (t sync0-bibtex-entry-related))))
+    ;; (sync0-bibtex-correct-journaltitle-keywords)
+    (sync0-bibtex-correct-keywords "journaltitle")
+    (sync0-bibtex-correct-keywords "library")
     ;; Fix problems with calculation of doctype tag.
     ;;;; (when sync0-bibtex-entry-doctype
     ;; (unless (sync0-null-p sync0-bibtex-entry-doctype)

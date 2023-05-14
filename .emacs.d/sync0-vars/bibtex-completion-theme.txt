@@ -426,3 +426,6 @@ lexicography
 economic_debates
 1830_revolution
 canuts
+catholicism
+investments
+industrial_banking

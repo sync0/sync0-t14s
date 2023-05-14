@@ -1,4 +1,5 @@
-  (defun sync0-bibtex-extract-pdf-from-crossref (&optional beg end noconfirm)
+
+(defun sync0-bibtex-extract-pdf-from-crossref (&optional beg end noconfirm)
     "Extract pdf from crossref defined by
    sync0-bibtex-entry-crossref. Be careful! Filename is not
    automatically calculated because this function is not

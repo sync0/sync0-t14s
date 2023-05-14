@@ -239,17 +239,103 @@ bibtex does not take lists but strings as arguments."
 ;;       [", " "_"]
 ;;       ["d’" ""]])))
 
+;; (defun sync0-bibtex-obsidian-keyword-cleanup (keyword-string)
+;;   (xah-replace-pairs-in-string-recursive
+;;    keyword-string 
+;;    [["d'" ""]
+;;     ["l'" ""]
+;;     ;; ["-de-" ""]
+;;     ["l’" ""]
+;;     ["." ""]
+;;     ;; ["&" "_"]
+;;     ["\&" ""]
+;;     ["\\&" ""]
+;;     ["\\_" "_"]
+;;     ["\_" "_"]
+;;     ["__" "_"]
+;;     ;; [" /& " "_"]
+;;     ;; [" & " "_"]
+;;     ;; [" //& " "_"]
+;;     ;; [", " "_"]
+;;     [",_" "_"]
+;;     ["d’" ""]]))
+
+(defun sync0-bibtex-obsidian-keyword-cleanup (keyword-string)
+  "Corrections for the whole keyword string."
+  (let ((x (replace-regexp-in-string "[^,]\\([[:space:]]\\)" "_" keyword-string t nil 1)))
+    (xah-replace-pairs-in-string-recursive
+     x
+     [["/de-" "/"]])))
+
+;; (defun sync0-bibtex-correct-journaltitle-keywords ()
+;;   "Corrections for the whole keyword string."
+;;   (when (or (string= sync0-bibtex-entry-type-downcase "article")
+;;             (string= sync0-bibtex-entry-type-downcase "collection"))
+;;     (unless (null sync0-bibtex-entry-journaltitle)
+;;       (setq sync0-bibtex-entry-journaltitle-tag
+;;             (xah-replace-pairs-in-string
+;;              sync0-bibtex-entry-journaltitle
+;;              [[" de " "_"]
+;;               [" la " "_"]
+;;               ["la " ""]
+;;               ["le " ""]
+;;               ["les " ""]
+;;               ["the " ""]
+;;               [" et " "_"]
+;;               [" of " "_"]
+;;               [" the " "_"]
+;;               [" les " "_"]
+;;               [" and " "_"]
+;;               [" du " "_"]
+;;               [" des " "_"]
+;;               [" da " "_"]
+;;               [" do " "_"]
+;;               [" du " "_"]])))))
+
+(defun sync0-bibtex-correct-keywords (field)
+  "Create corrected var-tag for field to appear in keyword string."
+  (when-let* ((var (intern (concat "sync0-bibtex-entry-" field)))
+              (value (symbol-value var))
+              (var-tag (intern (concat "sync0-bibtex-entry-" field "-tag"))))
+    (unless (null var)
+      (set var-tag
+            (xah-replace-pairs-in-string
+             value
+             [[" de " "_"]
+              [" la " "_"]
+              ["la " ""]
+              ["le " ""]
+              ["les " ""]
+              ["the " ""]
+              [" et " "_"]
+              [" of " "_"]
+              [" the " "_"]
+              [" les " "_"]
+              [" and " "_"]
+              [" du " "_"]
+              [" des " "_"]
+              [" da " "_"]
+              [" do " "_"]
+              [" du " "_"]])))))
+
+  ;; (let* ((nospace (replace-regexp-in-string "[^,][[:space:]]+" "_" my-string))
+  ;;        (x (downcase nospace)))
+
 (defun sync0-bibtex-obsidian-keyword-tagify (my-string)
-  "Make my-string compatible with the tags of obsidian by
-downcasing and removing whitespace from tags to be included as
-keywords in biblatex entries and obsidian markdown files."
-  (let* ((nospace (replace-regexp-in-string "[[:space:]]+" "_" my-string))
-         (x (downcase nospace)))
+  "Corrections for individual fields used in keywords. Make
+my-string compatible with the tags of obsidian by downcasing and
+removing whitespace from tags to be included as keywords in
+biblatex entries and obsidian markdown files."
+  (let ((x (downcase my-string)))
     (xah-replace-pairs-in-string-recursive
      x
      [["d'" ""]
       ["l'" ""]
+      ;; ["-de-" ""]
       ["l’" ""]
+      ;; [" de " "-"]
+      ;; ["-de-" "-"]
+      ;; ["de-" ""]
       ["." ""]
       ;; ["&" "_"]
       ["\&" ""]
@@ -260,7 +346,7 @@ keywords in biblatex entries and obsidian markdown files."
       ;; [" /& " "_"]
       ;; [" & " "_"]
       ;; [" //& " "_"]
-      [", " "_"]
+      ;; [", " "_"]
       [",_" "_"]
       ["d’" ""]])))
 
@@ -350,17 +436,20 @@ access it."
                  (match-string 1 ,var))
                 (t (nth 0 (split-string ,var ", ")))))
      (set (intern (concat ,(symbol-name var) "-tag"))
-          (cond ((string-match " and " ,var)
-                 (let* ((no-comma (replace-regexp-in-string ", " "_" (downcase ,var)))
-                        (person (substring  ,(symbol-name var) 19))
-                        (person-string (concat ", " person "/"))
-                        (no-space (replace-regexp-in-string "[[:space:]]+" "-" no-comma)))
-                   (replace-regexp-in-string "-and-" person-string no-space)))
-                ((string-match "^{" ,var)
-                 (string-match "{\\([[:print:]]+\\)}" ,var)
-                 (downcase (match-string 1 ,var)))
-                (t (let ((raw (replace-regexp-in-string ", " "_" ,var)))
-                     (downcase (replace-regexp-in-string " " "-" raw))))))))
+          (let ((x (cond ((string-match " and " ,var)
+                          (let* ((no-comma (replace-regexp-in-string ", " "_" (downcase ,var)))
+                                 (person (substring  ,(symbol-name var) 19))
+                                 (person-string (concat ", " person "/"))
+                                 (no-space (replace-regexp-in-string "[[:space:]]+" "-" no-comma)))
+                            (replace-regexp-in-string "-and-" person-string no-space)))
+                         ((string-match "^{" ,var)
+                          (string-match "{\\([[:print:]]+\\)}" ,var)
+                          (downcase (match-string 1 ,var)))
+                         (t (let ((raw (replace-regexp-in-string ", " "_" ,var)))
+                              (downcase (replace-regexp-in-string " " "-" raw)))))))
+            (xah-replace-pairs-in-string
+             x
+             [["-de-" "–"]])))))
 
 (defmacro sync0-bibtex-normalize-name-string (var completion-string)
   "Get values from completing-read-multiple and organize them into
@@ -444,7 +533,5 @@ bibtex-completion handles crossreferences."
            (crossref-value (cdr crossref-cons)))
       (when (string= entry-value crossref-value)
         (set (intern entry-element) nil)))))
-
-
 
 (provide 'sync0-bibtex-corrections)

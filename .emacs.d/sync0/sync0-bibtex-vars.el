@@ -44,6 +44,10 @@ because it requires a special treatment.")
   '("InBook" "InCollection" "InProceedings")
   "List of Bibtex entry types that use the crossref field")
 
+(defvar sync0-bibtex-entry-editor-types
+  '("MvCollection" "Collection" "InCollection" "InProceedings" "Proceedings")
+  "List of Bibtex entry types that use the editor field")
+
 (defvar sync0-bibtex-attachment-programs
   '("zathura" "okular" "gwenview" "nil")
   "List of software to open attachments")
@@ -71,6 +75,8 @@ because it requires a special treatment.")
 
 (setq sync0-bibtex-obsidian-reference-template-top
       (concat  "\n## Description {.noexport}\n\n" 
+               "\n### Motivation\n\n" 
+               "\n### Aperçu\n\n" 
                "### Progrès de la lecture\n\n"
                "### Annotations\n\n"
                "```dataview\n"
@@ -181,7 +187,7 @@ a Bibtex entry.")
        (no-key-list (remove "keywords" sync0-bibtex-string-multiple-fields))
        (mult-var-tag (mapcar (lambda (x) (concat x "-tag")) no-key-list))
        (mult-var-fix (mapcar (lambda (x) (concat x "-fixed")) no-key-list))
-       (raw-list (list "type-downcase" "crossref-entry" "title-fixed" "title-aliases" "editor-over-author" "title-compatible" "lastname" "related-tag" "key" "file-old"))
+       (raw-list (list "type-downcase" "crossref-entry" "title-fixed" "title-aliases" "editor-over-author" "title-compatible" "lastname" "related-tag" "key" "file-old" "journaltitle-tag" "library-tag"))
        (full-list (append mult-var-tag mult-var-fix raw-list)))
   (dolist (element full-list) 
     (let ((my-var (intern (concat prefix element))))
@@ -361,7 +367,7 @@ Obsidian of produced markdown (corrupt YAML frontmatters).")
 
 (defvar sync0-bibtex-tag-fields-list
   '(("type" "reference/" sync0-bibtex-entry-type-downcase)
-    ("journaltitle" "journaltitle/" sync0-bibtex-entry-journaltitle)
+    ("journaltitle" "journaltitle/" sync0-bibtex-entry-journaltitle-tag)
 ;;    ("publication" "publication/" sync0-bibtex-entry-publication)
     ("crossref" "crossref/" sync0-bibtex-entry-crossref)
     ("doctype" "" sync0-bibtex-entry-doctype-tag)
@@ -373,7 +379,7 @@ Obsidian of produced markdown (corrupt YAML frontmatters).")
     ("scanstatus" "scanstatus/" sync0-bibtex-entry-scanstatus)
     ("priority" "priority/" sync0-bibtex-entry-priority)
     ("country" "" sync0-bibtex-entry-country-tag)
-    ("library" "library/" sync0-bibtex-entry-library)
+    ("library" "library/" sync0-bibtex-entry-library-tag)
     ("language" "language/" sync0-bibtex-entry-language)
     ("edition" "edition/" sync0-bibtex-entry-edition)
     ("related" "related/" sync0-bibtex-entry-related-tag)

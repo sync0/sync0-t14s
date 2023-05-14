@@ -118,9 +118,11 @@ function is to be used only in pipes."
     ;; the function below does not work; throws an error listp that I
     ;; have not been able to solve (sync0-bibtex-update-vars
     ;; sync0-bibtex-completion-variables-list)
-    (unless (sync0-null-p sync0-bibtex-entry-url)
-      (when (yes-or-no-p "Download the attached pdf? ")
-        (sync0-bibtex-download-pdf sync0-bibtex-entry-key t))))
+    (setq sync0-bibtex-entry-creation nil)
+    (when (and sync0-bibtex-entry-url
+               (string-match "\\.pdf$" sync0-bibtex-entry-url)
+               (yes-or-no-p "Download the attached pdf? "))
+        (sync0-bibtex-download-pdf sync0-bibtex-entry-key t)))
 
   ;; (defun sync0-bibtex-entry-define-related (&optional bibkey)
   ;;   "Define the author for new BibLaTeX entry."
@@ -372,6 +374,29 @@ format provided by org-roam files"
     (interactive)
     (let    ((bibkey (or refkey 
                          (sync0-bibtex-completion-choose-key t t))))
+      (sync0-bibtex-completion-load-entry bibkey)
+      ;; (unless no-extract
+      ;;   (when (or (string= sync0-bibtex-entry-type-downcase "incollection")
+      ;;             (string= sync0-bibtex-entry-type-downcase "inbook")
+      ;;             (string= sync0-bibtex-entry-type-downcase "inproceedings"))
+      ;;     (sync0-bibtex-extract-pdf-from-crossref)))
+      (if rewrite
+          (sync0-bibtex-entry-create-obsidian-note-from-entry bibkey t)
+        (sync0-bibtex-entry-create-obsidian-note-from-entry bibkey))))
+
+  (defun sync0-bibtex-create-note-at-point (&optional rewrite)
+    "Create a new Obsidian markdown note from an existing BibLaTeX
+   entry in the default bibliography file. When optional rewrite
+   is t, do not create a new file but simply rewrite an existing
+   entry with the data of the corresponding bibtex entry in the
+   default .bib file. When optional no-extract is true, do not
+   attempt to extract a sub-pdf from its crossref (this feature
+   is only useful when calling this function in loops to prevent
+   undesired behavior)."
+    (interactive)
+    (let* ((entry (save-excursion (bibtex-beginning-of-entry)
+			          (bibtex-parse-entry)))
+           (bibkey (cdr (assoc "=key=" entry))))
       (sync0-bibtex-completion-load-entry bibkey)
       ;; (unless no-extract
       ;;   (when (or (string= sync0-bibtex-entry-type-downcase "incollection")
@@ -696,35 +721,70 @@ notes file in vault to reflect metadata changes."
 ;;           (bibtex-kill-field nil t)))
 ;;       (bibtex-make-field bib-list t))))
 
-  (defun sync0-bibtex-copy-pdf-to-path (&optional in-path bibkey)
-    "Copy attached pdf to path and change the title to make it
+(defun sync0-bibtex-define-attachment-copy-filename (bibkey)
+  "Calculate filename for attachments to be copied."
+  (let* ((separator "_")
+         (author (when sync0-bibtex-entry-author-or-editor-p
+                   (concat  sync0-bibtex-entry-lastname separator)))
+         (date (when sync0-bibtex-entry-date-or-origdate-p
+                 (concat (eval (intern (concat "sync0-bibtex-entry-" sync0-bibtex-entry-date-or-origdate-p))) separator)))
+         (title sync0-bibtex-entry-title-compatible))
+    (concat bibkey
+            separator
+            author
+            date
+            title)))
+
+(defun sync0-bibtex-copy-attachment-at-point (&optional in-path bibkey)
+  "Copy attached pdf to path and change the title to make it
 readable."
-    (interactive)
-    (when-let* ((refkey (or bibkey
-                            (sync0-bibtex-completion-choose-key t t)))
-                (file (sync0-bibtex-choose-attachment refkey))
-                (extension  (file-name-extension file t)))
-      (sync0-bibtex-completion-load-entry refkey)
-      (if (file-exists-p file)
-          (let* ((target-path (or in-path
-                                  (read-string "Où envoyer ce fichier ? (finir en /) ")))
-                 (command (concat "cp "
-                                  file
-                                  " \""
-                                  target-path
-                                  refkey
-                                  "_"
-                                  sync0-bibtex-entry-lastname
-                                  "_"
-                                  (or sync0-bibtex-entry-date-fixed
-                                      "")
-                                  "_"
-                                  sync0-bibtex-entry-title-compatible
-                                  extension
-                                  "\"")))
-            (shell-command command)
-            (message "PDF for %s moved to target location" sync0-bibtex-entry-key))
-        (message "No PDF found for %s" sync0-bibtex-entry-key))))
+  (interactive)
+  (let* ((entry (save-excursion (bibtex-beginning-of-entry)
+			        (bibtex-parse-entry)))
+         (bibkey (cdr (assoc "=key=" entry)))
+         (file (sync0-bibtex-choose-attachment bibkey))
+         (extension  (file-name-extension file t))
+         (path (or in-path
+                   (read-string "Où envoyer ce fichier ? (finir en /) " sync0-goodreads-directory))))
+    (sync0-bibtex-completion-load-entry bibkey)
+    (if (and (file-exists-p file)
+             (file-accessible-directory-p path))
+        (let* ((filetitle (sync0-bibtex-define-attachment-copy-filename bibkey))
+               (command (concat "cp "
+                                file
+                                " \""
+                                path
+                                filetitle
+                                extension
+                                "\"")))
+          (shell-command command)
+          (message "PDF for %s moved to target location" bibkey))
+      (message "No PDF found for %s" bibkey))))
+
+(defun sync0-bibtex-copy-pdf-to-path (&optional in-path bibkey)
+  "Copy attached pdf to path and change the title to make it
+readable."
+  (interactive)
+  (let* ((refkey (or bibkey
+                     (sync0-bibtex-completion-choose-key t t)))
+         (file (sync0-bibtex-choose-attachment refkey))
+         (path (or in-path
+                   (read-string "Où envoyer ce fichier ? (finir en /) " sync0-goodreads-directory)))
+         (extension  (file-name-extension file t)))
+    (sync0-bibtex-completion-load-entry refkey)
+    (if (and (file-exists-p file)
+             (file-accessible-directory-p path))
+        (let* ((filetitle (sync0-bibtex-define-attachment-copy-filename refkey))
+               (command (concat "cp "
+                                file
+                                " \""
+                                path
+                                filetitle
+                                extension
+                                "\"")))
+          (shell-command command)
+          (message "PDF for %s moved to target location" refkey))
+      (message "No PDF found for %s" refkey))))
 
   (defun sync0-bibtex-archive-entry (&optional bibkey)
     "Choose an entry to send to the archived bibliography. This
@@ -1150,7 +1210,8 @@ file where it was found."
      "PDF editing"
      (("X" sync0-bibtex-delete-attachments "Delete attachments")
       ("P" sync0-pandoc-export-epub-to-pdf "EPUB to PDF")
-      ("C" sync0-bibtex-crop-pdf "Crop attached PDF")
+      ("C" sync0-bibtex-copy-attachment-at-point "Copy attachment")
+      ;; ("C" sync0-bibtex-crop-pdf "Crop attached PDF")
       ("T" sync0-bibtex-recalc-tags-and-mdnote-at-point "Recalc keywords at point")
       ("o" sync0-bibtex-open-pdf-at-point "Show PDF")
       ("O" (sync0-bibtex-open-pdf-at-point t) "Show crossref PDF"))
@@ -1180,7 +1241,7 @@ file where it was found."
       ("i" sync0-bibtex-convert-jpg-to-pdf "Convert jpg to pdf")
       ("k" sync0-add-field-theme "Add theme")
       ("y" sync0-bibtex-yank-citation-from-bibkey "Yank citation.")
-      ("N" sync0-bibtex-create-note-from-entry "Create md note for entry")
-      ("R" (sync0-bibtex-create-note-from-entry t) "Rewrite md for entry"))))
+      ("N" sync0-bibtex-create-note-at-point "Create mdnote")
+      ("R" (sync0-bibtex-create-note-at-point t) "Rewrite mdnote"))))
 
   (provide 'sync0-bibtex-functions)
