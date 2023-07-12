@@ -11,3 +11,6 @@ fetch
 annotate
 inspect
 scan
+annotated
+toprocess
+unverified

@@ -1,4 +1,7 @@
+(require 'sync0-bibtex-key-functions)
 (require 'sync0-bibtex-corrections)
+(require 'sync0-bibtex-utils)
+(require 'sync0-obsidian)
 
 (defun sync0-bibtex-nullify-all-variables ()
   "Set all bibtex variables required to do operations to nil to
@@ -37,6 +40,11 @@ prevent undesired results."
                        (format-time-string "%Y/%m/%d"))
                  (setq sync0-bibtex-entry-created
                        (format-time-string "%Y-%m-%d"))))
+    ("lastseen" (lambda ()
+                 (setq sync0-bibtex-entry-lastseen-tag
+                       (format-time-string "%Y/%m/%d"))
+                 (setq sync0-bibtex-entry-lastseen
+                       (format-time-string "%Y-%m-%d"))))
     ("origdate" (lambda ()
                   (setq sync0-bibtex-entry-origdate
                         (read-string "Origdate (ex. 1890-18-12) : " sync0-bibtex-entry-initial-origdate))))
@@ -61,6 +69,8 @@ prevent undesired results."
                       (setq sync0-bibtex-entry-origlanguage
                             (completing-read "Choose original language : "
                                              sync0-bibtex-completion-language nil nil sync0-bibtex-entry-initial-language))))
+    ("mention" (lambda ()
+                 (setq sync0-bibtex-entry-mention (sync0-bibtex-completion-choose-key nil t))))
     ("file" (lambda ()
               (if sync0-bibtex-entry-creation
                   (setq sync0-bibtex-entry-file
@@ -121,6 +131,30 @@ prevent undesired results."
                           (bibtex-completion-get-value "language" sync0-bibtex-entry-crossref-entry)))))
     ("related" (lambda ()
                  (setq sync0-bibtex-entry-related (sync0-bibtex-completion-choose-key t t))))
+    ;; ("seen" (lambda ()
+    ;;           (if sync0-bibtex-entry-creation
+    ;;               (progn
+    ;;                 (setq sync0-bibtex-entry-seen-tag
+    ;;                       (format-time-string "%Y/%m/%d"))
+    ;;                 (setq sync0-bibtex-entry-seen
+    ;;                       (format-time-string "%Y-%m-%d")))
+    ;;               (if (bound-and-true-p sync0-bibtex-entry-seen)
+    ;;                   (let* ((x (completing-read-multiple "Seen: " sync0-bibtex-completion-seen))
+    ;;                         (y (concat sync0-bibtex-entry-seen ", " x)))
+    ;;                 (setq sync0-bibtex-entry-seen-tag (replace-regexp-in-string "-" "/" y))
+    ;;                 (setq sync0-bibtex-entry-seen y))
+    ;;               (progn
+    ;;                 (setq sync0-bibtex-entry-seen-tag
+    ;;                       (format-time-string "%Y/%m/%d"))
+    ;;                 (setq sync0-bibtex-entry-seen
+    ;;                       (format-time-string "%Y-%m-%d")))))))
+    ("seen" (lambda ()
+              (if (or sync0-bibtex-entry-creation
+                      (not (bound-and-true-p sync0-bibtex-entry-seen)))
+                  (setq sync0-bibtex-entry-seen
+                        (format-time-string "%Y-%m-%d"))
+                (let ((x (completing-read-multiple "Seen: " sync0-bibtex-completion-seen)))
+                  (setq sync0-bibtex-entry-seen (concat sync0-bibtex-entry-seen ", " x))))))
     ("keywords" (lambda ()
                   ;; Requires package unidecode for conversion to
                   ;; ASCII. See:
@@ -136,9 +170,9 @@ prevent undesired results."
 the cdr is a lambda function with all the actions that should be
 carried to calculate the value it will take in a BibLaTeX entry.")
 
-;; Set functions for biblatex fields that require completion of multiple
+;; Set entry functions for biblatex fields that require completion of multiple
 ;; things.
-(let ((x (remove "keywords" sync0-bibtex-string-multiple-fields)))
+(let ((x (cl-set-difference sync0-bibtex-string-multiple-fields '("keywords" "seen" "mention") :test #'string=)))
   ;; Remove keywords to prevent overwriting the function it currently has
   (dolist (element x)
     (let* ((my-var (intern (concat "sync0-bibtex-entry-" element)))
@@ -273,63 +307,8 @@ carried to calculate the value it will take in a BibLaTeX entry.")
        ;;; variables avoiding conflicts with the editor field. This
        ;;; part is also necessary to calculate the name of the person
        ;;; used in calculating entries.
-    ;; Set author or editor fields
-    (sync0-bibtex-set-author-or-editor-extra-fields)
-    ;; Set date fields
-    (sync0-bibtex-set-date-extra-fields)
-    ;; Set date fields
-    (sync0-bibtex-set-title-extra-fields)
-    ;; Fix problems with calculation of related tag.
-    (when sync0-bibtex-entry-related
-      (setq sync0-bibtex-entry-related-tag
-            (cond ((sync0-null-p sync0-bibtex-entry-related)
-                   "")
-                  ((string-match ", " sync0-bibtex-entry-related)
-                   (sync0-add-prefix-to-list-convert-to-string sync0-bibtex-entry-related ", " "related/"))
-                  (t sync0-bibtex-entry-related))))
-    ;; (sync0-bibtex-correct-journaltitle-keywords)
-    (sync0-bibtex-correct-keywords "journaltitle")
-    (sync0-bibtex-correct-keywords "library")
-    ;; Fix problems with calculation of doctype tag.
-    ;;;; (when sync0-bibtex-entry-doctype
-    ;; (unless (sync0-null-p sync0-bibtex-entry-doctype)
-    ;; (sync0-bibtex-tagify-var sync0-bibtex-entry-doctype))
-    ;;
-    ;; Fix problems with calculation of tags for biblatex fields that
-    ;; allow multiple completion.
-    (let* ((to-remove (list "keywords"))
-           (my-list (cl-set-difference sync0-bibtex-string-multiple-fields to-remove :test #'string=)))
-      (dolist (element my-list)
-        (let ((my-var (intern (concat "sync0-bibtex-entry-" element))))
-          (eval `(sync0-bibtex-tagify-var ,my-var)))))
-    ;; Calculate the people fields; the reason for excluding author,
-    ;; editor and translator fields is that these are necessary for
-    ;; the cumbersome calculation of titles. 
-    (let* ((to-remove (list "author" "editor" "translator"))
-           (my-list (cl-set-difference sync0-bibtex-people-fields to-remove :test #'string=)))
-      (dolist (element my-list)
-        (let ((my-var (intern (concat "sync0-bibtex-entry-" element))))
-          (eval `(sync0-bibtex-fix-names ,my-var)))))
-    ;; Calculate the translator field. This is calculated separately
-    ;; to allow for some flexibility in including the translator
-    ;; field, when present, in Obsidian markdown notes.
-    (unless (sync0-null-p sync0-bibtex-entry-translator)
-      (sync0-bibtex-fix-names sync0-bibtex-entry-translator)
-      (setq sync0-bibtex-entry-translator-lastname
-            (sync0-bibtex-abbreviate-lastnames sync0-bibtex-entry-translator-lastname))
-      (setq sync0-bibtex-entry-lastname
-            (concat sync0-bibtex-entry-lastname " (" sync0-bibtex-entry-translator-lastname ")")))
-      ;; Fix problems with calculation of medium obsidian YAML property.
-      (unless (null sync0-bibtex-entry-medium)
-        (setq sync0-bibtex-entry-medium-fixed
-              (if (string-match ", " sync0-bibtex-entry-medium)
-                  (sync0-add-prefix-to-list-convert-to-string sync0-bibtex-entry-medium ", " "\"" "\"")
-                (concat "\"" sync0-bibtex-entry-medium "\""))))
-      (unless (null sync0-bibtex-entry-project)
-        (setq sync0-bibtex-entry-project-fixed
-              (if (string-match ", " sync0-bibtex-entry-project)
-                  (sync0-add-prefix-to-list-convert-to-string sync0-bibtex-entry-project ", " "\"" "\"")
-                (concat "\"" sync0-bibtex-entry-project "\""))))
+          ;; Corrections
+      (sync0-bibtex-correct-entry-fields)
       ;; Set parent extra field
       (setq sync0-bibtex-entry-parent
             (cond ((string= sync0-bibtex-entry-type-downcase "article")

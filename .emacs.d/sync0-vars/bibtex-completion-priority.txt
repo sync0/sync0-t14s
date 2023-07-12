@@ -3,3 +3,4 @@ medium_low
 medium
 medium_high
 high
+none

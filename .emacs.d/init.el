@@ -505,6 +505,24 @@ empty (not in the lisp sense but in a human-readable sense)."
               (equal var '(""))))
           (t (null var))))
 
+(defun sync0-create-file-with-content (content filepath)
+  (if (file-exists-p filepath)
+      (error "%s is already present in file system." filepath)
+    (with-temp-buffer 
+      (insert content)
+      (write-file filepath))))
+
+(defun sync0-file-has-extension-p (file extension)
+  "Check whether FILE has the given EXTENSION."
+  (let ((actual-extension (file-name-extension file)))
+    (string= actual-extension
+             (if (string-prefix-p "." extension)
+                 (substring extension 1)
+               extension))))
+
+(use-package cl-lib
+     :straight nil)
+
 (use-package s)
 
 (use-package f
@@ -1262,6 +1280,9 @@ Exempt major modes are defined in `display-line-numbers-exempt-modes'."
   (ivy-set-display-transformer
    'org-ref-ivy-insert-cite-link
    'ivy-bibtex-display-transformer)
+
+;; (doi-utils-def-bibtex-type article ("journal-article" "article-journal")
+;;                            author title journaltitle date volume number pages doi url)
 
   :bind 
   (:map org-mode-map
@@ -2518,7 +2539,7 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
   (bibtex-completion-notes-symbol "N")
   (bibtex-completion-notes-extension ".md")
   ;; (bibtex-completion-notes-extension ".org")
-  (bibtex-completion-pdf-extension '(".pdf" ".epub" ".doc" ".docx" ".org" ".ppt" ".pptx" ".md" ".rtf" ".tex" ".mp3" ".mp4" ".png" ".jpg"))
+  (bibtex-completion-pdf-extension '(".pdf" ".epub" ".doc" ".docx" ".org" ".ppt" ".pptx" ".md" ".rtf" ".tex" ".mp3" ".mp4" ".png" ".jpg" ".txt"))
   (bibtex-completion-additional-search-fields '(date volume edition))
   ;; (bibtex-completion-additional-search-fields '(origdate date volume edition))
   ;; (bibtex-completion-additional-search-fields '(origdate date subtitle edition))
@@ -2632,3 +2653,4 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
      :bind ((:map pdf-outline-buffer-mode-map
                   ("j" . next-line)
                   ("k" . previous-line))))
+(put 'erase-buffer 'disabled nil)

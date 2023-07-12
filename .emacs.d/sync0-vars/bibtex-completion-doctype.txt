@@ -45,3 +45,14 @@ obituary
 souvenir
 call
 slides
+book
+memoire
+working_paper
+manual
+pamphlet
+syllabus
+test
+confirmation
+receipt
+statement
+catalogue

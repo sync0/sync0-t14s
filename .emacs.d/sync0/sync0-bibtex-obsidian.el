@@ -1,4 +1,48 @@
+(require 'sync0-bibtex-key-functions)
+(require 'sync0-bibtex-utils)
 (require 'sync0-bibtex-corrections)
+(require 'sync0-obsidian)
+(require 'sync0-yaml)
+
+(defun sync0-bibtex-transplant-obsidian-ref-into-biblatex ()
+  "Create new BibLaTeX entry in the default bibliography. When
+   optional quick is non-nil, only capture the minimal fields
+   required to create a new entry."
+  (interactive)
+  ;; Before calculating any values, reset all values in my
+  ;; master list of variable (set them to nil).
+  ;; (setq sync0-bibtex-entry-derivation (yes-or-no-p "Derive entry?"))
+  (setq sync0-bibtex-entry-creation t)
+  (setq sync0-bibtex-entry-file-old nil)
+  (setq sync0-bibtex-entry-keywords nil)
+  ;; (sync0-bibtex-completion-load-entry nil quick)
+  (let* ((obsidian-id (read-string "Which Obsidian file to use as base for new entry?"))
+         (obsidian-file (concat sync0-zettelkasten-references-directory obsidian-id ".md"))
+         (obsidian-file-string (f-read-text obsidian-file))
+         x)
+    (if (file-exists-p obsidian-file)
+        (progn
+          (when (sync0-bibtex-duplicate-entry-key-p obsidian-id)
+            (setq obsidian-id (sync0-bibtex-entry-key-define t)))
+          (setq sync0-bibtex-entry-key obsidian-id)  
+          (setq sync0-bibtex-entry-keywords (sync0-yaml-get-property "tags" obsidian-file-string))
+          (setq sync0-bibtex-entry-author (sync0-yaml-get-property "author" obsidian-file-string))
+          (setq sync0-bibtex-entry-date (sync0-yaml-get-property "date" obsidian-file-string))
+          (setq sync0-bibtex-entry-origdate (sync0-yaml-get-property "origdate" obsidian-file-string))
+          (setq sync0-bibtex-entry-publisher (sync0-yaml-get-property "publisher" obsidian-file-string))
+          (setq sync0-bibtex-entry-doctype (sync0-yaml-get-property "doctype" obsidian-file-string))
+          (setq sync0-bibtex-entry-title (sync0-yaml-get-property "title" obsidian-file-string))
+          (setq sync0-bibtex-entry-journaltitle (sync0-yaml-get-property "journaltitle" obsidian-file-string))
+          (setq sync0-bibtex-entry-language (sync0-yaml-get-property "language" obsidian-file-string))
+          (setq sync0-bibtex-entry-langid sync0-bibtex-entry-language)
+          (setq sync0-bibtex-entry-type-downcase (sync0-yaml-get-property "biblatex_type" obsidian-file-string))
+          (setq sync0-bibtex-entry-type (if (member sync0-bibtex-entry-type-downcase sync0-bibtex-entry-types-correction)
+                                            (let (beg (upcase-initials (substring sync0-bibtex-entry-type-downcase 0 3)))
+                                              (end (upcase-initials (substring sync0-bibtex-entry-type-downcase 4 nil)))
+                                              (concat beg end))
+                                          (upcase-initials sync0-bibtex-entry-type-downcase)))
+          (sync0-bibtex-entry-append-to-bibliography sync0-bibtex-entry-key))
+      (message "No Obsidian file found for %s" obsidian-id))))
 
   (defun sync0-bibtex-entry-inform-new-note (&optional rewrite)
     "Inform the user about a new entry that has been just created."

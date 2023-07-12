@@ -1,4 +1,5 @@
-  (defun sync0-bibtex-update-var (field)
+
+(defun sync0-bibtex-update-var (field)
     "Update variables used for completion based on the information
    provided by the new entry."
      (when-let* ((my-list (assoc field sync0-bibtex-completion-variables-list))

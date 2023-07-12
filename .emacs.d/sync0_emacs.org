@@ -623,7 +623,33 @@ empty (not in the lisp sense but in a human-readable sense)."
           (t (null var))))
 #+END_SRC  
 
+Create a file with a given content.
+
+#+BEGIN_SRC emacs-lisp
+(defun sync0-create-file-with-content (content filepath)
+  (if (file-exists-p filepath)
+      (error "%s is already present in file system." filepath)
+    (with-temp-buffer 
+      (insert content)
+      (write-file filepath))))
+#+END_SRC  
+
+#+BEGIN_SRC emacs-lisp
+(defun sync0-file-has-extension-p (file extension)
+  "Check whether FILE has the given EXTENSION."
+  (let ((actual-extension (file-name-extension file)))
+    (string= actual-extension
+             (if (string-prefix-p "." extension)
+                 (substring extension 1)
+               extension))))
+#+END_SRC  
+
 * Fundamental Packages
+** cl-lib
+#+BEGIN_SRC emacs-lisp
+(use-package cl-lib
+     :straight nil)
+#+END_SRC
 ** s 
 #+BEGIN_SRC emacs-lisp
 (use-package s)
@@ -1616,6 +1642,9 @@ Change strings from Unicode to ASCII.
    'org-ref-ivy-insert-cite-link
    'ivy-bibtex-display-transformer)
 
+;; (doi-utils-def-bibtex-type article ("journal-article" "article-journal")
+;;                            author title journaltitle date volume number pages doi url)
+
   :bind 
   (:map org-mode-map
         ("C-c [" . org-ref-ivy-insert-cite-link)))
@@ -2045,6 +2074,14 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
 #+END_SRC 
 
 * Text editing                                                                  :revise:
+* text-mode
+#+BEGIN_SRC emacs-lisp
+(add-hook 'text-mode-hook
+          '(lambda ()
+             (setq indent-tabs-mode nil)
+             (setq tab-width 4)))
+#+END_SRC 
+
 ** auto-fill
 
   #+BEGIN_SRC emacs-lisp
@@ -3038,8 +3075,8 @@ Default Emacs mode for editing python code.
   (bibtex-align-at-equal-sign t)
   (bibtex-text-indentation 22)
   (bibtex-entry-format '(opts-or-alts page-dashes whitespace braces last-comma inherit-booktitle delimiters sort-fields realign))
-  :init
-  (add-hook 'bibtex-mode-hook (lambda () (setq fill-column 9999)))
+  ;; :init
+  ;; (add-hook 'bibtex-mode-hook (lambda () (setq fill-column 9999)))
   ;; :hook
   ;; (bibtex-mode . (lambda ()
   ;;                  (setq fill-column 9999)))
@@ -3094,7 +3131,7 @@ Default Emacs mode for editing python code.
   (bibtex-completion-notes-symbol "N")
   (bibtex-completion-notes-extension ".md")
   ;; (bibtex-completion-notes-extension ".org")
-  (bibtex-completion-pdf-extension '(".pdf" ".epub" ".doc" ".docx" ".org" ".ppt" ".pptx" ".md" ".rtf" ".tex" ".mp3" ".mp4" ".png" ".jpg"))
+  (bibtex-completion-pdf-extension '(".pdf" ".epub" ".doc" ".docx" ".org" ".ppt" ".pptx" ".md" ".rtf" ".tex" ".mp3" ".mp4" ".png" ".jpg" ".txt"))
   (bibtex-completion-additional-search-fields '(date volume edition))
   ;; (bibtex-completion-additional-search-fields '(origdate date volume edition))
   ;; (bibtex-completion-additional-search-fields '(origdate date subtitle edition))

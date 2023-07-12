@@ -1,5 +1,31 @@
 (require 'xah-replace-pairs)
 
+(defun sync0-bibtex-corrections-add-quotes-name (person)
+  "Add quotes to person string."
+  (when (stringp person)
+          (cond ((string-match " and " person)
+                 ;; create a list with parts 
+                 (let* ((name-parts  (split-string person " and "))
+                        (name-string (let (x)
+                                       (dolist  (element name-parts x)
+                                         (setq x (concat x element "\", \""))))))
+                   (concat "\"" (substring name-string 0 -3))))
+                ;; check when author is an organization
+                ((string-match "^{" person)
+                 (concat "\"" (substring person 1 -1) "\""))
+                ;; other cases
+                (t (concat "\"" person "\"")))))
+
+(defun sync0-bibtex-corrections-reverse-name (person)
+  "Correct the order of names from Last, First to First Last as
+they are defined in the order of the completion bib variable.
+This function takes a string as argument; otherwise fails."
+  (when (stringp person)
+    (let* ((author-list (split-string person ", "))
+           (last-name (nth 0 author-list))
+           (first-name (nth 1 author-list)))
+      (concat first-name " " last-name))))
+
 (defun sync0-bibtex-entry-select-draft-prefix ()
   (unless (sync0-null-p sync0-bibtex-entry-doctype)
     (when (string-match "draft" sync0-bibtex-entry-doctype)
@@ -122,23 +148,23 @@ Obsidian aliases."
          (setq sync0-bibtex-entry-author-or-editor-p nil)
          (setq sync0-bibtex-entry-lastname nil))
         ((and (sync0-null-p sync0-bibtex-entry-author)
-              (not (sync0-null-p sync0-bibtex-entry-editor)))
+              sync0-bibtex-entry-editor)
          (setq sync0-bibtex-entry-editor-over-author t)
          (setq sync0-bibtex-entry-author-or-editor-p t)
-         (sync0-bibtex-fix-names sync0-bibtex-entry-editor)
+         ;; (sync0-bibtex-fix-names sync0-bibtex-entry-editor)
          (setq sync0-bibtex-entry-lastname
                (sync0-bibtex-abbreviate-lastnames sync0-bibtex-entry-editor-lastname)))
-        ((and (not (sync0-null-p sync0-bibtex-entry-author))
-              (sync0-null-p sync0-bibtex-entry-editor))
+        ((and (sync0-null-p sync0-bibtex-entry-editor)
+               sync0-bibtex-entry-author)
          (setq sync0-bibtex-entry-editor-over-author nil)
          (setq sync0-bibtex-entry-author-or-editor-p t)
-         (sync0-bibtex-fix-names sync0-bibtex-entry-author)
+         ;; (sync0-bibtex-fix-names sync0-bibtex-entry-author)
          (setq sync0-bibtex-entry-lastname
                (sync0-bibtex-abbreviate-lastnames sync0-bibtex-entry-author-lastname)))
         (t (setq sync0-bibtex-entry-author-or-editor-p t)
            (setq sync0-bibtex-entry-editor-over-author nil)
-           (sync0-bibtex-fix-names sync0-bibtex-entry-editor)
-           (sync0-bibtex-fix-names sync0-bibtex-entry-author)
+           ;; (sync0-bibtex-fix-names sync0-bibtex-entry-editor)
+           ;; (sync0-bibtex-fix-names sync0-bibtex-entry-author)
            (setq sync0-bibtex-entry-lastname
                (sync0-bibtex-abbreviate-lastnames sync0-bibtex-entry-author-lastname)))))
 
@@ -260,6 +286,12 @@ bibtex does not take lists but strings as arguments."
 ;;     [",_" "_"]
 ;;     ["d’" ""]]))
 
+(defun sync0-bibtex-filesystem-cleanup (stringy)
+  "Correct characters forbidden in system filenames."
+    (xah-replace-pairs-in-string
+    stringy 
+     [["/" "--"]]))
+
 (defun sync0-bibtex-obsidian-keyword-cleanup (keyword-string)
   "Corrections for the whole keyword string."
   (let ((x (replace-regexp-in-string "[^,]\\([[:space:]]\\)" "_" keyword-string t nil 1)))
@@ -326,48 +358,51 @@ bibtex does not take lists but strings as arguments."
 my-string compatible with the tags of obsidian by downcasing and
 removing whitespace from tags to be included as keywords in
 biblatex entries and obsidian markdown files."
-  (let ((x (downcase my-string)))
-    (xah-replace-pairs-in-string-recursive
-     x
-     [["d'" ""]
-      ["l'" ""]
-      ;; ["-de-" ""]
-      ["l’" ""]
-      ;; [" de " "-"]
-      ;; ["-de-" "-"]
-      ;; ["de-" ""]
-      ["." ""]
-      ;; ["&" "_"]
-      ["\&" ""]
-      ["\\&" ""]
-      ["\\_" "_"]
-      ["\_" "_"]
-      ["__" "_"]
-      ;; [" /& " "_"]
-      ;; [" & " "_"]
-      ;; [" //& " "_"]
-      ;; [", " "_"]
-      [",_" "_"]
-      ["d’" ""]])))
+  (when (stringp my-string)
+    (let ((x (downcase my-string)))
+      (xah-replace-pairs-in-string-recursive
+       x
+       [["d'" ""]
+        ["l'" ""]
+        ;; ["-de-" ""]
+        ["l’" ""]
+        ;; [" de " "-"]
+        ;; ["-de-" "-"]
+        ;; ["de-" ""]
+        ["." ""]
+        ;; ["&" "_"]
+        ["\&" ""]
+        ["\\&" ""]
+        ["\\_" "_"]
+        ["\_" "_"]
+        ["__" "_"]
+        ;; [" /& " "_"]
+        ;; [" & " "_"]
+        ;; [" //& " "_"]
+        ;; [", " "_"]
+        [",_" "_"]
+        ["d’" ""]]))))
 
 (defun sync0-bibtex-correct-smartquotes (my-string)
   "Make my-string compatible with the tags of obsidian by
 downcasing and removing whitespace from tags to be included as
 keywords in biblatex entries and obsidian markdown files."
+  (when (stringp my-string)
     (xah-replace-pairs-in-string
      my-string
      [["'" "’"]
-     ["--" "–"]
-     ["---" "—"]]))
+      ["--" "–"]
+      ["---" "—"]])))
 
 (defun sync0-bibtex-obsidian-tagify (sep my-string)
   "Make my-string compatible with the tags of obsidian by
 downcasing and removing whitespace from tags to be included as
 keywords in biblatex entries and obsidian markdown files."
-  (let* ((nospace (s-trim sep))
-         (regex (concat "[^" nospace "]\\([[:space:]]+\\)"))
-         (nospace (replace-regexp-in-string regex "_" my-string nil t 1)))
-    (downcase nospace)))
+  (when (stringp my-string)
+    (let* ((nospace (s-trim sep))
+           (regex (concat "[^" nospace "]\\([[:space:]]+\\)"))
+           (nospace (replace-regexp-in-string regex "_" my-string nil t 1)))
+      (downcase nospace))))
 
 (defmacro sync0-bibtex-tagify-var (var)
   "Put the values of var with quotes. This function prepares two
@@ -407,18 +442,19 @@ access it."
   `(unless (sync0-null-p ,var)
      ;; first remove the sync0-bibtex-entry- prefix to use later
      (set (intern (concat ,(symbol-name var) "-fixed"))
-          (cond ((string-match " and " ,var)
-                 ;; create a list with parts 
-                 (let* ((name-parts  (split-string ,var " and "))
-                        (name-string (let (x)
-                                       (dolist  (element name-parts x)
-                                         (setq x (concat x element "\", \""))))))
-                   (concat "\"" (substring name-string 0 -3))))
-                ;; check when author is an organization
-                ((string-match "^{" ,var)
-                 (concat "\"" (substring ,var 1 -1) "\""))
-                ;; other cases
-                (t (concat "\"" ,var "\""))))
+          (sync0-bibtex-corrections-add-quotes-name ,var))
+          ;; (cond ((string-match " and " ,var)
+          ;;        ;; create a list with parts 
+          ;;        (let* ((name-parts  (split-string ,var " and "))
+          ;;               (name-string (let (x)
+          ;;                              (dolist  (element name-parts x)
+          ;;                                (setq x (concat x element "\", \""))))))
+          ;;          (concat "\"" (substring name-string 0 -3))))
+          ;;       ;; check when author is an organization
+          ;;       ((string-match "^{" ,var)
+          ;;        (concat "\"" (substring ,var 1 -1) "\""))
+          ;;       ;; other cases
+          ;;       (t (concat "\"" ,var "\""))))
      (set (intern (concat ,(symbol-name var) "-lastname"))
           (cond ((string-match " and " ,var)
                  ;; create a list with parts 
@@ -436,20 +472,33 @@ access it."
                  (match-string 1 ,var))
                 (t (nth 0 (split-string ,var ", ")))))
      (set (intern (concat ,(symbol-name var) "-tag"))
-          (let ((x (cond ((string-match " and " ,var)
-                          (let* ((no-comma (replace-regexp-in-string ", " "_" (downcase ,var)))
-                                 (person (substring  ,(symbol-name var) 19))
-                                 (person-string (concat ", " person "/"))
-                                 (no-space (replace-regexp-in-string "[[:space:]]+" "-" no-comma)))
-                            (replace-regexp-in-string "-and-" person-string no-space)))
-                         ((string-match "^{" ,var)
-                          (string-match "{\\([[:print:]]+\\)}" ,var)
-                          (downcase (match-string 1 ,var)))
-                         (t (let ((raw (replace-regexp-in-string ", " "_" ,var)))
-                              (downcase (replace-regexp-in-string " " "-" raw)))))))
+          (let* ((downcased (downcase ,var))
+                 (x (cond ((string-match " and " ,var)
+                           (let* ((no-comma (replace-regexp-in-string ", " "_" downcased))
+                                  (person (substring  ,(symbol-name var) 19))
+                                  (person-string (concat ", " person "/"))
+                                  (no-space (replace-regexp-in-string "[[:space:]]+" "-" no-comma)))
+                             (replace-regexp-in-string "-and-" person-string no-space)))
+                          ((not (string-match "," ,var))
+                           (xah-replace-pairs-in-string
+                            downcased
+                            [[" de la " "_"]
+                             [" de " "_"]
+                             [" la " "_"]
+                             [" des " "_"]
+                             ["-" "_"]]))
+                          (t (xah-replace-pairs-in-string
+                              downcased
+                              [[" de la " "-"]
+                               [" de " "-"]
+                               [" la " "-"]
+                               [" des " "-"]
+                               [", " "_"]
+                               [" " "-"]])))))
             (xah-replace-pairs-in-string
              x
-             [["-de-" "–"]])))))
+             [["-de-" "–"]
+             ["-la-" "–"]])))))
 
 (defmacro sync0-bibtex-normalize-name-string (var completion-string)
   "Get values from completing-read-multiple and organize them into
@@ -533,5 +582,75 @@ bibtex-completion handles crossreferences."
            (crossref-value (cdr crossref-cons)))
       (when (string= entry-value crossref-value)
         (set (intern entry-element) nil)))))
+
+(defun sync0-bibtex-correct-entry-fields ()
+  "Collection of functions with corrections necessary for correct formatting of entries."
+    ;; Calculate the people fields; the reason for excluding author,
+    ;; editor and translator fields is that these are necessary for
+    ;; the cumbersome calculation of titles. 
+    (dolist (element sync0-bibtex-people-fields)
+      (let ((my-var (intern (concat "sync0-bibtex-entry-" element))))
+        (eval `(sync0-bibtex-fix-names ,my-var))))
+    ;; Calculate the translator field. This is calculated separately
+    ;; to allow for some flexibility in including the translator
+    ;; field, when present, in Obsidian markdown notes.
+    (unless (sync0-null-p sync0-bibtex-entry-translator)
+      ;; (sync0-bibtex-fix-names sync0-bibtex-entry-translator)
+      (setq sync0-bibtex-entry-translator-lastname
+            (sync0-bibtex-abbreviate-lastnames sync0-bibtex-entry-translator-lastname))
+      (setq sync0-bibtex-entry-lastname
+            (concat sync0-bibtex-entry-lastname " (" sync0-bibtex-entry-translator-lastname ")")))
+    ;; Set author for title calculation
+    (sync0-bibtex-set-author-or-editor-extra-fields)
+    ;; Set date fields
+    (sync0-bibtex-set-date-extra-fields)
+    ;; Set date fields
+    (sync0-bibtex-set-title-extra-fields)
+    ;; Fix problems with calculation of related tag.
+    (when sync0-bibtex-entry-related
+      (setq sync0-bibtex-entry-related-tag
+            (cond ((sync0-null-p sync0-bibtex-entry-related)
+                   "")
+                  ((string-match ", " sync0-bibtex-entry-related)
+                   (sync0-add-prefix-to-list-convert-to-string sync0-bibtex-entry-related ", " "related/"))
+                  (t sync0-bibtex-entry-related))))
+    ;; (sync0-bibtex-correct-journaltitle-keywords)
+    (sync0-bibtex-correct-keywords "journaltitle")
+    (sync0-bibtex-correct-keywords "library")
+    ;; Fix problems with calculation of doctype tag.
+    ;;;; (when sync0-bibtex-entry-doctype
+    ;; (unless (sync0-null-p sync0-bibtex-entry-doctype)
+    ;; (sync0-bibtex-tagify-var sync0-bibtex-entry-doctype))
+    ;;
+    ;; Fix problems with calculation of tags for biblatex fields that
+    ;; allow multiple completion.
+    (let* ((to-remove (list "keywords"))
+           (my-list (cl-set-difference sync0-bibtex-string-multiple-fields to-remove :test #'string=)))
+      (dolist (element my-list)
+        (let ((my-var (intern (concat "sync0-bibtex-entry-" element))))
+          (eval `(sync0-bibtex-tagify-var ,my-var)))))
+;; Correct problem with certain date tags that take multiple entries
+    (when (bound-and-true-p sync0-bibtex-entry-seen-tag)
+      (setq sync0-bibtex-entry-seen-tag 
+            (xah-replace-pairs-in-string
+             sync0-bibtex-entry-seen-tag 
+             [["-" "/"]])))
+    ;; (let* ((to-remove (list "author" "editor" "translator"))
+    ;;        (my-list (cl-set-difference sync0-bibtex-people-fields to-remove :test #'string=)))
+    ;;   (dolist (element my-list)
+    ;;     (let ((my-var (intern (concat "sync0-bibtex-entry-" element))))
+    ;;       (eval `(sync0-bibtex-fix-names ,my-var)))))
+      ;; Fix problems with calculation of medium obsidian YAML property.
+      (unless (null sync0-bibtex-entry-medium)
+        (setq sync0-bibtex-entry-medium-fixed
+              (if (string-match ", " sync0-bibtex-entry-medium)
+                  (sync0-add-prefix-to-list-convert-to-string sync0-bibtex-entry-medium ", " "\"" "\"")
+                (concat "\"" sync0-bibtex-entry-medium "\""))))
+      (unless (null sync0-bibtex-entry-project)
+        (setq sync0-bibtex-entry-project-fixed
+              (if (string-match ", " sync0-bibtex-entry-project)
+                  (sync0-add-prefix-to-list-convert-to-string sync0-bibtex-entry-project ", " "\"" "\"")
+                (concat "\"" sync0-bibtex-entry-project "\"")))))
+
 
 (provide 'sync0-bibtex-corrections)

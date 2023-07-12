@@ -232,13 +232,27 @@
     (dolist (key keys)
         (sync0-bibtex-open-pdf key)))
 
-(defun bibtex-completion-string-keys-with-sep (keys)
-  "Produce strin of concatenated KEYS with separator."
-  (let ((separator ", ")
-        (x ""))
-    (dolist (key keys x)
-      (setq x (concat key separator x)))
-    (string-trim-right x ", ")))
+;; (defun bibtex-completion-string-keys-with-sep (keys)
+;;   "Produce strin of concatenated KEYS with separator."
+;;   (let ((separator ", ")
+;;         (x ""))
+;;     (dolist (key keys x)
+;;       (setq x (concat key separator x)))
+;;     (string-trim-right x ", ")))
+
+;; (defun bibtex-completion-string-keys-with-sep (keys)
+;;   "Produce strin of concatenated KEYS with separator."
+;;   (if (> (length keys) 1)
+;;       (sync0-show-elements-of-list keys ", ")
+;;     keys))
+
+;; (defun bibtex-completion-string-keys-with-sep (keys)
+;;   "Produce strin of concatenated KEYS with separator."
+;;   (let ((separator ", ")
+;;         (x ""))
+;;     (dolist (key keys x)
+;;       (setq x (concat key separator x)))
+;;     x))
 
 (defun bibtex-completion-add-field-and-recalc-mdnote (keys)
   "Add "
@@ -259,6 +273,23 @@
     ;; Loop
     (dolist (key keys)
       (sync0-bibtex-add-field-and-recalc-keywords-and-mdnote key field unique-p multiple-new-p separator assigned-value assigned-values))))
+
+(defun bibtex-convert-pdf-to-txt (&optional keylist)
+  "Summarize a PDF file based on the specified type and languages."
+  (interactive)
+  (if keylist
+      ;; Loop
+      (dolist (key keylist)
+        (let* ((pdf-file (sync0-bibtex-choose-attachment key ".pdf"))
+               (command (format "pdftotext -layout -enc UTF-8 -nopgbrk %s" pdf-file)))
+          (shell-command command)))
+    (when (sync0-bibtex-buffer-p)
+      (let* ((entry (save-excursion (bibtex-beginning-of-entry)
+			            (bibtex-parse-entry)))
+             (bibkey (cdr (assoc "=key=" entry)))
+        (pdf-file (sync0-bibtex-choose-attachment bibkey ".pdf"))
+        (command (format "pdftotext -layout -enc UTF-8 -nopgbrk %s" pdf-file)))
+      (shell-command command)))))
 
 ;; Before being able to call custom functions from ivy-bibtex, these
 ;; have to be manually added to ivy-bibtex. 
@@ -297,6 +328,10 @@
 
 (ivy-bibtex-ivify-action bibtex-completion-recalc-tags ivy-bibtex-recalc-tags)
 
+(ivy-bibtex-ivify-action bibtex-completion-recalc-tags ivy-bibtex-recalc-tags)
+
+(ivy-bibtex-ivify-action bibtex-convert-pdf-to-txt ivy-bibtex-convert-pdf-to-txt)
+
  ;; '(("p" ivy-bibtex-open-pdf "Open PDF file (if present)" ivy-bibtex-open-pdf)
  ;;   ("u" ivy-bibtex-open-url-or-doi "Open URL or DOI in browser" ivy-bibtex-open-url-or-doi)
  ;;   ("c" ivy-bibtex-insert-citation "Insert citation" ivy-bibtex-insert-citation)
@@ -314,20 +349,21 @@
 ;; those already defined.
 (ivy-add-actions
  'ivy-bibtex
- '(("z" ivy-bibtex-print-pdf-list "Print PDF with default printer" ivy-bibtex-print-pdf-list)
-   ("Z" ivy-bibtex-copy-pdf-to-path-list "Copy PDF to target path" ivy-bibtex-copy-pdf-to-path-list)
+ '(("P" ivy-bibtex-print-pdf-list "Print PDF with default printer" ivy-bibtex-print-pdf-list)
+   ("C" ivy-bibtex-copy-pdf-to-path-list "Copy PDF to target path" ivy-bibtex-copy-pdf-to-path-list)
+   ("1" ivy-bibtex-convert-pdf-to-txt "Convert to TXT" ivy-bibtex-convert-pdf-to-txt)
    ("Y" ivy-bibtex-rewrite-notes-from-biblatex-data-list "Rewrite mdnote metadata" ivy-bibtex-rewrite-notes-from-biblatex-data-list)
-   ("A" ivy-bibtex-archive-entries-list "Archive entry" ivy-bibtex-archive-entries-list)
+   ;; ("A" ivy-bibtex-archive-entries-list "Archive entry" ivy-bibtex-archive-entries-list)
    ("p" ivy-bibtex-open-pdf-external "Open PDF" ivy-bibtex-open-pdf-external)
    ("w" ivy-bibtex-open-url "Open URL" ivy-bibtex-open-url)
    ("M" ivy-bibtex-move-entries-to-bibfile-list "Move entry to bibfile" ivy-bibtex-move-entries-to-bibfile-list)
-   ("S" ivy-bibtex-string-keys-with-sep "Produce string of keys" ivy-bibtex-string-keys-with-sep)
+   ;; ("S" ivy-bibtex-string-keys-with-sep "Produce string of keys" ivy-bibtex-string-keys-with-sep)
    ("K" ivy-bibtex-add-key-to-pdf-list "Mark bibkey onto PDF" ivy-bibtex-add-key-to-pdf-list)
-   ("C" ivy-bibtex-concatenate-pdf-list "Concatenate PDFs" ivy-bibtex-concatenate-pdf-list)
+   ("j" ivy-bibtex-concatenate-pdf-list "Concatenate PDFs" ivy-bibtex-concatenate-pdf-list)
    ("f" ivy-bibtex-file-exists-p "Check existence of attachment" ivy-bibtex-file-exists-p)
    ("d" ivy-bibtex-download-pdf-from-url "Download attachement from URL" ivy-bibtex-download-pdf-from-url)
    ("D" ivy-bibtex-delete-entry "Delete entry" ivy-bibtex-delete-entry)
-   ("E" ivy-bibtex-file-extract-pdf-from-crossref "Extract PDF from crossref" ivy-bibtex-extract-pdf-from-crossref)
+   ("E" ivy-bibtex-extract-pdf-from-crossref "Extract PDF from crossref" ivy-bibtex-extract-pdf-from-crossref)
    ("a" ivy-bibtex-add-field-and-recalc-mdnote "Add field and recalc mdnote" ivy-bibtex-add-field-and-recalc-mdnote)
    ("T" ivy-bibtex-recalc-tags "Recalc tags and mdnote" ivy-bibtex-recalc-tags)
    ("x" ivy-bibtex-crop-pdf-list "Crop PDF with cropbox" ivy-bibtex-crop-pdf-list)))

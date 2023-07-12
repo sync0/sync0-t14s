@@ -95,3 +95,4 @@ Descartes - LARHRA
 CDR Triangle
 MSH Triangle
 Bibliothèque Chevreul de Lyon
+Archives départementales de la Haute-Vienne

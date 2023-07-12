@@ -8,6 +8,8 @@
 (setq sync0-bibtex-excluded-bibliographies '("/home/sync0/Gdrive/bibliographies/trash.bib"
                                              "/home/sync0/Gdrive/bibliographies/archived.bib"
                                              "/home/sync0/Gdrive/bibliographies/master.bib"
+                                             "/home/sync0/Gdrive/bibliographies/jabref.bib"
+                                             "/home/sync0/Gdrive/bibliographies/jabref.bib.sav"
                                              "/home/sync0/Gdrive/bibliographies/exclude.bib"
                                              "/home/sync0/Gdrive/bibliographies/sick.bib"
                                              "/home/sync0/Gdrive/bibliographies/backup.bib"
