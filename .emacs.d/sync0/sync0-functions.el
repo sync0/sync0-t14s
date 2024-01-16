@@ -113,6 +113,78 @@ of all elements separeted by separator."
   "Check existence of duplicates in list"
   (not (equal (remove-duplicates list) list)))
 
+;; (defun sync0-define-list-interactively (define-string continue-string &optional initial-input)
+;;   (interactive)
+;;   (or initial-input
+;;       (let (x)
+;;         (push (read-string define-string) x)
+;;         (while (yes-or-no-p continue-string) 
+;;           (push (read-string define-string) x))
+;;         (if (> (length x) 1)
+;;             x
+;;           (car x)))))
+
+(defun sync0-define-list-interactively (define-string continue-string &optional initial-input)
+  (cond ((and initial-input 
+              (listp initial-input))
+         initial-input)
+        ((and initial-input 
+              (stringp initial-input))
+         (list initial-input))
+        (t 
+         (let (x)
+           (push (read-string define-string) x)
+           (while (yes-or-no-p continue-string) 
+             (push (read-string define-string) x))
+           x))))
+
+;; (defun sync0-define-list-interactively (define-string continue-string &optional initial-input)
+;;   (interactive)
+;;   (or initial-input
+;;       (let (x)
+;;         (push (read-string define-string) x)
+;;         (while (yes-or-no-p continue-string) 
+;;           (push (read-string define-string) x))
+;;             x)))
+
+;; from https://www.reddit.com/r/emacs/comments/weuiqs/deleting_files_in_emacs_oc/
+(defun sync0-delete-this-file (&optional forever)
+  "Delete the file associated with `current-buffer'.
+If FOREVER is non-nil, the file is deleted without being moved to trash."
+  (interactive "P")
+  (when-let ((file (or (buffer-file-name)
+                       (user-error "Current buffer is not visiting a file")))
+             ((y-or-n-p "Delete this file? ")))
+    (delete-file file (not forever))
+    (kill-buffer (current-buffer))))
+
+(defun sync0-correct-string-with-corrector (stringy corrector &optional end)
+  "Correct stringy with corrector. Matches corrector to the
+beginning of the stringy by default unless optional end is set to
+true."
+  (let ((corrector-regex (if end
+                             (concat corrector "$")
+                           (concat "^" corrector))))
+    (if (string-match corrector-regex stringy)
+        stringy
+      (if end 
+          (concat stringy corrector)
+        (concat corrector stringy)))))
+
+;; (defun sync0-erase-file-contents (file-path)
+;;   "Erase the contents of the specified file."
+;;   (interactive "FEnter file path: ") ; Use "F" to prompt for a file
+;;   (with-temp-buffer
+;;     (write-region "" nil file-path)))
+
+(defun sync0-erase-file-contents (file-path &optional optional-content)
+  "Erase the contents of the specified file.
+If OPTIONAL-CONTENT is provided, replace the old content with it."
+  (interactive "FEnter file path: ") ; Use "F" to prompt for a file
+  (with-temp-buffer
+    (insert (or optional-content ""))
+    (write-region (point-min) (point-max) file-path)))
+
 (provide 'sync0-functions)
 
 

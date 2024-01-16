@@ -65,22 +65,36 @@ prevent undesired results."
                           (completing-read "Choose language : "
                                            sync0-bibtex-completion-language nil nil sync0-bibtex-entry-initial-language))
                   (setq sync0-bibtex-entry-langid sync0-bibtex-entry-language))))
+    ("pagetotal" (lambda ()
+                   (setq sync0-bibtex-entry-pagetotal
+                         (if (sync0-null-p sync0-bibtex-entry-pages)
+                             (read-string "Pagetotal: ")
+                           (if (string-match "\\([0-9]+\\)-\\([0-9]+\\)" sync0-bibtex-entry-pages)
+                               (when-let* ((beg (match-string 1 sync0-bibtex-entry-pages))
+                                           (end (match-string 2 sync0-bibtex-entry-pages))
+                                           (result (1+ (- (string-to-number end) (string-to-number beg))))) 
+                                 (number-to-string result))
+                             "1")))))
     ("origlanguage" (lambda ()
                       (setq sync0-bibtex-entry-origlanguage
                             (completing-read "Choose original language : "
                                              sync0-bibtex-completion-language nil nil sync0-bibtex-entry-initial-language))))
     ("mention" (lambda ()
                  (setq sync0-bibtex-entry-mention (sync0-bibtex-completion-choose-key nil t))))
+    ("mentioned" (lambda ()
+                 (setq sync0-bibtex-entry-mentioned (sync0-bibtex-completion-choose-key nil t))))
     ("file" (lambda ()
               (if sync0-bibtex-entry-creation
-                  (setq sync0-bibtex-entry-file
-                        (concat ":" sync0-zettelkasten-attachments-directory sync0-bibtex-entry-key ".pdf:PDF"))
+                  (let* ((extension (or sync0-bibtex-entry-extension "pdf"))
+                         (coda (concat "." extension ":" (upcase extension))))
+                    (setq sync0-bibtex-entry-file
+                          (concat ":" sync0-zettelkasten-attachments-directory sync0-bibtex-entry-key coda)))
                 (if sync0-bibtex-entry-file-old
                     (setq sync0-bibtex-entry-file
                           (let* ((attachments (bibtex-completion-find-pdf sync0-bibtex-entry-key))
-                                 (new-extension (completing-read "Choose extension to add" bibtex-completion-pdf-extension))
-                                 (new-extension-caps (upcase (substring new-extension 1)))
-                                 (new-attach (concat ":" sync0-zettelkasten-attachments-directory sync0-bibtex-entry-key new-extension ":" new-extension-caps)))
+                                 (new-extension (completing-read "Choose extension to add: " sync0-bibtex-completion-extension))
+                                 (new-extension-caps (upcase new-extension))
+                                 (new-attach (concat ":" sync0-zettelkasten-attachments-directory sync0-bibtex-entry-key "." new-extension ":" new-extension-caps)))
                             (cond ((> (length attachments) 1)
                                    (let (x)
                                      (dolist (element attachments x)
@@ -94,9 +108,10 @@ prevent undesired results."
                                      (concat ":" single-attach ":" old-extension-caps ";" new-attach)))
                                   (t new-attach))))
                   (setq sync0-bibtex-entry-file
-                        (let* ((extension (completing-read "Choose extension to add" bibtex-completion-pdf-extension))
-                               (extension-sans (upcase (substring extension 1))))
-                          (concat ":" sync0-zettelkasten-attachments-directory sync0-bibtex-entry-key extension ":" extension-sans)))))))
+                        (let* ((extension (or sync0-bibtex-entry-extension
+                                              (completing-read "Choose extension to add: " sync0-bibtex-completion-extension)))
+                               (extension-upcase (upcase extension)))
+                          (concat ":" sync0-zettelkasten-attachments-directory sync0-bibtex-entry-key "." extension ":" extension-upcase)))))))
     ("subtitle" (lambda ()
                    (setq sync0-bibtex-entry-subtitle
                          (sync0-bibtex-correct-smartquotes 
@@ -104,7 +119,8 @@ prevent undesired results."
     ("booktitle" (lambda ()
                    (setq sync0-bibtex-entry-booktitle
                          (sync0-bibtex-correct-smartquotes 
-                          (if sync0-bibtex-entry-crossref 
+                          (if (and sync0-bibtex-entry-crossref 
+                                   sync0-bibtex-entry-crossref-entry)
                               (bibtex-completion-get-value "title" sync0-bibtex-entry-crossref-entry)
                             (completing-read "Booktitle : " sync0-bibtex-completion-title))))))
     ("booksubtitle" (lambda ()
@@ -116,7 +132,7 @@ prevent undesired results."
     ("crossref" (lambda ()
                   (when (yes-or-no-p "Load crossref? ")
                     (setq sync0-bibtex-entry-crossref 
-                          (sync0-bibtex-completion-choose-key t t))
+                          (sync0-bibtex-completion-choose-key t t "Crossref: "))
                     (setq sync0-bibtex-entry-crossref-entry
                           (bibtex-completion-get-entry sync0-bibtex-entry-crossref))
                     (setq sync0-bibtex-entry-initial-date
@@ -172,7 +188,7 @@ carried to calculate the value it will take in a BibLaTeX entry.")
 
 ;; Set entry functions for biblatex fields that require completion of multiple
 ;; things.
-(let ((x (cl-set-difference sync0-bibtex-string-multiple-fields '("keywords" "seen" "mention") :test #'string=)))
+(let ((x (cl-set-difference sync0-bibtex-string-multiple-fields '("keywords" "seen" "mention" "mentioned") :test #'string=)))
   ;; Remove keywords to prevent overwriting the function it currently has
   (dolist (element x)
     (let* ((my-var (intern (concat "sync0-bibtex-entry-" element)))
@@ -219,6 +235,18 @@ carried to calculate the value it will take in a BibLaTeX entry.")
            (my-func (list 'lambda () my-macro))
            (my-cons (cons element (list my-func))))
       (push my-cons sync0-bibtex-entry-functions))))
+
+(defun sync0-bibtex-entry-calculate-bibfield (bibfield)
+  "Call corresponding function for bibfield from functions defined
+in the variable sync0-bibtex-entry-functions to get the value for
+bibfield. The value will be set to the corresponding
+sync0-variables. For this function to run correctly, the
+sync0-entry-variables must have been cleaned beforehand using
+sync0-bibtex-nullify-all-variables functions. This function's
+output is the value calculated by the called function."
+  (if (member bibfield sync0-bibtex-fields)
+      (funcall (cadr (assoc bibfield sync0-bibtex-entry-functions)))
+    (error "%s is not part of BibLaTeX fields defined in sync0-bibtex-fields" bibfield)))
 
 (defun sync0-bibtex-completion-load-entry (&optional bibkey quick)
   "Load the contents of the biblatex fields corresponding to a
@@ -325,5 +353,6 @@ carried to calculate the value it will take in a BibLaTeX entry.")
       (if bibkey
           (bibtex-completion-get-value "keywords" entry)
         (funcall (cadr (assoc "keywords" sync0-bibtex-entry-functions))))))
+
 
 (provide 'sync0-bibtex-entry-functions)

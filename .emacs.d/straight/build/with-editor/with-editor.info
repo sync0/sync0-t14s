@@ -1,4 +1,4 @@
-This is with-editor.info, produced by makeinfo version 6.8 from
+This is with-editor.info, produced by makeinfo version 7.0.3 from
 with-editor.texi.
 
      Copyright (C) 2015-2021 Jonas Bernoulli <jonas@bernoul.li>
@@ -179,8 +179,8 @@ it receives a signal.
           trap \"exit 1\" USR2; \
           while true; do sleep 1; done'"
 
-     Note that the unit separator character () right after the file
-     name ($0) is required.
+     Note that the unit separator character () right after the file name
+     ($0) is required.
 
      Also note that using this alternative implementation leads to a
      delay of up to a second.  The delay can be shortened by replacing
@@ -397,15 +397,15 @@ Appendix C Variable Index
 
 
 Tag Table:
-Node: Top773
-Node: Using the With-Editor package2569
-Node: Configuring With-Editor3155
-Node: Using With-Editor commands7704
-Node: Using With-Editor as a library10995
-Node: Debugging12958
-Node: Command Index13837
-Node: Function Index14719
-Node: Variable Index16185
+Node: Top775
+Node: Using the With-Editor package2571
+Node: Configuring With-Editor3157
+Node: Using With-Editor commands7706
+Node: Using With-Editor as a library10997
+Node: Debugging12960
+Node: Command Index13839
+Node: Function Index14721
+Node: Variable Index16187
 
 End Tag Table
 

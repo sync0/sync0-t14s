@@ -54,6 +54,33 @@ created: " (format-time-string "%Y-%m-%d")
        " --bibliography=bibliography.bib"
        ))
 
+;; (defun sync0-markdown-copy-pdf-in-cabinet ()
+;;   "Copy the pdf corresponding to current file and paste it to the cabinet."
+;;   (interactive)
+;;   (let* ((full-path (buffer-file-name))
+;;          (current-file (when (string-match "^.+/\\([[:alnum:]]+\\)\\.md$" full-path)
+;;                          (match-string-no-properties 1 full-path)))
+;;          (pdf-path (concat sync0-zettelkasten-attachments-directory current-file ".pdf"))
+;;          (command (concat "cp " full-path " " pdf-path)))
+;;     (if (and (file-exists-p pdf-path)
+;;              (yes-or-no-p "Keep current file in cabinet?"))
+;;         (message "File already present in cabinet for %s" current-file)
+;;       (shell-command command))))
+
+(defun sync0-markdown-copy-pdf-in-cabinet ()
+  "Copy the pdf corresponding to current file and paste it to the cabinet."
+  (interactive)
+  (let* ((full-path (buffer-file-name))
+         (current-file (when (string-match "^.+/\\([[:alnum:]]+\\)\\.md$" full-path)
+                         (match-string-no-properties 1 full-path)))
+         (old-path (concat sync0-zettelkasten-references-directory current-file ".pdf"))
+         (pdf-path (concat sync0-zettelkasten-attachments-directory current-file ".pdf")))
+    (unless (null (file-exists-p old-path))
+    (if (and (file-exists-p pdf-path)
+             (yes-or-no-p "Keep current file in cabinet?"))
+        (message "File already present in cabinet for %s" current-file)
+      (copy-file old-path pdf-path t)))))
+
 (defun sync0-markdown-open-pdf-in-zathura ()
   "Open the pdf for bibtex key under point if it exists."
   (interactive)
@@ -117,7 +144,7 @@ readable."
 cabinet (defined by sync0-zettelkasten-exported-pdfs-directory)."
   (interactive)
   (let* ((current-path (file-name-directory buffer-file-name))
-         (current-file (sync0-yaml-get-property "id"))
+         (current-file (sync0-yaml-get-property "key"))
          (current-pdf (concat current-path current-file ".pdf"))
          (target-pdf (concat sync0-zettelkasten-exported-pdfs-directory current-file ".pdf"))
          (command (concat "cp " current-pdf " " target-pdf)))
@@ -155,7 +182,8 @@ cabinet (defined by sync0-zettelkasten-exported-pdfs-directory)."
    "Etc"
    (("a" sync0-define-local-abbrev "Define abbrev")
    ("P" sync0-markdown-print-pdf "Print corresp. pdf")
-   ("C" sync0-markdown-save-exported-pdf-in-cabinet "Copy pdf to cabinet")
+   ("C" sync0-markdown-copy-pdf-in-cabinet "Copy pdf to cabinet")
+   ;; ("C" sync0-markdown-save-exported-pdf-in-cabinet "Copy pdf to cabinet")
    ("M" sync0-markdown-copy-pdf-to-path "Move to path"))))
 ;; ("d" org-insert-drawer)
 

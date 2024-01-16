@@ -635,11 +635,6 @@ bibtex-completion handles crossreferences."
             (xah-replace-pairs-in-string
              sync0-bibtex-entry-seen-tag 
              [["-" "/"]])))
-    ;; (let* ((to-remove (list "author" "editor" "translator"))
-    ;;        (my-list (cl-set-difference sync0-bibtex-people-fields to-remove :test #'string=)))
-    ;;   (dolist (element my-list)
-    ;;     (let ((my-var (intern (concat "sync0-bibtex-entry-" element))))
-    ;;       (eval `(sync0-bibtex-fix-names ,my-var)))))
       ;; Fix problems with calculation of medium obsidian YAML property.
       (unless (null sync0-bibtex-entry-medium)
         (setq sync0-bibtex-entry-medium-fixed
@@ -651,6 +646,169 @@ bibtex-completion handles crossreferences."
               (if (string-match ", " sync0-bibtex-entry-project)
                   (sync0-add-prefix-to-list-convert-to-string sync0-bibtex-entry-project ", " "\"" "\"")
                 (concat "\"" sync0-bibtex-entry-project "\"")))))
+
+(defun sync0-bibtex-corrections-format-bibtex-to-biblatex ()
+  "Format bibtex keys in buffer to follow my BibLaTeX conventions."
+  (let ((regex "^@\\([[A-z]+\\){[[:alnum:]]+,$"))
+    (while (re-search-forward regex nil t)
+      (let* ((entry (save-excursion (bibtex-beginning-of-entry)
+			            (bibtex-parse-entry)))
+             (bibkey (cdr (assoc "=key=" entry)))
+             (type (cdr (assoc "=type=" entry)))
+             (type-lowcase (downcase type))
+             (author-full (when-let ((person (cdr (assoc "author" entry))))
+                            (unless (string-match "^[[:print:]]+, " person)
+                              (substring person 1 -1))))
+             (author-list 
+              (when author-full
+                (split-string author-full " ")))
+             (author-first (when author-list
+                             (string-trim-whitespace (car author-list))))
+             (author-last (when author-list
+                            (string-trim-whitespace (cadr author-list))))
+             (author (when (and author-first author-last)
+                       (concat author-last ", " author-first)))
+             (date (unless (assoc "date" entry)
+                     (substring (cdr (assoc "year" entry)) 1 -1)))
+             (journaltitle (when (string= type-lowcase "article")
+                             (unless (assoc "journaltitle" entry)
+                               (sync0-bibtex-get-field-value-at-point "journal" entry))))
+             ;; "^[0-9]+[a-z]\{2\}"
+             (new-key (if (string-match "[[:digit:]]+[[:alpha:]]+" bibkey)
+                          bibkey
+                        (sync0-bibtex-entry-key-define)))
+             (created (unless  (assoc "created" entry)
+                        (format-time-string "%Y-%m-%d")))
+             (new-path (unless (assoc "file" entry)
+                         (concat ":" sync0-zettelkasten-attachments-directory new-key ".pdf:PDF")))
+             (regex-journal "^[[:blank:]]+journal[[:blank:]]+=")
+             (beg (save-excursion (bibtex-beginning-of-entry)))
+             (end (save-excursion (bibtex-end-of-entry)))
+             ;; (language (unless (assoc "language" entry)
+             ;;             (completing-read "Choose language : "
+             ;;                              sync0-bibtex-completion-language)))
+             (language (unless (assoc "language" entry)
+                         "french"))
+             (title-full (sync0-bibtex-get-field-value-at-point "title" entry))
+             (title-list 
+              (when title-full
+                (split-string title-full ":")))
+             (title (when title-list
+                      (string-trim-whitespace (car title-list))))
+             (subtitle (when (> (length title-list) 1)
+                         (string-trim-whitespace (cadr title-list))))
+             (status (unless  (assoc "status" entry)
+                       "inspect"))
+             (type-string (concat "@" (upcase-initials type) "{" new-key ",\n")))
+        (bibtex-beginning-of-entry)
+        (re-search-forward regex end t 1) 
+        (kill-whole-line 1)
+        (insert type-string)
+        ;; remove the journal field 
+        (when journaltitle
+          (re-search-forward regex-journal end t 1) 
+          (kill-whole-line 1))
+        (sync0-bibtex-create-field-at-entry "author" author t)
+        (sync0-bibtex-create-field-at-entry "title" title t)
+        (when subtitle
+          (sync0-bibtex-create-field-at-entry "subtitle" subtitle))
+        (sync0-bibtex-create-field-at-entry "journaltitle" journaltitle)
+        (sync0-bibtex-create-field-at-entry "date" date)
+        (sync0-bibtex-create-field-at-entry "created" created)
+        (sync0-bibtex-create-field-at-entry "file" new-path)
+        (sync0-bibtex-create-field-at-entry "language" language)
+        (sync0-bibtex-create-field-at-entry "langid" language)
+        (sync0-bibtex-create-field-at-entry "status" status)
+        (bibtex-fill-entry)))))
+
+(defun sync0-bibtex-corrections-format-yank-citation (bibkey)
+  "Format citation to yank according to conventions."
+  (sync0-bibtex-completion-load-entry bibkey)
+  (cond ((and (string= sync0-bibtex-entry-type-downcase "incollection")
+              sync0-bibtex-entry-booktitle)
+           (concat sync0-bibtex-entry-lastname
+                   (or (concat " " sync0-bibtex-entry-date-fixed " ")
+                       " ")
+                   sync0-bibtex-entry-title-compatible
+                   " in "
+                   (when sync0-bibtex-entry-editor
+                     (concat 
+                      (sync0-bibtex-abbreviate-lastnames   sync0-bibtex-entry-editor)
+                      ", "))
+                   sync0-bibtex-entry-booktitle
+                   (when sync0-bibtex-entry-volume
+                     (concat 
+                      ", T. "
+                      sync0-bibtex-entry-volume
+                      (when sync0-bibtex-entry-number
+                        (concat 
+                         ", No. "
+                         sync0-bibtex-entry-number))))
+                   (when sync0-bibtex-entry-pages
+                     (concat 
+                      ", p. "
+                      sync0-bibtex-entry-pages))))
+        ((string= sync0-bibtex-entry-type-downcase "article")
+         (when sync0-bibtex-entry-booktitle
+           (concat sync0-bibtex-entry-lastname
+                   (or (concat " " sync0-bibtex-entry-date-fixed " ")
+                       " ")
+                   sync0-bibtex-entry-title-compatible
+                   (when sync0-bibtex-entry-volume
+                     (concat 
+                      ", T. "
+                      sync0-bibtex-entry-volume
+                      (when sync0-bibtex-entry-number
+                        (concat 
+                         ", No. "
+                         sync0-bibtex-entry-number))))
+                   (when sync0-bibtex-entry-pages
+                     (concat 
+                      ", p. "
+                      sync0-bibtex-entry-pages)))))
+        ((or (string= sync0-bibtex-entry-type-downcase "incollection")
+             (string= sync0-bibtex-entry-type-downcase "inproceedings"))
+         (concat sync0-bibtex-entry-lastname
+                 (or (concat " " sync0-bibtex-entry-date-fixed " ")
+                     " ")
+               sync0-bibtex-entry-title-compatible
+               " in "
+               sync0-bibtex-entry-journaltitle
+               (when sync0-bibtex-entry-volume
+                 (concat 
+                  ", T. "
+                  sync0-bibtex-entry-volume
+               (when sync0-bibtex-entry-number
+                 (concat 
+                  ", No. "
+                  sync0-bibtex-entry-number))
+               (when sync0-bibtex-entry-pages
+                 (concat 
+                  ", p. "
+                  sync0-bibtex-entry-pages))))))
+        ((string= sync0-bibtex-entry-type-downcase "inbook")
+         (concat sync0-bibtex-entry-lastname
+                 (or (concat " " sync0-bibtex-entry-date-fixed " ")
+                     " ")
+                 sync0-bibtex-entry-title-compatible
+                 " in "
+                 sync0-bibtex-entry-booktitle
+                 (when sync0-bibtex-entry-volume
+                   (concat 
+                    ", T. "
+                    sync0-bibtex-entry-volume
+                    (when sync0-bibtex-entry-number
+                      (concat 
+                       ", No. "
+                       sync0-bibtex-entry-number))))
+                 (when sync0-bibtex-entry-pages
+                   (concat 
+                    ", p. "
+                    sync0-bibtex-entry-pages))))
+        (t (concat sync0-bibtex-entry-lastname
+                   (or (concat " " sync0-bibtex-entry-date-fixed " ")
+                       " ")
+                   sync0-bibtex-entry-title-compatible))))
 
 
 (provide 'sync0-bibtex-corrections)

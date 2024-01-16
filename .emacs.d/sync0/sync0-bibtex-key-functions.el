@@ -102,7 +102,7 @@ by org-roam files"
     (while (re-search-forward oldkey nil t)
       (replace-match newkey))))
 
-(defun sync0-bibtex-completion-choose-key (&optional unique pointer)
+(defun sync0-bibtex-completion-choose-key (&optional unique pointer query-message)
   "Choose key with completion. When optional pointer is t,
    preselect the entry at point."
   (if unique
@@ -113,7 +113,8 @@ by org-roam files"
              (preselect (when entry
                           (cdr (assoc "=key=" entry))))
              (candidates (bibtex-completion-candidates))
-             (selection (ivy-read "Bibliography candidates: "
+             (selection (ivy-read (or query-message
+                                      "Bibliography candidates: ")
                                   candidates
                                   :preselect preselect
                                   :caller 'ivy-bibtex
@@ -130,7 +131,9 @@ by org-roam files"
            selection
            x)
       (while (not (equal selection "nilnil"))
-        (setq selection (ivy-read (format "Bibliography candidates%s: "
+        (setq selection (ivy-read (format (concat (or query-message
+                                                      "Bibliography candidates")
+                                                  "%s: ")
                                           (if (> counter 0)
                                               (concat " (selected: " (number-to-string counter) ")") ""))
                                   candidates

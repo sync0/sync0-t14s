@@ -30,6 +30,86 @@
 
 (setq use-package-verbose t)
 
+(use-package org 
+  :custom
+  (org-hide-leading-stars t)
+  ;; Leave one line between headlines 
+  (org-cycle-separator-lines 0)
+  ;; (org-cycle-separator-lines 2)
+  ;; Don't fontify the whole damn line
+  (org-fontify-whole-block-delimiter-line nil)
+  ;; Disable word wrap in org mode.
+  ;; (org-startup-truncated t)
+  ;; Initial indentation
+  (org-startup-indented t)         
+  ;; Necessary to avoid crazy inconsistenscies using org-download and org-roam
+  (org-link-file-path-type 'absolute)
+  ;; Begin displaying entire trees.
+  (org-startup-folded nil)
+  ;; Better display of italics & bold.
+  (org-hide-emphasis-markers t)
+  ;; Define org-tags.
+  (org-tag-alist '(("urgent" . ?u)
+                   ("current" . ?c)
+                   ("next" . ?n)
+                   ("skim" . ?s)
+                   ("exegesis" . ?e)
+                   ("waiting" . ?w)
+                   ;; ("postponed" . ?p)
+                   ("revise" . ?r)
+                   ("someday" . ?a)
+                   ("fetch" . ?f)
+                   ("@office" . ?o)
+                   ("@home" . ?h)
+                   ("@deepwork" . ?p)
+                   ("transcribe" . ?t)
+                   ("ignore" . ?i)
+                   ("delegated" . ?d)))
+  ;; Hide inherited tags from Org's agenda view.
+  ;; org-agenda-show-inherited-tags nil
+  ;; Define todo keywords.
+  ;; (org-blank-before-new-entry '((heading . nil)(plain-list-item . nil)))
+  ;; Stop emacs asking for confirmation
+  (org-confirm-babel-evaluate nil)
+  (org-ellipsis "  ⌄ ") ;; folding symbol
+  ;; Do not show export buffer.
+  (org-export-show-temporary-export-buffer nil)
+  ;; Set path for org default directory (necessary for refile and agenda).
+  (org-directory (concat (getenv "HOME") "/Gdrive/org"))
+  (org-refile-use-outline-path 'file)
+  (org-outline-path-complete-in-steps nil)
+  (org-startup-with-inline-images t)
+  (org-refile-use-cache nil)
+  ;; Have org-mode indent elisp sections.
+  (org-src-tab-acts-natively t)
+  (org-src-preserve-indentation t)
+  (org-edit-src-content-indentation 0)
+  ;; Color embeded source code
+  (org-src-fontify-natively t)
+  (org-fontify-done-headline t) 
+  (org-fontify-whole-heading-line t)
+  (org-fontify-quote-and-verse-blocks t)
+  ;; Don't fontify sub and superscripts.
+  (org-pretty-entities-include-sub-superscripts nil)
+  ;; Limit inheritance for certain tags. 
+  (org-tags-exclude-from-inheritance (quote ("crypt" "ignore" "next" "current" "waiting" "someday" "delegated" "urgent")))
+  (org-log-done 'time)
+  :config 
+  (require 'sync0-org)
+  ;; This is necessary to avoid conflict with my motion bindings. 
+  (unbind-key "M-h" org-mode-map)
+
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((python . t)))
+
+  :bind (;;("<f5>" . sync0-hydra-file-access/body)
+         ("C-x 2" . sync0-split-and-follow-horizontally)
+         ("C-x 3" . sync0-split-and-follow-vertically)
+         (:map org-mode-map
+               ("M-<return>" . sync0-org-meta-return-dwim)
+               ("M-S-<return>" . sync0-org-insert-todo-heading-dwim))))
+
 (add-to-list 'load-path (concat user-emacs-directory "sync0/"))
 
 (setq user-full-name "Carlos Alberto Rivera Carreño"
@@ -72,7 +152,7 @@
                              `(markdown-reference-face ((t (:inherit markdown-code-face))))
                              `(org-default ((t (:family "Literata" :weight light  :inherit variable-pitch))))
                              `(org-link ((t (:inherit org-default :underline t))))
-                             `(org-ref-cite-face ((t (:inherit org-link)))) 
+                             ;; `(org-ref-cite-face ((t (:inherit org-link)))) 
                              `(org-footnote ((t (:family "Literata" :style small :weight normal :height 0.7))))
                              `(org-checkbox ((t (:family "Inconsolata" :weight bold :spacing monospace))))
                               `(org-document-title ((t (:family "Verlag" :height 2.074 :inherit variable-pitch))))
@@ -1096,7 +1176,7 @@ Exempt major modes are defined in `display-line-numbers-exempt-modes'."
   (setq right-margin-width 0))
 
 (add-hook 'prog-mode-hook #'sync0-set-margins)
-(add-hook 'bibtex-mode-hook #'sync0-set-margins)
+;; (add-hook 'bibtex-mode-hook #'sync0-set-margins)
 (add-hook 'neotree-mode-hook #'sync0-set-neotree-margins)
 
    (use-package all-the-icons 
@@ -1560,86 +1640,10 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
   (evil-leader/set-key
     "D" 'sync0-hydra-org-download-functions/body))
 
-(use-package org 
-  :after evil
-  :custom
-  (org-hide-leading-stars t)
-  ;; Leave one line between headlines 
-  (org-cycle-separator-lines 0)
-  ;; (org-cycle-separator-lines 2)
-  ;; Don't fontify the whole damn line
-  (org-fontify-whole-block-delimiter-line nil)
-  ;; Disable word wrap in org mode.
-  ;; (org-startup-truncated t)
-  ;; Initial indentation
-  (org-startup-indented t)         
-  ;; Necessary to avoid crazy inconsistenscies using org-download and org-roam
-  (org-link-file-path-type 'absolute)
-  ;; Begin displaying entire trees.
-  (org-startup-folded nil)
-  ;; Better display of italics & bold.
-  (org-hide-emphasis-markers t)
-  ;; Define org-tags.
-  (org-tag-alist '(("urgent" . ?u)
-                   ("current" . ?c)
-                   ("next" . ?n)
-                   ("skim" . ?s)
-                   ("exegesis" . ?e)
-                   ("waiting" . ?w)
-                   ;; ("postponed" . ?p)
-                   ("revise" . ?r)
-                   ("someday" . ?a)
-                   ("fetch" . ?f)
-                   ("@office" . ?o)
-                   ("@home" . ?h)
-                   ("@deepwork" . ?p)
-                   ("transcribe" . ?t)
-                   ("ignore" . ?i)
-                   ("delegated" . ?d)))
-  ;; Hide inherited tags from Org's agenda view.
-  ;; org-agenda-show-inherited-tags nil
-  ;; Define todo keywords.
-  ;; (org-blank-before-new-entry '((heading . nil)(plain-list-item . nil)))
-  ;; Stop emacs asking for confirmation
-  (org-confirm-babel-evaluate nil)
-  (org-ellipsis "  ⌄ ") ;; folding symbol
-  ;; Do not show export buffer.
-  (org-export-show-temporary-export-buffer nil)
-  ;; Set path for org default directory (necessary for refile and agenda).
-  (org-directory (concat (getenv "HOME") "/Gdrive/org"))
-  (org-refile-use-outline-path 'file)
-  (org-outline-path-complete-in-steps nil)
-  (org-startup-with-inline-images t)
-  (org-refile-use-cache nil)
-  ;; Have org-mode indent elisp sections.
-  (org-src-tab-acts-natively t)
-  (org-src-preserve-indentation t)
-  (org-edit-src-content-indentation 0)
-  ;; Color embeded source code
-  (org-src-fontify-natively t)
-  (org-fontify-done-headline t) 
-  (org-fontify-whole-heading-line t)
-  (org-fontify-quote-and-verse-blocks t)
-  ;; Don't fontify sub and superscripts.
-  (org-pretty-entities-include-sub-superscripts nil)
-  ;; Limit inheritance for certain tags. 
-  (org-tags-exclude-from-inheritance (quote ("crypt" "ignore" "next" "current" "waiting" "someday" "delegated" "urgent")))
-  (org-log-done 'time)
-  :config 
-  (require 'sync0-org)
-  ;; This is necessary to avoid conflict with my motion bindings. 
-  (unbind-key "M-h" org-mode-map)
-
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((python . t)))
-
-  :bind (;;("<f5>" . sync0-hydra-file-access/body)
-         ("C-x 2" . sync0-split-and-follow-horizontally)
-         ("C-x 3" . sync0-split-and-follow-vertically)
-         (:map org-mode-map
-               ("M-<return>" . sync0-org-meta-return-dwim)
-               ("M-S-<return>" . sync0-org-insert-todo-heading-dwim))))
+(add-hook 'text-mode-hook
+          '(lambda ()
+             (setq indent-tabs-mode nil)
+             (setq tab-width 4)))
 
 (use-package auto-fill
   :straight nil
@@ -2231,7 +2235,7 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
     (company-auto-complete nil)
     :config
     ;; Disable company-mode in bibtex-mode (clashes with yasnippets)
-    (add-hook 'bibtex-mode-hook (company-mode -1))
+    ;; (add-hook 'bibtex-mode-hook (company-mode -1))
 
     (define-key company-active-map (kbd "M-j") 'company-select-next)
     (define-key company-active-map (kbd "M-k") 'company-select-previous)
@@ -2366,7 +2370,7 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
   ;; (jedi:setup-keys t)
   ;; (jedi:complete-on-dot t)
   :config
-  (add-hook 'python-mode-hook 'jedi:setup)
+  ;; (add-hook 'python-mode-hook 'jedi:setup)
   (add-hook 'python-mode-hook 'py-autopep8-enable-on-save)
   (add-hook 'python-mode-hook 'flycheck-mode))
 
@@ -2406,6 +2410,59 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
     ((text-mode . yas-minor-mode)
      (prog-mode . yas-minor-mode)
      (bibtex-mode . yas-minor-mode)))
+
+(use-package bibtex
+  :straight nil
+  :custom
+  (bibtex-dialect 'biblatex) ;; biblatex as default bib format
+  (bibtex-maintain-sorted-entries t)
+  (bibtex-field-delimiters 'braces)
+  (bibtex-entry-delimiters 'braces)
+  ;; This line is necessary to prevent strange problem
+  ;; caused by lack of support for my bibtex key naming scheme
+  ;; (bibtex-entry-maybe-empty-head t)
+  (bibtex-comma-after-last-field t)
+  (bibtex-text-indentation 0)
+  (bibtex-autokey-names 0)
+  (bibtex-autokey-name-length 0)
+  (bibtex-autokey-year-title-separator "")
+  (bibtex-autokey-titleword-length 0)
+  (bibtex-autokey-year-length 0)
+  (bibtex-autokey-titlewords 0)
+  (bibtex-align-at-equal-sign t)
+  (bibtex-text-indentation 22)
+  (bibtex-entry-format '(opts-or-alts page-dashes whitespace braces last-comma inherit-booktitle delimiters sort-fields realign))
+  ;; :init
+  ;; (add-hook 'bibtex-mode-hook (lambda () (setq fill-column 9999)))
+  ;; :hook
+  ;; (bibtex-mode . (lambda ()
+  ;;                  (setq fill-column 9999)))
+  :config
+  (require 'sync0-bibtex-functions)
+
+  (setq scihub-homepage "https://sci-hub.ru")
+  (setq scihub-download-directory sync0-zettelkasten-attachments-directory)
+  (setq scihub-open-after-download nil)
+
+  (setq bu-keywords-values sync0-bibtex-completion-keywords)
+
+  ;; (setq bibtex-autokey-prefix-string (format-time-string "%Y%m%d"))
+
+  ;; (minibuffer-electric-default-mode)
+  ;; (smart-quotes-mode)
+
+  (unbind-key "TAB" bibtex-mode-map)
+
+  ;; (defvar sync0-bibtex-reference-keys
+  ;;   (lazy-completion-table sync0-bibtex-reference-keys
+  ;;                          (lambda () (sync0-bibtex-parse-keys nil t)))
+  ;;   "Completion table for BibTeX reference keys.
+  ;;  The CDRs of the elements are t for header keys and nil for crossref keys.")
+
+  (evil-define-key 'normal bibtex-mode-map
+    "K" 'sync0-bibtex-previous-key
+    "zf" 'bibtex-fill-entry
+    "J" 'sync0-bibtex-next-key))
 
 (use-package tex
   :straight auctex
@@ -2466,66 +2523,6 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
   ;; Add standard Sweave file extensions to the list of files recognized  by AuCTeX.
   (add-hook 'TeX-mode-hook (lambda () (reftex-isearch-minor-mode))))
 
-(use-package bibtex
-  :straight nil
-  :custom
-  ;; (bibtex-dialect 'biblatex) ;; biblatex as default bib format
-  (bibtex-maintain-sorted-entries t)
-  (bibtex-field-delimiters 'braces)
-  (bibtex-entry-delimiters 'braces)
-  ;; This line is necessary to prevent strange problem
-  ;; caused by lack of support for my bibtex key naming scheme
-  ;; (bibtex-entry-maybe-empty-head t)
-  (bibtex-comma-after-last-field t)
-  (bibtex-text-indentation 0)
-  (bibtex-autokey-names 0)
-  (bibtex-autokey-name-length 0)
-  (bibtex-autokey-year-title-separator "")
-  (bibtex-autokey-titleword-length 0)
-  (bibtex-autokey-year-length 0)
-  (bibtex-autokey-titlewords 0)
-  (bibtex-align-at-equal-sign t)
-  (bibtex-text-indentation 22)
-  (bibtex-entry-format '(opts-or-alts page-dashes whitespace braces last-comma inherit-booktitle delimiters sort-fields realign))
-  :init
-  (add-hook 'bibtex-mode-hook (lambda () (setq fill-column 9999)))
-  ;; :hook
-  ;; (bibtex-mode . (lambda ()
-  ;;                  (setq fill-column 9999)))
-  :config
-  (bibtex-set-dialect 'biblatex)
-  (require 'bibtex-completion)
-  (require 'bibtex-utils)
-  (require 'unidecode)
-  (require 'sync0-bibtex-fields)
-  (require 'sync0-bibtex-vars)
-  (require 'sync0-bibtex-functions)
-  (require 'scihub)
-
-  (setq scihub-homepage "https://sci-hub.ru")
-  (setq scihub-download-directory sync0-zettelkasten-attachments-directory)
-  (setq scihub-open-after-download nil)
-
-  (setq bu-keywords-values sync0-bibtex-completion-keywords)
-
-  (setq bibtex-autokey-prefix-string (format-time-string "%Y%m%d"))
-
-  (minibuffer-electric-default-mode)
-  (smart-quotes-mode)
-
-  (unbind-key "TAB" bibtex-mode-map)
-
-  ;; (defvar sync0-bibtex-reference-keys
-  ;;   (lazy-completion-table sync0-bibtex-reference-keys
-  ;;                          (lambda () (sync0-bibtex-parse-keys nil t)))
-  ;;   "Completion table for BibTeX reference keys.
-  ;;  The CDRs of the elements are t for header keys and nil for crossref keys.")
-
-  (evil-define-key 'normal bibtex-mode-map
-    "K" 'sync0-bibtex-previous-key
-    "zf" 'bibtex-fill-entry
-    "J" 'sync0-bibtex-next-key))
-
 (use-package bibtex-completion
   :after bibtex
   :custom 
@@ -2539,7 +2536,7 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
   (bibtex-completion-notes-symbol "N")
   (bibtex-completion-notes-extension ".md")
   ;; (bibtex-completion-notes-extension ".org")
-  (bibtex-completion-pdf-extension '(".pdf" ".epub" ".doc" ".docx" ".org" ".ppt" ".pptx" ".md" ".rtf" ".tex" ".mp3" ".mp4" ".png" ".jpg" ".txt"))
+  (bibtex-completion-pdf-extension '(".pdf" ".epub" ".doc" ".docx" ".org" ".ppt" ".pptx" ".md" ".rtf" ".tex" ".mp3" ".mp4" ".png" ".jpg" ".txt" ".m4a"))
   (bibtex-completion-additional-search-fields '(date volume edition))
   ;; (bibtex-completion-additional-search-fields '(origdate date volume edition))
   ;; (bibtex-completion-additional-search-fields '(origdate date subtitle edition))
@@ -2653,4 +2650,3 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
      :bind ((:map pdf-outline-buffer-mode-map
                   ("j" . next-line)
                   ("k" . previous-line))))
-(put 'erase-buffer 'disabled nil)

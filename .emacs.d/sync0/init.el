@@ -12,6 +12,7 @@
   (load bootstrap-file nil 'nomessage))
 
 (straight-use-package 'use-package)
+(straight-use-package 'org)
 
   (setq straight-use-package-by-default t)
 
@@ -40,6 +41,7 @@
 
 (setq auto-save-interval 100
       auto-save-timeout 60)
+
 
 (use-package custom
   :straight nil
@@ -1851,84 +1853,84 @@ _q_uit
     (:map org-mode-map
           ("C-c [" . org-ref-ivy-insert-cite-link)))
 
-(use-package org-roam
-  ;; :after evil-leader
-  :straight (org-roam :type git :host github :repo "org-roam/org-roam") 
-  :init 
-  (require 'org-id)
-  :custom
-  (org-roam-directory "~/Dropbox/org/")
-  (org-id-extra-files (find-lisp-find-files org-roam-directory "\.org$"))
-  (org-roam-file-extensions '("org"))
-;; disable warning
-  (org-roam-v2-ack t) 
-;; exclude useless files from my org directory 
-  (org-roam-file-exclude-regexp "etc/[[:graph:]]+.org")
-  :config
-;;   (setq org-roam-directory "~/Dropbox/org/")
-;;   (setq org-id-extra-files (find-lisp-find-files org-roam-directory "\.org$"))
-;;   (setq org-roam-file-extensions '("org"))
+;; (use-package org-roam
+;;   ;; :after evil-leader
+;;   :straight (org-roam :type git :host github :repo "org-roam/org-roam") 
+;;   :init 
+;;   (require 'org-id)
+;;   :custom
+;;   (org-roam-directory "~/Dropbox/org/")
+;;   (org-id-extra-files (find-lisp-find-files org-roam-directory "\.org$"))
+;;   (org-roam-file-extensions '("org"))
 ;; ;; disable warning
-;;   (setq org-roam-v2-ack t) 
+;;   (org-roam-v2-ack t) 
 ;; ;; exclude useless files from my org directory 
-;;   (setq org-roam-file-exclude-regexp "etc/[[:graph:]]+.org")
+;;   (org-roam-file-exclude-regexp "etc/[[:graph:]]+.org")
+;;   :config
+;; ;;   (setq org-roam-directory "~/Dropbox/org/")
+;; ;;   (setq org-id-extra-files (find-lisp-find-files org-roam-directory "\.org$"))
+;; ;;   (setq org-roam-file-extensions '("org"))
+;; ;; ;; disable warning
+;; ;;   (setq org-roam-v2-ack t) 
+;; ;; ;; exclude useless files from my org directory 
+;; ;;   (setq org-roam-file-exclude-regexp "etc/[[:graph:]]+.org")
 
-  (org-roam-setup)
+;;   (org-roam-setup)
 
-  (require 'org-ref)
-  (require 'org-emms)
-  (require 'deft)
-  (require 'sync0-org-roam-functions)
+;;   (require 'org-ref)
+;;   (require 'org-emms)
+;;   (require 'deft)
+;;   (require 'sync0-org-roam-functions)
 
-  (cl-defmethod org-roam-node-zettel-type ((node org-roam-node))
-     (cdr
-      (assoc "ZETTEL_TYPE" (org-roam-node-properties node)))) 
+;;   (cl-defmethod org-roam-node-zettel-type ((node org-roam-node))
+;;      (cdr
+;;       (assoc "ZETTEL_TYPE" (org-roam-node-properties node)))) 
 
-  (cl-defmethod org-roam-node-fiche-type ((node org-roam-node))
-     (cdr
-      (assoc "FICHE_TYPE" (org-roam-node-properties node)))) 
+;;   (cl-defmethod org-roam-node-fiche-type ((node org-roam-node))
+;;      (cdr
+;;       (assoc "FICHE_TYPE" (org-roam-node-properties node)))) 
 
-  (cl-defmethod org-roam-node-zettel-function ((node org-roam-node))
-     (cdr
-      (assoc "ZETTEL_FUNCTION" (org-roam-node-properties node)))) 
+;;   (cl-defmethod org-roam-node-zettel-function ((node org-roam-node))
+;;      (cdr
+;;       (assoc "ZETTEL_FUNCTION" (org-roam-node-properties node)))) 
 
-  (cl-defmethod org-roam-node-biblatex-type ((node org-roam-node))
-     (cdr
-      (assoc "BIBLATEX_TYPE" (org-roam-node-properties node)))) 
+;;   (cl-defmethod org-roam-node-biblatex-type ((node org-roam-node))
+;;      (cdr
+;;       (assoc "BIBLATEX_TYPE" (org-roam-node-properties node)))) 
 
-  ;; (cl-defmethod org-roam-node-creation-date ((node org-roam-node))
-  ;;    (cdr
-  ;;     (assoc "CREATED" (org-roam-node-properties node)))) 
+;;   ;; (cl-defmethod org-roam-node-creation-date ((node org-roam-node))
+;;   ;;    (cdr
+;;   ;;     (assoc "CREATED" (org-roam-node-properties node)))) 
 
-;; (setq org-roam-node-display-template "${title:80}  | ${zettel-type:4}:${biblatex-type}${fiche-type}${zettel-function} | ${tags}")
+;; ;; (setq org-roam-node-display-template "${title:80}  | ${zettel-type:4}:${biblatex-type}${fiche-type}${zettel-function} | ${tags}")
 
-(setq org-roam-node-display-template "${title:80}  ${tags:50} ${zettel-type} : ${biblatex-type}${fiche-type}${zettel-function}")
+;; (setq org-roam-node-display-template "${title:80}  ${tags:50} ${zettel-type} : ${biblatex-type}${fiche-type}${zettel-function}")
 
-  ;; add the possiblity to follow links in the org-roam buffer
-  (define-key org-roam-mode-map [mouse-1] #'org-roam-visit-thing)
+;;   ;; add the possiblity to follow links in the org-roam buffer
+;;   (define-key org-roam-mode-map [mouse-1] #'org-roam-visit-thing)
 
-  (evil-leader/set-key
-    "F" 'org-roam-node-find
-    "B" 'org-roam-buffer-toggle
-    "i" 'sync0-org-roam-insert
-    "I" 'sync0-hydra-org-roam-insert/body))
+;;   (evil-leader/set-key
+;;     "F" 'org-roam-node-find
+;;     "B" 'org-roam-buffer-toggle
+;;     "i" 'sync0-org-roam-insert
+;;     "I" 'sync0-hydra-org-roam-insert/body))
 
-(use-package org-roam-bibtex
-  :straight (org-roam-bibtex :type git :host github :repo "org-roam/org-roam-bibtex") 
-  :after org-roam
-  :hook (org-roam-mode . org-roam-bibtex-mode)
-  :custom
-      (orb-process-file-keyword t)
-      (orb-file-field-extensions '("pdf" "epub"))
-      ;; Use this to insert citation keys
-      (orb-insert-link-description 'citekey)
-      (orb-insert-interface 'ivy-bibtex)
-      (orb-note-actions-interface 'hydra)
-  :config
+;; (use-package org-roam-bibtex
+;;   :straight (org-roam-bibtex :type git :host github :repo "org-roam/org-roam-bibtex") 
+;;   :after org-roam
+;;   :hook (org-roam-mode . org-roam-bibtex-mode)
+;;   :custom
+;;       (orb-process-file-keyword t)
+;;       (orb-file-field-extensions '("pdf" "epub"))
+;;       ;; Use this to insert citation keys
+;;       (orb-insert-link-description 'citekey)
+;;       (orb-insert-interface 'ivy-bibtex)
+;;       (orb-note-actions-interface 'hydra)
+;;   :config
 
-(setq orb-preformat-keywords
-      '("citekey" "title" "subtitle" "booktitle" "booksubtitle" "journaltitle" "url" "author-or-editor" "keywords" "file"))
-           )
+;; (setq orb-preformat-keywords
+;;       '("citekey" "title" "subtitle" "booktitle" "booksubtitle" "journaltitle" "url" "author-or-editor" "keywords" "file"))
+;;            )
 
 (use-package org-pdftools
 :disabled t

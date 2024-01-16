@@ -384,3 +384,54 @@ doc-view (where isearch doesn't work."
     (if org-recoll-result-file-read-only (setq buffer-read-only t)))
 
 (string-width (buffer-string))
+
+
+booktitle
+crossref
+author
+language
+lagid
+doctype lecture audio
+institution
+created
+theme
+year
+status fetch
+century
+
+
+("Approccio alla storia concettuale" "Lezione del 22 settembre 2020" "2020-09-22" "https://elearning.unipd.it/spgi/mod/resource/view.php?id=49365")
+("La modernità come “rottura”" "Lezione del 23 settembre 2020" "2020-09-22" "https://elearning.unipd.it/spgi/mod/resource/view.php?id=50260")
+("Il lavoro dei concetti e la rivoluzione. sulla rappresentanza politica" "Lezione del 2020" "2020-" "")
+("" "Lezione del 2020" "2020-" "")
+("" "Lezione del 2020" "2020-" "")
+("" "Lezione del 2020" "2020-" "")
+("" "Lezione del 2020" "2020-" "")
+("" "Lezione del 2020" "2020-" "")
+("" "Lezione del 2020" "2020-" "")
+("" "Lezione del 2020" "2020-" "")
+("" "Lezione del 2020" "2020-" "")
+("" "Lezione del 2020" "2020-" "")
+("" "Lezione del 2020" "2020-" "")
+("" "Lezione del 2020" "2020-" "")
+("" "Lezione del 2020" "2020-" "")
+("" "Lezione del 2020" "2020-" "")
+("" "Lezione del 2020" "2020-" "")
+("" "Lezione del 2020" "2020-" "")
+("" "Lezione del 2020" "2020-" "")
+("" "Lezione del 2020" "2020-" "")
+("" "Lezione del 2020" "2020-" "")
+("" "Lezione del 2020" "2020-" "")
+("" "Lezione del 2020" "2020-" "")
+("" "Lezione del 2020" "2020-" "")
+("" "Lezione del 2020" "2020-" "")
+("" "Lezione del 2020" "2020-" "")
+("" "Lezione del 2020" "2020-" "")
+("" "Lezione del 2020" "2020-" "")
+("" "Lezione del 2020" "2020-" "")
+("" "Lezione del 2020" "2020-" "")
+("" "Lezione del 2020" "2020-" "")
+("" "Lezione del 2020" "2020-" "")
+("" "Lezione del 2020" "2020-" "")
+("" "Lezione del 2020" "2020-" "")
+("" "Lezione del 2020" "2020-" "")

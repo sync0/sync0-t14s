@@ -15,7 +15,6 @@
                                              "/home/sync0/Gdrive/bibliographies/backup.bib"
                                              "/home/sync0/Gdrive/bibliographies/bibliography.bib.bak"))
 
-
 (defun sync0-bibtex-recalc-bibliographies ()
   "Recalculate files in default bibliography directory
 (set by sync0-bibtex-bibliography-directory)."

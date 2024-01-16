@@ -75,3 +75,68 @@ function linkRelated(bibkey) {
     return x
 }
 
+
+
+// function extractYamlProperties(file) {
+//   const content = app.vault.metadataCache(file);
+//   const match = content.match(/^---[\s\S]*?^---/m);
+//   if (match) {
+//     try {
+//       return YAML.parse(match[0]);
+//     } catch (error) {
+//       console.error("Error parsing YAML properties:", error);
+//     }
+//   }
+//   return {};
+// }
+
+var subfolderName = "references"; // Specify the name of the stable subfolder
+
+var suggestions = (await tp.system.suggester(
+    (item) => {
+        const author = await tp.frontmatter["author"] ;
+        const origdate = await tp.frontmatter["origdate"] ;
+        const date = await tp.frontmatter["date"] ;
+        const title = await tp.frontmatter["title"] ;
+        const subtitle = await tp.frontmatter["subtitle"] ;
+        return `${author} ${origdate} ${date} ${title}${subtitle}`;
+  },
+  app.vault.getMarkdownFiles().filter((file) => {
+    const filePath = file.path;
+    const subfolderIndex = filePath.indexOf(subfolderName);
+    return subfolderIndex !== -1 && filePath.substring(subfolderIndex).split("/").length === 2;
+  }),
+  false,
+  "Select source of annotation/citation"
+));
+
+
+var selectedFile = await suggestions.file;
+var annotation = await selectedFile.basename;
+
+
+
+
+
+var subfolderName = "references"; // Specify the name of the stable subfolder
+
+var suggestions = (await tp.system.suggester(
+    (item) => {
+        const author = tp.frontmatter["author"] ;
+        const origdate = tp.frontmatter["origdate"] ;
+        const date = tp.frontmatter["date"] ;
+        const title = tp.frontmatter["title"] ;
+        const subtitle = tp.frontmatter["subtitle"] ;
+        return `${author} ${origdate} ${date} ${title}${subtitle}`;
+  },
+  app.vault.getMarkdownFiles().filter((file) => {
+    const filePath = file.path;
+    const subfolderIndex = filePath.indexOf(subfolderName);
+    return subfolderIndex !== -1 && filePath.substring(subfolderIndex).split("/").length === 2;
+  }),
+  false,
+  "Select source of annotation/citation"
+));
+
+var selectedFile = await suggestions.file;
+var annotation = await selectedFile.basename;

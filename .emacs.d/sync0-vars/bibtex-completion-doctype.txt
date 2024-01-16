@@ -56,3 +56,14 @@ confirmation
 receipt
 statement
 catalogue
+lecture
+audio
+cover_letter
+article
+catalog
+workshop
+@article
+@Article
+thesis
+archives
+masters_thesis

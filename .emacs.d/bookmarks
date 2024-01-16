@@ -148,10 +148,10 @@
  (rear-context-string . "Eles | têm    |\n")
  (position . 1687))
 ("here2"
- (filename . "~/Gdrive/bibliographies/courcelle-seneuil_jde_unverified.bib")
- (front-context-string . "\n@InCollection{2")
- (rear-context-string . "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
- (position . 3065))
+ (filename . "~/Gdrive/cabinet/233sv.el")
+ (front-context-string . "\n(sync0-bibtex-d")
+ (rear-context-string . "the dictionary?\n")
+ (position . 6672))
 ("matonti"
  (filename . "~/Dropbox/notes/matonti2012.org")
  (front-context-string . "\n\n* 無 Conclusion")
@@ -283,8 +283,9 @@
  (rear-context-string . "\"init.el\"))))))\n")
  (position . 5443))
 ("here"
- (filename . "~/Gdrive/cabinet/233sv.el")
- (front-context-string . "\n\n       (\"Jours")
- (rear-context-string . "the dictionary?\n")
- (position . 6604))
+ (filename . "~/.emacs.d/sync0/sync0-bibtex-create-functions.el")
+ (front-context-string . "nguage\" crossref")
+ (rear-context-string . "on-get-value \"la")
+ (position . 6398)
+ (last-modified 26001 24031 842218 960000))
 )

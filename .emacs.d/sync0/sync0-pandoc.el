@@ -27,6 +27,9 @@
         ("scrartcl" (lambda ()
                      (concat
                       " --defaults=/home/sync0/Gdrive/typography/pandoc/defaults_scrartcl.yaml")))
+        ("scrartcl_margin" (lambda ()
+                     (concat
+                      " --defaults=/home/sync0/Gdrive/typography/pandoc/defaults_scrartcl_margin.yaml")))
         ("scrartcl_numbered" (lambda ()
                      (concat
                       " --defaults=/home/sync0/Gdrive/typography/pandoc/defaults_scrartcl_numbered.yaml")))
@@ -66,6 +69,7 @@
      " --shift-heading-level-by=1" 
      ;; " --shift-heading-level-by=-1" 
      " --filter=/home/sync0/.local/share/pandoc/filters/delink.hs"
+     " --lua-filter=noexport-subtrees.lua"
      ;; " --lua-filter=diagram-generator.lua "
      " -H preamble.tex")
      ;; " --filter pandoc-xnos"
@@ -182,20 +186,77 @@
        " --from=markdown --to=docx"
        " --standalone"
        " --resource-path=.:/home/sync0/.local/share/pandoc/filters:/home/sync0/Gdrive/typography/css:/home/sync0/Gdrive/typography/csl:/home/sync0/Gdrive/pandoc/yaml:/home/sync0/Gdrive/pandoc/templates:/home/sync0/Gdrive/bibliographies"
-       " --shift-heading-level-by=1" 
-       ;; " --shift-heading-level-by=-1" 
-       " --metadata=reference-section-title:Références"
+       " --shift-heading-level-by=-1" 
+       " --bibliography=/home/sync0/Gdrive/bibliographies/master.bib"
+       ;; " --csl=/home/sync0/Gdrive/typography/csl/chicago-fullnote-short-title-sync0-nodoi.csl"
+       ;; " --csl=/home/sync0/Gdrive/typography/csl/chicago-author-date-fr.csl"
+       " --csl=/home/sync0/Gdrive/typography/csl/test.csl"
+       ;; " --csl=/home/sync0/Gdrive/typography/csl/revue-histoire-pensee-economique.csl"
+       " --reference-doc=/home/sync0/Gdrive/typography/pandoc/revue-histoire-pensee-economique.docx"
+       ;; " --reference-doc=/home/sync0/Gdrive/typography/pandoc/pandoc_template.docx"
+       " --lua-filter=noexport-subtrees.lua"
+       ;; " --shift-heading-level-by=2"
+       ;; " --metadata=reference-section-title:Références"
        " --citeproc"
-       " --filter=/home/sync0/.local/share/pandoc/filters/delink.hs"
+       ;; " --filter=/home/sync0/.local/share/pandoc/filters/delink.hs"
        ))
 
 (defun sync0-pandoc-export-md-to-docx ()
   (interactive)
   (let* ((current-path (buffer-file-name))
-         (current-file (when (string-match "^.+/\\([0-9]+\\)\\.md$" current-path)
+         (current-file (when (string-match "^.+/\\([[:alnum:]]+\\)\\.md$" current-path)
                          (match-string-no-properties 1 current-path)))
+         ;; (current-file (when (string-match "^.+/\\([0-9]+\\)\\.md$" current-path)
+         ;;                 (match-string-no-properties 1 current-path)))
          (file (read-string "Which file to convert to docx? " current-file))
          (command (concat sync0-pandoc-md-to-docx-command " " file ".md -o" file ".docx")))
+    (shell-command command)))
+
+  (defvar sync0-pandoc-docx-to-pdf-command-base
+    (concat
+     "pandoc"
+     " --from=docx --to=pdf"
+     " --standalone"
+     " --pdf-engine=lualatex"
+     " --resource-path=.:/home/sync0/.local/share/pandoc/filters:/home/sync0/Gdrive/typography/css:/home/sync0/Gdrive/typography/csl:/home/sync0/Gdrive/typography/pandoc:/home/sync0/Gdrive/bibliographies:/home/sync0/Gdrive/typography/pandoc:/home/sync0/Gdrive/obsidian/img:/home/sync0/Pictures/archives:/home/sync0/Documents/pdfs"
+     ;; " --shift-heading-level-by=1" 
+     ;; " --shift-heading-level-by=-1" 
+     ;; " --filter=/home/sync0/.local/share/pandoc/filters/delink.hs"
+     ;; " --lua-filter=noexport-subtrees.lua"
+     ;; " --lua-filter=diagram-generator.lua "
+     "--track-changes=all"
+     " -H preamble.tex")
+     ;; " --filter pandoc-xnos"
+    "String of basic export settings for pandoc to convert from markdown to pdf.")
+
+(defun sync0-pandoc-export-docx-to-pdf (&optional myfile)
+  (interactive)
+  (let* ((file (or myfile
+                   (read-string "Which file to convert to docx? ")))
+         (command (concat sync0-pandoc-docx-to-pdf-command-base " " file ".docx -o" file ".pdf")))
+    (shell-command command)))
+
+  (defvar sync0-pandoc-docx-to-md-command-base
+    (concat
+     "pandoc"
+     " --from=docx --to=markdown"
+     " --standalone"
+     " --resource-path=.:/home/sync0/.local/share/pandoc/filters:/home/sync0/Gdrive/typography/css:/home/sync0/Gdrive/typography/csl:/home/sync0/Gdrive/typography/pandoc:/home/sync0/Gdrive/bibliographies:/home/sync0/Gdrive/typography/pandoc:/home/sync0/Gdrive/obsidian/img:/home/sync0/Pictures/archives:/home/sync0/Documents/pdfs"
+     ;; " --shift-heading-level-by=1" 
+     ;; " --shift-heading-level-by=-1" 
+     ;; " --filter=/home/sync0/.local/share/pandoc/filters/delink.hs"
+     ;; " --lua-filter=noexport-subtrees.lua"
+     ;; " --lua-filter=diagram-generator.lua "
+     " --lua-filter=criticmarkup.lua"
+     " --track-changes=all")
+     ;; " --filter pandoc-xnos"
+    "String of basic export settings for pandoc to convert from markdown to pdf.")
+
+(defun sync0-pandoc-export-docx-to-md (&optional myfile)
+  (interactive)
+  (let* ((file (or myfile
+                   (read-string "Which file to convert to docx? ")))
+         (command (concat sync0-pandoc-docx-to-md-command-base " " file ".docx -o" file ".md")))
     (shell-command command)))
 
 ;; (defun sync0-pandoc-export-md-to-tex ()

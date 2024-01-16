@@ -1,3 +1,5 @@
+(require 'sync0-bibtex-extraction)
+(require 'sync0-functions)
 
 (defun sync0-update-bibtex-authors ()
   (interactive)
@@ -138,14 +140,34 @@
       (when-let ((pdf (car (bibtex-completion-find-pdf key))))
         (sync0-bibtex-crop-pdf pdf cropbox)))))
 
+;; This function depends on the shell command trash-cli that can be found in YAY or in Github
+;; https://github.com/andreafrancia/trash-cli
 (defun bibtex-completion-copy-pdf-to-path-list (keys)
   "Print the PDFs of the entries with the given KEYS where available."
-  (let ((path (read-string "Où envoyer ce pdf ? (finir en /) " sync0-goodreads-directory)))
+  (let ((path (sync0-correct-string-with-corrector
+               (read-string "Where should I send these PDFs? : " sync0-goodreads-directory) "/" t))
+        (compress (yes-or-no-p "Compress selected files as one ZIP? "))
+        (paths))
     (if (file-accessible-directory-p path)
-        (dolist (key keys)
-          (when-let ((pdf (car (bibtex-completion-find-pdf key))))
-            (sync0-bibtex-copy-pdf-to-path path key)))
-    (message "%s is unaccesable or does not exist." path))))
+        (progn 
+          (dolist (key keys paths)
+            (when-let ((pdf (car (bibtex-completion-find-pdf key))))
+              (sync0-bibtex-copy-pdf-to-path path key)
+              (push sync0-bibtex-temp-pdf-copy-new-path-and-filename paths)))
+            (message "PDFs succesfully copied to path %s" path)
+          (when compress
+            (let* ((zip-path path)
+                   ;; (zip-path (sync0-correct-string-with-corrector
+                   ;;            (read-string "Where to save ZIP file? : " sync0-goodreads-directory) "/" t))
+                   (zip-name (read-string "Name of ZIP file? : " (format-time-string "%Y-%m-%d-%H-%M")))
+                   (command (concat "zip " zip-path zip-name ".zip -@ < " sync0-bibtex-helper-pdf-copy-filepath)))
+              (sync0-erase-file-contents sync0-bibtex-helper-pdf-copy-filepath (sync0-show-elements-of-list paths "\n"))
+              (shell-command command)
+              ;; avoid ; too dangerous and unreliable
+              ;; (shell-command (concat "xargs rm < " sync0-bibtex-helper-pdf-copy-filepath))
+              (mapc #'(lambda  (x) (shell-command (concat "trash-put " x)))  paths)
+              (message "ZIP file %s with PDFs copied in path %s" zip-name zip-path))))
+      (message "%s is unaccesable or does not exist." path))))
 
 (defun bibtex-completion-rewrite-notes-from-biblatex-data-list (keys)
   "Print the PDFs of the entries with the given KEYS where available."
@@ -177,10 +199,17 @@
     (dolist (key keys)
         (sync0-bibtex-add-key-to-pdf key)))
 
-(defun bibtex-completion-open-url (keys)
+(defun bibtex-completion-open-url (&optional keylist)
   "Print the PDFs of the entries with the given KEYS where available."
-    (dolist (key keys)
-        (sync0-bibtex-open-url key)))
+  (interactive)
+  (if keylist
+    (dolist (key keylist)
+      (sync0-bibtex-open-url key))
+    (when (sync0-bibtex-buffer-p)
+      (let* ((entry (save-excursion (bibtex-beginning-of-entry)
+			            (bibtex-parse-entry)))
+             (bibkey (cdr (assoc "=key=" entry))))
+      (sync0-bibtex-open-url bibkey)))))
 
 (defun bibtex-completion-concatenate-pdf-list (keys)
   "Concatenate pdfs corresponding to keys"
@@ -263,8 +292,10 @@
                            ";")
                           (t ", ")))
          (unique-p (member field sync0-bibtex-unique-fields))
-         (assigned-value (progn (funcall (cadr (assoc field sync0-bibtex-entry-functions)))
-                                (eval (intern (concat "sync0-bibtex-entry-" field)))))
+         (delay-calc (string= field "file"))
+         (assigned-value (unless delay-calc
+                           (progn (funcall (cadr (assoc field sync0-bibtex-entry-functions)))
+                                  (eval (intern (concat "sync0-bibtex-entry-" field))))))
          (assigned-values (when (and assigned-value
                                      (null unique-p))
                             (split-string assigned-value separator)))
@@ -291,8 +322,29 @@
         (command (format "pdftotext -layout -enc UTF-8 -nopgbrk %s" pdf-file)))
       (shell-command command)))))
 
+(defun bibtex-completion-yank-citations-from-bibkeys (&optional keylist)
+  "Yank a PDF file based on the specified type and languages."
+  (interactive)
+  (if keylist
+      ;; Loop
+      (let (x)
+        (dolist (key keylist x)
+          (when-let ((citation (sync0-bibtex-corrections-format-yank-citation key)))
+            (setq x (concat citation "\n" x))))
+        (kill-new x)
+        (message "%s copied to kill ring." x))
+    (when (sync0-bibtex-buffer-p)
+      (let* ((entry (save-excursion (bibtex-beginning-of-entry)
+			            (bibtex-parse-entry)))
+             (bibkey (cdr (assoc "=key=" entry))))
+        (when-let ((citation (sync0-bibtex-corrections-format-yank-citation bibkey)))
+          (kill-new citation)
+          (message "%s copied to kill ring." citation))))))
+
 ;; Before being able to call custom functions from ivy-bibtex, these
 ;; have to be manually added to ivy-bibtex. 
+
+(ivy-bibtex-ivify-action bibtex-completion-yank-citations-from-bibkeys ivy-bibtex-yank-citations-from-bibkeys)
 
 (ivy-bibtex-ivify-action bibtex-completion-print-pdf-list ivy-bibtex-print-pdf-list)
 
@@ -352,6 +404,7 @@
  '(("P" ivy-bibtex-print-pdf-list "Print PDF with default printer" ivy-bibtex-print-pdf-list)
    ("C" ivy-bibtex-copy-pdf-to-path-list "Copy PDF to target path" ivy-bibtex-copy-pdf-to-path-list)
    ("1" ivy-bibtex-convert-pdf-to-txt "Convert to TXT" ivy-bibtex-convert-pdf-to-txt)
+   ("y" ivy-bibtex-yank-citations-from-bibkeys "Yank citations from keys" ivy-bibtex-yank-citations-from-bibkeys)
    ("Y" ivy-bibtex-rewrite-notes-from-biblatex-data-list "Rewrite mdnote metadata" ivy-bibtex-rewrite-notes-from-biblatex-data-list)
    ;; ("A" ivy-bibtex-archive-entries-list "Archive entry" ivy-bibtex-archive-entries-list)
    ("p" ivy-bibtex-open-pdf-external "Open PDF" ivy-bibtex-open-pdf-external)

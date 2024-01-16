@@ -95,3 +95,4 @@ yangben
 yiddish
 yoruba
 hungarian
+fr

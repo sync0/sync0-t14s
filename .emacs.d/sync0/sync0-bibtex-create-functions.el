@@ -17,13 +17,10 @@
   (setq sync0-bibtex-entry-creation t)
   (setq sync0-bibtex-entry-file-old nil)
   (sync0-bibtex-completion-load-entry nil quick)
-  (unless (null sync0-bibtex-entry-crossref)
-    (when (and (member sync0-bibtex-entry-type sync0-bibtex-crossref-types)
-               (file-exists-p (concat sync0-zettelkasten-attachments-directory sync0-bibtex-entry-crossref ".pdf"))
-               (yes-or-no-p "Extract  PDF from crossref?"))
-      (sync0-bibtex-extract-pdf-from-crossref)))
+  ;; Extract sub-pdf from crossref
+  (sync0-bibtex-derive-pdf-from-crossref)
   ;; Set some default values
-  (setq sync0-bibtex-entry-status "inspect")
+  (setq sync0-bibtex-entry-status "fetch")
   ;; Insert entry in default bibliography file
   (sync0-bibtex-entry-append-to-bibliography sync0-bibtex-entry-key)
   (sync0-bibtex-entry-create-obsidian-note-from-entry sync0-bibtex-entry-key)
@@ -36,7 +33,7 @@
              (yes-or-no-p "Download the attached pdf? "))
     (sync0-bibtex-download-pdf sync0-bibtex-entry-key t)))
 
-;; change this function to be actually usable
+;; change this function to be actually usable : do not delete this, just create a new one from using this as template
 (defun sync0-bibtex-define-multiple-entries (num)
   "Create new BibLaTeX entries..."
   (interactive "nHow many new entries to create? ")
@@ -88,6 +85,109 @@
         (sync0-bibtex-entry-append-to-bibliography filename bibfile)
         ;; Third, create an obsidian markdown note for the entry.
         (sync0-bibtex-entry-create-obsidian-note-from-entry filename)))))
+
+(defun sync0-bibtex-derive-entries-from-collection (&optional glist)
+  "Create new BibLaTeX entries from objects of the form (title
+subtitle pages expages author), where title is the title of new entries, pages are
+the page ranges of the biblatex entries and expages is the
+range of pages of the actual pdf file to be used for extraction." 
+  (interactive)
+  ;; Before calculating any values, reset all values in my
+  ;; master list of variable (set them to nil).
+  (sync0-bibtex-nullify-all-variables)
+  (let* ((unique-author-p (or (null glist)
+                              (yes-or-no-p "Unique author for newly created entries?")))
+         (unique-author (when unique-author-p
+                   (funcall (cadr (assoc "author" sync0-bibtex-entry-functions)))))
+         (type "InCollection")
+         ;; (type (completing-read "Choose Bibtex entry type: " sync0-bibtex-entry-types))
+         ;; Specify which fields to load
+         (themes (sync0-bibtex-entry-calculate-bibfield "theme")) 
+         ;; (fields (append (cdr (assoc type sync0-bibtex-type-fields))
+         ;;                 (remove "file" sync0-bibtex-base-fields)))
+         (unique (unless glist
+                   (list 
+                    (read-string "Title? ")
+                    (read-string "Subtitle? ")
+                    (read-string "Page range? ")
+                    (when (y-or-n-p "Add expages? ")
+                      (read-string "Expage range? ")))))
+         (crossref (sync0-bibtex-completion-choose-key t t "Which crossref to derive entries from? "))
+         (crossref-entry (bibtex-completion-get-entry crossref))
+         (created (sync0-bibtex-entry-calculate-bibfield "created"))
+         (date (bibtex-completion-get-value "date" crossref-entry))
+         (language (bibtex-completion-get-value "language" crossref-entry))
+         (crossref-title (bibtex-completion-get-value "title" crossref-entry))
+         (crossref-subtitle (bibtex-completion-get-value "subtitle" crossref-entry))
+         ;; (add-notes (yes-or-no-p "Create Obsidian notes for the newly created entries?"))
+         (bibfile (sync0-bibtex-entry-choose-bibliography-file))
+         (list-length (if glist
+                          (length glist)
+                        0))
+         (num (max 1 list-length))
+         (keylist (sync0-bibtex-entry-define-keys-list num))
+         (extract-p (yes-or-no-p "Extract  PDF from crossref?"))
+         (crossref-file (when extract-p
+                          (sync0-bibtex-choose-attachment crossref "pdf"))))
+    ;; Set some default values for all new entries
+    (setq sync0-bibtex-entry-type type)
+    (setq sync0-bibtex-entry-type-downcase (downcase type))
+    (setq sync0-bibtex-entry-crossref crossref)
+    (setq sync0-bibtex-entry-status "inspect")
+    ;; (setq sync0-bibtex-entry-source "primary")
+    ;; (setq sync0-bibtex-entry-theme themes)
+    (setq sync0-bibtex-entry-date date)
+    (setq sync0-bibtex-entry-booktitle crossref-title)
+    (setq sync0-bibtex-entry-booksubtitle crossref-subtitle)
+    (setq sync0-bibtex-entry-creation t)
+    (setq sync0-bibtex-entry-file-old nil)
+    ;; Begin loop; specific settings for each note are to be defined
+    ;; inside the loop.
+    (dotimes (i num)
+      (let* ((sublist (or unique
+                          (elt glist i)))
+             (filename (elt keylist i))
+             (title (car sublist))
+             (subtitle (elt sublist 1))
+             (pages (elt sublist 2))
+             (expages (elt sublist 3))
+             (author (or unique-author
+                         (elt sublist 4))))
+        (setq sync0-bibtex-entry-key filename)
+        (setq sync0-bibtex-entry-title title)
+        (setq sync0-bibtex-entry-subtitle subtitle)
+        (setq sync0-bibtex-entry-pages pages)
+        (setq sync0-bibtex-entry-expages expages)
+        (unless unique-author
+          (setq sync0-bibtex-entry-author author))
+        (setq sync0-bibtex-entry-file (concat ":" sync0-zettelkasten-attachments-directory sync0-bibtex-entry-key ".pdf:PDF"))
+        ;; (dolist (element fields x)
+        ;;   (let* ((var (concat "sync0-bibtex-entry-" element))
+        ;;          (value (progn 
+        ;;                   ;; first calculate the values, this function
+        ;;                   ;; does not only calculate the value itself
+        ;;                   ;; but also some other accompanying dummy
+        ;;                   ;; variables that are necessary for
+        ;;                   ;; calculating titles and else. Be careful,
+        ;;                   ;; because the stdout of the function does
+        ;;                   ;; not neceesarily match the definition of
+        ;;                   ;; the value for "element"
+        ;;                   (funcall (cadr (assoc element sync0-bibtex-entry-functions)))
+        ;;                   ;; Retrieve the value for the corresponding
+        ;;                   ;; variable
+        ;;                   (symbol-value (intern var)))))
+        ;;     ;; set the variable to the value
+        ;;     (set (intern var) value)
+        ;;     ;; Not sure whether this next functions works.
+        ;;     (sync0-bibtex-update-var element)))
+        (funcall (cadr (assoc "keywords" sync0-bibtex-entry-functions)))
+        ;; Second, append entry to default bibliography file.
+        (sync0-bibtex-entry-append-to-bibliography filename bibfile)
+        ;; Third, create an obsidian markdown note for the entry.
+        ;; (sync0-bibtex-entry-create-obsidian-note-from-entry filename)
+        ;; Fourth, extract the pdf from the crossref
+        (when extract-p
+        (sync0-bibtex-extract-pdf-from-crossref crossref-file t))))))
 
 (defun sync0-bibtex-define-similar-type-entries (num)
   "Create new BibLaTeX entries with similar type and constant

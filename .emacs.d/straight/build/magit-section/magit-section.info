@@ -1,4 +1,4 @@
-This is magit-section.info, produced by makeinfo version 6.8 from
+This is magit-section.info, produced by makeinfo version 7.0.3 from
 magit-section.texi.
 
      Copyright (C) 2015-2021 Jonas Bernoulli <jonas@bernoul.li>
@@ -275,11 +275,11 @@ File: magit-section.info,  Node: Matching Functions,  Prev: Core Functions,  Up:
 
 
 Tag Table:
-Node: Top788
-Node: Introduction2069
-Node: Creating Sections2839
-Node: Core Functions7353
-Node: Matching Functions8679
+Node: Top790
+Node: Introduction2071
+Node: Creating Sections2841
+Node: Core Functions7355
+Node: Matching Functions8681
 
 End Tag Table
 

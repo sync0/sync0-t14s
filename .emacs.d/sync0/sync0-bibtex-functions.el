@@ -7,17 +7,22 @@
 ;;             collect `(defvar ,var ,initial-value))))
 
 (require 'cl-lib)
+(require 'scihub)
 (require 'unidecode)
+(require 'bibtex-utils)
 (require 'bibtex-completion)
-(require 'sync0-bibtex-utils)
+(require 'sync0-bibtex-fields)
+(require 'sync0-bibtex-vars)
+(require 'sync0-bibtex-var-functions)
 (require 'sync0-bibtex-key-functions)
+(require 'sync0-bibtex-utils)
+(require 'sync0-bibtex-extraction)
 (require 'sync0-bibtex-entry-functions)
 (require 'sync0-print)
 (require 'sync0-pdf)
 (require 'sync0-yaml)
 (require 'sync0-pandoc)
 (require 'doi-utils)
-(require 'sync0-bibtex-var-functions)
 (require 'sync0-bibtex-extraction)
 (require 'sync0-bibtex-diagnostics)
 (require 'sync0-bibtex-corrections)
@@ -26,6 +31,7 @@
 (require 'sync0-bibtex-python)
 (require 'sync0-bibtex-create-functions)
 (require 'sync0-bibtex-actions)
+(require 'sync0-bibtex-url)
 (require 'xah-replace-pairs)
 
   ;; (defun sync0-bibtex-entry-define-related (&optional bibkey)
@@ -170,14 +176,14 @@ readable."
     (if (and (file-exists-p file)
              (file-accessible-directory-p path))
         (let* ((filetitle (sync0-bibtex-define-attachment-copy-filename refkey path))
+               (file-and-path (concat path filetitle extension))
+               (file-and-path-quotes (concat "\"" file-and-path "\""))
                (command (concat "cp "
                                 file
-                                " \""
-                                path
-                                filetitle
-                                extension
-                                "\"")))
+                                " "
+                                file-and-path-quotes)))
           (shell-command command)
+          (setq sync0-bibtex-temp-pdf-copy-new-path-and-filename file-and-path)
           (message "PDF for %s moved to target location" refkey))
       (message "No PDF found for %s" refkey))))
 
@@ -298,20 +304,6 @@ etc.)."
         (kill-new citation)
         (message "%s copied to kill ring." citation))))
 
-  (defun sync0-bibtex-yank-citation-from-bibkey (&optional bibkey)
-    "Add bibkey citation kill ring."
-    (interactive)
-    (let ((refkey (if bibkey
-                      bibkey
-                    (sync0-bibtex-completion-choose-key t t))))
-      (sync0-bibtex-completion-load-entry refkey)
-      (when-let ((citation (concat sync0-bibtex-entry-lastname
-                                   (or sync0-bibtex-entry-date-fixed
-                                       " ")
-                                   sync0-bibtex-entry-title-compatible)))
-        (kill-new citation)
-        (message "%s copied to kill ring." citation))))
-
   (defun sync0-bibtex-convert-jpg-to-pdf (&optional bibkey)
     "Copy attached pdf to path and change the title to make it
 readable."
@@ -356,14 +348,17 @@ readable."
      (("c" sync0-bibtex-clean-entry "Clean this entry")
       ("E" sync0-bibtex-define-entry "New entry")
       ("e" (sync0-bibtex-define-entry t) "Quick new entry")
-      ("d" doi-utils-add-bibtex-entry-from-doi "Entry from DOI")
+      ;; ("d" doi-utils-add-bibtex-entry-from-doi "Entry from DOI")
       ;; ("m" sync0-bibtex-define-multiple-entries "Define entries")
+      ("d" sync0-bibtex-derive-entries-from-collection "Derive from collection")
       ("t" sync0-bibtex-transplant-obsidian-ref-into-biblatex "Entry from mdnote")
       ("u" sync0-bibtex-update-key "Update key")
       ("n" sync0-bibtex-open-notes-at-point "Open notes")
       ("M" sync0-bibtex-define-similar-type-entries "Define X similar entries")
       ("f" sync0-bibtex-define-entries-from-bibkey "Define multiple from this entry")
-      ("g" sync0-bibtex-python-bibentry-from-gallica "Define entry from Gallica"))
+      ;; ("g" sync0-bibtex-python-bibentry-from-gallica "Define entry from Gallica")
+      ("W" sync0-bibtex-python-bibentry-from-webscrapper "Define from webscrapper")
+      ("D" sync0-bibtex-python-bibentry-from-doi-or-isbn "Define from DOI or ISBN"))
       ;; ("w" sync0-bibtex-open-url "Open url")
       ;; ("M" sync0-bibtex-move-entry-to-bibfile "Move entry to bibfile")
       ;; ("D" sync0-bibtex-delete-entry "Delete entry")
@@ -400,11 +395,13 @@ readable."
      ;; ("r" (sync0-bibtex-update-completion-files sync0-bibtex-completion-variables-list) "Refresh completion vars")
      (("a" sync0-bibtex-add-field-at-point "Add field")
       ("A" (sync0-bibtex-add-field-at-point t) "Add field and recalc")
-      ("i" sync0-bibtex-convert-jpg-to-pdf "Convert jpg to pdf")
+      ("I" sync0-bibtex-convert-jpg-to-pdf "Convert jpg to pdf")
+      ("i" bibtex-completion-open-url "Open URL")
       ("k" sync0-add-field-theme "Add theme")
+      ("w" sync0-search-in-catalogs "Search in catalogs")
       ("1" bibtex-convert-pdf-to-txt "Convert to TXT")
       ;; ("2" sync0-bibtex-python-summarize-txt "Summarize TXT")
-      ("y" sync0-bibtex-yank-citation-from-bibkey "Yank citation.")
+      ("y" bibtex-completion-yank-citations-from-bibkeys "Yank citation.")
       ("N" sync0-bibtex-create-note-at-point "Create mdnote")
       ("R" (sync0-bibtex-create-note-at-point t) "Rewrite mdnote"))))
 

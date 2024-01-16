@@ -40,11 +40,11 @@ old-value, search for and replace the string with the old value."
   (unless (null value)
     (let ((field-list (list field "Whatever string" value nil))
           (end (save-excursion (bibtex-end-of-entry)))
-          (regex (concat "^[[:space:]]+" field "[[:space:]]+=")))
+          (regex (concat "^[[:blank:]]*" field "[[:blank:]]+=")))
       (save-excursion
         (bibtex-beginning-of-entry)
-        (when replace
-          (re-search-forward regex end nil 1)
+        (when (and replace
+                   (re-search-forward regex end t 1))
           (bibtex-kill-field nil t))
         (bibtex-make-field field-list t)))))
 
@@ -52,7 +52,7 @@ old-value, search for and replace the string with the old value."
   "Create bibtex field with value at entry at point. When optional
 old-value, search for and replace the string with the old value."
   (let ((end (save-excursion (bibtex-end-of-entry)))
-        (regex (concat "^[[:space:]]+" field "[[:space:]]+=")))
+        (regex (concat "^[[:blank:]]*" field "[[:blank:]]+=")))
     (save-excursion
       (bibtex-beginning-of-entry)
         (re-search-forward regex end nil 1)

@@ -1,5 +1,6 @@
 (require ' sync0-bibtex-key-functions)
 (require ' sync0-bibtex-corrections)
+(require ' sync0-bibtex-url)
 
 (defvar sync0-obsidian-archive-directory
      "/home/sync0/Pictures/archives/")
@@ -30,7 +31,7 @@
          (title (read-string "Titre du texte : " nil nil nil t))
          (obsidian-file (concat sync0-obsidian-directory filename ".md")) 
          (obsidian-entry (concat "---\n"
-                                 "id: " filename "\n"
+                                 "key: " filename "\n"
                                  "zettel_type: " type "\n"
                                  "created: " creation "\n"
                                  ;; "title: \"" title "\"\n"
@@ -52,7 +53,7 @@
          (day (format-time-string "%d")) 
          (obsidian-file (concat sync0-obsidian-directory filename ".md")) 
          (obsidian-entry (concat "---\n"
-                                 "id: " filename "\n"
+                                 "key: " filename "\n"
                                  "zettel_type: writing\n"
                                  "created: " creation "\n"
                                  ;; "title: \"Écriture libre, " creation "\"\n"
@@ -105,14 +106,14 @@ for (let group of pages.groupBy(p => p.biblatex_type)) {
 }
 ```"))
              (obsidian-entry (concat "---\n"
-                                     "id: " filename "\n"
+                                     "key: " filename "\n"
                                      "zettel_type: fiche\n"
                                      "zettel_subtype: people\n"
                                      "created: " creation "\n"
                                      "title: \"" name-fixed "\"\n"
                                      "people: \"" name-string-fixed "\"\n"
-                                     "aliases: [\"" name-string-fixed "\", \"" name-fixed "\"]\n"
-                                     "tags: [fiche/people, created/" tag-creation  ", people/" tag-people "]\n"
+                                     "aliases:\n  - \"" name-string-fixed "\"\n  - \"" name-fixed "\"\n"
+                                     "tags:\n  - fiche/people\n  - created/" tag-creation  "\n  - people/" tag-people "\n"
                                      "---\n" 
                                      "# " name-fixed "\n\n" works)))
         ;; Sanity check before creation
@@ -139,12 +140,17 @@ for (let group of pages.groupBy(p => p.biblatex_type)) {
  Zettel: _n_ew
  Fiche: _p_eople
  Zettel: _f_reewriting
+ ^^^----------------
+ ^Other functions^
+ ^^^----------------
+ Search: _s_earch in catalogs
 
  _q_uit
  "
   ("f" sync0-obsidian-create-freewriting-zettel)
   ("p" sync0-obsidian-create-multiple-people-fiche)
   ("n" sync0-obsidian-create-zettel)
+  ("s" sync0-search-in-catalogs)
   ("q" nil :color blue))
 
 (evil-leader/set-key

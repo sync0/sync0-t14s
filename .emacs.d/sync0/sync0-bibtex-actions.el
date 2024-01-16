@@ -42,26 +42,44 @@ function is to be used only in pipes."
         (shell-command command)
       (message "Problem opening file for entry %s failed." refkey))))
 
+;; (defun sync0-bibtex-download-pdf (&optional refkey creation)
+;;   (interactive)
+;;   (if creation
+;;       (let ((file (string-trim sync0-bibtex-entry-file ":" ":PDF"))
+;;             (url sync0-bibtex-entry-url))
+;;         (sync0-pdf-download-from-url url file))
+;;     (let*    ((bibkey (or refkey 
+;;                           (sync0-bibtex-completion-choose-key t t)))
+;;               (entry (bibtex-completion-get-entry bibkey))
+;;               (url (bibtex-completion-get-value "url" entry))
+;;               (doi (bibtex-completion-get-value "doi" entry))
+;;               (file (concat sync0-zettelkasten-attachments-directory bibkey ".pdf")))
+;;       (if (yes-or-no-p "Call the pirates?")
+;;           (if doi
+;;               (scihub doi file)
+;;             (scihub url file))
+;;         (if (file-exists-p file)
+;;             (message "Cannot download. Attachment exists for key %s" bibkey)
+;;           (sync0-pdf-download-from-url url file))))))
 
 (defun sync0-bibtex-download-pdf (&optional refkey creation)
   (interactive)
   (if creation
-      (let ((file (string-trim sync0-bibtex-entry-file ":" ":PDF"))
-            (url sync0-bibtex-entry-url))
+      (when-let* ((extension (when (string-match ":[[:upper:]]+$" sync0-bibtex-entry-file)
+                                    (match-string 0 sync0-bibtex-entry-file)))
+                  (file (string-trim sync0-bibtex-entry-file ":" extension))
+                  (url sync0-bibtex-entry-url))
         (sync0-pdf-download-from-url url file))
     (let*    ((bibkey (or refkey 
                           (sync0-bibtex-completion-choose-key t t)))
               (entry (bibtex-completion-get-entry bibkey))
               (url (bibtex-completion-get-value "url" entry))
               (doi (bibtex-completion-get-value "doi" entry))
-              (file (concat sync0-zettelkasten-attachments-directory bibkey ".pdf")))
-      (if (yes-or-no-p "Call the pirates?")
-          (if doi
-              (scihub doi file)
-            (scihub url file))
+              (extension (concat "." (or sync0-bibtex-entry-extension "pdf")))
+              (file (concat sync0-zettelkasten-attachments-directory bibkey extension)))
         (if (file-exists-p file)
             (message "Cannot download. Attachment exists for key %s" bibkey)
-          (sync0-pdf-download-from-url url file))))))
+          (sync0-pdf-download-from-url url file)))))
 
 (defun sync0-bibtex-update-key ()
   "Change bibtex key at point with a key using the format
@@ -163,7 +181,7 @@ entry under point in a .bib file"
 			        (bibtex-parse-entry)))
          (bibkey (cdr (assoc "=key=" entry)))
          (crossref (when op-crossref
-                     (cdr (assoc "crossref" entry))))
+                   (substring (cdr (assoc "crossref" entry)) 1 -1)))
          (program
           (completing-read "Which softare to open attachment ?" sync0-bibtex-attachment-programs))
          (file (sync0-bibtex-choose-attachment bibkey))
@@ -364,6 +382,7 @@ format provided by org-roam files"
          (new-path (unless (assoc "file" entry)
                      (concat ":" sync0-zettelkasten-attachments-directory new-key ".pdf:PDF")))
          (regex "^@\\([[A-z]+\\){[[:alnum:]]+,$")
+         (regex-journal "^[[:blank:]]+journal[[:blank:]]+=")
          (beg (save-excursion (bibtex-beginning-of-entry)))
          (end (save-excursion (bibtex-end-of-entry)))
          (language (unless (assoc "language" entry)
@@ -384,6 +403,10 @@ format provided by org-roam files"
     (re-search-forward regex end t 1) 
     (kill-whole-line 1)
     (insert type-string)
+    ;; remove the journal field 
+    (when journaltitle
+      (re-search-forward regex-journal end t 1) 
+      (kill-whole-line 1))
     (sync0-bibtex-create-field-at-entry "author" author t)
     (sync0-bibtex-create-field-at-entry "title" title t)
     (when subtitle
@@ -410,11 +433,6 @@ format provided by org-roam files"
     (let    ((bibkey (or refkey 
                          (sync0-bibtex-completion-choose-key t t))))
       (sync0-bibtex-completion-load-entry bibkey)
-      ;; (unless no-extract
-      ;;   (when (or (string= sync0-bibtex-entry-type-downcase "incollection")
-      ;;             (string= sync0-bibtex-entry-type-downcase "inbook")
-      ;;             (string= sync0-bibtex-entry-type-downcase "inproceedings"))
-      ;;     (sync0-bibtex-extract-pdf-from-crossref)))
       (if rewrite
           (sync0-bibtex-entry-create-obsidian-note-from-entry bibkey t)
         (sync0-bibtex-entry-create-obsidian-note-from-entry bibkey))))
@@ -553,10 +571,14 @@ file where it was found."
          (old-values (unless unique-p
                        (when old-value
                          (split-string old-value separator))))
+         (corrected-value (if (null assigned-value)
+                              (progn (funcall (cadr (assoc field sync0-bibtex-entry-functions)))
+                                     (eval (intern (concat "sync0-bibtex-entry-" field))))
+                            assigned-value))
          (already-present-p (unless multiple-new-p 
                               (if unique-p
-                                  (string= old-value assigned-value)
-                                (member assigned-value old-values))))
+                                  (string= old-value corrected-value)
+                                (member corrected-value old-values))))
          (keywords-p sync0-bibtex-entry-keywords)
          (new-value (cond ((and multiple-new-p
                                 (null unique-p))
@@ -564,11 +586,11 @@ file where it was found."
                              (sync0-show-elements-of-list new-list separator)))
                           ((and old-value
                                 (null unique-p))
-                           (concat old-value separator assigned-value))
-                          (t assigned-value)))
+                           (concat old-value separator corrected-value))
+                          (t corrected-value)))
          (bib-file (sync0-bibtex-find-key-in-bibfiles bibkey)))
     (if already-present-p
-        (message "%s already present or assigned for %s in %s " assigned-value bibkey field)
+        (message "%s already present or assigned for %s in %s " corrected-value bibkey field)
       (unless (null bib-file)
         ;; position the cursor at beg of entry
         ;; problem bib search function
@@ -588,6 +610,5 @@ file where it was found."
         ;; save newly created keywords
         (save-buffer)
         (sync0-bibtex-create-note-from-entry t bibkey)))))
-
 
   (provide 'sync0-bibtex-actions)

@@ -115,6 +115,8 @@
            ;;                       (concat shorthand " (" sync0-bibtex-entry-edition "e)")))
            (author-key (when  sync0-bibtex-entry-author-or-editor-p
                          (concat sync0-bibtex-entry-lastname ", " sync0-bibtex-entry-key)))
+           (author-key-two (when  sync0-bibtex-entry-author-or-editor-p
+                         (concat sync0-bibtex-entry-lastname "(" sync0-bibtex-entry-key ")")))
            (journaltitle-key (when (and sync0-bibtex-entry-journaltitle
                                         (not sync0-bibtex-entry-author-or-editor-p))
                                (concat sync0-bibtex-entry-journaltitle ", " sync0-bibtex-entry-key)))
@@ -245,6 +247,10 @@ the note, instead of attempting to create a new note."
            (title-list-string (if sync0-bibtex-entry-aliases 
                                   (concat sync0-bibtex-entry-aliases "\", \"" title-automated-list)
                                 title-automated-list))
+           (conversiont-title-list-to-list (sync0-string-split-with-sep-and-list title-list-string "\", \""))
+               ;; here I have every element ready in a list but without the quotation marks
+           (title-list-fixed-as-list  (mapcar (lambda (x) (concat "\"" x "\"")) conversiont-title-list-to-list))
+           (title-list-fixed (concat "  - " (sync0-show-elements-of-list title-list-fixed-as-list "\n  - ")))
            (obsidian-fields-string (let (x)
                                      (dolist (element sync0-bibtex-obsidian-fields-list x)
                                        (let ((field (car element))
@@ -255,16 +261,19 @@ the note, instead of attempting to create a new note."
                                            (push (concat field ": " opener value closer) x))))
                                      (delete-duplicates x :test #'string=)
                                      (sync0-show-elements-of-list x "\n")))
+           (keywords-corrected
+            (let ((x (sync0-string-split-with-sep-and-list sync0-bibtex-entry-keywords ", ")))
+              (concat "  - " (sync0-show-elements-of-list x "\n  - "))))
            (obsidian-yaml (concat "---\n"
                                   "zettel_type: reference\n"
-                                  "id: " bibkey "\n"
+                                  "key: " bibkey "\n"
                                   "citekey: " bibkey "\n"
                                   "biblatex_type: " (downcase sync0-bibtex-entry-type)  "\n"
                                   "export_template: zkn_literature_notes\n"
                                   "lang: fr-FR\n"
                                   obsidian-fields-string
-                                  (concat "\naliases: [\"" title-list-string "\"]\n")
-                                  "tags: [bibkey/" bibkey ", " sync0-bibtex-entry-keywords "]\n"
+                                  (concat "\naliases:\n" title-list-fixed "\n")
+                                  "tags:\n  - bibkey/" bibkey "\n" keywords-corrected "\n"
                                   "---\n"
                                   ;; (concat "# " sync0-bibtex-entry-obsidian-title "\n")
                                   (concat "# " sync0-bibtex-entry-key "\n")))

@@ -14,3 +14,7 @@ scan
 annotated
 toprocess
 unverified
+getch
+inrevision
+tomend
+inspectrelatedtypemultivolume

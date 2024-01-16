@@ -133,3 +133,19 @@ Rosario
 Turin
 MSH Triangle
 Bibliothèque Chevreul de Lyon
+Milano
+Hamburg
+Livourne
+Bari
+Florence
+Leiden
+Hillsdale
+Corbeil
+Torino
+Graz, Austria
+Havre
+Petit-Montrouge
+Villeneuve d’Ascq
+Périgueux
+York, UK
+Angoulême

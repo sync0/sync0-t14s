@@ -96,3 +96,8 @@ CDR Triangle
 MSH Triangle
 Bibliothèque Chevreul de Lyon
 Archives départementales de la Haute-Vienne
+Bibliothèque provisoire Bron
+Sudoc
+Bibliothèque Municipale de Lyon
+Bibliothèque numérique de Lyon
+Bibliothèque francophone multimédia de Limoges
