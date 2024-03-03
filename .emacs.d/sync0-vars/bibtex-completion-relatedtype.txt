@@ -10,3 +10,4 @@ translationfrom
 translationof
 basedon
 preprintof
+{translationof}

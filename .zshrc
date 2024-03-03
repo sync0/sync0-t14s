@@ -9,7 +9,9 @@ export ZSH="/home/sync0/.oh-my-zsh"
 PATH="/home/sync0/.local/share/pandoc/filters/:$PATH"
 PATH="/home/sync0/bin/:$PATH"
 PATH="/opt/tropy/:$PATH"
+PATH="/home/sync0/.local/share/gem/ruby/3.0.0/bin:$PATH"
 MERMAID_BIN="/home/sync0/node_modules/.bin/mmdc"
+
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME

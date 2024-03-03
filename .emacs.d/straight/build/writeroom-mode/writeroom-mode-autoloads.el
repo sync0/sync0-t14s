@@ -5,9 +5,8 @@
 
 ;;; Code:
 
+
 
-;;;### (autoloads nil "writeroom-mode" "writeroom-mode.el" (0 0 0
-;;;;;;  0))
 ;;; Generated autoloads from writeroom-mode.el
 
 (autoload 'writeroom-mode "writeroom-mode" "\
@@ -27,10 +26,8 @@ evaluate `writeroom-mode'.
 The mode's hook is called both when the mode is enabled and when
 it is disabled.
 
-\(fn &optional ARG)" t)
-
+(fn &optional ARG)" t)
 (put 'global-writeroom-mode 'globalized-minor-mode t)
-
 (defvar global-writeroom-mode nil "\
 Non-nil if Global Writeroom mode is enabled.
 See the `global-writeroom-mode' command
@@ -38,9 +35,7 @@ for a description of this minor mode.
 Setting this variable directly does not take effect;
 either customize it (see the info node `Easy Customization')
 or call the function `global-writeroom-mode'.")
-
 (custom-autoload 'global-writeroom-mode "writeroom-mode" nil)
-
 (autoload 'global-writeroom-mode "writeroom-mode" "\
 Toggle Writeroom mode in all buffers.
 With prefix ARG, enable Global Writeroom mode if ARG is positive;
@@ -55,11 +50,8 @@ Writeroom mode is enabled in all buffers where
 
 See `writeroom-mode' for more information on Writeroom mode.
 
-\(fn &optional ARG)" t)
-
+(fn &optional ARG)" t)
 (register-definition-prefixes "writeroom-mode" '("alpha" "bottom-divider-width" "define-writeroom-global-effect" "fullscreen" "internal-border-width" "menu-bar-lines" "sticky" "tool-bar-lines" "turn-on-writeroom-mode" "vertical-scroll-bars" "writeroom-"))
-
-;;;***
 
 ;;; End of scraped data
 

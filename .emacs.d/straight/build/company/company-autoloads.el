@@ -5,8 +5,8 @@
 
 ;;; Code:
 
+
 
-;;;### (autoloads nil "company" "company.el" (0 0 0 0))
 ;;; Generated autoloads from company.el
 
 (autoload 'company-mode "company" "\
@@ -52,10 +52,8 @@ evaluate `company-mode'.
 The mode's hook is called both when the mode is enabled and when
 it is disabled.
 
-\(fn &optional ARG)" t)
-
+(fn &optional ARG)" t)
 (put 'global-company-mode 'globalized-minor-mode t)
-
 (defvar global-company-mode nil "\
 Non-nil if Global Company mode is enabled.
 See the `global-company-mode' command
@@ -63,9 +61,7 @@ for a description of this minor mode.
 Setting this variable directly does not take effect;
 either customize it (see the info node `Easy Customization')
 or call the function `global-company-mode'.")
-
 (custom-autoload 'global-company-mode "company" nil)
-
 (autoload 'global-company-mode "company" "\
 Toggle Company mode in all buffers.
 With prefix ARG, enable Global Company mode if ARG is positive;
@@ -80,93 +76,71 @@ do it.
 
 See `company-mode' for more information on Company mode.
 
-\(fn &optional ARG)" t)
+(fn &optional ARG)" t)
+(autoload 'company-manual-begin "company" "\
+Start the completion interface.
 
-(autoload 'company-manual-begin "company" nil t)
-
+Unlike `company-complete-selection' or `company-complete', this command
+doesn't cause any immediate changes to the buffer text." t)
 (autoload 'company-complete "company" "\
 Insert the common part of all candidates or the current selection.
 The first time this is called, the common part is inserted, the second
 time, or when the selection has been changed, the selected candidate is
 inserted." t)
-
 (register-definition-prefixes "company" '("company-"))
 
-;;;***
 
-;;;### (autoloads nil "company-abbrev" "company-abbrev.el" (0 0 0
-;;;;;;  0))
 ;;; Generated autoloads from company-abbrev.el
 
 (autoload 'company-abbrev "company-abbrev" "\
 `company-mode' completion backend for abbrev.
 
-\(fn COMMAND &optional ARG &rest IGNORED)" t)
-
+(fn COMMAND &optional ARG &rest IGNORED)" t)
 (register-definition-prefixes "company-abbrev" '("company-abbrev-insert"))
 
-;;;***
 
-;;;### (autoloads nil "company-bbdb" "company-bbdb.el" (0 0 0 0))
 ;;; Generated autoloads from company-bbdb.el
 
 (autoload 'company-bbdb "company-bbdb" "\
 `company-mode' completion backend for BBDB.
 
-\(fn COMMAND &optional ARG &rest IGNORE)" t)
-
+(fn COMMAND &optional ARG &rest IGNORE)" t)
 (register-definition-prefixes "company-bbdb" '("company-bbdb-"))
 
-;;;***
 
-;;;### (autoloads nil "company-capf" "company-capf.el" (0 0 0 0))
 ;;; Generated autoloads from company-capf.el
 
 (register-definition-prefixes "company-capf" '("company-"))
 
-;;;***
 
-;;;### (autoloads nil "company-clang" "company-clang.el" (0 0 0 0))
 ;;; Generated autoloads from company-clang.el
 
 (register-definition-prefixes "company-clang" '("company-clang"))
 
-;;;***
 
-;;;### (autoloads nil "company-cmake" "company-cmake.el" (0 0 0 0))
 ;;; Generated autoloads from company-cmake.el
 
 (register-definition-prefixes "company-cmake" '("company-cmake"))
 
-;;;***
 
-;;;### (autoloads nil "company-css" "company-css.el" (0 0 0 0))
 ;;; Generated autoloads from company-css.el
 
 (autoload 'company-css "company-css" "\
 `company-mode' completion backend for `css-mode'.
 
-\(fn COMMAND &optional ARG &rest IGNORED)" t)
-
+(fn COMMAND &optional ARG &rest IGNORED)" t)
 (register-definition-prefixes "company-css" '("company-css-"))
 
-;;;***
 
-;;;### (autoloads nil "company-dabbrev" "company-dabbrev.el" (0 0
-;;;;;;  0 0))
 ;;; Generated autoloads from company-dabbrev.el
 
 (autoload 'company-dabbrev "company-dabbrev" "\
 dabbrev-like `company-mode' completion backend.
 
-\(fn COMMAND &optional ARG &rest IGNORED)" t)
-
+(fn COMMAND &optional ARG &rest IGNORED)" t)
 (register-definition-prefixes "company-dabbrev" '("company-dabbrev-"))
 
-;;;***
 
-;;;### (autoloads nil "company-dabbrev-code" "company-dabbrev-code.el"
-;;;;;;  (0 0 0 0))
 ;;; Generated autoloads from company-dabbrev-code.el
 
 (autoload 'company-dabbrev-code "company-dabbrev-code" "\
@@ -174,37 +148,28 @@ dabbrev-like `company-mode' backend for code.
 The backend looks for all symbols in the current buffer that aren't in
 comments or strings.
 
-\(fn COMMAND &optional ARG &rest IGNORED)" t)
-
+(fn COMMAND &optional ARG &rest IGNORED)" t)
 (register-definition-prefixes "company-dabbrev-code" '("company-dabbrev-code-"))
 
-;;;***
 
-;;;### (autoloads nil "company-elisp" "company-elisp.el" (0 0 0 0))
 ;;; Generated autoloads from company-elisp.el
 
 (autoload 'company-elisp "company-elisp" "\
 `company-mode' completion backend for Emacs Lisp.
 
-\(fn COMMAND &optional ARG &rest IGNORED)" t)
-
+(fn COMMAND &optional ARG &rest IGNORED)" t)
 (register-definition-prefixes "company-elisp" '("company-elisp-"))
 
-;;;***
 
-;;;### (autoloads nil "company-etags" "company-etags.el" (0 0 0 0))
 ;;; Generated autoloads from company-etags.el
 
 (autoload 'company-etags "company-etags" "\
 `company-mode' completion backend for etags.
 
-\(fn COMMAND &optional ARG &rest IGNORED)" t)
-
+(fn COMMAND &optional ARG &rest IGNORED)" t)
 (register-definition-prefixes "company-etags" '("company-etags-"))
 
-;;;***
 
-;;;### (autoloads nil "company-files" "company-files.el" (0 0 0 0))
 ;;; Generated autoloads from company-files.el
 
 (autoload 'company-files "company-files" "\
@@ -212,109 +177,78 @@ comments or strings.
 Completions works for proper absolute and relative files paths.
 File paths with spaces are only supported inside strings.
 
-\(fn COMMAND &optional ARG &rest IGNORED)" t)
-
+(fn COMMAND &optional ARG &rest IGNORED)" t)
 (register-definition-prefixes "company-files" '("company-file"))
 
-;;;***
 
-;;;### (autoloads nil "company-gtags" "company-gtags.el" (0 0 0 0))
 ;;; Generated autoloads from company-gtags.el
 
 (autoload 'company-gtags "company-gtags" "\
 `company-mode' completion backend for GNU Global.
 
-\(fn COMMAND &optional ARG &rest IGNORED)" t)
-
+(fn COMMAND &optional ARG &rest IGNORED)" t)
 (register-definition-prefixes "company-gtags" '("company-gtags-"))
 
-;;;***
 
-;;;### (autoloads nil "company-ispell" "company-ispell.el" (0 0 0
-;;;;;;  0))
 ;;; Generated autoloads from company-ispell.el
 
 (autoload 'company-ispell "company-ispell" "\
 `company-mode' completion backend using Ispell.
 
-\(fn COMMAND &optional ARG &rest IGNORED)" t)
+(fn COMMAND &optional ARG &rest IGNORED)" t)
+(register-definition-prefixes "company-ispell" '("company-"))
 
-(register-definition-prefixes "company-ispell" '("company-ispell-"))
-
-;;;***
 
-;;;### (autoloads nil "company-keywords" "company-keywords.el" (0
-;;;;;;  0 0 0))
 ;;; Generated autoloads from company-keywords.el
 
 (autoload 'company-keywords "company-keywords" "\
 `company-mode' backend for programming language keywords.
 
-\(fn COMMAND &optional ARG &rest IGNORED)" t)
-
+(fn COMMAND &optional ARG &rest IGNORED)" t)
 (register-definition-prefixes "company-keywords" '("company-keywords-"))
 
-;;;***
 
-;;;### (autoloads nil "company-nxml" "company-nxml.el" (0 0 0 0))
 ;;; Generated autoloads from company-nxml.el
 
 (autoload 'company-nxml "company-nxml" "\
 `company-mode' completion backend for `nxml-mode'.
 
-\(fn COMMAND &optional ARG &rest IGNORED)" t)
-
+(fn COMMAND &optional ARG &rest IGNORED)" t)
 (register-definition-prefixes "company-nxml" '("company-nxml-"))
 
-;;;***
 
-;;;### (autoloads nil "company-oddmuse" "company-oddmuse.el" (0 0
-;;;;;;  0 0))
 ;;; Generated autoloads from company-oddmuse.el
 
 (autoload 'company-oddmuse "company-oddmuse" "\
 `company-mode' completion backend for `oddmuse-mode'.
 
-\(fn COMMAND &optional ARG &rest IGNORED)" t)
-
+(fn COMMAND &optional ARG &rest IGNORED)" t)
 (register-definition-prefixes "company-oddmuse" '("company-oddmuse-"))
 
-;;;***
 
-;;;### (autoloads nil "company-semantic" "company-semantic.el" (0
-;;;;;;  0 0 0))
 ;;; Generated autoloads from company-semantic.el
 
 (autoload 'company-semantic "company-semantic" "\
 `company-mode' completion backend using CEDET Semantic.
 
-\(fn COMMAND &optional ARG &rest IGNORED)" t)
-
+(fn COMMAND &optional ARG &rest IGNORED)" t)
 (register-definition-prefixes "company-semantic" '("company-semantic-"))
 
-;;;***
 
-;;;### (autoloads nil "company-template" "company-template.el" (0
-;;;;;;  0 0 0))
 ;;; Generated autoloads from company-template.el
 
 (register-definition-prefixes "company-template" '("company-template-"))
 
-;;;***
 
-;;;### (autoloads nil "company-tempo" "company-tempo.el" (0 0 0 0))
 ;;; Generated autoloads from company-tempo.el
 
 (autoload 'company-tempo "company-tempo" "\
 `company-mode' completion backend for tempo.
 
-\(fn COMMAND &optional ARG &rest IGNORED)" t)
-
+(fn COMMAND &optional ARG &rest IGNORED)" t)
 (register-definition-prefixes "company-tempo" '("company-tempo-"))
 
-;;;***
 
-;;;### (autoloads nil "company-tng" "company-tng.el" (0 0 0 0))
 ;;; Generated autoloads from company-tng.el
 
 (autoload 'company-tng-frontend "company-tng" "\
@@ -323,11 +257,8 @@ frontend will display the candidate in the buffer as if it's
 already there and any key outside of `company-active-map' will
 confirm the selection and finish the completion.
 
-\(fn COMMAND)")
-
-(define-obsolete-function-alias 'company-tng-configure-default 'company-tng-mode "0.9.14" "\
-Applies the default configuration to enable company-tng.")
-
+(fn COMMAND)")
+(define-obsolete-function-alias 'company-tng-configure-default 'company-tng-mode "0.10.0" "Applies the default configuration to enable company-tng.")
 (defvar company-tng-mode nil "\
 Non-nil if Company-Tng mode is enabled.
 See the `company-tng-mode' command
@@ -335,9 +266,7 @@ for a description of this minor mode.
 Setting this variable directly does not take effect;
 either customize it (see the info node `Easy Customization')
 or call the function `company-tng-mode'.")
-
 (custom-autoload 'company-tng-mode "company-tng" nil)
-
 (autoload 'company-tng-mode "company-tng" "\
 This minor mode enables `company-tng-frontend'.
 
@@ -355,14 +284,10 @@ evaluate `(default-value \\='company-tng-mode)'.
 The mode's hook is called both when the mode is enabled and when
 it is disabled.
 
-\(fn &optional ARG)" t)
-
+(fn &optional ARG)" t)
 (register-definition-prefixes "company-tng" '("company-tng-"))
 
-;;;***
 
-;;;### (autoloads nil "company-yasnippet" "company-yasnippet.el"
-;;;;;;  (0 0 0 0))
 ;;; Generated autoloads from company-yasnippet.el
 
 (autoload 'company-yasnippet "company-yasnippet" "\
@@ -388,11 +313,8 @@ shadow backends that come after it.  Recommended usages:
 
   (global-set-key (kbd \"C-c y\") \\='company-yasnippet)
 
-\(fn COMMAND &optional ARG &rest IGNORE)" t)
-
+(fn COMMAND &optional ARG &rest IGNORE)" t)
 (register-definition-prefixes "company-yasnippet" '("company-yasnippet-"))
-
-;;;***
 
 ;;; End of scraped data
 

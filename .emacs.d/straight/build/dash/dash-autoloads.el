@@ -5,8 +5,8 @@
 
 ;;; Code:
 
+
 
-;;;### (autoloads nil "dash" "dash.el" (0 0 0 0))
 ;;; Generated autoloads from dash.el
 
 (autoload 'dash-fontify-mode "dash" "\
@@ -36,10 +36,8 @@ evaluate `dash-fontify-mode'.
 The mode's hook is called both when the mode is enabled and when
 it is disabled.
 
-\(fn &optional ARG)" t)
-
+(fn &optional ARG)" t)
 (put 'global-dash-fontify-mode 'globalized-minor-mode t)
-
 (defvar global-dash-fontify-mode nil "\
 Non-nil if Global Dash-Fontify mode is enabled.
 See the `global-dash-fontify-mode' command
@@ -47,9 +45,7 @@ for a description of this minor mode.
 Setting this variable directly does not take effect;
 either customize it (see the info node `Easy Customization')
 or call the function `global-dash-fontify-mode'.")
-
 (custom-autoload 'global-dash-fontify-mode "dash" nil)
-
 (autoload 'global-dash-fontify-mode "dash" "\
 Toggle Dash-Fontify mode in all buffers.
 With prefix ARG, enable Global Dash-Fontify mode if ARG is positive;
@@ -64,15 +60,11 @@ Dash-Fontify mode is enabled in all buffers where
 
 See `dash-fontify-mode' for more information on Dash-Fontify mode.
 
-\(fn &optional ARG)" t)
-
+(fn &optional ARG)" t)
 (autoload 'dash-register-info-lookup "dash" "\
 Register the Dash Info manual with `info-lookup-symbol'.
 This allows Dash symbols to be looked up with \\[info-lookup-symbol]." t)
-
 (register-definition-prefixes "dash" '("!cdr" "!cons" "--" "->" "-a" "-butlast" "-c" "-d" "-e" "-f" "-gr" "-i" "-juxt" "-keep" "-l" "-m" "-no" "-o" "-p" "-r" "-s" "-t" "-u" "-value-to-list" "-when-let" "-zip" "dash-"))
-
-;;;***
 
 ;;; End of scraped data
 

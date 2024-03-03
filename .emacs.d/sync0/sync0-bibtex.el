@@ -1,11 +1,13 @@
 ;; -*- lexical-binding: t -*-
+(defvar sync0-bibtex-bibliographies nil
+  "Default bibliographies to be read by helm-bibtex and others")
 
 (setq sync0-bibtex-bibliobraphy-directory (concat (getenv "HOME") "/Gdrive/bibliographies/")
       sync0-bibtex-default-bibliography (concat (getenv "HOME") "/Gdrive/bibliographies/bibliography.bib")
       sync0-bibtex-master-bibliography (concat (getenv "HOME") "/Gdrive/bibliographies/master.bib")
       sync0-bibtex-sick-bibliography (concat (getenv "HOME") "/Gdrive/bibliographies/sick.bib"))
 
-(setq sync0-bibtex-excluded-bibliographies '("/home/sync0/Gdrive/bibliographies/trash.bib"
+(defvar sync0-bibtex-excluded-bibliographies '("/home/sync0/Gdrive/bibliographies/trash.bib"
                                              "/home/sync0/Gdrive/bibliographies/archived.bib"
                                              "/home/sync0/Gdrive/bibliographies/master.bib"
                                              "/home/sync0/Gdrive/bibliographies/jabref.bib"
@@ -13,7 +15,14 @@
                                              "/home/sync0/Gdrive/bibliographies/exclude.bib"
                                              "/home/sync0/Gdrive/bibliographies/sick.bib"
                                              "/home/sync0/Gdrive/bibliographies/backup.bib"
-                                             "/home/sync0/Gdrive/bibliographies/bibliography.bib.bak"))
+                                             "/home/sync0/Gdrive/bibliographies/bibliography.bib.bak")
+  "List of all excluded bibliography files from processing.")
+
+;; Exclude backup files from undo-tree
+(setq sync0-bibtex-excluded-bibliographies
+      (append sync0-bibtex-excluded-bibliographies
+              (directory-files sync0-bibtex-bibliobraphy-directory t "\\.~undo-tree~$")))
+
 
 (defun sync0-bibtex-recalc-bibliographies ()
   "Recalculate files in default bibliography directory
@@ -29,8 +38,7 @@
     (setq org-ref-default-bibliography sync0-bibtex-bibliographies))
   (when (bound-and-true-p bibtex-completion-bibliography)
     (setq bibtex-completion-bibliography sync0-bibtex-bibliographies))
-  (let ((x (length sync0-bibtex-bibliographies)))
-    (message "%s files have been recognized as bibliographies." x)))
+  (message "%s files have been recognized as bibliographies." (length sync0-bibtex-bibliographies)))
 
 (sync0-bibtex-recalc-bibliographies)
 

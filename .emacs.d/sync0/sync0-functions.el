@@ -1,3 +1,4 @@
+
 (defun sync0-insert-elements-of-list (list)
   "Print each element of LIST on a line of its own."
   (while list
@@ -6,12 +7,21 @@
 
 (defun sync0-show-elements-of-list (list sep)
   "Print massive string with each element of list separated by sep"
-(unless (equal (length list) 0)
-  (let (x)
-    (while list
-      (setq x (concat (car list) sep x))
-      (setq list (cdr list)))
-    (string-trim-right x sep))))
+  (cond
+   ((listp list)
+    (if (> (length list) 1)
+	(let (x)
+	  (while list
+	    (setq x (concat (car list) sep x))
+	    (setq list (cdr list)))
+	  (string-trim-right x sep))
+      (car list)))
+   ((stringp list)
+    list)
+   ((symbolp list)
+    (symbol-name list))
+   (t
+    (error "Unknwon input to sync0-show-elements-of-list."))))
 
 (defun sync0-update-list (newelt list file)
   "Saves my projects in my home folder."
@@ -184,6 +194,52 @@ If OPTIONAL-CONTENT is provided, replace the old content with it."
   (with-temp-buffer
     (insert (or optional-content ""))
     (write-region (point-min) (point-max) file-path)))
+
+(defun sync0-completion-finish-key (command)
+  "Return the key binding that finishes a completion command.
+COMMAND is the command to finish, one of the symbols
+`completing-read' or `read-file-name'."
+  (cond
+   ((and (boundp 'selectrum-mode) selectrum-mode) (key-description (where-is-internal 'selectrum-submit-exact-input (list selectrum-minibuffer-map) 'non-ascii)))
+   ((and (boundp 'ivy-mode) ivy-mode) (key-description (where-is-internal 'ivy-immediate-done (list ivy-minibuffer-map) 'non-ascii)))
+   ((and (boundp 'helm-mode) helm-mode) (let ((map (symbol-value (alist-get command '((completing-read . helm-comp-read-map)
+										      (read-file-name . helm-read-file-map))))))
+					  (key-description (where-is-internal 'helm-cr-empty-string (list map) 'non-ascii))))
+   (t (key-description [return]))))
+
+;; (defun sync0-completing-read-collection (collection)
+;;   "Read keywords with completion from COLLECTION.
+;; Return the keywords entered as a list.  If no keywords are
+;; entered, the return value is nil."
+;;   (let* ((prompt (format "Add projects (%s to finish) [%%s]" (sync0-completion-finish-key 'completing-read))))
+;;     (cl-loop for project = (completing-read (format prompt (mapconcat #'identity collection " "))
+;; 					    collection) 
+;;              until (string= project "")
+;;              collecting (let ((matching-code (car (rassoc project sync0-projects-alist))))
+;;                           (if matching-code
+;;                               matching-code
+;;                             project))
+;;              into projects
+;;              finally return projects)))
+
+(defun sync0-process-bibkeys (keys)
+  "Process the KEYS argument into a list of strings."
+  (cond
+    ;; Case 1: List of strings or symbols
+   ((listp keys)
+    (if (> (length keys) 1)
+	(mapcar (lambda (k)
+		  (if (symbolp k)
+                      (symbol-name k)
+                    k))
+		keys)
+      (car keys)))
+    ;; Case 2: Single string
+    ((stringp keys)
+      keys)
+    ;; Case 3: Other data types
+    (t
+     (error "You must supply either a list or a string as keys."))))
 
 (provide 'sync0-functions)
 

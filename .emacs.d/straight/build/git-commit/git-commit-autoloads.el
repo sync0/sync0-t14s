@@ -5,9 +5,10 @@
 
 ;;; Code:
 
+
 
-;;;### (autoloads nil "git-commit" "git-commit.el" (0 0 0 0))
 ;;; Generated autoloads from git-commit.el
+
 (put 'git-commit-major-mode 'safe-local-variable
     (lambda (val)
       (memq val '(text-mode
@@ -15,10 +16,7 @@
                   org-mode
                   fundamental-mode
                   git-commit-elisp-text-mode))))
-
 (register-definition-prefixes "git-commit" '("git-commit-" "global-git-commit-mode"))
-
-;;;***
 
 ;;; End of scraped data
 

@@ -16,6 +16,14 @@
 ;;             (bibkey (sync0-bibtex-entry-key-define)))
 ;; mycommand))))
 
+(defvar sync0-bibtex-python-pdf-searcher-path
+  "/home/sync0/Scripts/python/pdf_search/pdf_search.py"
+  "Path of my current python pdf searcher script")
+
+(defvar sync0-bibtex-python-pdf-searcher-venv-path
+"/home/sync0/Scripts/python/pdf_search/.venv/bin/activate"
+  "Path of my venv for python pdf searcher script")
+
 (defvar sync0-bibtex-python-summarizer-script-path
   "/home/sync0/Scripts/python/summarizer/summarize4.py"
   "Path of my current python webscrapper script")
@@ -39,6 +47,14 @@
 (defvar sync0-bibtex-python-pdf-to-txt-venv-path
 "/home/sync0/Scripts/python/summarizer/myenv/bin/activate"
   "Path of my current python webscrapper script")
+
+(defvar sync0-bibtex-python-fuzzy-to-bibtex-venv-path
+"/home/sync0/Scripts/python/fuzzy_to_biblatex/.venv/bin/activate"
+  "Path of my current python fuzzy data to biblatex script")
+
+(defvar sync0-bibtex-python-fuzzy-to-bibtex-script-path
+"/home/sync0/Scripts/python/fuzzy_to_biblatex/fuzzy_to_biblatex.py"
+  "Path of my current python fuzzy data to biblatex script")
 
 (defvar sync0-bibtex-python-doi-or-isbn-venv-path
 "/home/sync0/Scripts/python/doi_biblatex/.venv/bin/activate"
@@ -68,7 +84,7 @@
 (defun sync0-bibtex-python-determine-webscrapper-script (url)
   "Analyze the url and determine the right web scrapper python
 script to use"
-  (cond ((string-match-p "hal.science" url)
+  (cond ((string-match-p "hal." url)
          "/home/sync0/Scripts/python/web_scrapper/hal_scrapper.py")
         ((string-match-p "catalogue.bnf" url)
          "/home/sync0/Scripts/python/web_scrapper/bnf_scrapper.py")
@@ -205,5 +221,84 @@ the URL-LIST."
         (goto-char (point-min))
         (sync0-bibtex-corrections-format-bibtex-to-biblatex)
         (append-to-file nil nil bibfile))))
+
+;; (defun sync0-bibtex-python-bibentry-from-chatgpt (&optional string-or-list)
+;;   "Run the Python command chosen interactiveley with each DOI or ISBN number in the
+;; the URL-LIST."
+;;   (interactive)
+;;   (let ((bibfile (sync0-bibtex-entry-choose-bibliography-file))
+;;         (venv sync0-bibtex-python-fuzzy-to-bibtex-venv-path)
+;;         (script-path sync0-bibtex-python-fuzzy-to-bibtex-script-path)
+;;         (bibstrings (sync0-define-list-interactively "Enter bibliography string: " "Add another text string? " string-or-list)))
+;;         ;; If oi-or-list is a list, loop through each URL
+;;       (with-temp-buffer
+;;         (dolist (element bibstrings)
+;;           (let* ((bibkey (sync0-bibtex-entry-key-define t))
+;; 		 (text-string (concat "'" element "'"))
+;; 		 (python-command (format "source %s && python3 %s %s %s" venv script-path text-string bibkey)))
+;;                 (forward-line)
+;;                 (insert (shell-command-to-string python-command)) 
+;;                (bibtex-fill-entry)))
+;;         (goto-char (point-min))
+;;         ;; (sync0-bibtex-corrections-format-bibtex-to-biblatex)
+;;         (append-to-file nil nil bibfile))))
+
+;; (defun sync0-bibtex-python-bibentry-from-chatgpt (&optional string-or-list)
+;;   "Run the Python command chosen interactiveley with each DOI or ISBN number in the
+;; the URL-LIST."
+;;   (interactive)
+;;   (let ((bibfile (sync0-bibtex-entry-choose-bibliography-file))
+;;         (venv sync0-bibtex-python-fuzzy-to-bibtex-venv-path)
+;;         (script-path sync0-bibtex-python-fuzzy-to-bibtex-script-path)
+;;         (bibstrings (sync0-define-list-interactively "Enter bibliography string: " "Add another text string? " string-or-list)))
+;;         ;; If oi-or-list is a list, loop through each URL
+;;       (with-temp-buffer
+;;         (dolist (element bibstrings)
+;;           (let* ((bibkey (sync0-bibtex-entry-key-define t))
+;; 		 (text-string (concat "'" element "'"))
+;; 		 (python-command (format "source %s && python3 %s %s %s" venv script-path text-string bibkey)))
+;;                 (forward-line)
+;;                 (insert (shell-command-to-string python-command)) 
+;;                (bibtex-fill-entry)))
+;;         (goto-char (point-min))
+;;         ;; (sync0-bibtex-corrections-format-bibtex-to-biblatex)
+;;         (append-to-file nil nil bibfile))))
+
+;; (defun sync0-bibtex-python-bibentry-from-anystyle (&optional string-or-list)
+;;   "Run the anystyle command chosen interactiveley with string or list."
+;;   (interactive)
+;;   (let ((bibfile (sync0-bibtex-entry-choose-bibliography-file))
+;; 	(base-command "anystyle --stdout -f bib parse ")
+;;         (tempfile )
+;;         (bibstrings (sync0-define-list-interactively "Enter bibliography string: " "Add another text string? " string-or-list)))
+;;     ;; If list, loop through each element
+;;     (with-temp-buffer
+;;       (dolist (element bibstrings)
+;; 	(insert (concat element "\n")))
+;;       (append-to-file nil nil tempfile))
+;;     (with-temp-buffer
+;;       (let ((mycommand (concat base-command tempfile)))
+;;         (insert (shell-command-to-string mycommand)) 
+;;         (goto-char (point-min))
+;;         ;; (sync0-bibtex-corrections-format-bibtex-to-biblatex)
+;;         (append-to-file nil nil bibfile)))))
+
+(defun sync0-bibtex-bibentry-from-anystyle (&optional string-or-list)
+  "Run the anystyle command chosen interactively with string or list."
+  (interactive)
+  (let ((bibfile "/home/sync0/Gdrive/bibliographies/unchecked.bib")
+        ;; (bibfile (sync0-bibtex-entry-choose-bibliography-file))
+        (base-command "anystyle --stdout -f bib parse ")
+        (tempfile (make-temp-file "anystyle-input")))
+    ;; If list, loop through each element
+    (with-temp-file tempfile
+      (dolist (element (sync0-define-list-interactively "Enter bibliography string: " "Add another text string? " string-or-list))
+        (insert (concat element "\n"))))
+    (with-temp-buffer
+      (let ((mycommand (concat base-command tempfile)))
+        (insert (shell-command-to-string mycommand)) 
+        (goto-char (point-min))
+	(sync0-bibtex-corrections-format-bibtex-to-biblatex)
+	(append-to-file nil nil bibfile)))))
 
 (provide 'sync0-bibtex-python)

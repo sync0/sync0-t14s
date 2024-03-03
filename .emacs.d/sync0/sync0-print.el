@@ -1,5 +1,16 @@
 (defvar sync0-print-file nil)
 
+(defvar sync0-print-default-printer "bizhub_c451"
+  "Default printer to use with the lp or the lpr terminal commands.")
+
+(defvar sync0-print-default-two-sided "two-sided-long-edge")
+
+(defvar sync0-print-default-print-quality "3")
+
+(defvar sync0-print-default-pages-per-sheet "1")
+
+(defvar sync0-print-default-paper-size "a4")
+
 (defvar sync0-print-number-copies nil)
 
 (defvar sync0-print-page-size nil)
@@ -11,6 +22,10 @@
 ;; (defvar sync0-print-command "lpr -P HP_Deskjet_4640_series -o fit-to-page -o position=center") 
 
 (defvar sync0-print-command "lpr -o fit-to-page -o position=center") 
+
+(defvar sync0-print-command
+  (concat "lpr -P " sync0-print-default-printer " -o fit-to-page -o position=center") 
+  "Default command to pass to lpr")
 
 ;; (defun sync0-print-define-file (&optional)
 ;;   "Define the language for new BibLaTeX entry."
@@ -25,20 +40,20 @@
   (let ((copies (concat " -# "
                         (read-string "Enter number of copies: " "1")))
         (page-size (concat " -o media="
-                           (completing-read "Choose page size: " '("a4" "a5" "a6" "letter" "legal"))))
+                           (completing-read "Choose page size: " '("a4" "a5" "a6" "letter" "legal") nil t sync0-print-default-paper-size)))
         (page-list (unless (yes-or-no-p "Print all pages?")
-                     (concat " -P "
-                             (read-string "Page list (ex. 1-3 or 1,3): " ))))
-        (page-per-sheet (let ((pages (read-string "Enter number of pages per sheet (max. 16): " "1")))
+                     (concat " -o page-ranges="
+                             (read-string "Page range (ex. 1-3 or 1,3): "))))
+        (page-per-sheet (let ((pages (read-string "Enter number of pages per sheet (max. 16): " sync0-print-default-pages-per-sheet)))
                           (if (string= pages "1")
                               nil
                             (concat " -o number-up=" pages))))
         (double-sided (concat " -o sides="
-                              (completing-read "Choose page layout: " '("one-sided" "two-sided-long-edge" "two-sided-short-edge"))))
+                              (completing-read "Choose page layout: " '("one-sided" "two-sided-long-edge" "two-sided-short-edge") nil t sync0-print-default-two-sided)))
         ;; Remember the blank space at the end of this command. This
         ;; is good to prevent unwanted effects when using this command
         ;; in with the function "concat"
-        (quality (concat " -o print-quality=" (completing-read "Choose print quality: " '("3" "4" "5")) " ")))
+        (quality (concat " -o print-quality=" (completing-read "Choose print quality: " '("3" "4" "5") nil t sync0-print-default-print-quality) " ")))
     (concat sync0-print-command
             copies
             page-size

@@ -19,7 +19,7 @@
 ;; use-package has to be told not to use straight when this is not
 ;; desired, such as when packages are already present by default in Emacs.
 (setq straight-use-package-by-default t)
-;; Turn off 
+;; Turn off default package manager
 (setq package-enable-at-startup nil)
 
 (eval-when-compile
@@ -311,6 +311,7 @@
 
 (setq sync0-cloud-directory (concat (getenv "HOME") "/Gdrive/")
       sync0-zettelkasten-directory (concat sync0-cloud-directory "obsidian/")
+      sync0-bibliographies-directory (concat sync0-cloud-directory "bibliographies/")
       sync0-goodreads-directory (concat sync0-cloud-directory "goodreads/")
       sync0-zettelkasten-references-directory (concat sync0-zettelkasten-directory "references/")
       ;; sync0-obsidian-directory (concat (getenv "HOME") "/Gdrive/obsidian/")
@@ -327,6 +328,16 @@
       sync0-french-parts-speech '("nom féminin" "nom masculin" "verbe intransitif" "verbe transitif" "verbe" "conjonction" "adjectif" "adverbe")
       sync0-portuguese-parts-speech '("sustantivo femenino" "sustantivo masculino" "verbo intransitivo" "verbo transitivo" "verbo" "conjunção" "adjetivo" "advérbio")
       sync0-spanish-parts-speech '("sustantivo femenino" "sustantivo masculino" "verbo intransitivo" "verbo transitivo" "verbo" "conjunción" "adjectivo" "adverbio"))
+
+(defvar sync0-default-file-associations
+   '(("epub" . "zathura")
+     ("odt" . "libreoffice")
+     ("doc" . "libreoffice")
+     ("docx" . "libreoffice")
+     ("ppt" . "libreoffice")
+     ("mp4" . "vlc")
+     ("mp3" . "vlc"))
+"My default file associations")
 
 (defmacro sync0-redefine (symbol value)
   `(setf ,symbol ,value))
@@ -611,6 +622,8 @@ empty (not in the lisp sense but in a human-readable sense)."
   (use-package undo-tree
     :custom
     (undo-tree-enable-undo-in-region nil)
+    (undo-tree-history-directory-alist '(("." . (concat sync0-emacs-directory "undo-tree-files/"))))
+    (undo-tree-auto-save-history nil)
     :config
     (global-undo-tree-mode))
 
@@ -721,9 +734,9 @@ empty (not in the lisp sense but in a human-readable sense)."
     "p" 'previous-buffer
     "n" 'next-buffer
     "N" 'sync0-find-next-file
-    "k" 'kill-buffer-and-window 
+    "k" 'quit-window
     "b" 'ivy-switch-buffer
-    "K" 'kill-buffer)
+    "K" 'kill-buffer-and-window)
 
   (defhydra sync0-hydra-help (:color amaranth :hint nil :exit t)
     "
@@ -815,6 +828,8 @@ empty (not in the lisp sense but in a human-readable sense)."
     (unbind-key "C-m" evil-normal-state-map)
     (unbind-key "M-." evil-normal-state-map)
     (unbind-key "C-d" evil-motion-state-map)
+;; Used for calling ebib
+    (unbind-key "C-e" evil-motion-state-map)
     ;; (unbind-key "<SPC>" evil-motion-state-map)
 
     (evil-define-key 'normal global-map
@@ -823,14 +838,22 @@ empty (not in the lisp sense but in a human-readable sense)."
       "U" 'undo-tree-redo
       "s" 'fill-paragraph
       "S" 'sync0-insert-line-below
-      "M" 'bookmark-set
-      "zc" 'transpose-chars
-      "zb" 'sync0-delete-text-block
-      "zl" 'transpose-lines
-      "zw" 'transpose-words
-      "zj" 'evil-join
-      "zp" 'transpose-paragraphs
-      "zs" 'transpose-sentences)
+      "M" 'bookmark-set)
+
+    ;; (evil-define-key 'normal global-map
+    ;;   "/" 'swiper
+    ;;   "gb" 'counsel-bookmark
+    ;;   "U" 'undo-tree-redo
+    ;;   "s" 'fill-paragraph
+    ;;   "S" 'sync0-insert-line-below
+    ;;   "M" 'bookmark-set
+    ;;   "zc" 'transpose-chars
+    ;;   "zb" 'sync0-delete-text-block
+    ;;   "zl" 'transpose-lines
+    ;;   "zw" 'transpose-words
+    ;;   "zj" 'evil-join
+    ;;   "zp" 'transpose-paragraphs
+    ;;   "zs" 'transpose-sentences)
 
     (evil-leader/set-key
       "<SPC>" 'sync0-insert-whitespace
@@ -1357,9 +1380,9 @@ Exempt major modes are defined in `display-line-numbers-exempt-modes'."
   (require 'bibtex-completion)
   (require 'sync0-org-ref-functions)
 
-  (ivy-set-display-transformer
-   'org-ref-ivy-insert-cite-link
-   'ivy-bibtex-display-transformer)
+  ;; (ivy-set-display-transformer
+  ;;  'org-ref-ivy-insert-cite-link
+  ;;  'ivy-bibtex-display-transformer)
 
 ;; (doi-utils-def-bibtex-type article ("journal-article" "article-journal")
 ;;                            author title journaltitle date volume number pages doi url)
@@ -1809,7 +1832,7 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
   (use-package writeroom-mode
     :commands writeroom-mode
     :straight (writeroom-mode :type git :host github :repo "joostkremers/writeroom-mode")
-    :hook (markdown-mode . writeroom-mode)
+    ;; :hook (markdown-mode . writeroom-mode)
     :custom
     (writeroom-width 70))
 
@@ -1919,6 +1942,7 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
 (use-package markdown-mode
   :commands (markdown-mode gfm-mode)
   :custom
+  (indent-tabs-mode t)
   (markdown-enable-wiki-links t)
   (markdown-enable-math t)
   (markdown-coding-system 'utf-8)
@@ -2643,10 +2667,59 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
                   ("D" . pdf-view-dark-minor-mode)
                   ("d" . pdf-annot-delete))))
 
-   (use-package pdf-outline
- :straight nil
-     ;; :load-path "site-lisp/pdf-tools/lisp"
-     :after pdf-tools
-     :bind ((:map pdf-outline-buffer-mode-map
-                  ("j" . next-line)
-                  ("k" . previous-line))))
+(use-package pdf-outline
+  :straight nil
+  ;; :load-path "site-lisp/pdf-tools/lisp"
+  :after pdf-tools
+  :bind ((:map pdf-outline-buffer-mode-map
+               ("j" . next-line)
+               ("k" . previous-line))))
+
+(use-package ebib
+  :after (bibtex bibtex-completion)
+  ;; :init
+  ;; (setq bibtex-biblatex-entry-alist sync0-bibtex-type-fields)
+  :custom
+  ;; Set the dialect to biblatex
+  (ebib-bibtex-dialect 'biblatex)
+  (ebib-default-directory sync0-bibliographies-directory)
+  ;; Set the path to your bibliography file
+  ;; (ebib-file-search-dirs '(sync0-bibtex-master-bibliography))
+  (ebib-save-indent-as-bibtex t)
+  (ebib-notes-directory sync0-zettelkasten-references-directory)
+  (ebib-notes-locations (list sync0-zettelkasten-references-directory))
+  (ebib-notes-file-extension "md")
+  ;; (ebib-preload-bib-files (list sync0-bibtex-master-bibliography))
+  ;; Visuals
+  ;; make ebib window easier to deal with
+  (ebib-index-window-size 20)
+  (ebib-index-column-separator " ")
+  (ebib-create-backups nil)
+  (ebib-notes-show-method-all)
+  (ebib-default-entry-type "Misc")
+  (ebib-index-default-sort '("Year" . ascend))
+  (ebib-sort-order '((("author" "editor") ("date" "origdate") ("edition") ("volume" "number"))))
+  ;; (ebib-keywords sync0-bibtex-completion-theme)
+  (ebib-keywords "/home/sync0/.emacs.d/sync0-vars/bibtex-completion-theme.txt")
+  (ebib-keywords-save-on-exit t)
+  (ebib-keywords-field-keep-sorted t) 
+  (ebib-keywords-separator ", ") 
+  (ebib-file-associations (cons '("pdf" . "zathura") sync0-default-file-associations))
+  :config
+  (require 'sync0-ebib-rewrite)
+  (require 'sync0-ebib)
+  ;; Prevent conflicts between evil bindings and ebib's own
+  (add-to-list 'evil-emacs-state-modes 'ebib-index-mode)
+  (add-to-list 'evil-emacs-state-modes 'ebib-entry-mode)
+  ;; (setq ebib-file-search-dirs `(,do.refs/pdf-dir))
+  ;; (setq ebib-preload-bib-files (do.refs/get-db-file-list))
+  ;; use a common/similar notes template between `ebib' and `ivy-bibtex'.
+  ;; (setq ebib-notes-template "#+TITLE: Notes on: %T\n\n>|<")
+  (remove-hook 'ebib-notes-new-note-hook #'org-narrow-to-subtree)
+  ;; open pdfs with our favorite pdf reader
+  ;; (setq ebib-file-associations do.refs/file-assoc)
+  ;; (defun sync0-ebib-get-pdf-filename (key)
+  ;;   (sync0-bibtex-choose-attachment key))
+
+  (global-set-key (kbd "C-e") 'ebib)
+  )

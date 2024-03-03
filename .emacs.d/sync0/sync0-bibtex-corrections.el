@@ -1,5 +1,26 @@
 (require 'xah-replace-pairs)
 
+;; (defun sync0-bibtex-completion-get-value (field entry)
+;;   "Fix a redefinition of bibtex-completion-get-value because it
+;; outputs the bibtex fields with the braces {}."
+;;   (if (member field '("=type=" "=has-pdf=" "=has-note=" "edition" "pagetotal"))
+;;       (bibtex-completion-get-value field entry)
+;;     (when-let ((val (bibtex-completion-get-value field entry)))
+;;       (substring val 1 -1))))
+
+;; (defun sync0-bibtex-completion-get-value (field entry)
+;;   "Fix a redefinition of bibtex-completion-get-value because it
+;; outputs the bibtex fields with the braces {}."
+;;   (if (member field '("=type=" "=has-pdf=" "=has-note="))
+;;       (bibtex-completion-get-value field entry)
+;;     (when-let ((val (bibtex-completion-get-value field entry)))
+;;       (substring val 1 -1))))
+
+(defun sync0-bibtex-completion-get-value (field entry)
+  "Fix a redefinition of bibtex-completion-get-value because it
+outputs the bibtex fields with the braces {}."
+      (bibtex-completion-get-value field entry))
+
 (defun sync0-bibtex-corrections-add-quotes-name (person)
   "Add quotes to person string."
   (when (stringp person)
@@ -659,6 +680,8 @@ bibtex-completion handles crossreferences."
              (author-full (when-let ((person (cdr (assoc "author" entry))))
                             (unless (string-match "^[[:print:]]+, " person)
                               (substring person 1 -1))))
+             (year (when (assoc "year" entry)
+                         (cdr (assoc "year" entry))))
              (author-list 
               (when author-full
                 (split-string author-full " ")))
@@ -669,12 +692,15 @@ bibtex-completion handles crossreferences."
              (author (when (and author-first author-last)
                        (concat author-last ", " author-first)))
              (date (unless (assoc "date" entry)
-                     (substring (cdr (assoc "year" entry)) 1 -1)))
+		     (when year
+                       (substring year 1 -1))))
+	     (year-or-date (or year date))
+	     (century (when year-or-date
+			(format "%s" (1+ (string-to-number year-or-date)))))
              (journaltitle (when (string= type-lowcase "article")
                              (unless (assoc "journaltitle" entry)
                                (sync0-bibtex-get-field-value-at-point "journal" entry))))
-             ;; "^[0-9]+[a-z]\{2\}"
-             (new-key (if (string-match "[[:digit:]]+[[:alpha:]]+" bibkey)
+             (new-key (if (string-match "^[[:digit:]]+[[:alpha:]]+" bibkey)
                           bibkey
                         (sync0-bibtex-entry-key-define)))
              (created (unless  (assoc "created" entry)
@@ -698,7 +724,7 @@ bibtex-completion handles crossreferences."
              (subtitle (when (> (length title-list) 1)
                          (string-trim-whitespace (cadr title-list))))
              (status (unless  (assoc "status" entry)
-                       "inspect"))
+                       "fetch"))
              (type-string (concat "@" (upcase-initials type) "{" new-key ",\n")))
         (bibtex-beginning-of-entry)
         (re-search-forward regex end t 1) 
@@ -713,7 +739,10 @@ bibtex-completion handles crossreferences."
         (when subtitle
           (sync0-bibtex-create-field-at-entry "subtitle" subtitle))
         (sync0-bibtex-create-field-at-entry "journaltitle" journaltitle)
-        (sync0-bibtex-create-field-at-entry "date" date)
+	(when date
+          (sync0-bibtex-create-field-at-entry "date" date)
+	  (unless year
+            (sync0-bibtex-create-field-at-entry "year" date)))
         (sync0-bibtex-create-field-at-entry "created" created)
         (sync0-bibtex-create-field-at-entry "file" new-path)
         (sync0-bibtex-create-field-at-entry "language" language)
@@ -748,8 +777,8 @@ bibtex-completion handles crossreferences."
                      (concat 
                       ", p. "
                       sync0-bibtex-entry-pages))))
-        ((string= sync0-bibtex-entry-type-downcase "article")
-         (when sync0-bibtex-entry-booktitle
+        ((and (string= sync0-bibtex-entry-type-downcase "article")
+          sync0-bibtex-entry-booktitle)
            (concat sync0-bibtex-entry-lastname
                    (or (concat " " sync0-bibtex-entry-date-fixed " ")
                        " ")
@@ -765,7 +794,26 @@ bibtex-completion handles crossreferences."
                    (when sync0-bibtex-entry-pages
                      (concat 
                       ", p. "
-                      sync0-bibtex-entry-pages)))))
+                      sync0-bibtex-entry-pages))))
+        ((string= sync0-bibtex-entry-type-downcase "article")
+         (concat sync0-bibtex-entry-lastname
+                 (or (concat " " sync0-bibtex-entry-date-fixed " ")
+                     " ")
+               sync0-bibtex-entry-title-compatible
+               " in "
+               sync0-bibtex-entry-journaltitle
+               (when sync0-bibtex-entry-volume
+                 (concat 
+                  ", T. "
+                  sync0-bibtex-entry-volume
+               (when sync0-bibtex-entry-number
+                 (concat 
+                  ", No. "
+                  sync0-bibtex-entry-number))
+               (when sync0-bibtex-entry-pages
+                 (concat 
+                  ", p. "
+                  sync0-bibtex-entry-pages))))))
         ((or (string= sync0-bibtex-entry-type-downcase "incollection")
              (string= sync0-bibtex-entry-type-downcase "inproceedings"))
          (concat sync0-bibtex-entry-lastname

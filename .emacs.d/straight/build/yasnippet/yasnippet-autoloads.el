@@ -5,8 +5,8 @@
 
 ;;; Code:
 
+
 
-;;;### (autoloads nil "yasnippet" "yasnippet.el" (0 0 0 0))
 ;;; Generated autoloads from yasnippet.el
 
 (autoload 'yas-minor-mode "yasnippet" "\
@@ -37,10 +37,8 @@ evaluate `yas-minor-mode'.
 The mode's hook is called both when the mode is enabled and when
 it is disabled.
 
-\(fn &optional ARG)" t)
-
+(fn &optional ARG)" t)
 (put 'yas-global-mode 'globalized-minor-mode t)
-
 (defvar yas-global-mode nil "\
 Non-nil if Yas-Global mode is enabled.
 See the `yas-global-mode' command
@@ -48,9 +46,7 @@ for a description of this minor mode.
 Setting this variable directly does not take effect;
 either customize it (see the info node `Easy Customization')
 or call the function `yas-global-mode'.")
-
 (custom-autoload 'yas-global-mode "yasnippet" nil)
-
 (autoload 'yas-global-mode "yasnippet" "\
 Toggle Yas minor mode in all buffers.
 With prefix ARG, enable Yas-Global mode if ARG is positive; otherwise,
@@ -65,12 +61,9 @@ would do it.
 
 See `yas-minor-mode' for more information on Yas minor mode.
 
-\(fn &optional ARG)" t)
+(fn &optional ARG)" t)
 (autoload 'snippet-mode "yasnippet" "A mode for editing yasnippets" t nil)
-
 (register-definition-prefixes "yasnippet" '("help-snippet-def" "snippet-mode-map" "yas"))
-
-;;;***
 
 ;;; End of scraped data
 

@@ -5,9 +5,8 @@
 
 ;;; Code:
 
+
 
-;;;### (autoloads nil "guess-language" "guess-language.el" (0 0 0
-;;;;;;  0))
 ;;; Generated autoloads from guess-language.el
 
 (autoload 'guess-language-mode "guess-language" "\
@@ -41,11 +40,8 @@ evaluate `guess-language-mode'.
 The mode's hook is called both when the mode is enabled and when
 it is disabled.
 
-\(fn &optional ARG)" t)
-
+(fn &optional ARG)" t)
 (register-definition-prefixes "guess-language" '("guess-language"))
-
-;;;***
 
 ;;; End of scraped data
 

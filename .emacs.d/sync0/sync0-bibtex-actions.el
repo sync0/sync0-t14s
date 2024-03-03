@@ -51,8 +51,8 @@ function is to be used only in pipes."
 ;;     (let*    ((bibkey (or refkey 
 ;;                           (sync0-bibtex-completion-choose-key t t)))
 ;;               (entry (bibtex-completion-get-entry bibkey))
-;;               (url (bibtex-completion-get-value "url" entry))
-;;               (doi (bibtex-completion-get-value "doi" entry))
+;;               (url (sync0-bibtex-completion-get-value "url" entry))
+;;               (doi (sync0-bibtex-completion-get-value "doi" entry))
 ;;               (file (concat sync0-zettelkasten-attachments-directory bibkey ".pdf")))
 ;;       (if (yes-or-no-p "Call the pirates?")
 ;;           (if doi
@@ -73,8 +73,8 @@ function is to be used only in pipes."
     (let*    ((bibkey (or refkey 
                           (sync0-bibtex-completion-choose-key t t)))
               (entry (bibtex-completion-get-entry bibkey))
-              (url (bibtex-completion-get-value "url" entry))
-              (doi (bibtex-completion-get-value "doi" entry))
+              (url (sync0-bibtex-completion-get-value "url" entry))
+              (doi (sync0-bibtex-completion-get-value "doi" entry))
               (extension (concat "." (or sync0-bibtex-entry-extension "pdf")))
               (file (concat sync0-zettelkasten-attachments-directory bibkey extension)))
         (if (file-exists-p file)
@@ -182,9 +182,11 @@ entry under point in a .bib file"
          (bibkey (cdr (assoc "=key=" entry)))
          (crossref (when op-crossref
                    (substring (cdr (assoc "crossref" entry)) 1 -1)))
-         (program
-          (completing-read "Which softare to open attachment ?" sync0-bibtex-attachment-programs))
          (file (sync0-bibtex-choose-attachment bibkey))
+	 (extension (file-name-extension file))
+	 (program (if (assoc extension sync0-default-file-associations)
+                      (cdr (assoc extension sync0-default-file-associations))
+		    (completing-read "Which software to open attachment with? " sync0-bibtex-attachment-programs)))
          (crossref-file (when op-crossref
                           (sync0-bibtex-choose-attachment crossref))))
     (if op-crossref 
@@ -207,10 +209,28 @@ entry under point in a .bib file"
   (let* ((bibkey (or bibkey 
                      (sync0-bibtex-completion-choose-key t t)))
          (entry (bibtex-completion-get-entry bibkey))
-         (url  (bibtex-completion-get-value "url" entry)))
+         (url  (sync0-bibtex-completion-get-value "url" entry)))
     (if (not (sync0-null-p url))
-        (bibtex-url)
+        (browse-url url) ;; Replace with your desired function
       (message "No url found for %s" bibkey))))
+
+(defun sync0-bibtex-download-from-youtube (&optional bibkey)
+  "Open the URL for BibTeX key under point if it exists."
+  (interactive)
+  (let* ((bibkey (or bibkey 
+                     (sync0-bibtex-completion-choose-key t t)))
+         (entry (bibtex-completion-get-entry bibkey))
+         (url  (sync0-bibtex-completion-get-value "url" entry))
+         (output-directory sync0-zettelkasten-attachments-directory)
+         (output-file (concat (file-name-as-directory output-directory) bibkey ".%(ext)s"))
+         ;; Use yt-dlp; it has to be installed from AUR
+         (command (concat "yt-dlp --write-sub --write-auto-sub --sub-lang \"en.*\" -o " (shell-quote-argument output-file) " -f \"bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best\" " (shell-quote-argument url))))
+    (if (not (sync0-null-p url))
+        (progn
+          (message "Downloading video for %s" bibkey)
+          (shell-command command)
+          (message "Video downloaded successfully for %s" bibkey))
+      (message "No URL found for %s" bibkey))))
 
 (defun sync0-bibtex-open-notes-at-point ()
   "Open the notes for bibtex key under point in a cite link in a
@@ -238,18 +258,15 @@ interactive use and use in pipes to output to the printer."
                    (shell-command (concat command pdf))
                  (message "File %s does not exist" pdf))))
         (command (let* ((bibkey (sync0-bibtex-completion-choose-key))
-                        (attachments  (bibtex-completion-find-pdf bibkey))
-                        (pdf (if (equal (length attachments) 1)
-                                 (car attachments)
-                               (completing-read "Which attachment to open? " attachments))))
+                        (pdf (sync0-bibtex-choose-attachment bibkey "pdf")))
+                        ;; (pdf (if (equal (length attachments) 1)
+                        ;;          (car attachments)
+                        ;;        (completing-read "Which attachment to open? " attachments)))
                    (if (file-exists-p pdf)
                        (shell-command (concat command pdf))
                      (message "No attachment found for entry %s" bibkey))))
         (t (let* ((bibkey (sync0-bibtex-completion-choose-key t t))
-                  (attachments  (bibtex-completion-find-pdf bibkey))
-                  (pdf (if (equal (length attachments) 1)
-                           (car attachments)
-                         (completing-read "Which attachment to open? " attachments)))
+                   (pdf (sync0-bibtex-choose-attachment bibkey "pdf"))
                   (command (sync0-print-define-command))) 
              (if (file-exists-p pdf)
                  (shell-command (concat command pdf))

@@ -1,3 +1,4 @@
+(require 'sync0-bibtex-vars)
 
 (defun sync0-bibtex-update-var (field)
     "Update variables used for completion based on the information

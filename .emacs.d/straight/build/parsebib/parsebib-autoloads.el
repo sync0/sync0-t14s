@@ -5,13 +5,11 @@
 
 ;;; Code:
 
+
 
-;;;### (autoloads nil "parsebib" "parsebib.el" (0 0 0 0))
 ;;; Generated autoloads from parsebib.el
 
 (register-definition-prefixes "parsebib" '("parsebib-"))
-
-;;;***
 
 ;;; End of scraped data
 

@@ -194,3 +194,5 @@ Vietnam
 Yemen
 Zambia
 Zimbabwe
+ranc
+{France}

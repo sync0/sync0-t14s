@@ -5,32 +5,27 @@
 
 ;;; Code:
 
+
 
-;;;### (autoloads nil "markdown-mode" "markdown-mode.el" (0 0 0 0))
 ;;; Generated autoloads from markdown-mode.el
 
 (autoload 'markdown-mode "markdown-mode" "\
 Major mode for editing Markdown files.
 
-\(fn)" t)
-
+(fn)" t)
 (add-to-list 'auto-mode-alist '("\\.\\(?:md\\|markdown\\|mkd\\|mdown\\|mkdn\\|mdwn\\)\\'" . markdown-mode))
-
 (autoload 'gfm-mode "markdown-mode" "\
 Major mode for editing GitHub Flavored Markdown files.
 
-\(fn)" t)
-
+(fn)" t)
 (autoload 'markdown-view-mode "markdown-mode" "\
 Major mode for viewing Markdown content.
 
-\(fn)" t)
-
+(fn)" t)
 (autoload 'gfm-view-mode "markdown-mode" "\
 Major mode for viewing GitHub Flavored Markdown content.
 
-\(fn)" t)
-
+(fn)" t)
 (autoload 'markdown-live-preview-mode "markdown-mode" "\
 Toggle native previewing on save for a specific markdown file.
 
@@ -49,11 +44,8 @@ evaluate `markdown-live-preview-mode'.
 The mode's hook is called both when the mode is enabled and when
 it is disabled.
 
-\(fn &optional ARG)" t)
-
+(fn &optional ARG)" t)
 (register-definition-prefixes "markdown-mode" '("defun-markdown-" "gfm-" "markdown"))
-
-;;;***
 
 ;;; End of scraped data
 

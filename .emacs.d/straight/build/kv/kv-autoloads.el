@@ -5,13 +5,11 @@
 
 ;;; Code:
 
+
 
-;;;### (autoloads nil "kv" "kv.el" (0 0 0 0))
 ;;; Generated autoloads from kv.el
 
 (register-definition-prefixes "kv" '("dotass" "keyword->symbol" "map-bind"))
-
-;;;***
 
 ;;; End of scraped data
 

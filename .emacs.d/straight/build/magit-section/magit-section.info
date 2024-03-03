@@ -1,4 +1,4 @@
-This is magit-section.info, produced by makeinfo version 7.0.3 from
+This is magit-section.info, produced by makeinfo version 7.1 from
 magit-section.texi.
 
      Copyright (C) 2015-2021 Jonas Bernoulli <jonas@bernoul.li>
@@ -84,17 +84,17 @@ File: magit-section.info,  Node: Creating Sections,  Next: Core Functions,  Prev
 
      Create a section object of type CLASS, storing VALUE in its ‘value’
      slot, and insert the section at point.  CLASS is a subclass of
-     ‘magit-section’ or has the form ‘(eval FORM)’, in which case FORM
+     'magit-section' or has the form ‘(eval FORM)’, in which case FORM
      is evaluated at runtime and should return a subclass.  In other
      places a sections class is oftern referred to as its "type".
 
      Many commands behave differently depending on the class of the
      current section and sections of a certain class can have their own
-     keymap, which is specified using the ‘keymap’ class slot.  The
+     keymap, which is specified using the 'keymap' class slot.  The
      value of that slot should be a variable whose value is a keymap.
 
      For historic reasons Magit and Forge in most cases use symbols as
-     CLASS that don’t actually identify a class and that lack the
+     CLASS that don't actually identify a class and that lack the
      appropriate package prefix.  This works due to some undocumented
      kludges, which are not available to other packages.
 
@@ -105,19 +105,19 @@ File: magit-section.info,  Node: Creating Sections,  Next: Core Functions,  Prev
      during a refresh, then the visibility of predecessor is inherited
      and HIDE is ignored (but the hook is still honored).
 
-     BODY is any number of forms that actually insert the section’s
+     BODY is any number of forms that actually insert the section's
      heading and body.  Optional NAME, if specified, has to be a symbol,
      which is then bound to the object of the section being inserted.
 
      Before BODY is evaluated the ‘start’ of the section object is set
-     to the value of ‘point’ and after BODY was evaluated its ‘end’ is
+     to the value of 'point' and after BODY was evaluated its ‘end’ is
      set to the new value of ‘point’; BODY is responsible for moving
      ‘point’ forward.
 
      If it turns out inside BODY that the section is empty, then
      ‘magit-cancel-section’ can be used to abort and remove all traces
      of the partially inserted section.  This can happen when creating a
-     section by washing Git’s output and Git didn’t actually output
+     section by washing Git's output and Git didn't actually output
      anything this time around.
 
  -- Function: magit-insert-heading &rest args
@@ -136,7 +136,7 @@ File: magit-section.info,  Node: Creating Sections,  Next: Core Functions,  Prev
      any text before this happens and afterwards it should again only
      contain a single line.  If the ‘face’ property is set anywhere
      inside any of these strings, then insert all of them unchanged.
-     Otherwise use the ‘magit-section-heading’ face for all inserted
+     Otherwise use the 'magit-section-heading' face for all inserted
      text.
 
      The ‘content’ property of the section object is the end of the
@@ -145,7 +145,7 @@ File: magit-section.info,  Node: Creating Sections,  Next: Core Functions,  Prev
      value of ‘content’ is nil, then the section has no heading and its
      body cannot be collapsed.  If a section does have a heading, then
      its height must be exactly one line, including a trailing newline
-     character.  This isn’t enforced, you are responsible for getting it
+     character.  This isn't enforced, you are responsible for getting it
      right.  The only exception is that this function does insert a
      newline character if necessary.
 
@@ -153,7 +153,7 @@ File: magit-section.info,  Node: Creating Sections,  Next: Core Functions,  Prev
 
      Use BODY to insert the section body, once the section is expanded.
      If the section is expanded when it is created, then this is like
-     ‘progn’.  Otherwise BODY isn’t evaluated until the section is
+     ‘progn’.  Otherwise BODY isn't evaluated until the section is
      explicitly expanded.
 
  -- Function: magit-cancel-section
@@ -223,14 +223,14 @@ File: magit-section.info,  Node: Matching Functions,  Prev: Core Functions,  Up:
 
         • ‘(CONDITION...)’ matches if any of the CONDITIONs matches.
 
-        • ‘[CLASS...]’ matches if the section’s class is the same as the
-          first CLASS or a subclass of that; the section’s parent class
+        • ‘[CLASS...]’ matches if the section's class is the same as the
+          first CLASS or a subclass of that; the section's parent class
           matches the second CLASS; and so on.
 
         • ‘[* CLASS...]’ matches sections that match [CLASS...] and also
           recursively all their child sections.
 
-        • ‘CLASS’ matches if the section’s class is the same as CLASS or
+        • ‘CLASS’ matches if the section's class is the same as CLASS or
           a subclass of that; regardless of the classes of the parent
           sections.
 
@@ -275,11 +275,11 @@ File: magit-section.info,  Node: Matching Functions,  Prev: Core Functions,  Up:
 
 
 Tag Table:
-Node: Top790
-Node: Introduction2071
-Node: Creating Sections2841
-Node: Core Functions7355
-Node: Matching Functions8681
+Node: Top788
+Node: Introduction2069
+Node: Creating Sections2839
+Node: Core Functions7325
+Node: Matching Functions8651
 
 End Tag Table
 

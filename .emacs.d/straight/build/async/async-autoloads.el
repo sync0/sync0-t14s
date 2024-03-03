@@ -5,8 +5,8 @@
 
 ;;; Code:
 
+
 
-;;;### (autoloads nil "async" "async.el" (0 0 0 0))
 ;;; Generated autoloads from async.el
 
 (autoload 'async-start-process "async" "\
@@ -17,8 +17,7 @@ object will return the process object when the program is
 finished.  Set DEFAULT-DIRECTORY to change PROGRAM's current
 working directory.
 
-\(fn NAME PROGRAM FINISH-FUNC &rest PROGRAM-ARGS)")
-
+(fn NAME PROGRAM FINISH-FUNC &rest PROGRAM-ARGS)")
 (autoload 'async-start "async" "\
 Execute START-FUNC (often a lambda) in a subordinate Emacs process.
 When done, the return value is passed to FINISH-FUNC.  Example:
@@ -34,6 +33,16 @@ When done, the return value is passed to FINISH-FUNC.  Example:
        (lambda (result)
          (message \"Async process done, result should be 222: %s\"
                   result)))
+
+If you call `async-send' from a child process, the message will
+be also passed to the FINISH-FUNC.  You can test RESULT to see if
+it is a message by using `async-message-p'.  If nil, it means
+this is the final result.  Example of the FINISH-FUNC:
+
+    (lambda (result)
+      (if (async-message-p result)
+          (message \"Received a message from child process: %s\" result)
+        (message \"Async process done, result: %s\" result)))
 
 If FINISH-FUNC is nil or missing, a future is returned that can
 be inspected using `async-get', blocking until the value is
@@ -78,22 +87,17 @@ passed to FINISH-FUNC).  Call `async-get' on such a future always
 returns nil.  It can still be useful, however, as an argument to
 `async-ready' or `async-wait'.
 
-\(fn START-FUNC &optional FINISH-FUNC)")
-
+(fn START-FUNC &optional FINISH-FUNC)")
 (register-definition-prefixes "async" '("async-"))
 
-;;;***
 
-;;;### (autoloads nil "async-bytecomp" "async-bytecomp.el" (0 0 0
-;;;;;;  0))
 ;;; Generated autoloads from async-bytecomp.el
 
 (autoload 'async-byte-recompile-directory "async-bytecomp" "\
 Compile all *.el files in DIRECTORY asynchronously.
 All *.elc files are systematically deleted before proceeding.
 
-\(fn DIRECTORY &optional QUIET)")
-
+(fn DIRECTORY &optional QUIET)")
 (defvar async-bytecomp-package-mode nil "\
 Non-nil if Async-Bytecomp-Package mode is enabled.
 See the `async-bytecomp-package-mode' command
@@ -101,9 +105,7 @@ for a description of this minor mode.
 Setting this variable directly does not take effect;
 either customize it (see the info node `Easy Customization')
 or call the function `async-bytecomp-package-mode'.")
-
 (custom-autoload 'async-bytecomp-package-mode "async-bytecomp" nil)
-
 (autoload 'async-bytecomp-package-mode "async-bytecomp" "\
 Byte compile asynchronously packages installed with package.el.
 
@@ -125,20 +127,16 @@ evaluate `(default-value \\='async-bytecomp-package-mode)'.
 The mode's hook is called both when the mode is enabled and when
 it is disabled.
 
-\(fn &optional ARG)" t)
-
+(fn &optional ARG)" t)
 (autoload 'async-byte-compile-file "async-bytecomp" "\
 Byte compile Lisp code FILE asynchronously.
 
 Same as `byte-compile-file' but asynchronous.
 
-\(fn FILE)" t)
-
+(fn FILE)" t)
 (register-definition-prefixes "async-bytecomp" '("async-"))
 
-;;;***
 
-;;;### (autoloads nil "dired-async" "dired-async.el" (0 0 0 0))
 ;;; Generated autoloads from dired-async.el
 
 (defvar dired-async-mode nil "\
@@ -148,9 +146,7 @@ for a description of this minor mode.
 Setting this variable directly does not take effect;
 either customize it (see the info node `Easy Customization')
 or call the function `dired-async-mode'.")
-
 (custom-autoload 'dired-async-mode "dired-async" nil)
-
 (autoload 'dired-async-mode "dired-async" "\
 Do dired actions asynchronously.
 
@@ -168,39 +164,29 @@ evaluate `(default-value \\='dired-async-mode)'.
 The mode's hook is called both when the mode is enabled and when
 it is disabled.
 
-\(fn &optional ARG)" t)
-
+(fn &optional ARG)" t)
 (autoload 'dired-async-do-copy "dired-async" "\
 Run ‘dired-do-copy’ asynchronously.
 
-\(fn &optional ARG)" t)
-
+(fn &optional ARG)" t)
 (autoload 'dired-async-do-symlink "dired-async" "\
 Run ‘dired-do-symlink’ asynchronously.
 
-\(fn &optional ARG)" t)
-
+(fn &optional ARG)" t)
 (autoload 'dired-async-do-hardlink "dired-async" "\
 Run ‘dired-do-hardlink’ asynchronously.
 
-\(fn &optional ARG)" t)
-
+(fn &optional ARG)" t)
 (autoload 'dired-async-do-rename "dired-async" "\
 Run ‘dired-do-rename’ asynchronously.
 
-\(fn &optional ARG)" t)
-
+(fn &optional ARG)" t)
 (register-definition-prefixes "dired-async" '("dired-async-"))
 
-;;;***
 
-;;;### (autoloads nil "smtpmail-async" "smtpmail-async.el" (0 0 0
-;;;;;;  0))
 ;;; Generated autoloads from smtpmail-async.el
 
 (register-definition-prefixes "smtpmail-async" '("async-smtpmail-"))
-
-;;;***
 
 ;;; End of scraped data
 

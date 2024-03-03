@@ -5,8 +5,8 @@
 
 ;;; Code:
 
+
 
-;;;### (autoloads nil "company-box" "company-box.el" (0 0 0 0))
 ;;; Generated autoloads from company-box.el
 
 (autoload 'company-box-mode "company-box" "\
@@ -26,27 +26,18 @@ evaluate `company-box-mode'.
 The mode's hook is called both when the mode is enabled and when
 it is disabled.
 
-\(fn &optional ARG)" t)
-
+(fn &optional ARG)" t)
 (register-definition-prefixes "company-box" '("company-box-"))
 
-;;;***
 
-;;;### (autoloads nil "company-box-doc" "company-box-doc.el" (0 0
-;;;;;;  0 0))
 ;;; Generated autoloads from company-box-doc.el
 
 (register-definition-prefixes "company-box-doc" '("company-box-"))
 
-;;;***
 
-;;;### (autoloads nil "company-box-icons" "company-box-icons.el"
-;;;;;;  (0 0 0 0))
 ;;; Generated autoloads from company-box-icons.el
 
 (register-definition-prefixes "company-box-icons" '("company-box-icons-"))
-
-;;;***
 
 ;;; End of scraped data
 

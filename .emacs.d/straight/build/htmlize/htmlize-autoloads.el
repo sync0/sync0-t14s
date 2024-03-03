@@ -5,17 +5,18 @@
 
 ;;; Code:
 
+
 
-;;;### (autoloads nil "htmlize" "htmlize.el" (0 0 0 0))
 ;;; Generated autoloads from htmlize.el
 
 (autoload 'htmlize-buffer "htmlize" "\
 Convert BUFFER to HTML, preserving colors and decorations.
 
 The generated HTML is available in a new buffer, which is returned.
-When invoked interactively, the new buffer is selected in the current
-window.  The title of the generated document will be set to the buffer's
-file name or, if that's not available, to the buffer's name.
+When invoked interactively (or if optional INTERACTIVE is non-nil),
+the new buffer is selected in the current window.  The title of the
+generated document will be set to the buffer's file name or, if that
+is not available, to the buffer's name.
 
 Note that htmlize doesn't fontify your buffers, it only uses the
 decorations that are already present.  If you don't set up font-lock or
@@ -23,14 +24,12 @@ something else to fontify your buffers, the resulting HTML will be
 plain.  Likewise, if you don't like the choice of colors, fix the mode
 that created them, or simply alter the faces it uses.
 
-\(fn &optional BUFFER)" t)
-
+(fn &optional BUFFER INTERACTIVE)" t)
 (autoload 'htmlize-region "htmlize" "\
 Convert the region to HTML, preserving colors and decorations.
 See `htmlize-buffer' for details.
 
-\(fn BEG END)" t)
-
+(fn BEG END &optional INTERACTIVE)" t)
 (autoload 'htmlize-file "htmlize" "\
 Load FILE, fontify it, convert it to HTML, and save the result.
 
@@ -48,8 +47,7 @@ If TARGET is specified and names a directory, the resulting file will be
 saved there instead of to FILE's directory.  If TARGET is specified and
 does not name a directory, it will be used as output file name.
 
-\(fn FILE &optional TARGET)" t)
-
+(fn FILE &optional TARGET)" t)
 (autoload 'htmlize-many-files "htmlize" "\
 Convert FILES to HTML and save the corresponding HTML versions.
 
@@ -62,16 +60,12 @@ If TARGET-DIRECTORY is specified, the HTML files will be saved to that
 directory.  Normally, each HTML file is saved to the directory of the
 corresponding source file.
 
-\(fn FILES &optional TARGET-DIRECTORY)" t)
-
+(fn FILES &optional TARGET-DIRECTORY)" t)
 (autoload 'htmlize-many-files-dired "htmlize" "\
 HTMLize dired-marked files.
 
-\(fn ARG &optional TARGET-DIRECTORY)" t)
-
+(fn ARG &optional TARGET-DIRECTORY)" t)
 (register-definition-prefixes "htmlize" '("htmlize-"))
-
-;;;***
 
 ;;; End of scraped data
 

@@ -5,8 +5,8 @@
 
 ;;; Code:
 
+
 
-;;;### (autoloads nil "biblio-core" "biblio-core.el" (0 0 0 0))
 ;;; Generated autoloads from biblio-core.el
 
 (autoload 'biblio-lookup "biblio-core" "\
@@ -16,11 +16,8 @@ function obeying the interface described in the docstring of
 `biblio-backends'.  Returns the buffer in which results will be
 inserted.
 
-\(fn &optional BACKEND QUERY)" t)
-
+(fn &optional BACKEND QUERY)" t)
 (register-definition-prefixes "biblio-core" '("biblio-"))
-
-;;;***
 
 ;;; End of scraped data
 

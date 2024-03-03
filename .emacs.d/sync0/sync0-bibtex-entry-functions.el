@@ -2,6 +2,7 @@
 (require 'sync0-bibtex-corrections)
 (require 'sync0-bibtex-utils)
 (require 'sync0-obsidian)
+(require 'sync0-projects)
 
 (defun sync0-bibtex-nullify-all-variables ()
   "Set all bibtex variables required to do operations to nil to
@@ -30,11 +31,10 @@ prevent undesired results."
               (unless (sync0-null-p sync0-bibtex-entry-date)
                 (setq sync0-bibtex-entry-year (substring-no-properties sync0-bibtex-entry-date 0 4)))))
     ("century" (lambda ()
-                 (when sync0-bibtex-entry-date
-                   (setq sync0-bibtex-entry-century
-                         (let* ((base-string (substring-no-properties sync0-bibtex-entry-date 0 2))
-                                (cenum  (1+ (string-to-number base-string))))
-                           (format "%s" cenum))))))
+                 (unless (sync0-null-p sync0-bibtex-entry-date)
+		   (setq sync0-bibtex-entry-century
+                         (let ((base-string (substring-no-properties sync0-bibtex-entry-date 0 2)))
+                           (format "%s" (1+ (string-to-number base-string))))))))
     ("created" (lambda ()
                  (setq sync0-bibtex-entry-created-tag
                        (format-time-string "%Y/%m/%d"))
@@ -121,13 +121,13 @@ prevent undesired results."
                          (sync0-bibtex-correct-smartquotes 
                           (if (and sync0-bibtex-entry-crossref 
                                    sync0-bibtex-entry-crossref-entry)
-                              (bibtex-completion-get-value "title" sync0-bibtex-entry-crossref-entry)
+                              (sync0-bibtex-completion-get-value "title" sync0-bibtex-entry-crossref-entry)
                             (completing-read "Booktitle : " sync0-bibtex-completion-title))))))
     ("booksubtitle" (lambda ()
                       (setq sync0-bibtex-entry-booksubtitle
                             (sync0-bibtex-correct-smartquotes 
                              (if sync0-bibtex-entry-crossref 
-                                 (bibtex-completion-get-value "subtitle" sync0-bibtex-entry-crossref-entry)
+                                 (sync0-bibtex-completion-get-value "subtitle" sync0-bibtex-entry-crossref-entry)
                                (completing-read "Booksubtitle : " sync0-bibtex-completion-title))))))
     ("crossref" (lambda ()
                   (when (yes-or-no-p "Load crossref? ")
@@ -136,15 +136,15 @@ prevent undesired results."
                     (setq sync0-bibtex-entry-crossref-entry
                           (bibtex-completion-get-entry sync0-bibtex-entry-crossref))
                     (setq sync0-bibtex-entry-initial-date
-                          (bibtex-completion-get-value "date" sync0-bibtex-entry-crossref-entry)
+                          (sync0-bibtex-completion-get-value "date" sync0-bibtex-entry-crossref-entry)
                           sync0-bibtex-entry-initial-origdate
-                          (bibtex-completion-get-value "origdate" sync0-bibtex-entry-crossref-entry)
+                          (sync0-bibtex-completion-get-value "origdate" sync0-bibtex-entry-crossref-entry)
                           sync0-bibtex-entry-initial-author
                           (if (member sync0-bibtex-entry-type sync0-bibtex-entry-editor-types)
-                              (bibtex-completion-get-value "editor" sync0-bibtex-entry-crossref-entry)
-                            (bibtex-completion-get-value "author" sync0-bibtex-entry-crossref-entry))
+                              (sync0-bibtex-completion-get-value "editor" sync0-bibtex-entry-crossref-entry)
+                            (sync0-bibtex-completion-get-value "author" sync0-bibtex-entry-crossref-entry))
                           sync0-bibtex-entry-initial-language
-                          (bibtex-completion-get-value "language" sync0-bibtex-entry-crossref-entry)))))
+                          (sync0-bibtex-completion-get-value "language" sync0-bibtex-entry-crossref-entry)))))
     ("related" (lambda ()
                  (setq sync0-bibtex-entry-related (sync0-bibtex-completion-choose-key t t))))
     ;; ("seen" (lambda ()
@@ -171,6 +171,14 @@ prevent undesired results."
                         (format-time-string "%Y-%m-%d"))
                 (let ((x (completing-read-multiple "Seen: " sync0-bibtex-completion-seen)))
                   (setq sync0-bibtex-entry-seen (concat sync0-bibtex-entry-seen ", " x))))))
+    ("project" (lambda nil
+		 (setq sync0-bibtex-entry-project
+		       (sync0-show-elements-of-list
+			(let ((translated-projects (mapcar (lambda (proj)
+							     (or (cdr (assoc proj sync0-projects-alist)) proj))
+							   sync0-bibtex-completion-project)))
+			  (sync0-completing-read-projects translated-projects))
+			", "))))
     ("keywords" (lambda ()
                   ;; Requires package unidecode for conversion to
                   ;; ASCII. See:
@@ -188,7 +196,7 @@ carried to calculate the value it will take in a BibLaTeX entry.")
 
 ;; Set entry functions for biblatex fields that require completion of multiple
 ;; things.
-(let ((x (cl-set-difference sync0-bibtex-string-multiple-fields '("keywords" "seen" "mention" "mentioned") :test #'string=)))
+(let ((x (cl-set-difference sync0-bibtex-string-multiple-fields '("keywords" "seen" "mention" "mentioned" "project") :test #'string=)))
   ;; Remove keywords to prevent overwriting the function it currently has
   (dolist (element x)
     (let* ((my-var (intern (concat "sync0-bibtex-entry-" element)))
@@ -270,7 +278,7 @@ output is the value calculated by the called function."
   (let* ((entry (when bibkey (bibtex-completion-get-entry bibkey)))
          (type (if entry
                    (sync0-bibtex-normalize-case
-                    (bibtex-completion-get-value "=type="  entry))
+                    (sync0-bibtex-completion-get-value "=type="  entry))
                  (completing-read "Choose Bibtex entry type: " sync0-bibtex-entry-types)))
          ;; Specify which fields to load
          (fields (cond (bibkey
@@ -283,7 +291,7 @@ output is the value calculated by the called function."
                            (cdr (assoc type sync0-bibtex-type-fields))
                            sync0-bibtex-base-fields)))))
     (setq sync0-bibtex-entry-key (or bibkey 
-                                     (sync0-bibtex-entry-key-define)))
+                                     (sync0-bibtex-entry-key-define t)))
     (setq sync0-bibtex-entry-type type)
     ;; the following field is used to avoid inconsistensies in
     ;; case when using the type for boolean operations
@@ -298,7 +306,7 @@ output is the value calculated by the called function."
       (dolist (element fields x)
         (let* ((var (concat "sync0-bibtex-entry-" element))
                (value (if entry
-                          (bibtex-completion-get-value element entry)
+			  (sync0-bibtex-completion-get-value element entry)
                        (progn 
                          ;; first calculate the values, this function
                          ;; does not only calculate the value itself
@@ -351,7 +359,7 @@ output is the value calculated by the called function."
       ;; keywors have to be calculated last in order to prevent empty
       ;; fields when defining the keywords
       (if bibkey
-          (bibtex-completion-get-value "keywords" entry)
+          (sync0-bibtex-completion-get-value "keywords" entry)
         (funcall (cadr (assoc "keywords" sync0-bibtex-entry-functions))))))
 
 

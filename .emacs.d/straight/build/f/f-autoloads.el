@@ -5,13 +5,11 @@
 
 ;;; Code:
 
+
 
-;;;### (autoloads nil "f" "f.el" (0 0 0 0))
 ;;; Generated autoloads from f.el
 
 (register-definition-prefixes "f" '("f-"))
-
-;;;***
 
 ;;; End of scraped data
 

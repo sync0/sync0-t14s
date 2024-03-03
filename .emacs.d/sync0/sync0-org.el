@@ -234,7 +234,7 @@
   "H" 'org-metaleft
   "L" 'org-metaright
   "K" 'org-metaup
-  "J" 'org-metadown
+  ;; "J" 'org-metadown
   "k" 'previous-line
   "j" 'next-line
   "o" '(lambda () (interactive) (sync0-evil-org-eol-call 'sync0-clever-insert-item))

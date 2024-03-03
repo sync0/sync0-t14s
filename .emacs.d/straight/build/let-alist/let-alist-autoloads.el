@@ -5,8 +5,8 @@
 
 ;;; Code:
 
+
 
-;;;### (autoloads nil "let-alist" "let-alist.el" (0 0 0 0))
 ;;; Generated autoloads from let-alist.el
 
 (autoload 'let-alist "let-alist" "\
@@ -34,17 +34,20 @@ essentially expands to
       .site.contents))
 
 If you nest `let-alist' invocations, the inner one can't access
-the variables of the outer one. You can, however, access alists
+the variables of the outer one.  You can, however, access alists
 inside the original alist by using dots inside the symbol, as
 displayed in the example above.
 
-\(fn ALIST &rest BODY)" nil t)
+Note that there is no way to differentiate the case where a key
+is missing from when it is present, but its value is nil.  Thus,
+the following form evaluates to nil:
 
+    (let-alist \\='((some-key . nil))
+      .some-key)
+
+(fn ALIST &rest BODY)" nil t)
 (function-put 'let-alist 'lisp-indent-function 1)
-
 (register-definition-prefixes "let-alist" '("let-alist--"))
-
-;;;***
 
 ;;; End of scraped data
 

@@ -1,4 +1,4 @@
-This is with-editor.info, produced by makeinfo version 7.0.3 from
+This is with-editor.info, produced by makeinfo version 7.1 from
 with-editor.texi.
 
      Copyright (C) 2015-2021 Jonas Bernoulli <jonas@bernoul.li>
@@ -32,12 +32,12 @@ does.
 
    This library was written because Magit has to be able to do the above
 to allow the user to edit commit messages gracefully and to edit rebase
-sequences, which wouldn’t be possible at all otherwise.
+sequences, which wouldn't be possible at all otherwise.
 
    Because other packages can benefit from such functionality, this
 library is made available as a separate package.  It also defines some
 additional functionality which makes it useful even for end-users, who
-don’t use Magit or another package which uses it internally.
+don't use Magit or another package which uses it internally.
 
 This manual is for With-Editor version 3.0.5.
 
@@ -62,7 +62,7 @@ This manual is for With-Editor version 3.0.5.
 * Function Index::
 * Variable Index::
 
-— The Detailed Node Listing —
+-- The Detailed Node Listing --
 
 Using the With-Editor package
 
@@ -78,7 +78,7 @@ File: with-editor.info,  Node: Using the With-Editor package,  Next: Using With-
 
 The ‘With-Editor’ package is used internally by Magit when editing
 commit messages and rebase sequences.  It also provides some commands
-and features which are useful by themselves, even if you don’t use
+and features which are useful by themselves, even if you don't use
 Magit.
 
    For information about using this library in you own package, see
@@ -121,20 +121,20 @@ and we have to add another kludge to find it anyway.
      system, then this should be fixed for all users at once, by
      teaching ‘with-editor-locate-emacsclient’ how to do so on your
      system and system like yours.  Doing it this way has the advantage,
-     that you won’t have do it again every time you update Emacs, and
+     that you won't have do it again every time you update Emacs, and
      that other users who have installed Emacs the same way as you have,
-     won’t have to go through the same trouble.
+     won't have to go through the same trouble.
 
      Note that there also is a nuclear option; setting this variable to
      ‘nil’ causes the "sleeping editor" described below to be used even
-     for local child processes.  Obviously we don’t recommend that you
+     for local child processes.  Obviously we don't recommend that you
      use this except in "emergencies", i.e.  before we had a change to
      add a kludge appropriate for you setup.
 
  -- Function: with-editor-locate-emacsclient
 
      The function used to set the initial value of the option
-     ‘with-editor-emacsclient-executable’.  There’s a lot of voodoo
+     ‘with-editor-emacsclient-executable’.  There's a lot of voodoo
      here.
 
    The ‘emacsclient’ cannot be used when using Tramp to run a process on
@@ -157,7 +157,7 @@ it receives a signal.
      for local processes when ‘with-editor-emacsclient-executable’ is
      ‘nil’.
 
-     Where the latter uses a socket to communicate with Emacs’ server,
+     Where the latter uses a socket to communicate with Emacs' server,
      this substitute prints edit requests to its standard output on
      which a process filter listens for such requests.  As such it is
      not a complete substitute for a proper ‘emacsclient’, it can only
@@ -179,8 +179,8 @@ it receives a signal.
           trap \"exit 1\" USR2; \
           while true; do sleep 1; done'"
 
-     Note that the unit separator character () right after the file name
-     ($0) is required.
+     Note that the unit separator character (--) right after the file
+     name ($0) is required.
 
      Also note that using this alternative implementation leads to a
      delay of up to a second.  The delay can be shortened by replacing
@@ -194,7 +194,7 @@ File: with-editor.info,  Node: Using With-Editor commands,  Prev: Configuring Wi
 ==============================
 
 This section describes how to use the ‘with-editor’ library _outside_ of
-Magit.  You don’t need to know any of this just to create commits using
+Magit.  You don't need to know any of this just to create commits using
 Magit.
 
    The commands ‘with-editor-async-shell-command’ and
@@ -273,7 +273,7 @@ File: with-editor.info,  Node: Using With-Editor as a library,  Next: Debugging,
 
 This section describes how to use the ‘with-editor’ library _outside_ of
 Magit to teach another package how to have its child processes call
-home, just like Magit does.  You don’t need to know any of this just to
+home, just like Magit does.  You don't need to know any of this just to
 create commits using Magit.  You can also ignore this if you use
 ‘with-editor’ outside of Magit, but only as an end-user.
 
@@ -397,15 +397,15 @@ Appendix C Variable Index
 
 
 Tag Table:
-Node: Top775
-Node: Using the With-Editor package2571
-Node: Configuring With-Editor3157
-Node: Using With-Editor commands7706
-Node: Using With-Editor as a library10997
-Node: Debugging12960
-Node: Command Index13839
-Node: Function Index14721
-Node: Variable Index16187
+Node: Top773
+Node: Using the With-Editor package2563
+Node: Configuring With-Editor3147
+Node: Using With-Editor commands7687
+Node: Using With-Editor as a library10976
+Node: Debugging12937
+Node: Command Index13816
+Node: Function Index14698
+Node: Variable Index16164
 
 End Tag Table
 

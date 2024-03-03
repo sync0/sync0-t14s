@@ -5,18 +5,15 @@
 
 ;;; Code:
 
+
 
-;;;### (autoloads nil "web-mode" "web-mode.el" (0 0 0 0))
 ;;; Generated autoloads from web-mode.el
 
 (autoload 'web-mode "web-mode" "\
 Major mode for editing web templates.
 
-\(fn)" t)
-
+(fn)" t)
 (register-definition-prefixes "web-mode" '("web-mode-"))
-
-;;;***
 
 ;;; End of scraped data
 

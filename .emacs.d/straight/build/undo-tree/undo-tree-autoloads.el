@@ -5,8 +5,8 @@
 
 ;;; Code:
 
+
 
-;;;### (autoloads nil "undo-tree" "undo-tree.el" (0 0 0 0))
 ;;; Generated autoloads from undo-tree.el
 
 (autoload 'undo-tree-mode "undo-tree" "\
@@ -22,7 +22,7 @@ as what it is: a tree.
 
 The following keys are available in `undo-tree-mode':
 
-  \\{undo-tree-map}
+  \\{undo-tree-mode-map}
 
 Within the undo-tree visualizer, the following keys are available:
 
@@ -42,10 +42,8 @@ evaluate `undo-tree-mode'.
 The mode's hook is called both when the mode is enabled and when
 it is disabled.
 
-\(fn &optional ARG)" t)
-
+(fn &optional ARG)" t)
 (put 'global-undo-tree-mode 'globalized-minor-mode t)
-
 (defvar global-undo-tree-mode nil "\
 Non-nil if Global Undo-Tree mode is enabled.
 See the `global-undo-tree-mode' command
@@ -53,9 +51,7 @@ for a description of this minor mode.
 Setting this variable directly does not take effect;
 either customize it (see the info node `Easy Customization')
 or call the function `global-undo-tree-mode'.")
-
 (custom-autoload 'global-undo-tree-mode "undo-tree" nil)
-
 (autoload 'global-undo-tree-mode "undo-tree" "\
 Toggle Undo-Tree mode in all buffers.
 With prefix ARG, enable Global Undo-Tree mode if ARG is positive;
@@ -70,11 +66,8 @@ Undo-Tree mode is enabled in all buffers where
 
 See `undo-tree-mode' for more information on Undo-Tree mode.
 
-\(fn &optional ARG)" t)
-
+(fn &optional ARG)" t)
 (register-definition-prefixes "undo-tree" '("*undo-tree-id-counter*" "buffer-undo-tree" "turn-on-undo-tree-mode" "undo-"))
-
-;;;***
 
 ;;; End of scraped data
 

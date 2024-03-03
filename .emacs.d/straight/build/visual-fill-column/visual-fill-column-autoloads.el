@@ -5,9 +5,8 @@
 
 ;;; Code:
 
+
 
-;;;### (autoloads nil "visual-fill-column" "visual-fill-column.el"
-;;;;;;  (0 0 0 0))
 ;;; Generated autoloads from visual-fill-column.el
 
 (autoload 'visual-fill-column-mode "visual-fill-column" "\
@@ -28,10 +27,8 @@ evaluate `visual-fill-column-mode'.
 The mode's hook is called both when the mode is enabled and when
 it is disabled.
 
-\(fn &optional ARG)" t)
-
+(fn &optional ARG)" t)
 (put 'global-visual-fill-column-mode 'globalized-minor-mode t)
-
 (defvar global-visual-fill-column-mode nil "\
 Non-nil if Global Visual-Fill-Column mode is enabled.
 See the `global-visual-fill-column-mode' command
@@ -39,9 +36,7 @@ for a description of this minor mode.
 Setting this variable directly does not take effect;
 either customize it (see the info node `Easy Customization')
 or call the function `global-visual-fill-column-mode'.")
-
 (custom-autoload 'global-visual-fill-column-mode "visual-fill-column" nil)
-
 (autoload 'global-visual-fill-column-mode "visual-fill-column" "\
 Toggle Visual-Fill-Column mode in all buffers.
 With prefix ARG, enable Global Visual-Fill-Column mode if ARG is
@@ -57,8 +52,7 @@ Visual-Fill-Column mode is enabled in all buffers where
 See `visual-fill-column-mode' for more information on
 Visual-Fill-Column mode.
 
-\(fn &optional ARG)" t)
-
+(fn &optional ARG)" t)
 (autoload 'visual-fill-column-split-window-sensibly "visual-fill-column" "\
 Split WINDOW sensibly, unsetting its margins first.
 This function unsets the window margins and calls
@@ -70,11 +64,8 @@ enough space for a vertical split.  This function is used as the
 value of `split-window-preferred-function' to allow
 `display-buffer' to split such windows.
 
-\(fn &optional WINDOW)")
-
+(fn &optional WINDOW)")
 (register-definition-prefixes "visual-fill-column" '("turn-on-visual-fill-column-mode" "visual-fill-column-"))
-
-;;;***
 
 ;;; End of scraped data
 

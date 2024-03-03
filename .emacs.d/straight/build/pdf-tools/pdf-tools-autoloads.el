@@ -5,8 +5,8 @@
 
 ;;; Code:
 
+
 
-;;;### (autoloads nil "pdf-annot" "pdf-annot.el" (0 0 0 0))
 ;;; Generated autoloads from pdf-annot.el
 
 (autoload 'pdf-annot-minor-mode "pdf-annot" "\
@@ -28,27 +28,20 @@ evaluate `pdf-annot-minor-mode'.
 The mode's hook is called both when the mode is enabled and when
 it is disabled.
 
-\(fn &optional ARG)" t)
-
+(fn &optional ARG)" t)
 (register-definition-prefixes "pdf-annot" '("pdf-annot-"))
 
-;;;***
 
-;;;### (autoloads nil "pdf-cache" "pdf-cache.el" (0 0 0 0))
 ;;; Generated autoloads from pdf-cache.el
 
 (register-definition-prefixes "pdf-cache" '("boundingbox" "define-pdf-cache-function" "page" "pdf-cache-" "textregions"))
 
-;;;***
 
-;;;### (autoloads nil "pdf-dev" "pdf-dev.el" (0 0 0 0))
 ;;; Generated autoloads from pdf-dev.el
 
 (register-definition-prefixes "pdf-dev" '("pdf-dev-"))
 
-;;;***
 
-;;;### (autoloads nil "pdf-history" "pdf-history.el" (0 0 0 0))
 ;;; Generated autoloads from pdf-history.el
 
 (autoload 'pdf-history-minor-mode "pdf-history" "\
@@ -75,20 +68,15 @@ evaluate `pdf-history-minor-mode'.
 The mode's hook is called both when the mode is enabled and when
 it is disabled.
 
-\(fn &optional ARG)" t)
-
+(fn &optional ARG)" t)
 (register-definition-prefixes "pdf-history" '("pdf-history-"))
 
-;;;***
 
-;;;### (autoloads nil "pdf-info" "pdf-info.el" (0 0 0 0))
 ;;; Generated autoloads from pdf-info.el
 
 (register-definition-prefixes "pdf-info" '("pdf-info-"))
 
-;;;***
 
-;;;### (autoloads nil "pdf-isearch" "pdf-isearch.el" (0 0 0 0))
 ;;; Generated autoloads from pdf-isearch.el
 
 (autoload 'pdf-isearch-minor-mode "pdf-isearch" "\
@@ -101,14 +89,14 @@ image-processing, proceeding to the next match may be slow.
 
 Therefore two isearch behaviours have been defined: Normal isearch and
 batch mode.  The later one is a minor mode
-\(`pdf-isearch-batch-mode'), which when activated inhibits isearch
+(`pdf-isearch-batch-mode'), which when activated inhibits isearch
 from stopping at and highlighting every single match, but rather
 display them batch-wise.  Here a batch means a number of matches
 currently visible in the selected window.
 
 The kind of highlighting is determined by three faces
 `pdf-isearch-match' (for the current match), `pdf-isearch-lazy'
-\(for all other matches) and `pdf-isearch-batch' (when in batch
+(for all other matches) and `pdf-isearch-batch' (when in batch
 mode), which see.
 
 Colors may also be influenced by the minor-mode
@@ -137,13 +125,10 @@ evaluate `pdf-isearch-minor-mode'.
 The mode's hook is called both when the mode is enabled and when
 it is disabled.
 
-\(fn &optional ARG)" t)
-
+(fn &optional ARG)" t)
 (register-definition-prefixes "pdf-isearch" '("pdf-isearch-"))
 
-;;;***
 
-;;;### (autoloads nil "pdf-links" "pdf-links.el" (0 0 0 0))
 ;;; Generated autoloads from pdf-links.el
 
 (autoload 'pdf-links-minor-mode "pdf-links" "\
@@ -170,8 +155,7 @@ evaluate `pdf-links-minor-mode'.
 The mode's hook is called both when the mode is enabled and when
 it is disabled.
 
-\(fn &optional ARG)" t)
-
+(fn &optional ARG)" t)
 (autoload 'pdf-links-action-perform "pdf-links" "\
 Follow LINK, depending on its type.
 
@@ -185,13 +169,10 @@ sufficient number of characters have been read, the corresponding
 link's link is invoked.  Additionally, SPC may be used to
 scroll the current page.
 
-\(fn LINK)" t)
-
+(fn LINK)" t)
 (register-definition-prefixes "pdf-links" '("pdf-links-"))
 
-;;;***
 
-;;;### (autoloads nil "pdf-loader" "pdf-loader.el" (0 0 0 0))
 ;;; Generated autoloads from pdf-loader.el
 
 (autoload 'pdf-loader-install "pdf-loader" "\
@@ -204,20 +185,15 @@ opened, but not sooner.
 The arguments are passed verbatim to `pdf-tools-install', which
 see.
 
-\(fn &optional NO-QUERY-P SKIP-DEPENDENCIES-P NO-ERROR-P FORCE-DEPENDENCIES-P)")
-
+(fn &optional NO-QUERY-P SKIP-DEPENDENCIES-P NO-ERROR-P FORCE-DEPENDENCIES-P)")
 (register-definition-prefixes "pdf-loader" '("pdf-loader--"))
 
-;;;***
 
-;;;### (autoloads nil "pdf-macs" "pdf-macs.el" (0 0 0 0))
 ;;; Generated autoloads from pdf-macs.el
 
 (register-definition-prefixes "pdf-macs" '("pdf-view-"))
 
-;;;***
 
-;;;### (autoloads nil "pdf-misc" "pdf-misc.el" (0 0 0 0))
 ;;; Generated autoloads from pdf-misc.el
 
 (autoload 'pdf-misc-minor-mode "pdf-misc" "\
@@ -237,8 +213,7 @@ evaluate `pdf-misc-minor-mode'.
 The mode's hook is called both when the mode is enabled and when
 it is disabled.
 
-\(fn &optional ARG)" t)
-
+(fn &optional ARG)" t)
 (autoload 'pdf-misc-size-indication-minor-mode "pdf-misc" "\
 Provide a working size indication in the mode-line.
 
@@ -257,8 +232,7 @@ evaluate `pdf-misc-size-indication-minor-mode'.
 The mode's hook is called both when the mode is enabled and when
 it is disabled.
 
-\(fn &optional ARG)" t)
-
+(fn &optional ARG)" t)
 (autoload 'pdf-misc-menu-bar-minor-mode "pdf-misc" "\
 Display a PDF Tools menu in the menu-bar.
 
@@ -277,8 +251,7 @@ evaluate `pdf-misc-menu-bar-minor-mode'.
 The mode's hook is called both when the mode is enabled and when
 it is disabled.
 
-\(fn &optional ARG)" t)
-
+(fn &optional ARG)" t)
 (autoload 'pdf-misc-context-menu-minor-mode "pdf-misc" "\
 Provide a right-click context menu in PDF buffers.
 
@@ -299,13 +272,10 @@ evaluate `pdf-misc-context-menu-minor-mode'.
 The mode's hook is called both when the mode is enabled and when
 it is disabled.
 
-\(fn &optional ARG)" t)
-
+(fn &optional ARG)" t)
 (register-definition-prefixes "pdf-misc" '("pdf-misc-"))
 
-;;;***
 
-;;;### (autoloads nil "pdf-occur" "pdf-occur.el" (0 0 0 0))
 ;;; Generated autoloads from pdf-occur.el
 
 (autoload 'pdf-occur "pdf-occur" "\
@@ -317,14 +287,12 @@ in which case this functions performs a string search.
 If `pdf-occur-prefer-string-search' is non-nil, the meaning of
 the prefix-arg is inverted.
 
-\(fn STRING &optional REGEXP-P)" t)
-
+(fn STRING &optional REGEXP-P)" t)
 (autoload 'pdf-occur-multi-command "pdf-occur" "\
 Perform `pdf-occur' on multiple buffer.
 
 For a programmatic search of multiple documents see
 `pdf-occur-search'." t)
-
 (defvar pdf-occur-global-minor-mode nil "\
 Non-nil if Pdf-Occur-Global minor mode is enabled.
 See the `pdf-occur-global-minor-mode' command
@@ -332,9 +300,7 @@ for a description of this minor mode.
 Setting this variable directly does not take effect;
 either customize it (see the info node `Easy Customization')
 or call the function `pdf-occur-global-minor-mode'.")
-
 (custom-autoload 'pdf-occur-global-minor-mode "pdf-occur" nil)
-
 (autoload 'pdf-occur-global-minor-mode "pdf-occur" "\
 Enable integration of Pdf Occur with other modes.
 
@@ -357,8 +323,7 @@ evaluate `(default-value \\='pdf-occur-global-minor-mode)'.
 The mode's hook is called both when the mode is enabled and when
 it is disabled.
 
-\(fn &optional ARG)" t)
-
+(fn &optional ARG)" t)
 (autoload 'pdf-occur-ibuffer-minor-mode "pdf-occur" "\
 Hack into ibuffer's do-occur binding.
 
@@ -382,8 +347,7 @@ evaluate `pdf-occur-ibuffer-minor-mode'.
 The mode's hook is called both when the mode is enabled and when
 it is disabled.
 
-\(fn &optional ARG)" t)
-
+(fn &optional ARG)" t)
 (autoload 'pdf-occur-dired-minor-mode "pdf-occur" "\
 Hack into dired's `dired-do-search' binding.
 
@@ -407,13 +371,10 @@ evaluate `pdf-occur-dired-minor-mode'.
 The mode's hook is called both when the mode is enabled and when
 it is disabled.
 
-\(fn &optional ARG)" t)
-
+(fn &optional ARG)" t)
 (register-definition-prefixes "pdf-occur" '("pdf-occur-"))
 
-;;;***
 
-;;;### (autoloads nil "pdf-outline" "pdf-outline.el" (0 0 0 0))
 ;;; Generated autoloads from pdf-outline.el
 
 (autoload 'pdf-outline-minor-mode "pdf-outline" "\
@@ -440,24 +401,19 @@ evaluate `pdf-outline-minor-mode'.
 The mode's hook is called both when the mode is enabled and when
 it is disabled.
 
-\(fn &optional ARG)" t)
-
+(fn &optional ARG)" t)
 (autoload 'pdf-outline "pdf-outline" "\
 Display an PDF outline of BUFFER.
 
 BUFFER defaults to the current buffer.  Select the outline
 buffer, unless NO-SELECT-WINDOW-P is non-nil.
 
-\(fn &optional BUFFER NO-SELECT-WINDOW-P)" t)
-
+(fn &optional BUFFER NO-SELECT-WINDOW-P)" t)
 (autoload 'pdf-outline-imenu-enable "pdf-outline" "\
 Enable imenu in the current PDF buffer." t)
-
 (register-definition-prefixes "pdf-outline" '("pdf-outline"))
 
-;;;***
 
-;;;### (autoloads nil "pdf-sync" "pdf-sync.el" (0 0 0 0))
 ;;; Generated autoloads from pdf-sync.el
 
 (autoload 'pdf-sync-minor-mode "pdf-sync" "\
@@ -466,11 +422,11 @@ Correlate a PDF position with the TeX file.
 \\<pdf-sync-minor-mode-map>
 This works via SyncTeX, which means the TeX sources need to have
 been compiled with `--synctex=1'.  In AUCTeX this can be done by
-setting `TeX-source-correlate-method' to 'synctex (before AUCTeX
+setting `TeX-source-correlate-method' to `synctex' (before AUCTeX
 is loaded) and enabling `TeX-source-correlate-mode'.
 
-Then \\[pdf-sync-backward-search-mouse] in the PDF buffer will open the
-corresponding TeX location.
+Then \\[pdf-sync-backward-search-mouse] in the PDF buffer will
+open the corresponding TeX location.
 
 If AUCTeX is your preferred tex-mode, this library arranges to
 bind `pdf-sync-forward-display-pdf-key' (the default is `C-c C-g')
@@ -493,20 +449,15 @@ evaluate `pdf-sync-minor-mode'.
 The mode's hook is called both when the mode is enabled and when
 it is disabled.
 
-\(fn &optional ARG)" t)
-
+(fn &optional ARG)" t)
 (register-definition-prefixes "pdf-sync" '("pdf-sync-"))
 
-;;;***
 
-;;;### (autoloads nil "pdf-tools" "pdf-tools.el" (0 0 0 0))
 ;;; Generated autoloads from pdf-tools.el
 
 (defvar pdf-tools-handle-upgrades t "\
 Whether PDF Tools should handle upgrading itself.")
-
 (custom-autoload 'pdf-tools-handle-upgrades "pdf-tools" t)
-
 (autoload 'pdf-tools-install "pdf-tools" "\
 Install PDF-Tools in all current and future PDF buffers.
 
@@ -536,29 +487,23 @@ value (e.g. ~/bin/epdfinfo) before calling this function.
 
 See `pdf-view-mode' and `pdf-tools-enabled-modes'.
 
-\(fn &optional NO-QUERY-P SKIP-DEPENDENCIES-P NO-ERROR-P FORCE-DEPENDENCIES-P)" t)
-
+(fn &optional NO-QUERY-P SKIP-DEPENDENCIES-P NO-ERROR-P FORCE-DEPENDENCIES-P)" t)
 (autoload 'pdf-tools-enable-minor-modes "pdf-tools" "\
 Enable MODES in the current buffer.
 
 MODES defaults to `pdf-tools-enabled-modes'.
 
-\(fn &optional MODES)" t)
-
-(autoload 'pdf-tools-help "pdf-tools" nil t)
-
+(fn &optional MODES)" t)
+(autoload 'pdf-tools-help "pdf-tools" "\
+Show a Help buffer for `pdf-tools'." t)
 (register-definition-prefixes "pdf-tools" '("pdf-tools-"))
 
-;;;***
 
-;;;### (autoloads nil "pdf-util" "pdf-util.el" (0 0 0 0))
 ;;; Generated autoloads from pdf-util.el
 
 (register-definition-prefixes "pdf-util" '("display-buffer-split-below-and-attach" "pdf-util-"))
 
-;;;***
 
-;;;### (autoloads nil "pdf-view" "pdf-view.el" (0 0 0 0))
 ;;; Generated autoloads from pdf-view.el
 
 (autoload 'pdf-view-bookmark-jump-handler "pdf-view" "\
@@ -566,25 +511,20 @@ The bookmark handler-function interface for bookmark BMK.
 
 See also `pdf-view-bookmark-make-record'.
 
-\(fn BMK)")
+(fn BMK)")
+(register-definition-prefixes "pdf-view" '("cua-copy-region--pdf-view-advice" "pdf-view-"))
 
-(register-definition-prefixes "pdf-view" '("pdf-view-"))
-
-;;;***
 
-;;;### (autoloads nil "pdf-virtual" "pdf-virtual.el" (0 0 0 0))
 ;;; Generated autoloads from pdf-virtual.el
 
 (autoload 'pdf-virtual-edit-mode "pdf-virtual" "\
 Major mode when editing a virtual PDF buffer.
 
-\(fn)" t)
-
+(fn)" t)
 (autoload 'pdf-virtual-view-mode "pdf-virtual" "\
 Major mode in virtual PDF buffers.
 
-\(fn)" t)
-
+(fn)" t)
 (defvar pdf-virtual-global-minor-mode nil "\
 Non-nil if Pdf-Virtual-Global minor mode is enabled.
 See the `pdf-virtual-global-minor-mode' command
@@ -592,9 +532,7 @@ for a description of this minor mode.
 Setting this variable directly does not take effect;
 either customize it (see the info node `Easy Customization')
 or call the function `pdf-virtual-global-minor-mode'.")
-
 (custom-autoload 'pdf-virtual-global-minor-mode "pdf-virtual" nil)
-
 (autoload 'pdf-virtual-global-minor-mode "pdf-virtual" "\
 Enable recognition and handling of VPDF files.
 
@@ -613,16 +551,12 @@ evaluate `(default-value \\='pdf-virtual-global-minor-mode)'.
 The mode's hook is called both when the mode is enabled and when
 it is disabled.
 
-\(fn &optional ARG)" t)
-
+(fn &optional ARG)" t)
 (autoload 'pdf-virtual-buffer-create "pdf-virtual" "\
 
 
-\(fn &optional FILENAMES BUFFER-NAME DISPLAY-P)" t)
-
+(fn &optional FILENAMES BUFFER-NAME DISPLAY-P)" t)
 (register-definition-prefixes "pdf-virtual" '("pdf-virtual-"))
-
-;;;***
 
 ;;; End of scraped data
 

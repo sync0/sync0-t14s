@@ -5,8 +5,8 @@
 
 ;;; Code:
 
+
 
-;;;### (autoloads nil "goto-chg" "goto-chg.el" (0 0 0 0))
 ;;; Generated autoloads from goto-chg.el
 
 (autoload 'goto-last-change "goto-chg" "\
@@ -34,17 +34,13 @@ This command uses undo information. If undo is disabled, so is this command.
 At times, when undo information becomes too large, the oldest information is
 discarded. See variable `undo-limit'.
 
-\(fn ARG)" t)
-
+(fn ARG)" t)
 (autoload 'goto-last-change-reverse "goto-chg" "\
 Go back to more recent changes after \\[goto-last-change] have been used.
 See `goto-last-change' for use of prefix argument.
 
-\(fn ARG)" t)
-
+(fn ARG)" t)
 (register-definition-prefixes "goto-chg" '("glc-"))
-
-;;;***
 
 ;;; End of scraped data
 

@@ -24,7 +24,7 @@ recently created entry. This variable is useless. It's used only
 for diagnostics purposes only.")
 
 (defvar sync0-bibtex-fields
-  '("titleaddon" "title" "subtitle" "origtitle" "eventtitle" "date" "origdate" "eventdate" "author" "editor" "translator" "recipient" "introduction" "journaltitle" "edition" "booktitle" "booksubtitle" "crossref" "chapter" "volume" "volumes" "number" "series" "publisher" "location" "pages" "note" "doi" "url" "urldate" "language" "langid" "origlanguage" "medium" "institution" "library" "related" "relatedtype" "relatedstring" "file" "created" "password" "shorttitle" "doctype" "shorthand" "description" "keywords" "foreword" "afterword" "editortype" "pagetotal" "verba" "cote" "project" "site" "version" "people" "country" "lecture" "seminar" "theme" "currency" "value" "recommender" "podcast" "visibility" "source" "year" "status" "alive" "expages" "century" "aliases" "scanstatus" "issuetitle" "priority" "scheduled" "deadline" "supervisor" "lastseen" "seen" "amount" "revised" "mention" "format" "jury" "reviewer" "filetype" "extension" "mentioned")
+  '("titleaddon" "title" "subtitle" "origtitle" "eventtitle" "date" "origdate" "eventdate" "author" "editor" "translator" "recipient" "introduction" "journaltitle" "edition" "booktitle" "booksubtitle" "crossref" "chapter" "volume" "volumes" "number" "series" "publisher" "location" "pages" "note" "doi" "url" "urldate" "language" "langid" "origlanguage" "medium" "institution" "library" "related" "relatedtype" "relatedstring" "file" "created" "password" "shorttitle" "doctype" "shorthand" "description" "keywords" "foreword" "afterword" "editortype" "pagetotal" "verba" "cote" "project" "site" "version" "people" "country" "lecture" "seminar" "theme" "currency" "value" "recommender" "podcast" "visibility" "source" "year" "status" "alive" "expages" "century" "aliases" "scanstatus" "issuetitle" "priority" "scheduled" "deadline" "supervisor" "lastseen" "seen" "amount" "revised" "mention" "format" "jury" "reviewer" "filetype" "extension" "mentioned" "bookloan")
   "List of Bibtex entry fields")
 
 (defvar sync0-bibtex-automatic-fields
@@ -34,7 +34,7 @@ information and that although can be set by the user, are usually
 calculated automatically at entry for new biblatex entries.")
 
 (defvar sync0-bibtex-unique-fields
-  '("titleaddon" "title" "subtitle" "origtitle" "eventtitle" "date" "origdate" "eventdate" "journaltitle" "edition" "booktitle" "booksubtitle" "crossref" "chapter" "volume" "volumes" "number" "series" "publisher" "pages" "note" "doi" "url" "urldate" "language" "langid" "origlanguage" "institution" "library" "relatedtype" "relatedstring" "password" "shorttitle" "shorthand" "description" "editortype" "pagetotal" "verba" "cote" "site" "version" "lecture" "seminar" "currency" "value" "podcast" "visibility" "source" "year" "status" "alive" "expages" "century" "scanstatus" "issuetitle" "priority" "scheduled" "deadline" "format" "extension" "created")
+  '("titleaddon" "title" "subtitle" "origtitle" "eventtitle" "date" "origdate" "eventdate" "journaltitle" "edition" "booktitle" "booksubtitle" "crossref" "chapter" "volume" "volumes" "number" "series" "publisher" "pages" "note" "doi" "url" "urldate" "language" "langid" "origlanguage" "institution" "library" "relatedtype" "relatedstring" "password" "shorttitle" "shorthand" "description" "editortype" "pagetotal" "verba" "cote" "site" "version" "lecture" "seminar" "currency" "value" "podcast" "visibility" "source" "year" "status" "alive" "expages" "century" "scanstatus" "issuetitle" "priority" "scheduled" "deadline" "format" "extension" "created" "bookloan")
   "List of Bibtex fields that only take one value. No multiple values allowed.")
 
 (defvar sync0-bibtex-string-fields
@@ -78,7 +78,7 @@ because it requires a special treatment.")
   "List of Bibtex entry types that use the editor field")
 
 (defvar sync0-bibtex-attachment-programs
-  '("zathura" "okular" "gwenview" "nil")
+  '("zathura" "okular" "gwenview" "nil" "vlc")
   "List of software to open attachments")
 
 ;; (defvar sync0-bibtex-quick-fields
@@ -118,6 +118,7 @@ because it requires a special treatment.")
               "SORT created DESC\n"
               "```\n\n"
               "### Relations\n\n"
+              "### Index\n\n"
               "## Notes\n\n"))
 
 (setq sync0-bibtex-quick-fields
@@ -137,7 +138,7 @@ because it requires a special treatment.")
   "List of Bibtex entry fields")
 
 (defvar sync0-bibtex-completion-single-fields
-  '("publisher" "journaltitle" "location" "titleaddon" "title" "eventtitle" "note" "library" "series" "institution" "language" "site" "relatedtype" "editortype" "lecture" "seminar" "podcast" "visibility" "source" "status" "alive" "scanstatus" "priority" "currency" "format" "extension")
+  '("publisher" "journaltitle" "location" "titleaddon" "title" "eventtitle" "note" "library" "series" "institution" "language" "site" "relatedtype" "editortype" "lecture" "seminar" "podcast" "visibility" "source" "status" "alive" "scanstatus" "priority" "currency" "format" "extension" "bookloan")
    "List of biblatex fields that are set with the completing-read
 function---as opposed to those defined with
 completing-read-multiple, which appear in
@@ -275,6 +276,42 @@ Use format of base58 encoding.")
   those things related to bibtex files. Every day, I dispose of
   672 different keys.")
 
+(defvar sync0-bibtex-today-keys-file
+  "/home/sync0/.emacs.d/sync0-vars/sync0-bibtex-today-keys.txt"
+  "File to store today's unique strings.")
+
+(defun sync0-bibtex-load-today-keys ()
+  "Load today's unique strings from file."
+  (when (file-readable-p sync0-bibtex-today-keys-file)
+    (with-temp-buffer
+      (insert-file-contents sync0-bibtex-today-keys-file)
+      (setq sync0-bibtex-today-keys (split-string (buffer-string) "\n" t)))))
+
+(defun sync0-bibtex-save-today-keys ()
+  "Save today's unique strings to file."
+  (with-temp-file sync0-bibtex-today-keys-file
+    (insert (mapconcat 'identity sync0-bibtex-today-keys "\n"))))
+
+(defun sync0-bibtex-clear-today-keys ()
+  "Clear the contents of sync0-bibtex-today-keys.txt, removing entries not created today."
+  (with-temp-buffer
+    (insert-file-contents sync0-bibtex-today-keys-file)
+    (goto-char (point-min))
+    (while (not (eobp))
+      (let ((line-start (line-beginning-position)))
+        (if (looking-at-p (concat "^" sync0-bibtex-timeday))
+            (forward-line)
+          (delete-region line-start (1+ (line-end-position))))))
+    (write-region (point-min) (point-max) sync0-bibtex-today-keys-file nil 'no-message)))
+
+(sync0-bibtex-load-today-keys)
+(sync0-bibtex-clear-today-keys)
+
+;; Your function to add unique strings to sync0-bibtex-today-keys goes here
+
+;; Call save-sync0-bibtex-today-keys when Emacs is about to exit
+(add-hook 'kill-emacs-hook #'sync0-bibtex-save-today-keys)
+
 (defvar sync0-bibtex-archived-bibliography (concat sync0-bibtex-bibliobraphy-directory "archived.bib")
   "Bibliography to store entries that are not needed at the moment for whatever reason.")
 
@@ -353,6 +390,7 @@ titles and the like.")
     ("title" "\"" "\"" sync0-bibtex-entry-title)
     ("eventtitle" "\"" "\"" sync0-bibtex-entry-eventtitle)
     ("date" "" "" sync0-bibtex-entry-date)
+    ("bookloan" "" "" sync0-bibtex-entry-bookloan)
     ("amount" "" "" sync0-bibtex-entry-amount)
     ("currency" "" "" sync0-bibtex-entry-currency)
     ("lastseen" "" "" sync0-bibtex-entry-lastseen)
@@ -410,6 +448,7 @@ Obsidian of produced markdown (corrupt YAML frontmatters).")
     ("visibility" "visibility/" sync0-bibtex-entry-visibility)
     ("source" "century/" sync0-bibtex-entry-century)
     ("century" "source/" sync0-bibtex-entry-source)
+    ("bookloan" "bookloan/" sync0-bibtex-entry-bookloan)
     ("theme" "" sync0-bibtex-entry-theme-tag)
     ("status" "status/" sync0-bibtex-entry-status)
     ("scanstatus" "scanstatus/" sync0-bibtex-entry-scanstatus)

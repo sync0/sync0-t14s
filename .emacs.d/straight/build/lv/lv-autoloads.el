@@ -5,13 +5,11 @@
 
 ;;; Code:
 
+
 
-;;;### (autoloads nil "lv" "lv.el" (0 0 0 0))
 ;;; Generated autoloads from lv.el
 
 (register-definition-prefixes "lv" '("lv-"))
-
-;;;***
 
 ;;; End of scraped data
 

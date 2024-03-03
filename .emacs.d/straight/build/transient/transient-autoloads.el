@@ -5,8 +5,8 @@
 
 ;;; Code:
 
+
 
-;;;### (autoloads nil "transient" "transient.el" (0 0 0 0))
 ;;; Generated autoloads from transient.el
 
 (autoload 'transient-insert-suffix "transient" "\
@@ -19,10 +19,8 @@ LOC is a command, a key vector, a key description (a string
   (whose last element may also be a command or key).
 See info node `(transient)Modifying Existing Transients'.
 
-\(fn PREFIX LOC SUFFIX)")
-
+(fn PREFIX LOC SUFFIX)")
 (function-put 'transient-insert-suffix 'lisp-indent-function 'defun)
-
 (autoload 'transient-append-suffix "transient" "\
 Insert a SUFFIX into PREFIX after LOC.
 PREFIX is a prefix command, a symbol.
@@ -33,10 +31,8 @@ LOC is a command, a key vector, a key description (a string
   (whose last element may also be a command or key).
 See info node `(transient)Modifying Existing Transients'.
 
-\(fn PREFIX LOC SUFFIX)")
-
+(fn PREFIX LOC SUFFIX)")
 (function-put 'transient-append-suffix 'lisp-indent-function 'defun)
-
 (autoload 'transient-replace-suffix "transient" "\
 Replace the suffix at LOC in PREFIX with SUFFIX.
 PREFIX is a prefix command, a symbol.
@@ -47,10 +43,8 @@ LOC is a command, a key vector, a key description (a string
   (whose last element may also be a command or key).
 See info node `(transient)Modifying Existing Transients'.
 
-\(fn PREFIX LOC SUFFIX)")
-
+(fn PREFIX LOC SUFFIX)")
 (function-put 'transient-replace-suffix 'lisp-indent-function 'defun)
-
 (autoload 'transient-remove-suffix "transient" "\
 Remove the suffix or group at LOC in PREFIX.
 PREFIX is a prefix command, a symbol.
@@ -59,13 +53,9 @@ LOC is a command, a key vector, a key description (a string
   (whose last element may also be a command or key).
 See info node `(transient)Modifying Existing Transients'.
 
-\(fn PREFIX LOC)")
-
+(fn PREFIX LOC)")
 (function-put 'transient-remove-suffix 'lisp-indent-function 'defun)
-
 (register-definition-prefixes "transient" '("magit--fit-window-to-buffer" "transient-"))
-
-;;;***
 
 ;;; End of scraped data
 

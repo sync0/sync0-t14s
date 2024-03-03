@@ -5,8 +5,8 @@
 
 ;;; Code:
 
+
 
-;;;### (autoloads nil "ivy-bibtex" "ivy-bibtex.el" (0 0 0 0))
 ;;; Generated autoloads from ivy-bibtex.el
 
 (autoload 'ivy-bibtex "ivy-bibtex" "\
@@ -19,27 +19,22 @@ If LOCAL-BIB is non-nil, display that the BibTeX entries are read
 from the local bibliography.  This is set internally by
 `ivy-bibtex-with-local-bibliography'.
 
-\(fn &optional ARG LOCAL-BIB)" t)
-
+(fn &optional ARG LOCAL-BIB)" t)
 (autoload 'ivy-bibtex-with-local-bibliography "ivy-bibtex" "\
 Search BibTeX entries with local bibliography.
 
 With a prefix ARG the cache is invalidated and the bibliography
 reread.
 
-\(fn &optional ARG)" t)
-
+(fn &optional ARG)" t)
 (autoload 'ivy-bibtex-with-notes "ivy-bibtex" "\
 Search BibTeX entries with notes.
 
 With a prefix ARG the cache is invalidated and the bibliography
 reread.
 
-\(fn &optional ARG)" t)
-
+(fn &optional ARG)" t)
 (register-definition-prefixes "ivy-bibtex" '("ivy-bibtex-"))
-
-;;;***
 
 ;;; End of scraped data
 

@@ -5,8 +5,8 @@
 
 ;;; Code:
 
+
 
-;;;### (autoloads nil "hydra" "hydra.el" (0 0 0 0))
 ;;; Generated autoloads from hydra.el
 
 (autoload 'defhydra "hydra" "\
@@ -61,30 +61,20 @@ want to bind anything.  In that case, typically you will bind the
 generated NAME/body command.  This command is also the return
 result of `defhydra'.
 
-\(fn NAME BODY &optional DOCSTRING &rest HEADS)" nil t)
-
+(fn NAME BODY &optional DOCSTRING &rest HEADS)" nil t)
 (function-put 'defhydra 'lisp-indent-function 'defun)
-
 (function-put 'defhydra 'doc-string-elt 3)
-
 (register-definition-prefixes "hydra" '("defhydra" "hydra-"))
 
-;;;***
 
-;;;### (autoloads nil "hydra-examples" "hydra-examples.el" (0 0 0
-;;;;;;  0))
 ;;; Generated autoloads from hydra-examples.el
 
 (register-definition-prefixes "hydra-examples" '("hydra-" "org-agenda-cts" "whitespace-mode"))
 
-;;;***
 
-;;;### (autoloads nil "hydra-ox" "hydra-ox.el" (0 0 0 0))
 ;;; Generated autoloads from hydra-ox.el
 
 (register-definition-prefixes "hydra-ox" '("hydra-ox"))
-
-;;;***
 
 ;;; End of scraped data
 

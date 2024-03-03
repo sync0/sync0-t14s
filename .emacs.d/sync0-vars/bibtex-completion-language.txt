@@ -96,3 +96,8 @@ yiddish
 yoruba
 hungarian
 fr
+eng
+{french}
+renc
+en
+{english}
