@@ -1,6 +1,7 @@
 txt
 m4a
 mp3
+mp4
 doc
 docx
 odt
@@ -14,3 +15,6 @@ org
 md
 jpg
 png
+epub
+rtf
+tex

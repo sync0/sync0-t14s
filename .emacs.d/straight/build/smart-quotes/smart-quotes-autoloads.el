@@ -5,17 +5,15 @@
 
 ;;; Code:
 
+
 
-;;;### (autoloads nil "smart-quotes" "smart-quotes.el" (0 0 0 0))
 ;;; Generated autoloads from smart-quotes.el
 
 (defvar smart-quotes-mode nil "\
 Toggle smart-quotes-mode.
 Setting this variable directly does not take effect;
 use either \\[customize] or the function `smart-quotes-mode'.")
-
 (custom-autoload 'smart-quotes-mode "smart-quotes" nil)
-
 (autoload 'smart-quotes-mode "smart-quotes" "\
 Minor mode that makes the ' and \" keys insert left and right
 quotation marks automatically according to the context before point;
@@ -24,20 +22,14 @@ With no argument, this command toggles Smart Quotes mode.
 With a prefix argument ARG, turn Smart Quotes minor mode on if ARG
 is positive, otherwise turn it off.
 
-\(fn &optional ARG)" t)
-
+(fn &optional ARG)" t)
 (autoload 'turn-on-smart-quotes "smart-quotes" "\
 Unconditionally turn on Smart Quotes mode.")
-
 (autoload 'turn-off-smart-quotes "smart-quotes" "\
 Unconditionally turn off Smart Quotes mode.")
-
 (autoload 'smart-quotes-smarten "smart-quotes" "\
 Turn quotes into smart quotes in region or buffer." t)
-
 (register-definition-prefixes "smart-quotes" '("smart-quotes-"))
-
-;;;***
 
 ;;; End of scraped data
 

@@ -1,5 +1,0 @@
-# -*- mode: snippet -*-
-# name: org-straight 
-# key: straight
-# --
-:straight (${1:the-package} :type git :host github :repo "${2:john-doe/awesome-package}") $0

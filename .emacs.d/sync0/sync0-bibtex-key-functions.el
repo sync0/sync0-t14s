@@ -46,29 +46,54 @@ character at random."
   (setq sync0-bibtex-today-keys (cons key sync0-bibtex-today-keys)))
 
 (defun sync0-bibtex-entry-key-define (&optional daily lengthy)
-  "Create new bibtex key following a pre-defined rule. In this
-case, keys are outputed in the YYMMDDxx format, in which the last
-two characters are produced using the sync0-random-alnum function
-to produce random characters."
+  "Generate a new BibTeX key following a predefined rule.
+The key format is YYMMDDxx, where 'xx' are random alphanumeric characters.
+If DAILY is non-nil, ensure uniqueness for the current day.
+If LENGTHY is non-nil, specify the length of random characters."
   (let* ((iterations (or lengthy sync0-bibtex-default-key-length))
          ;; 2 is the default value 
-         (random-alnum (loop repeat iterations concat (sync0-random-alnum)))
-         (new-key (concat sync0-bibtex-timeday random-alnum)))
+         (random-string (sync0-generate-random-string iterations))
+         (new-key (concat sync0-bibtex-timeday random-string)))
     (if (sync0-bibtex-duplicate-entry-key-p new-key daily)
-        ;; Call recursively the function again
-        (sync0-bibtex-entry-key-define daily)
+        (sync0-bibtex-entry-key-define daily iterations)
       (progn 
         (sync0-bibtex-add-key-to-keyvars new-key)
-        (format "%s" new-key)))))
+        new-key))))
+
+;; (defun sync0-bibtex-entry-key-define (&optional daily lengthy)
+;;   "Create new bibtex key following a pre-defined rule. In this
+;; case, keys are outputed in the YYMMDDxx format, in which the last
+;; two characters are produced using the sync0-random-alnum function
+;; to produce random characters."
+;;   (let* ((iterations (or lengthy sync0-bibtex-default-key-length))
+;;          ;; 2 is the default value 
+;;          (random-alnum (loop repeat iterations concat (sync0-random-alnum)))
+;;          (new-key (concat sync0-bibtex-timeday random-alnum)))
+;;     (if (sync0-bibtex-duplicate-entry-key-p new-key daily)
+;;         ;; Call recursively the function again
+;;         (sync0-bibtex-entry-key-define daily)
+;;       (progn 
+;;         (sync0-bibtex-add-key-to-keyvars new-key)
+;;         (format "%s" new-key)))))
 
 (defun sync0-bibtex-entry-define-keys-list (times &optional daily) 
-  "Create as many new keys as requested. They are put on a list"
-  (let (values)
-    (dotimes (i times)
-      (push (sync0-bibtex-entry-key-define daily) values))
-    (if (sync0-duplicates-p values)
-        (sync0-bibtex-entry-define-keys-list times daily)
-      values)))
+  "Generate a list of new BibTeX keys.
+The keys are unique and put in a list.
+If DAILY is non-nil, ensure uniqueness for the current day."
+  (let (keys)
+    (dotimes (_ times)
+      (push (sync0-bibtex-entry-key-define daily) keys))
+    (unless (sync0-duplicates-p keys)
+      keys)))
+
+;; (defun sync0-bibtex-entry-define-keys-list (times &optional daily) 
+;;   "Create as many new keys as requested. They are put on a list"
+;;   (let (values)
+;;     (dotimes (i times)
+;;       (push (sync0-bibtex-entry-key-define daily) values))
+;;     (if (sync0-duplicates-p values)
+;;         (sync0-bibtex-entry-define-keys-list times daily)
+;;       values)))
 
 (defun sync0-bibtex-next-key ()
   "Print the bibtex key of the document"
@@ -102,48 +127,96 @@ by org-roam files"
     (while (re-search-forward oldkey nil t)
       (replace-match newkey))))
 
-(defun sync0-bibtex-completion-choose-key (&optional unique pointer query-message)
+;; (defun sync0-bibtex-completion-choose-key (&optional unique pointer query-message use-cache)
+;;   "Choose key with completion. When optional pointer is t,
+;;    preselect the entry at point."
+;;   (if unique
+;;       (let* ((entry (when (or pointer
+;;                               (string= major-mode "bibtex-mode"))
+;;                       (save-excursion (bibtex-beginning-of-entry)
+;; 			              (bibtex-parse-entry))))
+;;              (preselect (when entry
+;;                           (cdr (assoc "=key=" entry))))
+;;              (candidates (if use-cache
+;; 			     sync0-bibtex-completion-candidate-cache
+;; 			   (setq sync0-bibtex-completion-candidate-cache (bibtex-completion-candidates))))
+;;              (selection (ivy-read (or query-message
+;;                                       "Bibliography candidates: ")
+;;                                   candidates
+;;                                   :preselect preselect
+;;                                   :caller 'ivy-bibtex
+;;                                   :history 'ivy-bibtex-history)))
+;;         (cdr (assoc "=key=" (cdr (assoc selection candidates)))))
+;;     (let* ((entry (when (or pointer
+;;                             (string= major-mode "bibtex-mode"))
+;;                     (save-excursion (bibtex-beginning-of-entry)
+;; 			            (bibtex-parse-entry))))
+;;            (preselect (when entry
+;;                         (cdr (assoc "=key=" entry))))
+;;              (candidates (if use-cache
+;; 			     sync0-bibtex-completion-candidate-cache
+;; 			   (setq sync0-bibtex-completion-candidate-cache (bibtex-completion-candidates))))
+;;            (counter 0)
+;;            selection
+;;            x)
+;;       (while (not (equal selection "nilnil"))
+;;         (setq selection (ivy-read (format (concat (or query-message
+;;                                                       "Bibliography candidates")
+;;                                                   "%s: ")
+;;                                           (if (> counter 0)
+;;                                               (concat " (selected: " (number-to-string counter) ")") ""))
+;;                                   candidates
+;;                                   :preselect preselect
+;;                                   :caller 'ivy-bibtex
+;;                                   :history 'ivy-bibtex-history))
+;;         (setq counter (1+ counter))
+;;         (setq x (concat (cdr (assoc "=key=" (cdr (assoc selection candidates)))) ", " x)))
+;;       (if (equal counter 1)
+;;           (format "%s" x)
+;;         (format "%s" (substring x 2 -2))))))
+
+(defun sync0-bibtex-completion-choose-key (&optional unique pointer query-message use-cache)
   "Choose key with completion. When optional pointer is t,
-   preselect the entry at point."
-  (if unique
-      (let* ((entry (when (or pointer
-                              (string= major-mode "bibtex-mode"))
-                      (save-excursion (bibtex-beginning-of-entry)
-			              (bibtex-parse-entry))))
-             (preselect (when entry
-                          (cdr (assoc "=key=" entry))))
-             (candidates (bibtex-completion-candidates))
-             (selection (ivy-read (or query-message
-                                      "Bibliography candidates: ")
-                                  candidates
-                                  :preselect preselect
-                                  :caller 'ivy-bibtex
-                                  :history 'ivy-bibtex-history)))
-        (cdr (assoc "=key=" (cdr (assoc selection candidates)))))
-    (let* ((entry (when (or pointer
-                            (string= major-mode "bibtex-mode"))
-                    (save-excursion (bibtex-beginning-of-entry)
-			            (bibtex-parse-entry))))
-           (preselect (when entry
-                        (cdr (assoc "=key=" entry))))
-           (candidates (bibtex-completion-candidates))
-           (counter 0)
-           selection
-           x)
-      (while (not (equal selection "nilnil"))
-        (setq selection (ivy-read (format (concat (or query-message
-                                                      "Bibliography candidates")
-                                                  "%s: ")
-                                          (if (> counter 0)
-                                              (concat " (selected: " (number-to-string counter) ")") ""))
-                                  candidates
-                                  :preselect preselect
-                                  :caller 'ivy-bibtex
-                                  :history 'ivy-bibtex-history))
-        (setq counter (1+ counter))
-        (setq x (concat (cdr (assoc "=key=" (cdr (assoc selection candidates)))) ", " x)))
-      (if (equal counter 1)
-          (format "%s" x)
-        (format "%s" (substring x 2 -2))))))
+preselect the entry at point. If UNIQUE is non-nil, return a single key, otherwise allow multiple selections."
+  (let* ((entry (when (or pointer
+                          (string= major-mode "bibtex-mode"))
+                  (save-excursion
+                    (bibtex-beginning-of-entry)
+                    (bibtex-parse-entry))))
+         (preselect (if entry
+			(cdr (assoc "=key=" entry))
+		    sync0-bibtex-choose-key-cache))
+         (candidates (if use-cache
+                         sync0-bibtex-completion-candidate-cache
+                       (setq sync0-bibtex-completion-candidate-cache (bibtex-completion-candidates)))))
+    (if unique
+        (let ((selection (ivy-read (or query-message
+                                       "Bibliography candidates: ")
+                                   candidates
+                                   :preselect preselect
+                                   :caller 'ivy-bibtex
+                                   :history 'ivy-bibtex-history)))
+	  (setq sync0-bibtex-choose-key-cache selection)
+          (cdr (assoc "=key=" (cdr (assoc selection candidates)))))
+      (let ((counter 0)
+            (selection nil)
+            (result ""))
+        (while (not (equal selection "nilnil"))
+          (setq selection (ivy-read (format (concat (or query-message
+                                                        "Bibliography candidates")
+                                                    "%s: ")
+                                            (if (> counter 0)
+                                                (concat " (selected: " (number-to-string counter) ")") ""))
+                                    candidates
+                                    :preselect preselect
+                                    :caller 'ivy-bibtex
+                                    :history 'ivy-bibtex-history))
+                counter (1+ counter)
+                result (concat (cdr (assoc "=key=" (cdr (assoc selection candidates)))) ", " result)))
+        (if (= counter 1)
+            (format "%s" result)
+          (format "%s" (substring result 2 -2))))))
+
+;; (provide 'sync0-bibtex-completion-choose-key)
 
 (provide 'sync0-bibtex-key-functions)

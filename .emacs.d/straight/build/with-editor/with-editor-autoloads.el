@@ -5,8 +5,8 @@
 
 ;;; Code:
 
+
 
-;;;### (autoloads nil "with-editor" "with-editor.el" (0 0 0 0))
 ;;; Generated autoloads from with-editor.el
 
 (autoload 'with-editor-export-editor "with-editor" "\
@@ -19,21 +19,16 @@ commands to use the current Emacs instance as \"the editor\".
 This works in `shell-mode', `term-mode', `eshell-mode' and
 `vterm'.
 
-\(fn &optional (ENVVAR \"EDITOR\"))" t)
-
+(fn &optional (ENVVAR \"EDITOR\"))" t)
 (autoload 'with-editor-export-git-editor "with-editor" "\
 Like `with-editor-export-editor' but always set `$GIT_EDITOR'." t)
-
 (autoload 'with-editor-export-hg-editor "with-editor" "\
 Like `with-editor-export-editor' but always set `$HG_EDITOR'." t)
-
 (defvar shell-command-with-editor-mode nil "\
 Non-nil if Shell-Command-With-Editor mode is enabled.
 See the `shell-command-with-editor-mode' command
 for a description of this minor mode.")
-
 (custom-autoload 'shell-command-with-editor-mode "with-editor" nil)
-
 (autoload 'shell-command-with-editor-mode "with-editor" "\
 Teach `shell-command' to use current Emacs instance as editor.
 
@@ -66,8 +61,7 @@ evaluate `(default-value \\='shell-command-with-editor-mode)'.
 The mode's hook is called both when the mode is enabled and when
 it is disabled.
 
-\(fn &optional ARG)" t)
-
+(fn &optional ARG)" t)
 (autoload 'with-editor-async-shell-command "with-editor" "\
 Like `async-shell-command' but with `$EDITOR' set.
 
@@ -85,18 +79,14 @@ with arguments, or a script which also works over Tramp.
 
 Also see `async-shell-command' and `shell-command'.
 
-\(fn COMMAND &optional OUTPUT-BUFFER ERROR-BUFFER ENVVAR)" t)
-
+(fn COMMAND &optional OUTPUT-BUFFER ERROR-BUFFER ENVVAR)" t)
 (autoload 'with-editor-shell-command "with-editor" "\
 Like `shell-command' or `with-editor-async-shell-command'.
 If COMMAND ends with \"&\" behave like the latter,
 else like the former.
 
-\(fn COMMAND &optional OUTPUT-BUFFER ERROR-BUFFER ENVVAR)" t)
-
-(register-definition-prefixes "with-editor" '("server-" "shell-command--shell-command-with-editor-mode" "start-file-process--with-editor-process-filter" "with-editor"))
-
-;;;***
+(fn COMMAND &optional OUTPUT-BUFFER ERROR-BUFFER ENVVAR)" t)
+(register-definition-prefixes "with-editor" '("server-" "shell-command" "start-file-process" "with-editor"))
 
 ;;; End of scraped data
 

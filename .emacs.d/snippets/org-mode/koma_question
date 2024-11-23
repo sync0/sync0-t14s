@@ -1,8 +1,0 @@
-# -*- mode: snippet -*-
-# name: koma_question
-# key: kquestion
-# --
-\begin{labeling}[~]{Question} 
-\item[Question] $1 
-\end{labeling}
-$0

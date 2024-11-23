@@ -1,1 +1,1 @@
-/home/sync0/.emacs.d/straight/repos/with-editor/with-editor.el
+/home/sync0/.emacs.d/straight/repos/with-editor/lisp/with-editor.el

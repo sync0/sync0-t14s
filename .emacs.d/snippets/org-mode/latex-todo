@@ -1,5 +1,0 @@
-# -*- mode: snippet -*-
-# name: latex-todo
-# key: todo 
-# --
-\todo{${1:my_todo_text}}$0

@@ -1,5 +1,0 @@
-# -*- mode: snippet -*-
-# name: doctorat-mentioned-people-table-complete
-# key: ent
-# --
-| `(sync0-doctorat-complete-biblatex-key)` | `(sync0-doctorat-complete-person-id)` | `(sync0-doctorat-complete-reference-types)` | `(sync0-doctorat-complete-explicit)` | ${5:32} | `(sync0-doctorat-complete-languages)` | $0 |

@@ -18,7 +18,7 @@ either customize it (see the info node `Easy Customization')
 or call the function `which-key-mode'.")
 (custom-autoload 'which-key-mode "which-key" nil)
 (autoload 'which-key-mode "which-key" "\
-Toggle which-key-mode.
+Toggle `which-key-mode'.
 
 This is a global minor mode.  If called interactively, toggle the
 `Which-Key mode' mode.  If the prefix argument is positive,
@@ -49,12 +49,12 @@ Do not use this setup if you use the paging commands.  Instead use
 but more functional." t)
 (autoload 'which-key-add-keymap-based-replacements "which-key" "\
 Replace the description of KEY using REPLACEMENT in KEYMAP.
-KEY should take a format suitable for use in `kbd'. REPLACEMENT
+KEY should take a format suitable for use in `kbd'.  REPLACEMENT
 should be a cons cell of the form (STRING . COMMAND) for each
 REPLACEMENT, where STRING is the replacement string and COMMAND
 is a symbol corresponding to the intended command to be
-replaced. COMMAND can be nil if the binding corresponds to a key
-prefix. An example is
+replaced.  COMMAND can be nil if the binding corresponds to a key
+prefix.  An example is
 
 (which-key-add-keymap-based-replacements global-map
   \"C-x w\" \\='(\"Save as\" . write-file)).
@@ -64,10 +64,11 @@ but the above format is preferred, and the option to use a string
 for REPLACEMENT will eventually be removed.
 
 (fn KEYMAP KEY REPLACEMENT &rest MORE)")
+(function-put 'which-key-add-keymap-based-replacements 'lisp-indent-function 'defun)
 (autoload 'which-key-add-key-based-replacements "which-key" "\
 Replace the description of KEY-SEQUENCE with REPLACEMENT.
-KEY-SEQUENCE is a string suitable for use in `kbd'. REPLACEMENT
-may either be a string, as in
+KEY-SEQUENCE is a string suitable for use in `kbd'.
+REPLACEMENT may either be a string, as in
 
 (which-key-add-key-based-replacements \"C-x 1\" \"maximize\")
 
@@ -93,11 +94,12 @@ be active for KEY-SEQUENCE and REPLACEMENT (MORE contains
 addition KEY-SEQUENCE REPLACEMENT pairs) to apply.
 
 (fn MODE KEY-SEQUENCE REPLACEMENT &rest MORE)")
+(function-put 'which-key-add-major-mode-key-based-replacements 'lisp-indent-function 'defun)
 (autoload 'which-key-reload-key-sequence "which-key" "\
 Simulate entering the key sequence KEY-SEQ.
 KEY-SEQ should be a list of events as produced by
 `listify-key-sequence'.  If nil, KEY-SEQ defaults to
-`which-key--current-key-list'. Any prefix arguments that were
+`which-key--current-key-list'.  Any prefix arguments that were
 used are reapplied to the new key sequence.
 
 (fn &optional KEY-SEQ)")
@@ -125,15 +127,15 @@ Show top-level bindings.
 (autoload 'which-key-show-major-mode "which-key" "\
 Show top-level bindings in the map of the current major mode.
 This function will also detect evil bindings made using
-`evil-define-key' in this map. These bindings will depend on the
-current evil state. 
+`evil-define-key' in this map.  These bindings will depend on the
+current evil state.
 
 (fn &optional ALL)" t)
 (autoload 'which-key-show-full-major-mode "which-key" "\
 Show all bindings in the map of the current major mode.
 This function will also detect evil bindings made using
-`evil-define-key' in this map. These bindings will depend on the
-current evil state. " t)
+`evil-define-key' in this map.  These bindings will depend on the
+current evil state." t)
 (autoload 'which-key-dump-bindings "which-key" "\
 Dump bindings from PREFIX into buffer named BUFFER-NAME.
 PREFIX should be a string suitable for `kbd'.
@@ -144,7 +146,7 @@ Undo last keypress and force which-key update.
 
 (fn &optional _)" t)
 (autoload 'which-key-C-h-dispatch "which-key" "\
-Dispatch C-h commands by looking up key in `which-key-C-h-map'.
+Dispatch \\`C-h' commands by looking up key in `which-key-C-h-map'.
 This command is always accessible (from any prefix) if
 `which-key-use-C-h-commands' is non nil." t)
 (autoload 'which-key-show-keymap "which-key" "\

@@ -1,5 +1,0 @@
-# -*- mode: snippet -*-
-# name: biblatex_doi
-# key: doi 
-# --
-doi = {${1:10.1016/S0954-349X(99)00022-3}}, $0

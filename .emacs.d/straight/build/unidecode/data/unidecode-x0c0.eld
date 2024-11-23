@@ -1,0 +1,1 @@
+/home/sync0/.emacs.d/straight/repos/unidecode/data/unidecode-x0c0.eld

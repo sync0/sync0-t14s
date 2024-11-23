@@ -1,9 +1,0 @@
-# -*- mode: snippet -*-
-# name: csquotes_displayquote
-# key: quote 
-# --
-#+ATTR_LATEX: :options [{\cite${1:$$(unless yas-modified-p (sync0-last-cited-page))}{`(sync0-last-cited-author)`}}]
-#+BEGIN_displayquote
-$2
-#+END_displayquote
-$0

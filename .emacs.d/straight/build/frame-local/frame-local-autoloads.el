@@ -5,13 +5,11 @@
 
 ;;; Code:
 
+
 
-;;;### (autoloads nil "frame-local" "frame-local.el" (0 0 0 0))
 ;;; Generated autoloads from frame-local.el
 
 (register-definition-prefixes "frame-local" '("frame-local-"))
-
-;;;***
 
 ;;; End of scraped data
 

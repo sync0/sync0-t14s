@@ -352,26 +352,6 @@ Open the `org-ref' manual." t)
 
 ;;; Generated autoloads from org-ref-glossary.el
 
-(autoload 'org-ref-add-glossary-entry "org-ref-glossary" "\
-Insert a new glossary entry.
-LABEL is how you refer to it with links.
-NAME is the name of the entry to be defined.
-DESCRIPTION is the definition of the entry.
-Entry gets added after the last #+latex_header line.
-
-This is not a preferred way to add entries. It is preferred to
-manually add them to the glossary table.
-
-(fn LABEL NAME DESCRIPTION)" t)
-(autoload 'org-ref-add-acronym-entry "org-ref-glossary" "\
-Add an acronym entry with LABEL.
-  ABBRV is the abbreviated form.
-  FULL is the expanded acronym.
-
-This is not the preferred way to add acronyms, you should add
-them manually to the acronyms table.
-
-(fn LABEL ABBRV FULL)" t)
 (register-definition-prefixes "org-ref-glossary" '("or-" "org-ref-"))
 
 

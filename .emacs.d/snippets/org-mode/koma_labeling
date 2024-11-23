@@ -1,7 +1,0 @@
-# -*- mode: snippet -*-
-# name: labeling_koma
-# key: klabeling
-# --
-\begin{labeling}[:]{} 
-\item[${1:Commentaire}] $2
-\end{labeling}$0

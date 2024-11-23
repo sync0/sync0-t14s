@@ -662,3 +662,64 @@
     ;;       (format-time-string "%Y%m%d%H%M%S"))))
 
 
+
+;; (defun my-modify-citations ()
+;;   "Modify citation commands in the current buffer based on my-bib-alist."
+;;   (interactive)
+;;   (let ((bib-key-alist '())) ; Temporary alist to store bibkey and labels
+;;     ;; Build the bib-key-alist from my-bib-alist
+;;     (dolist (bibfile my-bib-alist)
+;;       (let ((label (car bibfile))
+;;             (path (cdr bibfile)))
+;;         ;; Read the bib file and extract citation keys
+;;         (with-temp-buffer
+;;           (insert-file-contents path)
+;;           (while (re-search-forward "@\\w+{\\([^,]+\\)," nil t)
+;;             (let ((bibkey (match-string 1)))
+;;               ;; Add the bibkey and its corresponding label to the alist
+;;               (push (cons bibkey label) bib-key-alist))))))
+    
+;;     ;; Search for citation commands in the current buffer
+;;     (save-excursion
+;;       (goto-char (point-min))
+;;       (while (re-search-forward "\\\\cite\\w*\\(\\[.*?\\]\\)?{\\([^}]+\\)}" nil t)
+;;         (let ((options (match-string 1))
+;;               (key (match-string 2)))
+;;           ;; Find the corresponding label for the bibkey
+;;           (let ((label (cdr (assoc key bib-key-alist))))
+;;             (when label
+;;               ;; Modify the citation command to include the label
+;;               (replace-match (concat "\\\\cite" label options "{" key "}") t))))))))
+
+;; (defun my-modify-citations ()
+;;   "Modify citation commands in the current buffer based on my-bib-alist."
+;;   (interactive)
+;;   (let ((bib-key-alist '()))  ;; Temporary alist to store bibkey and labels
+;;     ;; Build the bib-key-alist from my-bib-alist
+;;     (dolist (bibfile my-bib-alist)
+;;       (let ((label (car bibfile))
+;;             (path (cdr bibfile)))
+;;         ;; Read the bib file and extract citation keys
+;;         (with-temp-buffer
+;;           (insert-file-contents path)
+;;           (while (re-search-forward "@\\w+{\\([^,]+\\)," nil t)
+;;             (let ((bibkey (match-string 1)))
+;;               ;; Add the bibkey and its corresponding label to the alist
+;;               (push (cons bibkey label) bib-key-alist))))))
+    
+;;     ;; Regex to match different citation commands
+;;     (let ((citation-regexp "\\\\cite\\(t\\|p\\|alp\\|alt\\|author\\|year\\|text\\)*\\(\\[.*?\\]\\)?{\\([^}]+\\)}"))
+;;       ;; Search and modify citation commands in the current buffer
+;;       (save-excursion
+;;         (goto-char (point-min))
+;;         (while (re-search-forward citation-regexp nil t)
+;;           (let ((cmd (match-string 0)) ;; Full match (entire command)
+;;                 (options (match-string 2)) ;; Citation options (like page numbers)
+;;                 (key (match-string 3))) ;; Bib key
+;;             ;; Find the corresponding label for the bibkey
+;;             (let ((label (cdr (assoc key bib-key-alist))))
+;;               (when label
+;;                 ;; Modify the citation command to include the label
+
+;;                 (replace-match (concat "\\\\cite" label options "{" key "}") t)))))))))
+

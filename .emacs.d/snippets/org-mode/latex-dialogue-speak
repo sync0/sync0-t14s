@@ -1,5 +1,0 @@
-# -*- mode: snippet -*-
-# name: latex-dialogue-speak
-# key: speak
-# --
-\speak\{${1:Estragon}\} ${2:I'm in hell!} $0

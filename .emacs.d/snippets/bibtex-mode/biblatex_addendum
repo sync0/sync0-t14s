@@ -1,5 +1,0 @@
-# -*- mode: snippet -*-
-# name: biblatex_addendum
-# key: addendum 
-# --
-addendum = {${1:Reproduction}}, $0

@@ -100,7 +100,7 @@
 				      (completing-read "Choose an attachment to open: " attach-list)
 				    (car attach-list)))
                (chosen-attachment-fix (if (string-match ":\\(.*\\)\\:[^.]*$" chosen-attachment)
-                                           (match-string 1 chosen-attachment)
+                                          (match-string 1 chosen-attachment)
                                         chosen-attachment))
                (extension (file-name-extension chosen-attachment-fix))
 	       (program (if (assoc extension sync0-default-file-associations)
@@ -108,7 +108,7 @@
 			  (completing-read "Which software to open attachment with? " sync0-bibtex-attachment-programs))))
           (if chosen-attachment
               (call-process program nil 0 nil chosen-attachment-fix)
-	     (message "No attachment found for key %s" key)))))))
+	    (message "No attachment found for key %s" key)))))))
 
 (defun sync0-ebib-open-notes-at-point ()
   "Choose an attachment to open for the current entry in Ebib."
@@ -191,65 +191,111 @@ a numeric prefix argument ARG can be used to specify which file to choose."
 ;;     (let ((width (string-pixel-width icon)))
 ;;       (propertize " " 'display `(space . (:width (,width)))))))
 
-(defun sync0-ebib-display-status-icon (test icon action &optional button-data)
-  "If TEST, display ICON with ACTION and BUTTON-DATA.
-TEST can be:
-- a symbol for a function, which will be called with no args.
-- a variable
-Either way, after calling/evaluation, ICON is displayed only if the
-result is non-nil.
-ICON should a single-character string.
-ICON's text-property 'action is set to this ACTION. It is run
-when the icon is clicked.
-ICON's text-property 'button-data is set to BUTTON-DATA.
-See info node `(elisp) Manipulating Buttons' for a description of how
-these properties work."
-  (if (if (functionp test) (funcall test) test)
-      (propertize icon
-                  'mouse-face 'highlight
-                  'button t
-                  'follow-link t
-                  'category t
-                  'keymap button-map
-                  'button-data button-data
-                  'action action)
-    icon))
+;; (defun sync0-ebib-display-status-icon (test icon action &optional button-data)
+;;   "If TEST, display ICON with ACTION and BUTTON-DATA.
+;; TEST can be:
+;; - a symbol for a function, which will be called with no args.
+;; - a variable
+;; Either way, after calling/evaluation, ICON is displayed only if the
+;; result is non-nil.
+;; ICON should a single-character string.
+;; ICON's text-property 'action is set to this ACTION. It is run
+;; when the icon is clicked.
+;; ICON's text-property 'button-data is set to BUTTON-DATA.
+;; See info node `(elisp) Manipulating Buttons' for a description of how
+;; these properties work."
+;;   (if (if (functionp test) (funcall test) test)
+;;       (propertize icon
+;;                   'mouse-face 'highlight
+;;                   'button t
+;;                   'follow-link t
+;;                   'category t
+;;                   'keymap button-map
+;;                   'button-data button-data
+;;                   'action action)
+;;     icon))
+
+;; (defun sync0-ebib-correct-attached-files (list)
+;;   (let ((processed-keys (sync0-process-bibkeys list))
+;; 	x)
+;;     (if (listp processed-keys)
+;; 	(progn
+;; 	  (dolist (element processed-keys x)
+;;             (if (string-match ":\\(.*\\)\\:[^.]*$" element)
+;; 		(match-string 1 element)
+;;               element)
+;; 	    (push element x))
+;; 	  x)
+;;           (if (string-match ":\\(.*\\)\\:[^.]*$" processed-keys)
+;;               (match-string 1 processed-keys)
+;;             processed-keys))))
+
+;; (defun sync0-ebib-correct-attached-files (list)
+;;   "Correct the format of attached files in the LIST."
+;;   (let ((processed-keys (sync0-process-bibkeys list))
+;;         corrected-files)
+;;     (if (listp processed-keys)
+;;         (dolist (element processed-keys)
+;;           (let ((corrected-file (if (string-match ":\\(.*\\)\\:[^.]*$" element)
+;;                                     (match-string 1 element)
+;;                                   element)))
+;;             (push corrected-file corrected-files)))
+;;       (let ((corrected-file (if (string-match ":\\(.*\\)\\:[^.]*$" processed-keys)
+;;                                 (match-string 1 processed-keys)
+;;                               processed-keys)))
+;;         (setq corrected-files corrected-file)))
+;;     corrected-files))
+
+;; (defun sync0-ebib-display-file-status (_ key db)
+;;   "Display 'F' if entry has a file. Always returns 'F'."
+;;   (let* ((file-val (ebib-get-field-value "file" key db 'noerror 'unbraced 'xref))
+;;          (file-list (when file-val
+;; 		      (or (split-string file-val ";")
+;; 			  file-val)))
+;;          (file-list-corrected
+;; 	  (when file-list (sync0-ebib-correct-attached-files file-list)))
+;;          (filep (if (listp file-list-corrected)
+;; 		    (seq-some #'file-exists-p file-list-corrected)
+;; 		  (file-exists-p file-list-corrected))))
+;;     (sync0-ebib-display-status-icon
+;;      filep
+;;      (propertize "F" 'face '(:weight bold))
+;;      'sync0-ebib-view-file)))
+
+(defun sync0-ebib-has-existing-files-p (file-val)
+  "Check if at least one file specified in FILE-VAL exists."
+  (when file-val
+    (if (string-match ";" file-val)
+	(let* ((files-list (split-string file-val ";"))
+	       (corrected-list (mapcar (lambda (file)
+                                         (if (string-match ":\\(.*\\)\\:[^.]*$" file)
+                                             (match-string 1 file)
+                                           file))
+                                       files-list)))
+          (seq-some #'file-exists-p corrected-list))
+      (let ((corrected-file (if (string-match ":\\(.*\\)\\:[^.]*$" file-val)
+                                (match-string 1 file-val)
+                              file-val)))
+        (file-exists-p corrected-file)))))
+
+(defun sync0-ebib-display-file-status (_ key db)
+  "Return 'F' if at least one file associated with the entry exists."
+  (let ((file-val (ebib-get-field-value "file" key db 'noerror 'unbraced 'xref)))
+    (if (sync0-ebib-has-existing-files-p file-val)
+	(propertize "F" 'face '(:weight bold))
+      "")))
 
 ;; (defun sync0-ebib-display-file-status (_ key db)
 ;;   "Display 'F' if entry has a file.
 ;; Always returns 'F'."
 ;;   (let* ((file-val (ebib-get-field-value "file" key db 'noerror 'unbraced 'xref))
-;; 	 (icon (sync0-ebib-display-status-icon
-;; 		file-val ;; `sync0-ebib-display-status-icon' test whether to display
-;; 		;; `sync0-ebib-display-status-icon': icon
-;; 		(propertize "F" 'face '(:foreground red))
-;; 		'sync0-ebib-view-file))
-;;          (icon-width (string-pixel-width icon)))
-;;     ;; Return icon (unmodified) followed by a space, propertized
-;;     ;; such that the whole string is the same width as the icon.
-;;     (concat
-;;      icon
-;;      (propertize
-;;       " "
-;;       'display `(space . (:width (,(- 1 icon-width))))))))
-
-;; (defun sync0-ebib-display-file-status (_ key db)
-;;   "Display 'F' if entry has a file.
-;; Always returns 'F'."
-;;   (let ((file-val (ebib-get-field-value "file" key db 'noerror 'unbraced 'xref)))
+;; 	 (file-list (split-string file-val ";"))
+;; 	 (file-list-corrected (sync0-ebib-correct-attached-files file-list))
+;;          (filep (seq-some #'file-exists-p file-list-corrected))) ;; Check if at least one file exists
 ;;     (sync0-ebib-display-status-icon
-;;      file-val
-;;      (propertize "F" 'face '(:foreground red))
+;;      filep
+;;      (propertize "F" 'face '(:weight bold)) ;; Change here
 ;;      'sync0-ebib-view-file)))
-
-(defun sync0-ebib-display-file-status (_ key db)
-  "Display 'F' if entry has a file.
-Always returns 'F'."
-  (let ((file-val (ebib-get-field-value "file" key db 'noerror 'unbraced 'xref)))
-    (sync0-ebib-display-status-icon
-     file-val
-     (propertize "F" 'face '(:weight bold)) ;; Change here
-     'sync0-ebib-view-file)))
 
 (add-to-list 'ebib-field-transformation-functions '("File" . sync0-ebib-display-file-status))
 
@@ -334,43 +380,6 @@ Always returns 'F'."
 
 (add-to-list 'ebib-field-transformation-functions '("Number" . sync0-ebib-display-number))
 
-;; (defun ebib-adjust-priority (delta)
-;;   "Increase or decrease the priority of the current entry by DELTA.
-;; If DELTA is positive, the priority is increased; if negative, it's decreased.
-;; If the priority field is not defined for an entry, set it to 1 when increasing,
-;; or display a message when decreasing."
-;;   (interactive "p")
-;;   (cl-flet ((adjust-priority (entry-key delta)
-;;                               ;; Adjusts the priority of entry ENTRY-KEY by DELTA.
-;;                               (let* ((priority-str (ebib-get-field-value "priority" entry-key ebib--cur-db 'noerror 'unbraced))
-;;                                      (priority (and priority-str (string-to-number priority-str)))
-;;                                      (new-priority (+ (or priority 0) delta)))
-;;                                 (cond
-;;                                  ((<= new-priority 0)
-;;                                   (ebib-delete-field-value "priority" entry-key ebib--cur-db)
-;;                                   (message "Priority removed for %s" entry-key))
-;;                                  ((<= 1 new-priority 5)
-;;                                   (ebib-set-field-value "priority" (number-to-string new-priority) entry-key ebib--cur-db 'overwrite)
-;;                                   (message "Priority adjusted to %d for %s" new-priority entry-key))
-;;                                  (t
-;;                                   (message "Priority already at maximum for %s" entry-key))))))
-;;     (let ((entry-key (ebib--get-key-at-point)))
-;;       (when entry-key
-;;         (adjust-priority entry-key delta)
-;;         (ebib--update-entry-buffer)))))
-
-;; (defun ebib-increase-priority ()
-;;   "Increase the priority of the current entry by 1.
-;; If the priority field is not defined, set it to 1."
-;;   (interactive)
-;;   (ebib-adjust-priority 1))
-
-;; (defun ebib-decrease-priority ()
-;;   "Decrease the priority of the current entry by 1.
-;; If the priority field is not defined, display a message."
-;;   (interactive)
-;;   (ebib-adjust-priority -1))
-
 (defun sync0-ebib-adjust-priority (entry-key delta)
   "Increase or decrease the priority of ENTRY-KEY by DELTA.
 If DELTA is positive, the priority is increased; if negative, it's decreased.
@@ -410,41 +419,6 @@ If the priority field is not defined, display a message."
   (let ((entry-key (ebib--get-key-at-point)))
     (when entry-key
       (sync0-ebib-adjust-priority entry-key -1))))
-
-;; (defun ebib-set-status ()
-;;   "Change or set the value of the 'status' field for the entry at point.
-;; If 'status' field is not defined, prompt the user to set it to one of the possible values from 'sync0-bibtex-completion-status'.
-;; If the user chooses 'nil', remove the 'status' field from the entry."
-;;   (interactive)
-;;   (let* ((entry-key (ebib--get-key-at-point))
-;;          (status-choices (cons "nil" sync0-bibtex-completion-status))
-;;          (new-status (completing-read "Choose new status: " status-choices)))
-;;     (when entry-key
-;;       (if (string= new-status "nil")
-;;           (ebib-delete-field-value "status" entry-key ebib--cur-db)
-;;         (if (ebib-get-field-value "status" entry-key ebib--cur-db 'noerror)
-;;             (ebib-set-field-value "status" new-status entry-key ebib--cur-db 'overwrite)
-;;           (ebib-set-field-value "status" new-status entry-key ebib--cur-db 'append)))
-;;       (message "Status set to '%s' for %s" new-status entry-key)
-;;       (ebib--update-entry-buffer))))
-
-;; (defun ebib-set-status ()
-;;   "Change or set the value of the 'status' field for the entry at point.
-;; If 'status' field is not defined, prompt the user to set it to one of the possible values from 'sync0-bibtex-completion-status'.
-;; If the user chooses 'nil', remove the 'status' field from the entry."
-;;   (interactive)
-;;   (let* ((entry-key (ebib--get-key-at-point))
-;;          (status-choices (cons "nil" sync0-bibtex-completion-status))
-;;          (new-status (completing-read "Choose new status: " status-choices)))
-;;     (when entry-key
-;;       (if (string= new-status "nil")
-;;           (ebib-delete-field-value "status" entry-key ebib--cur-db)
-;;         (if (ebib-get-field-value "status" entry-key ebib--cur-db 'noerror)
-;;             (ebib-set-field-value "status" new-status entry-key ebib--cur-db 'overwrite)
-;;           (ebib-set-field-value "status" new-status entry-key ebib--cur-db 'append)))
-;;       (message "Status set to '%s' for %s" new-status entry-key)
-;;       (ebib--save-database) ; Save the changes to the BibTeX file
-;;       (ebib--update-entry-buffer))))
 
 (defun sync0-ebib-set-status ()
   "Change or set the value of the 'status' field for the entry at point.
@@ -596,98 +570,26 @@ Prompt the user to choose one of the bibliographies defined in `sync0-bibtex-bib
          (beep))))
     (ebib--update-entry-buffer)))
 
-;; (defun ebib-move-entry-to-bibliography-for-entry (entry-key new-bibliography)
-;;   "Move the biblatex ENTRY-KEY to a different BIBLIOGRAPHY."
-;;   (let ((current-bibliography (ebib-db-get-filename (ebib-db-get-main ebib--cur-db))))
-;;     (when current-bibliography
-;;         (let ((new-entry-key (ebib-create-entry)))
-;;           ;; (ebib--copy-fields-to-entry entry-key new-entry-key)
-;;           ;; (ebib--maybe-remove-crossref-from-entry new-entry-key)
-;;           ;; (ebib-set-field-value "=type=" new-bibliography new-entry-key ebib--cur-db 'noerror 'unbraced 'xref)
-;;           (ebib-db-remove-entry entry-key ebib--cur-db)
-;;           (message "Entry moved to '%s' bibliography." new-bibliography)))))
-
-;; (defun ebib-ivy-bibtex-action ()
-;;   "Choose an action from `sync0-ivy-bibtex-actions` and execute it on the selected BibTeX entries."
-;;   (interactive)
-;;   (let* ((action (ivy-read "Choose action: " sync0-ivy-bibtex-actions
-;;                             :require-match t
-;;                             :sort t
-;;                             :caller 'ebib-ivy-bibtex-action))
-;;          (action-func (substring (nth 1 action) 4 -))
-;;          (keys (if (ebib-buffer-has-marked-entries)
-;;                    (ebib--get-marked-entries)
-;;                  (list (ebib--get-key-at-point)))))
-;;     (funcall action-func keys)))
-
-;; (defun ebib-ivy-bibtex-action ()
-;;   "Choose an action from `sync0-ivy-bibtex-actions` and execute it on the selected BibTeX entries."
-;;   (interactive)
-;;   (let* ((key (ivy-read "Choose action: " (mapcar #'car sync0-ivy-bibtex-actions)
-;;                         :require-match t
-;;                         :sort t
-;;                         :caller 'ebib-ivy-bibtex-action))
-;;          (action (assoc key sync0-ivy-bibtex-actions))
-;;          (action-func (nth 3 action))
-;; 	 (biby (substring (symbol-name action-func) 4))
-;; 	 (biby-two (replace-regexp-in-string "bibtex" "bibtex-completion" biby))
-;; 	 (keys (or (ebib-db-list-marked-entries ebib--cur-db)
-;;                    (list (ebib--get-key-at-point)))))
-;;     (funcall (intern biby-two) keys)))
-
-;; (defun ebib-ivy-bibtex-action ()
+;; rewrite needed
+;; (defun sync0-ebib-ivy-bibtex-action ()
 ;;   "Choose an action from `sync0-ivy-bibtex-actions` and execute it on the selected BibTeX entries."
 ;;   (interactive)
 ;;   (let* ((action-choices (mapcar (lambda (action)
-;;                                    (list (format "[%s] (%s) %s" (car action) (cadr action) (caddr action))
-;;                                          (car action)))
-;;                                  sync0-ivy-bibtex-actions))
-;;          (key (ivy-read "Choose action: " action-choices
-;;                         :require-match t
-;;                         :sort t
-;;                         :caller 'ebib-ivy-bibtex-action))
-;;          (action (assoc key sync0-ivy-bibtex-actions))
-;;          (action-func (nth 3 action))
-;;          (biby (substring (symbol-name action-func) 4))
-;;          (biby-two (replace-regexp-in-string "bibtex" "bibtex-completion" biby))
-;;          (keys (or (ebib-db-list-marked-entries ebib--cur-db)
-;;                    (list (ebib--get-key-at-point)))))
+;;                                    (cons (format "[%s] (%s) %s" (car action) (cadr action) (caddr action))
+;; 					 (car action)))
+;; 				 sync0-ivy-bibtex-actions))
+;; 	 (choice (ivy-read "Choose action: " action-choices
+;;                            :require-match t
+;;                            :sort t
+;;                            :caller 'sync0-ebib-ivy-bibtex-action))
+;; 	 (key (substring choice 1 2))
+;; 	 (action (assoc key sync0-ivy-bibtex-actions))
+;; 	 (action-func (nth 3 action))
+;; 	 (biby (substring (symbol-name action-func) 4))
+;; 	 (biby-two (replace-regexp-in-string "bibtex" "bibtex-completion" biby))
+;; 	 (keys (or (ebib-db-list-marked-entries ebib--cur-db)
+;; 		   (ebib--get-key-at-point))))
 ;;     (funcall (intern biby-two) keys)))
-
-(defun sync0-ebib-ivy-bibtex-action ()
-  "Choose an action from `sync0-ivy-bibtex-actions` and execute it on the selected BibTeX entries."
-  (interactive)
-  (let* ((action-choices (mapcar (lambda (action)
-                                   (cons (format "[%s] (%s) %s" (car action) (cadr action) (caddr action))
-					 (car action)))
-				 sync0-ivy-bibtex-actions))
-	 (choice (ivy-read "Choose action: " action-choices
-                           :require-match t
-                           :sort t
-                           :caller 'sync0-ebib-ivy-bibtex-action))
-	 (key (substring choice 1 2))
-	 (action (assoc key sync0-ivy-bibtex-actions))
-	 (action-func (nth 3 action))
-	 (biby (substring (symbol-name action-func) 4))
-	 (biby-two (replace-regexp-in-string "bibtex" "bibtex-completion" biby))
-	 (keys (or (ebib-db-list-marked-entries ebib--cur-db)
-		   (ebib--get-key-at-point))))
-    (funcall (intern biby-two) keys)))
-
-  ;; (setq ebib-index-columns
-  ;;  '(("Entry Key" 8 t)
-  ;;    ("Note" 1 nil)
-  ;;    ("File" 2 nil)
-  ;;    ("Author/Editor" 10 nil)
-  ;;    ("Origdate" 4 nil)
-  ;;    ("Year" 6 t)
-  ;;    ("Title" 40 t)
-  ;;    ("Volume" 2 nil)
-  ;;    ("Number" 2 nil)
-  ;;    ("Edition" 2 nil)
-  ;;    ("Priority" 4 nil)
-  ;;    ("Status" 4 nil)
-  ;;    ("Theme" 70 nil)))
 
 (defun sync0-ebib-recalc-tags ()
   "Recalculate tags for marked entries or entry at point in Ebib."
@@ -716,26 +618,26 @@ Prompt the user to choose one of the bibliographies defined in `sync0-bibtex-bib
 	("Edition" . ebib-compare-numerical-strings)
 	("Volumes" . ebib-compare-numerical-strings)))
 
-  (setq ebib-index-columns
-   '(("Entry Key" 8 t)
-     ("Note" 1 nil)
-     ("File" 2 nil)
-     ("Type" 3 nil)
-     ("Author/Editor" 10 nil)
-     ("Origdate" 6 t)
-     ("Year" 6 t)
-     ("Title" 40 t)
-     ("Volume" 5 t)
-     ("Number" 5 t)
-     ("Edition" 3 t)
-     ("Priority" 2 t)
-     ("Status" 10 nil)
-     ("Theme" 70 nil)))
+(setq ebib-index-columns
+      '(("Entry Key" 8 t)
+        ("Note" 1 nil)
+        ("File" 2 nil)
+        ("Type" 3 nil)
+        ("Author/Editor" 10 nil)
+        ("Origdate" 6 t)
+        ("Year" 6 t)
+        ("Title" 40 t)
+        ("Volume" 5 t)
+        ("Number" 5 t)
+        ("Edition" 3 t)
+        ("Priority" 2 t)
+        ("Status" 10 nil)
+        ("Theme" 70 nil)))
 
+;; Unset keys
 (keymap-unset ebib-index-mode-map (kbd "f") t)
 (keymap-unset ebib-index-mode-map (kbd "N") t)
 (keymap-unset ebib-index-mode-map (kbd "P") t)
-(keymap-unset ebib-entry-mode-map (kbd "k") t)
 (keymap-unset ebib-index-mode-map (kbd "k") t)
 (keymap-unset ebib-index-mode-map (kbd "r") t)
 (keymap-unset ebib-index-mode-map (kbd "j") t)
@@ -745,6 +647,13 @@ Prompt the user to choose one of the bibliographies defined in `sync0-bibtex-bib
 (keymap-unset ebib-index-mode-map (kbd "n") t)
 (keymap-unset ebib-index-mode-map (kbd "s") t)
 (keymap-unset ebib-index-mode-map (kbd "S") t)
+(keymap-unset ebib-index-mode-map "<SPC>" t)
+
+(keymap-unset ebib-entry-mode-map (kbd "j") t)
+(keymap-unset ebib-entry-mode-map (kbd "k") t)
+(keymap-unset ebib-entry-mode-map (kbd "n") t)
+(keymap-unset ebib-entry-mode-map (kbd "p") t)
+
 (define-key ebib-index-mode-map (kbd "f") 'sync0-ebib-choose-attachment)
 (define-key ebib-index-mode-map (kbd "n") 'sync0-ebib-open-notes-at-point)
 (define-key ebib-index-mode-map (kbd "v") 'sync0-ebib-visit-entry-in-bib-file)
@@ -763,6 +672,9 @@ Prompt the user to choose one of the bibliographies defined in `sync0-bibtex-bib
 (define-key ebib-index-mode-map (kbd "s") 'sync0-ebib-set-status)
 (define-key ebib-index-mode-map (kbd "S") 'ebib-save-current-database)
 
+(define-key ebib-entry-mode-map (kbd "j") 'ebib-next-field)
+(define-key ebib-entry-mode-map (kbd "k") 'ebib-prev-field)
+
 (major-mode-hydra-define ebib-index-mode nil 
   ("Entries"
    (("o" sync0-ebib-choose-attachment "Attachment at point")
@@ -773,7 +685,7 @@ Prompt the user to choose one of the bibliographies defined in `sync0-bibtex-bib
     ("-" sync0-ebib-decrease-priority "Decrease priority")
     ("=" sync0-ebib-set-priority "Set priority")
     ("s" sync0-ebib-set-status "Set status")
-    ("i" sync0-ebib-ivy-bibtex-action "Ivy action on entries")
+    ;; ("i" sync0-ebib-ivy-bibtex-action "Ivy action on entries")
     ("m" sync0-ebib-move-entry-to-bibliography "Move to other bibliography")
     ("p" sync0-ebib-add-projects-to-entry "Set/Add projects")
     ("t" ebib-add-keywords-to-entry "Add themes to entry"))

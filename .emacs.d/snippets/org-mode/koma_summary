@@ -1,7 +1,0 @@
-# -*- mode: snippet -*-
-# name: KOMA_summary 
-# key: lsummary
-# --
-\begin{summary}
-${1:Schreiben Sie Ihre Zusammenfassung}
-\end{summary}$0

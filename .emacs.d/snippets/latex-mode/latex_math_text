@@ -1,5 +1,0 @@
-# -*- mode: snippet -*-
-# name: math_text
-# key: text
-# --
-\text{$1}$0

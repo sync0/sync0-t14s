@@ -1,54 +1,78 @@
 (require 'sync0-bibtex-vars)
 
+;; (defun sync0-bibtex-update-var (field)
+;;     "Update variables used for completion based on the information
+;;    provided by the new entry."
+;;      (when-let* ((my-list (assoc field sync0-bibtex-completion-variables-list))
+;;                 (new-object  (eval (cadr my-list)))
+;;                 (completion-var  (caddr my-list))
+;;                 (completion-list  (symbol-value completion-var))
+;;                 (completion-file   (cadddr my-list)))
+;;       (cond ((member field sync0-bibtex-people-fields) 
+;;              (let (x)
+;;                (cond ((string-match " and " new-object)
+;;                       ;; create a list with parts 
+;;                       (setq x (append (split-string new-object " and ") x)))
+;;                      ;; check when author is an organization
+;;                      ((string-match "^{" new-object)
+;;                       (push  (substring new-object 1 -1) x))
+;;                      ;; other cases
+;;                      (t (push new-object x)))
+;;                (dolist (element x)
+;;                  ;; Check whether the item to be added is already present.
+;;                  (unless (member  element   completion-list)
+;;                    ;; Send the element to the list.
+;;                    (push element completion-list)
+;;                    ;; Update the variable with the bigger list
+;;                    (set completion-var completion-list)
+;;                    ;; Send the element to the file.
+;;                    (append-to-file (concat element "\n") nil completion-file)))))
+;;             ((member field sync0-bibtex-string-multiple-fields)
+;;              (let (x)
+;;                (if (string-match ", " new-object)
+;;                    ;; create a list with parts 
+;;                    (setq x (append (split-string new-object ", ") x))
+;;                  ;; other cases
+;;                  (push new-object x))
+;;                (dolist (element x)
+;;                  (unless (member  element completion-list)
+;;                    ;; Send the element to the list.
+;;                    (push element completion-list)
+;;                    ;; Update the variable with the bigger list
+;;                    (set completion-var completion-list)
+;;                    ;; Send the element to the file.
+;;                    (append-to-file (concat element "\n") nil completion-file)))))
+;;             (t (unless (member  new-object  completion-list)
+;;                  ;; Send the element to the list.
+;;                  (push new-object completion-list)
+;;                  ;; Update the variable with the bigger list
+;;                  (set completion-var completion-list)
+;;                  ;; Send the element to the file.
+;;                  (append-to-file (concat new-object "\n") nil completion-file))))))
+
 (defun sync0-bibtex-update-var (field)
-    "Update variables used for completion based on the information
-   provided by the new entry."
-     (when-let* ((my-list (assoc field sync0-bibtex-completion-variables-list))
-                (new-object  (eval (cadr my-list)))
-                (completion-var  (caddr my-list))
-                (completion-list  (symbol-value completion-var))
-                (completion-file   (cadddr my-list)))
-      (cond ((member field sync0-bibtex-people-fields) 
-             (let (x)
-               (cond ((string-match " and " new-object)
-                      ;; create a list with parts 
-                      (setq x (append (split-string new-object " and ") x)))
-                     ;; check when author is an organization
-                     ((string-match "^{" new-object)
-                      (push  (substring new-object 1 -1) x))
-                     ;; other cases
-                     (t (push new-object x)))
-               (dolist (element x)
-                 ;; Check whether the item to be added is already present.
-                 (unless (member  element   completion-list)
-                   ;; Send the element to the list.
-                   (push element completion-list)
-                   ;; Update the variable with the bigger list
-                   (set completion-var completion-list)
-                   ;; Send the element to the file.
-                   (append-to-file (concat element "\n") nil completion-file)))))
-            ((member field sync0-bibtex-string-multiple-fields)
-             (let (x)
-               (if (string-match ", " new-object)
-                   ;; create a list with parts 
-                   (setq x (append (split-string new-object ", ") x))
-                 ;; other cases
-                 (push new-object x))
-               (dolist (element x)
-                 (unless (member  element completion-list)
-                   ;; Send the element to the list.
-                   (push element completion-list)
-                   ;; Update the variable with the bigger list
-                   (set completion-var completion-list)
-                   ;; Send the element to the file.
-                   (append-to-file (concat element "\n") nil completion-file)))))
-            (t (unless (member  new-object  completion-list)
-                 ;; Send the element to the list.
-                 (push new-object completion-list)
-                 ;; Update the variable with the bigger list
-                 (set completion-var completion-list)
-                 ;; Send the element to the file.
-                 (append-to-file (concat new-object "\n") nil completion-file))))))
+  "Update completion variables based on the information provided by a BibTeX field."
+  (when-let* ((my-list (assoc field sync0-bibtex-completion-variables-list))
+              (new-object (eval (cadr my-list)))
+              (completion-var (caddr my-list))
+              (completion-list (symbol-value completion-var))
+              (completion-file (cadddr my-list)))
+    (when new-object
+      (let ((elements (cond
+                       ((member field sync0-bibtex-people-fields)
+                        (if (string-match " and " new-object)
+                            (string-split new-object " and ")
+                          (list (string-trim new-object "{" "}"))))
+                       ((member field sync0-bibtex-string-multiple-fields)
+                        (if (string-match ", " new-object)
+                            (string-split new-object ", ")
+                          (list new-object)))
+                       (t (list new-object)))))
+        (dolist (element elements)
+          (unless (member element completion-list)
+            (setq completion-list (cons element completion-list))
+            (set completion-var completion-list)
+            (append-to-file (concat element "\n") nil completion-file)))))))
 
   ;; (defun sync0-bibtex-update-vars (seqlists)
   ;;   "Update variables used for completion based on the information

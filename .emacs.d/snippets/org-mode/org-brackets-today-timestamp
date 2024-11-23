@@ -1,5 +1,0 @@
-# -*- mode: snippet -*-
-# name: org-brackets-today-timestamp
-# key: date
-# --
-(`(format-time-string "%Y-%m-%d")`) $0

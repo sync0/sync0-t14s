@@ -1,1 +1,1 @@
-/home/sync0/.emacs.d/straight/repos/emacs-doom-themes/themes/doom-miramare-theme.el
+/home/sync0/.emacs.d/straight/repos/themes/themes/doom-miramare-theme.el

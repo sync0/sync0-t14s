@@ -1,0 +1,97 @@
+(undo-tree-save-format-version . 1)
+"077209097f97ddf02c1126b9a7f8b3fd2e654dff"
+[nil nil nil nil (26081 3977 678124 246000) 0 nil]
+([nil nil ((13944 . 13945) (t 26069 867 61595 552000) 13944) nil (26081 3977 678122 953000) 0 nil])
+([nil nil ((13943 . 13944) 13920) nil (26081 3977 678121 891000) 0 nil])
+([nil nil ((nil rear-nonsticky nil 13944 . 13945) (#("
+" 0 1 (fontified nil)) . -14124) (13944 . 14125)) nil (26081 3977 678120 609000) 0 nil])
+([nil nil ((14125 . 14127) (14124 . 14125) 14056) nil (26081 3977 678119 136000) 0 nil])
+([nil nil ((nil rear-nonsticky nil 15043 . 15044) (nil fontified nil 14126 . 15044) (14126 . 15044)) nil (26081 3977 678117 473000) 0 nil])
+([nil nil ((#("(defvar sync0-bibtex-keys-backup-file \"/home/sync0/Gdrive/vars/bibtex-completion-key.txt\"
+  \"Bibliography to store entries that are not needed at the moment for whatever reason.\")
+
+" 0 1 (fontified t) 1 7 (face font-lock-keyword-face fontified t) 7 8 (fontified t) 8 37 (face font-lock-variable-name-face fontified t) 37 38 (fontified t) 38 89 (face font-lock-string-face fontified t) 89 90 (fontified t) 90 92 (fontified t) 92 178 (face font-lock-doc-face fontified t) 178 179 (fontified t) 179 180 (fontified t) 180 181 (fontified t)) . 13945) (undo-tree-id1 . -180) (undo-tree-id2 . -180) (undo-tree-id3 . -180) (undo-tree-id4 . -180) (undo-tree-id5 . -181) 14125) nil (26081 3977 678115 649000) 0 nil])
+([nil nil ((nil rear-nonsticky nil 14865 . 14866) (#("
+" 0 1 (fontified nil)) . -15046) (14865 . 15047)) nil (26081 3977 678109 829000) 0 nil])
+([nil nil ((#("
+" 0 1 (fontified t)) . 15046) (undo-tree-id0 . -1)) nil (26081 3977 678104 979000) 0 nil])
+([nil nil ((#("
+" 0 1 (fontified t)) . 14863) (undo-tree-id6 . -1) (undo-tree-id7 . -1) (undo-tree-id8 . -1) (t 26081 3977 690927 856000)) nil (26081 3978 910634 473000) 0 nil])
+([nil nil ((14003 . 14009) (13998 . 14003) (#("d" 0 1 (face font-lock-string-face fontified t)) . -13998) (undo-tree-id24 . -1) (13985 . 13999) (#("~" 0 1 (face font-lock-string-face fontified t)) . -13985) (undo-tree-id25 . -1) (#("/" 0 1 (face font-lock-string-face fontified t)) . -13986) (undo-tree-id26 . -1) (#("s" 0 1 (face font-lock-string-face fontified t)) . -13987) (undo-tree-id27 . -1) (#("y" 0 1 (face font-lock-string-face fontified t)) . -13988) (undo-tree-id28 . -1) (#("n" 0 1 (face font-lock-string-face fontified t)) . -13989) (undo-tree-id29 . -1) (#("c" 0 1 (face font-lock-string-face fontified t)) . -13990) (undo-tree-id30 . -1) (#("0" 0 1 (face font-lock-string-face fontified t)) . -13991) (undo-tree-id31 . -1) 13992 (13987 . 13992) (t 26081 3978 920938 470000)) nil (26081 4085 91539 458000) 0 nil])
+([nil nil ((13997 . 14003) (#("Gdrive" 0 6 (face font-lock-string-face fontified t)) . 13997) (undo-tree-id23 . -5)) nil (26081 4085 91532 715000) 0 nil])
+([nil nil ((14004 . 14014) (#("vars" 0 4 (face font-lock-string-face fontified t)) . 14004) (undo-tree-id17 . -4) (undo-tree-id18 . -3) (undo-tree-id19 . -4) (undo-tree-id20 . -4) (undo-tree-id21 . -4) (undo-tree-id22 . -4)) nil (26081 4085 91530 992000) 0 nil])
+([nil nil ((#("(defvar sync0-bibtex-keys-backup-file \"/home/sync0/Gdrive/vars/bibtex-completion-key.txt\"
+  \"Bibliography to store entries that are not needed at the moment for whatever reason.\")
+
+" 0 1 (fontified t) 1 7 (face font-lock-keyword-face fontified t) 7 8 (fontified t) 8 37 (face font-lock-variable-name-face fontified t) 37 38 (fontified t) 38 89 (face font-lock-string-face fontified t) 89 90 (fontified t) 90 92 (fontified t) 92 178 (face font-lock-doc-face fontified t) 178 179 (fontified t) 179 180 (fontified t) 180 181 (fontified t)) . 14893) (undo-tree-id13 . -180) (undo-tree-id14 . -180) (undo-tree-id15 . -180) (undo-tree-id16 . -180) 15073) nil (26081 4085 91523 618000) 0 nil])
+([nil nil ((14893 . 15074)) nil (26081 4085 91518 699000) 0 nil])
+([nil nil ((#("(defvar sync0-bibtex-keys-backup-file \"/home/sync0/Gdrive/vars/bibtex-completion-key.txt\"
+  \"Bibliography to store entries that are not needed at the moment for whatever reason.\")
+" 0 1 (fontified t) 1 7 (face font-lock-keyword-face fontified t) 7 8 (fontified t) 8 37 (face font-lock-variable-name-face fontified t) 37 38 (fontified t) 38 89 (face font-lock-string-face fontified t) 89 90 (fontified t) 90 92 (fontified t) 92 178 (face font-lock-doc-face fontified t) 178 179 (fontified t) 179 180 (fontified t)) . 14893) (undo-tree-id9 . -90) (undo-tree-id10 . -90) (undo-tree-id11 . -179) (undo-tree-id12 . -90) 14983) nil (26081 4085 91514 781000) 0 nil])
+([nil nil ((14892 . 14894) (t 26081 4085 105173 314000)) nil (26081 4138 141690 83000) 0 nil])
+([nil nil ((#("(defvar sync0-bibtex-today-keys '()
+  \"List of unique strings created today.\")
+" 0 1 (fontified t) 1 7 (face font-lock-keyword-face fontified t) 7 8 (fontified t) 8 31 (face font-lock-variable-name-face fontified t) 31 38 (fontified t) 38 77 (face font-lock-doc-face fontified t) 77 79 (fontified t)) . 14088) (undo-tree-id36 . -70) (undo-tree-id37 . -34) (undo-tree-id38 . -70) (undo-tree-id39 . -78) (undo-tree-id40 . -70) 14158 (t 26081 4138 152280 527000)) nil (26081 4226 263914 845000) 0 nil])
+([nil nil ((#("
+" 0 1 (fontified t)) . 14087) (undo-tree-id32 . -1) (undo-tree-id33 . -1) (undo-tree-id34 . -1) (undo-tree-id35 . -1)) nil (26081 4226 263906 960000) 0 nil])
+([nil nil ((14095 . 14101)) nil (26081 4226 263894 787000) 0 nil])
+([nil nil ((14585 . 14591)) nil (26081 4226 263893 935000) 0 nil])
+([nil nil ((#("
+" 0 1 (fontified t)) . 14823)) nil (26081 4226 263893 184000) 0 nil])
+([nil nil ((#("
+" 0 1 (fontified t)) . 14823)) nil (26081 4226 263891 962000) 0 nil])
+([nil nil ((#("
+" 0 1 (fontified t)) . 14823)) nil (26081 4226 263890 439000) 0 nil])
+([nil nil ((#("
+" 0 1 (fontified t rear-nonsticky t)) . 14823)) nil (26081 4226 263885 299000) 0 nil])
+([nil nil ((14397 . 14403) (t 26081 4226 273000 43000)) nil (26081 4286 37193 834000) 0 nil])
+([nil nil ((#("save-sync0" 0 10 (face font-lock-function-name-face fontified t)) . 14403) (undo-tree-id47 . -9) (undo-tree-id48 . -9) (undo-tree-id49 . -9) (undo-tree-id50 . 10) (undo-tree-id51 . -9) 14412) nil (26081 4286 37192 551000) 0 nil])
+([nil nil ((#("-" 0 1 (face font-lock-function-name-face fontified t)) . 14403) (undo-tree-id45 . 1) (undo-tree-id46 . 1)) nil (26081 4286 37188 403000) 0 nil])
+([nil nil ((14410 . 14414) (14409 . 14410)) nil (26081 4286 37186 49000) 0 nil])
+([nil nil ((#("load-sync0-" 0 11 (face font-lock-function-name-face fontified t)) . 14101) (undo-tree-id44 . -10)) nil (26081 4286 37185 7000) 0 nil])
+([nil nil ((14111 . 14112) (#("d" 0 1 (face font-lock-function-name-face fontified t)) . -14111) (undo-tree-id43 . -1) (14107 . 14112)) nil (26081 4286 37183 424000) 0 nil])
+([nil nil ((#("load-sync0-" 0 11 (fontified t)) . 14585) (undo-tree-id42 . -10)) nil (26081 4286 37180 849000) 0 nil])
+([nil nil ((14595 . 14596) (#("d" 0 1 (fontified t)) . -14595) (undo-tree-id41 . -1) (14591 . 14596)) nil (26081 4286 37175 760000) 0 nil])
+([nil nil ((#("save-" 0 5 (fontified t)) . 14781) (undo-tree-id58 . -4) (undo-tree-id59 . -5) (undo-tree-id60 . -5) (undo-tree-id61 . -4) (undo-tree-id62 . -4) (undo-tree-id63 . -5) (t 26081 4286 46813 787000)) nil (26081 4340 717517 597000) 0 nil])
+([nil nil ((14794 . 14798) (#("a" 0 1 (fontified t)) . -14794) (undo-tree-id52 . -1) (undo-tree-id53 . -1) (undo-tree-id54 . -1) (undo-tree-id55 . -1) (undo-tree-id56 . -1) (undo-tree-id57 . -1) 14795 (14793 . 14795)) nil (26081 4340 717506 447000) 0 nil])
+([nil nil ((14576 . 14577) (t 26081 4340 730581 843000) 14511) nil (26081 4829 475752 436000) 0 nil])
+([nil nil ((nil rear-nonsticky nil 14832 . 14833) (nil fontified nil 14577 . 14833) (14577 . 14833)) nil (26081 4829 475751 695000) 0 nil])
+([nil nil ((14576 . 14577) 14530) nil (26081 4829 475750 873000) 0 nil])
+([nil nil ((14585 . 14590) (#("clear" 0 5 (face font-lock-function-name-face fontified t)) . 14585) (undo-tree-id67 . -4)) nil (26081 4829 475749 941000) 0 nil])
+([nil nil ((#("sync0" 0 5 (face font-lock-function-name-face fontified t)) . 14591) (undo-tree-id66 . -4)) nil (26081 4829 475748 98000) 0 nil])
+([nil nil ((#("-" 0 1 (face font-lock-function-name-face fontified t)) . 14591)) nil (26081 4829 475746 625000) 0 nil])
+([nil nil ((14600 . 14603) (14597 . 14600)) nil (26081 4829 475746 64000) 0 nil])
+([nil nil ((14866 . 14867) 14860) nil (26081 4829 475745 202000) 0 nil])
+([nil nil ((nil rear-nonsticky nil 14898 . 14899) (nil fontified nil 14867 . 14899) (14867 . 14899)) nil (26081 4829 475744 301000) 0 nil])
+([nil nil ((#("clear" 0 5 (fontified t)) . 14868) (undo-tree-id65 . -4)) nil (26081 4829 475743 38000) 0 nil])
+([nil nil ((#("-" 0 1 (fontified t)) . 14868)) nil (26081 4829 475741 255000) 0 nil])
+([nil nil ((14880 . 14886)) nil (26081 4829 475740 243000) 0 nil])
+([nil nil ((#("
+" 0 1 (fontified t)) . 14899) (undo-tree-id64 . -1)) nil (26081 4829 475735 715000) 0 nil])
+([nil nil ((14820 . 14821) (14813 . 14820) (t 26081 4829 487660 753000) 14787) nil (26081 5127 186386 307000) 0 nil])
+([nil nil ((14843 . 14844) (14842 . 14843) 14828) nil (26081 5127 186385 185000) 0 nil])
+([nil nil ((nil rear-nonsticky nil 15397 . 15398) (nil fontified nil 14844 . 15398) (14844 . 15398)) nil (26081 5127 186384 113000) 0 nil])
+([nil nil ((#("  \"Clear the contents of sync0-bibtex-today-keys.txt if it's a new day.\"
+  (when (not (string= sync0-bibtex-timeday (format-time-string \"%y%-j\")))
+    (with-temp-file sync0-bibtex-today-keys-file
+      j
+      (insert \"\"))))
+" 0 2 (fontified t) 2 72 (face font-lock-doc-face fontified t) 72 76 (fontified t) 76 80 (face font-lock-keyword-face fontified t) 80 136 (fontified t) 136 143 (face font-lock-string-face fontified t) 143 147 (fontified t) 147 152 (fontified t) 152 166 (face font-lock-keyword-face fontified t) 166 195 (fontified t) 195 196 (fontified t) 196 203 (fontified t) 203 204 (fontified t) 204 218 (fontified t) 218 220 (face font-lock-string-face fontified t) 220 223 (fontified t) 223 224 (fontified t rear-nonsticky t) 224 225 (fontified t)) . 14618) (undo-tree-id81 . -204) (undo-tree-id82 . -204) (undo-tree-id83 . -224) (undo-tree-id84 . -114)) nil (26081 5127 186382 861000) 0 nil])
+([nil nil ((#("(defun sync0-bibtex-clear-today-keys ()
+" 0 1 (fontified t) 1 6 (face font-lock-keyword-face fontified t) 6 7 (fontified t) 7 12 (face font-lock-function-name-face fontified t) 12 36 (face font-lock-function-name-face fontified t) 36 40 (fontified t)) . 14578) (undo-tree-id75 . -40) (undo-tree-id76 . -40) (undo-tree-id77 . -40) (undo-tree-id78 . -40) (undo-tree-id79 . -39) (undo-tree-id80 . -40)) nil (26081 5127 186379 525000) 0 nil])
+([nil nil ((#("
+" 0 1 (fontified t)) . 14577) (undo-tree-id69 . -1) (undo-tree-id70 . -1) (undo-tree-id71 . -1) (undo-tree-id72 . -1) (undo-tree-id73 . -1) (undo-tree-id74 . -1)) nil (26081 5127 186369 907000) 0 nil])
+([nil nil ((#("
+" 0 1 (fontified t)) . 15132) (undo-tree-id68 . 1)) nil (26081 5127 186236 326000) 0 nil])
+([nil nil ((14003 . 14006) (t 26081 5127 196535 814000)) nil (26081 5240 261622 88000) 0 nil])
+([nil nil ((nil rear-nonsticky nil 14011 . 14012) (nil fontified nil 14004 . 14012) (14004 . 14012)) nil (26081 5240 261620 575000) 0 nil])
+([nil nil ((#(".emacs" 0 6 (face font-lock-string-face fontified t)) . 13997) (undo-tree-id100 . -5) (undo-tree-id101 . -6) (undo-tree-id102 . -6) (undo-tree-id103 . -6) (undo-tree-id104 . -6)) nil (26081 5240 261619 52000) 0 nil])
+([nil nil ((13997 . 13998) (#("
+" 0 1 (face font-lock-string-face fontified t)) . -13997) (undo-tree-id96 . -1) (undo-tree-id97 . 1) (undo-tree-id98 . -1) (undo-tree-id99 . -1) 13996) nil (26081 5240 261614 764000) 0 nil])
+([nil nil ((#(" " 0 1 (face font-lock-string-face fontified t)) . 13997) (undo-tree-id94 . -1) (undo-tree-id95 . -1)) nil (26081 5240 261607 611000) 0 nil])
+([nil nil ((#("
+" 0 1 (face font-lock-string-face fontified t)) . -14005) (undo-tree-id92 . 1) (undo-tree-id93 . -1) 13997) nil (26081 5240 261605 126000) 0 nil])
+([nil nil ((14005 . 14006) (#("
+" 0 1 (face font-lock-string-face fontified t)) . -14005) (undo-tree-id87 . 1) (undo-tree-id88 . 1) (undo-tree-id89 . -1) (undo-tree-id90 . -1) (undo-tree-id91 . -1) 14004) nil (26081 5240 261601 580000) 0 nil])
+([nil current ((#(" " 0 1 (face font-lock-string-face fontified t)) . 14005) (undo-tree-id85 . -1) (undo-tree-id86 . -1)) nil (26081 5240 261593 434000) 0 nil])
+nil

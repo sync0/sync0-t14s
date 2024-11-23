@@ -1,13 +1,6 @@
 ;; -*- lexical-binding: t -*-
-
-;; (defmacro defvar* (vars initial-value)
-;;  `(progn
-;;     ,@(loop for var in vars
-;;             do (check-type var symbol)
-;;             collect `(defvar ,var ,initial-value))))
-
 (require 'cl-lib)
-(require 'scihub)
+;; (require 'scihub)
 (require 'unidecode)
 (require 'bibtex-utils)
 (require 'bibtex-completion)
@@ -16,6 +9,7 @@
 (require 'sync0-bibtex-var-functions)
 (require 'sync0-bibtex-key-functions)
 (require 'sync0-bibtex-utils)
+(require 'sync0-ivy-bibtex)
 (require 'sync0-bibtex-extraction)
 (require 'sync0-bibtex-entry-functions)
 (require 'sync0-print)
@@ -34,107 +28,33 @@
 (require 'sync0-bibtex-url)
 (require 'xah-replace-pairs)
 
-  ;; (defun sync0-bibtex-entry-define-related (&optional bibkey)
-  ;;   "Define the author for new BibLaTeX entry."
-  ;;   (if bibkey 
-  ;;       (let ((entry (bibtex-completion-get-entry bibkey)))
-  ;;         (setq sync0-bibtex-entry-related
-  ;;               (bibtex-completion-get-value "related" entry))
-  ;;         (setq sync0-bibtex-entry-relatedtype
-  ;;               (bibtex-completion-get-value "relatedtype" entry)))
-  ;;     (progn
-  ;;         (setq sync0-bibtex-entry-related (sync0-bibtex-completion-choose-key nil t))
-  ;;         (setq sync0-bibtex-entry-relatedtype
-  ;;               (completing-read "Type de relation : " '("multivolume" "origpubas" "reviewof" "reprintof" "reprintas" "reprintfrom" "translationas" "translationfrom" "translationof"))))))
+(defun sync0-bibtex-recalc-master-bibliography ()
+  "Recalculate the master bibliography file based on other bibliography files.
+The master bibliography file is determined by `sync0-bibtex-master-bibliography'.
+The list of other bibliography files is specified by `sync0-bibtex-bibliographies'.
+Any bibliography file listed in `sync0-bibtex-bibliographies' but not `sync0-bibtex-sick-bibliography' will be appended to the master bibliography file.
 
-  ;; (defun sync0-bibtex-entry-append-to-bibliography (bibkey &optional bibfile)
-  ;;   "Append new BibLaTeX entry to default bibliography file.
-  ;;  Beware, this function only constructs and appends the entry
-  ;;  to the bib file; the values of the entry must have been defined
-  ;;  elsewhere. For the sake of speed, this function does not
-  ;;  perform any sanity checks on duplicate entries, and thus a
-  ;;  unique correct entry is assumed to be supplied as mandatory
-  ;;  argument bibkey."
-  ;;   (let* ((definitions (mapcar #'eval sync0-bibtex-entry-definitions-list))
-  ;;          (bibtex-fields sync0-bibtex-fields)
-  ;;          (bibliography-file (or bibfile sync0-bibtex-default-bibliography))
-  ;;          (fields (mapcar* #'(lambda (x y) (list x y)) bibtex-fields definitions))
-  ;;          ;; define the bibtex entries
-  ;;          (entries
-  ;;           (let (x)
-  ;;             (dolist (element fields x) 
-  ;;               (unless (sync0-null-p (cadr element))
-  ;;                 (setq x (concat x (car element) " = {" (cadr element) "},\n"))))))
-  ;;          (bibtex-entry (concat "@" sync0-bibtex-entry-type "{" bibkey ",\n" entries "}\n")))
-  ;;     (progn
-  ;;       (append-to-file bibtex-entry nil bibliography-file)
-  ;;       (sync0-bibtex-entry-inform-new-entry))))
+This function also replaces smart quotes with their corresponding simple equivalents."
+  (interactive)
+  (condition-case err
+      (let ((master-bibliography sync0-bibtex-master-bibliography)
+            (bibliographies (remove sync0-bibtex-sick-bibliography sync0-bibtex-bibliographies)))
+        (with-temp-file master-bibliography
+          (dolist (biblio bibliographies)
+            (insert-file-contents biblio)
+            (goto-char (point-max))
+            (insert "\n")))
+        (goto-char (point-min))
+        (message "Master bibliography file has been recalculated."))
+    (file-error
+     (message "Error: Unable to recalculate master bibliography. %s" (error-message-string err)))))
 
-
-  ;; (defun sync0-bibtex-update-key-in-bibfile (oldkey newkey bibfile)
-  ;;   "Change bibtex key at point with a key using the format provided
-  ;; by org-roam files"
-  ;;   (with-temp-file bibfile
-  ;;     (insert-file-contents bibfile)
-  ;;     (goto-char (point-min))
-  ;;     (while (re-search-forward oldkey nil t)
-  ;;       (replace-match newkey))))
-
-
-;;   (defun sync0-bibtex-open-notes-at-point ()
-;;     "Open the notes for bibtex key under point in a cite link in a
-;; buffer. Can also be called with key."
-;;     (interactive)
-;;     (let* ((bibkey (sync0-bibtex-completion-choose-key t t))
-;;            (notes-file  (concat sync0-zettelkasten-references-directory  bibkey ".md")))
-;;       (if (file-exists-p notes-file)
-;;           (find-file notes-file)
-;;         (message "No markdown notes file found for entry %s" bibkey))))
-
-
-;; (defun sync0-bibtex-add-field ()
-;;   (interactive)
-;;   (setq sync0-bibtex-entry-creation nil)
-;;   (sync0-bibtex-nullify-all-variables)
-;;   (let* ((field (completing-read "Choose Bibtex field: " sync0-bibtex-fields))
-;;          (entry (save-excursion (bibtex-beginning-of-entry)
-;; 			        (bibtex-parse-entry)))
-;;          (bibkey (cdr (assoc "=key=" entry))))
-;;     ;; load the variables 
-;;     (sync0-bibtex-completion-load-entry bibkey)
-;;     (unless (sync0-null-p  sync0-bibtex-entry-file)
-;;       (setq sync0-bibtex-entry-file-old t))
-;;     ;; (setq sync0-bibtex-entry-key bibkey)
-;;     ;; call new value
-;;     (funcall (cadr (assoc field sync0-bibtex-entry-functions)))
-;;     (let* ((keywords-p (when (string= field "keywords")
-;;                          t))
-;;            (prev-keywords-p (when keywords-p
-;;                               (assoc "keywords" entry)))
-;;            ;; (file-p (when (string= field "file")
-;;            ;;               t))
-;;            (old-value (when (assoc field entry)
-;;                         (unless keywords-p
-;;                       (substring (cdr (assoc field entry)) 1 -1))))
-;;            (assigned-value (eval (intern (concat "sync0-bibtex-entry-" field))))
-;;            (separator (when old-value
-;;                         (cond ((member field sync0-bibtex-people-fields)
-;;                                 " and ")
-;;                                ((string= field "file")
-;;                                          ";")
-;;                                (t ", "))))
-;;            (new-value (if old-value
-;;                           (concat old-value separator assigned-value)
-;;                         assigned-value))
-;;            (bib-list (list field "Whatever string" new-value nil)))
-;;       (bibtex-beginning-of-entry)
-;;       (when (or old-value
-;;                 (and prev-keywords-p
-;;                      keywords-p)) 
-;;         (save-excursion
-;;           (re-search-forward (concat "[[:space:]]+" field "[[:space:]]+="))
-;;           (bibtex-kill-field nil t)))
-;;       (bibtex-make-field bib-list t))))
+(defun sync0-bibtex-visit-bibliography ()
+  (interactive)
+  (let ((bib-file
+         (completing-read "Fichier Biblatex : " sync0-bibtex-bibliographies)))
+    (find-file
+     (expand-file-name bib-file))))
 
 (defun sync0-bibtex-copy-attachment-at-point (&optional in-path bibkey)
   "Copy attached pdf to path and change the title to make it
@@ -145,8 +65,8 @@ readable."
          (bibkey (cdr (assoc "=key=" entry)))
          (file (sync0-bibtex-choose-attachment bibkey))
          (extension  (file-name-extension file t))
-         (path (or in-path
-                   (read-string "Où envoyer ce fichier ? (finir en /) " sync0-goodreads-directory))))
+         (path (sync0-validate-path (or in-path
+                                        (read-directory-name "Où envoyer ce fichier ?" sync0-goodreads-directory)))))
     (sync0-bibtex-completion-load-entry bibkey)
     (if (and (file-exists-p file)
              (file-accessible-directory-p path))
@@ -170,7 +90,7 @@ readable."
                      (sync0-bibtex-completion-choose-key t t)))
          (file (sync0-bibtex-choose-attachment refkey))
          (path (or in-path
-                   (read-string "Où envoyer ce fichier ? (finir en /) " sync0-goodreads-directory)))
+                   (read-directory-name "Où envoyer ce fichier ? " sync0-goodreads-directory)))
          (extension  (file-name-extension file t)))
     (sync0-bibtex-completion-load-entry refkey)
     (if (and (file-exists-p file)
@@ -343,69 +263,72 @@ readable."
 ;;       (bibtex-make-field bib-list t))
 ;;     (save-buffer)))
 
-  (major-mode-hydra-define bibtex-mode nil 
-    ("Entries"
-     (("c" sync0-bibtex-clean-entry "Clean this entry")
-      ("E" sync0-bibtex-define-entry "New entry")
-      ("e" (sync0-bibtex-define-entry t) "Quick new entry")
-      ;; ("d" doi-utils-add-bibtex-entry-from-doi "Entry from DOI")
-      ;; ("m" sync0-bibtex-define-multiple-entries "Define entries")
-      ("d" sync0-bibtex-derive-entries-from-collection "Derive from collection")
-      ("t" sync0-bibtex-transplant-obsidian-ref-into-biblatex "Entry from mdnote")
-      ("u" sync0-bibtex-update-key "Update key")
-      ("n" sync0-bibtex-open-notes-at-point "Open notes")
-      ("M" sync0-bibtex-define-similar-type-entries "Define X similar entries")
-      ("f" sync0-bibtex-define-entries-from-bibkey "Define multiple from this entry")
-      ;; ("g" sync0-bibtex-python-bibentry-from-gallica "Define entry from Gallica")
-      ("W" sync0-bibtex-python-bibentry-from-webscrapper "Define from webscrapper")
-      ("Z" sync0-bibtex-bibentry-from-anystyle "Define from AnyStyle")
-      ("V" bibtex-completion-download-from-youtube "Download Youtube video")
-      ("D" sync0-bibtex-python-bibentry-from-doi-or-isbn "Define from DOI or ISBN"))
-      ;; ("w" sync0-bibtex-open-url "Open url")
-      ;; ("M" sync0-bibtex-move-entry-to-bibfile "Move entry to bibfile")
-      ;; ("D" sync0-bibtex-delete-entry "Delete entry")
-      ;; ("A" sync0-bibtex-archive-entry "Archive entry")
-      ;; ("1" sync0-bibtex-file-exists-p "Check file exists")
-     "PDF editing & more"
-     (("X" sync0-bibtex-delete-attachments "Delete attachments")
-      ;; ("P" sync0-pandoc-export-epub-to-pdf "EPUB to PDF")
-      ("P" bibtex-completion-search-pdf-with-python "Search PDF (Python)")
-      ("C" sync0-bibtex-copy-attachment-at-point "Copy attachment")
-      ;; ("C" sync0-bibtex-crop-pdf "Crop attached PDF")
-      ("T" sync0-bibtex-recalc-tags-and-mdnote-at-point "Recalc keywords at point")
-      ("o" sync0-bibtex-open-pdf-at-point "Show PDF")
-      ("O" (sync0-bibtex-open-pdf-at-point t) "Show crossref PDF")
-      ;; ("x" sync0-bibtex-extract-from-crossref "Extract from crossref")
-      ;; ("P" sync0-bibtex-copy-pdf-to-path "Copy to path")
-      ("p" bibtex-completion-print-pdf-list "Print att. from entry"))
-      ;; This does note work for some reason
-      ;; ("x" sync0-bibtex-arrange-pdf "Arrange pdf")
-      ;; ("T" sync0-bibtex-add-toc-to-pdf "Add TOC to PDF")
-      ;; ("K" sync0-bibtex-add-key-to-pdf "Add key to PDF")
-      ;; ("s" sync0-bibtex-extract-subpdf "Extract subpdf")
-      ;; ("d" sync0-bibtex-download-pdf "Download pdf from url")
-     ;; "Visit"
-      ;; ("o" sync0-org-ref-open-pdf-at-point "Open in pdfview")
-      ;; ("n" sync0-bibtex-open-notes "Open annotations")
-     "Bibliographies"
-     (("S" ivy-bibtex "Search entry")
-      ("s" ivy-bibtex-with-local-bibliography "Search entry locally")
-      ("b" sync0-bibtex-recalc-bibliographies "Recalc bibliographies")
-      ("B" sync0-bibtex-recalc-master-bibliography "Recalc master bib file")
-      ("r" sync0-bibtex-populate-keys "Populate keys")
-      ("v" sync0-bibtex-visit-bibliography "Visit bibfile"))
-     "Etc"
-     ;; ("r" (sync0-bibtex-update-completion-files sync0-bibtex-completion-variables-list) "Refresh completion vars")
-     (("a" sync0-bibtex-add-field-at-point "Add field")
-      ("A" (sync0-bibtex-add-field-at-point t) "Add field and recalc")
-      ("I" sync0-bibtex-convert-jpg-to-pdf "Convert jpg to pdf")
-      ("i" bibtex-completion-open-url "Open URL")
-      ("k" sync0-add-field-theme "Add theme")
-      ("w" sync0-search-in-catalogs "Search in catalogs")
-      ("1" bibtex-convert-pdf-to-txt "Convert to TXT")
-      ;; ("2" sync0-bibtex-python-summarize-txt "Summarize TXT")
-      ("y" bibtex-completion-yank-citations-from-bibkeys "Yank citation.")
-      ("N" sync0-bibtex-create-note-at-point "Create mdnote")
-      ("R" (sync0-bibtex-create-note-at-point t) "Rewrite mdnote"))))
+(major-mode-hydra-define bibtex-mode nil 
+  ("Entries"
+   (("c" sync0-bibtex-clean-entry "Clean this entry")
+    ("E" sync0-bibtex-define-entry "New entry")
+    ("e" (sync0-bibtex-define-entry t) "Quick new entry")
+    ;; ("d" doi-utils-add-bibtex-entry-from-doi "Entry from DOI")
+    ;; ("m" sync0-bibtex-define-multiple-entries "Define entries")
+    ("d" sync0-bibtex-derive-entries-from-collection "Derive from collection")
+    ("t" sync0-bibtex-transplant-obsidian-ref-into-biblatex "Entry from mdnote")
+    ("u" sync0-bibtex-update-key "Update key")
+    ("n" sync0-bibtex-open-notes-at-point "Open notes")
+    ("M" sync0-bibtex-define-similar-type-entries "Define X similar entries")
+    ("f" sync0-bibtex-define-entries-from-bibkey "Define multiple from this entry")
+    ;; ("g" sync0-bibtex-python-bibentry-from-gallica "Define entry from Gallica")
+    ("W" sync0-bibtex-python-bibentry-from-webscrapper "Define from webscrapper")
+    ("Z" sync0-bibtex-bibentry-from-anystyle "Define from AnyStyle")
+    ("V" bibtex-completion-download-from-youtube "Download Youtube video")
+    ("2" sync0-bibtex-duplicate-attachment-from-bibkey "Duplicate attachment")
+    ("D" sync0-bibtex-python-bibentry-from-doi-or-isbn "Define from DOI or ISBN"))
+   ;; ("w" sync0-bibtex-open-url "Open url")
+   ;; ("M" sync0-bibtex-move-entry-to-bibfile "Move entry to bibfile")
+   ;; ("D" sync0-bibtex-delete-entry "Delete entry")
+   ;; ("A" sync0-bibtex-archive-entry "Archive entry")
+   ;; ("1" sync0-bibtex-file-exists-p "Check file exists")
+   "PDF editing & more"
+   (("X" sync0-bibtex-delete-attachments "Delete attachments")
+    ;; ("P" sync0-pandoc-export-epub-to-pdf "EPUB to PDF")
+    ("P" bibtex-completion-search-pdf-with-python "Search PDF (Python)")
+    ("C" sync0-bibtex-copy-attachment-at-point "Copy attachment")
+    ;; ("C" sync0-bibtex-crop-pdf "Crop attached PDF")
+    ("3" bibtex-completion-ocr-pdf-files "OCR pdf")
+    ("T" sync0-bibtex-recalc-tags-and-mdnote-at-point "Recalc keywords at point")
+    ("o" sync0-bibtex-open-pdf-at-point "Show PDF")
+    ("O" (sync0-bibtex-open-pdf-at-point t) "Show crossref PDF")
+    ;; ("x" sync0-bibtex-extract-from-crossref "Extract from crossref")
+    ;; ("P" sync0-bibtex-copy-pdf-to-path "Copy to path")
+    ("p" bibtex-completion-print-pdf-list "Print att. from entry"))
+   ;; This does note work for some reason
+   ;; ("x" sync0-bibtex-arrange-pdf "Arrange pdf")
+   ;; ("T" sync0-bibtex-add-toc-to-pdf "Add TOC to PDF")
+   ;; ("K" sync0-bibtex-add-key-to-pdf "Add key to PDF")
+   ;; ("s" sync0-bibtex-extract-subpdf "Extract subpdf")
+   ;; ("d" sync0-bibtex-download-pdf "Download pdf from url")
+   ;; "Visit"
+   ;; ("o" sync0-org-ref-open-pdf-at-point "Open in pdfview")
+   ;; ("n" sync0-bibtex-open-notes "Open annotations")
+   "Bibliographies"
+   (("U" sync0-ivy-bibtex-update-cache "Update BibTeX keys cache")
+    ("S" sync0-consult-bibtex-multi-select "Search entry")
+    ("s" sync0-consult-bibtex-with-local-bibliography "Search entry locally")
+    ("b" sync0-bibtex-recalc-bibliographies "Recalc bibliographies")
+    ("B" sync0-bibtex-recalc-master-bibliography "Recalc master bib file")
+    ("r" sync0-bibtex-populate-keys "Populate keys")
+    ("v" sync0-bibtex-visit-bibliography "Visit bibfile"))
+   "Etc"
+   ;; ("r" (sync0-bibtex-update-completion-files sync0-bibtex-completion-variables-list) "Refresh completion vars")
+   (("a" sync0-bibtex-add-field-at-point "Add field")
+    ("A" (sync0-bibtex-add-field-at-point t) "Add field and recalc")
+    ("I" sync0-bibtex-convert-jpg-to-pdf "Convert jpg to pdf")
+    ("i" bibtex-completion-open-url "Open URL")
+    ("k" sync0-add-field-theme "Add theme")
+    ("w" sync0-search-in-catalogs "Search in catalogs")
+    ("1" bibtex-convert-pdf-to-txt "Convert to TXT")
+    ;; ("2" sync0-bibtex-python-summarize-txt "Summarize TXT")
+    ("y" bibtex-completion-yank-citations-from-bibkeys "Yank citation.")
+    ("N" sync0-bibtex-create-note-at-point "Create mdnote")
+    ("R" (sync0-bibtex-create-note-at-point t) "Rewrite mdnote"))))
 
-  (provide 'sync0-bibtex-functions)
+(provide 'sync0-bibtex-functions)

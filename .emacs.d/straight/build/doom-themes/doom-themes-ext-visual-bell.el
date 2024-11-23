@@ -1,1 +1,1 @@
-/home/sync0/.emacs.d/straight/repos/emacs-doom-themes/extensions/doom-themes-ext-visual-bell.el
+/home/sync0/.emacs.d/straight/repos/themes/extensions/doom-themes-ext-visual-bell.el

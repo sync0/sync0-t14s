@@ -1,0 +1,1 @@
+/home/sync0/.emacs.d/straight/repos/Highlight-Indentation-for-Emacs/highlight-indentation.el

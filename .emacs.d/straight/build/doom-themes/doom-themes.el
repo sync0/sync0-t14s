@@ -1,1 +1,1 @@
-/home/sync0/.emacs.d/straight/repos/emacs-doom-themes/doom-themes.el
+/home/sync0/.emacs.d/straight/repos/themes/doom-themes.el

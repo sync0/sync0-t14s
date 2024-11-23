@@ -1,0 +1,5 @@
+(undo-tree-save-format-version . 1)
+"07afa34f88dc64382832882a86e4bf713848776c"
+[nil nil nil nil (26082 29560 590452 156000) 0 nil]
+([nil current ((apply -3 8842 8886 undo--wrap-and-run-primitive-undo 8842 8886 ((8844 . 8847) 8862))) nil (26082 29560 590448 329000) 0 nil])
+nil

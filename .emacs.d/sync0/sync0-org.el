@@ -1,23 +1,85 @@
-(setq org-todo-keywords '((sequence "未(1)" "|" "完(2)" "消(3)")))
-
-;; Set faces for org-todo-keywords
-;; (setq org-todo-keyword-faces '(("未" . (:foreground "#dc322f" :weight semi-bold :height 0.9))
-;;                                ("完" . (:foreground "#859900" :weight semi-bold :height 0.9))   
-;;                                ("消" . (:foreground "#6c71c4" :weight semi-bold :height 0.9)) 
-;;                                ("中" . (:foreground "#b58900" :weight semi-bold :height 0.9))))
-
-
 ;; (require 'org-pdftools)
 ;; (require 'org-journal)
 ;; (require 'org-download)
 ;; (require 'org-ref)
 (require 'cl-lib)
 
+(use-package org 
+  :custom
+  (tab-width 8) 
+  (org-hide-leading-stars t)
+  ;; Leave one line between headlines 
+  (org-cycle-separator-lines 0)
+  ;; (org-cycle-separator-lines 2)
+  ;; Don't fontify the whole damn line
+  (org-fontify-whole-block-delimiter-line nil)
+  ;; Disable word wrap in org mode.
+  ;; (org-startup-truncated t)
+  ;; Initial indentation
+  (org-startup-indented t)         
+  ;; Necessary to avoid crazy inconsistenscies using org-download and org-roam
+  (org-link-file-path-type 'absolute)
+  ;; Begin displaying entire trees.
+  (org-startup-folded nil)
+  ;; Better display of italics & bold.
+  (org-hide-emphasis-markers t)
+  ;; Define org-tags.
+  (org-tag-alist '(("urgent" . ?u)
+                   ("current" . ?c)
+                   ("next" . ?n)
+                   ("skim" . ?s)
+                   ("exegesis" . ?e)
+                   ("waiting" . ?w)
+                   ;; ("postponed" . ?p)
+                   ("revise" . ?r)
+                   ("someday" . ?a)
+                   ("fetch" . ?f)
+                   ("@office" . ?o)
+                   ("@home" . ?h)
+                   ("@deepwork" . ?p)
+                   ("transcribe" . ?t)
+                   ("ignore" . ?i)
+                   ("delegated" . ?d)))
+  ;; Hide inherited tags from Org's agenda view.
+  ;; org-agenda-show-inherited-tags nil
+  ;; Define todo keywords.
+  ;; (org-blank-before-new-entry '((heading . nil)(plain-list-item . nil)))
+  ;; Stop emacs asking for confirmation
+  (org-confirm-babel-evaluate nil)
+  (org-ellipsis "  ⌄ ") ;; folding symbol
+  ;; Do not show export buffer.
+  (org-export-show-temporary-export-buffer nil)
+  ;; Set path for org default directory (necessary for refile and agenda).
+  (org-directory (concat (getenv "HOME") "/Gdrive/org"))
+  (org-refile-use-outline-path 'file)
+  (org-outline-path-complete-in-steps nil)
+  (org-startup-with-inline-images t)
+  (org-refile-use-cache nil)
+  ;; Have org-mode indent elisp sections.
+  (org-src-tab-acts-natively t)
+  (org-src-preserve-indentation t)
+  (org-edit-src-content-indentation 0)
+  ;; Color embeded source code
+  (org-src-fontify-natively t)
+  (org-fontify-done-headline t) 
+  (org-fontify-whole-heading-line t)
+  (org-fontify-quote-and-verse-blocks t)
+  ;; Don't fontify sub and superscripts.
+  (org-pretty-entities-include-sub-superscripts nil)
+  ;; Limit inheritance for certain tags. 
+  (org-tags-exclude-from-inheritance (quote ("crypt" "ignore" "next" "current" "waiting" "someday" "delegated" "urgent")))
+  (org-log-done 'time)
+  :config 
+  ;; This is necessary to avoid conflict with my motion bindings. 
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((python . t)))
+
+(setq org-todo-keywords '((sequence "未(1)" "|" "完(2)" "消(3)")))
 
 ;; Free this keybinding for cycle-themes
 (unbind-key "C-c C-t" org-mode-map)
 (unbind-key "M-h" org-mode-map)
-
 
 ;; Predicate for org-mode titles in org files. 
 
@@ -258,8 +320,6 @@
                                  ;; ("todo.org" :maxlevel . 2)
                                  (org-agenda-files :maxlevel . 4))))
 
-;; (org-refile-targets '((org-agenda-files :maxlevel . 4)))
-
 (setq org-file-apps
       '((auto-mode . emacs)
         (directory . emacs)
@@ -277,6 +337,11 @@
         ("\\.pptx\\'" . "libreoffice --impress %s")
         ("\\.pdf\\'" . emacs)))
 
-(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+;; (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+
+  :bind ((:map org-mode-map
+               ("M-<return>" . sync0-org-meta-return-dwim)
+               ("M-S-<return>" . sync0-org-insert-todo-heading-dwim))))
+
 
 (provide 'sync0-org)

@@ -11,6 +11,12 @@ PATH="/home/sync0/bin/:$PATH"
 PATH="/opt/tropy/:$PATH"
 PATH="/home/sync0/.local/share/gem/ruby/3.0.0/bin:$PATH"
 MERMAID_BIN="/home/sync0/node_modules/.bin/mmdc"
+XMODIFIERS=@im=fcitx
+# Unset GTK_IM_MODULE and QT_IM_MODULE for Wayland
+unset GTK_IM_MODULE
+unset QT_IM_MODULE
+# GTK_IM_MODULE=fcitx
+# QT_IM_MODULE=fcitx
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,

@@ -1,0 +1,1 @@
+/home/sync0/.emacs.d/straight/repos/auto-virtualenv/auto-virtualenv.el

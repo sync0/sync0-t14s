@@ -1,7 +1,0 @@
-# -*- mode: snippet -*-
-# name: org_latex_summary
-# key: summary
-# --
-#+BEGIN_summary
-$1
-#+END_summary $0

@@ -1,5 +1,0 @@
-# -*- mode: snippet -*-
-# name: org-export-keyword
-# key: export
-# --
-#+EXPORT_FILE_NAME: `(sync0-org-format-export-keyword)`

@@ -5,8 +5,8 @@
 
 ;;; Code:
 
+
 
-;;;### (autoloads nil "evil-leader" "evil-leader.el" (0 0 0 0))
 ;;; Generated autoloads from evil-leader.el
 
 (autoload 'global-evil-leader-mode "evil-leader" "\
@@ -27,8 +27,7 @@ evaluate `global-evil-leader-mode'.
 The mode's hook is called both when the mode is enabled and when
 it is disabled.
 
-\(fn &optional ARG)" t)
-
+(fn &optional ARG)" t)
 (autoload 'evil-leader-mode "evil-leader" "\
 Minor mode to enable <leader> support.
 
@@ -46,26 +45,21 @@ evaluate `evil-leader-mode'.
 The mode's hook is called both when the mode is enabled and when
 it is disabled.
 
-\(fn &optional ARG)" t)
-
+(fn &optional ARG)" t)
 (autoload 'evil-leader/set-key "evil-leader" "\
 Bind `key' to command `def' in `evil-leader/default-map'.
 
 Key has to be readable by `read-kbd-macro' and `def' a command.
 Accepts further `key' `def' pairs.
 
-\(fn KEY DEF &rest BINDINGS)" t)
-
+(fn KEY DEF &rest BINDINGS)" t)
 (autoload 'evil-leader/set-key-for-mode "evil-leader" "\
 Create keybindings for major-mode `mode' with `key' bound to command `def'.
 
 See `evil-leader/set-key'.
 
-\(fn MODE KEY DEF &rest BINDINGS)" t)
-
+(fn MODE KEY DEF &rest BINDINGS)" t)
 (register-definition-prefixes "evil-leader" '("evil-leader"))
-
-;;;***
 
 ;;; End of scraped data
 

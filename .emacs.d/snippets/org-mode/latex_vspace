@@ -1,5 +1,0 @@
-# -*- mode: snippet -*-
-# name: latex_vspace
-# key: vspace
-# --
-\vspace{${1:\baselineskip}} $0

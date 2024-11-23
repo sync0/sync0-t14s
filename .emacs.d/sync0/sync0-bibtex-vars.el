@@ -1,11 +1,60 @@
 ;; -*- lexical-binding: t -*-
-(defvar sync0-bibtex-timeday
-  (format-time-string "%y%-j")
-  "Timeday for newly created bibkeys and such")
+(require 'sync0-vars)
+
+(defvar sync0-bibtex-bibliographies nil
+  "Default bibliographies to be read by helm-bibtex and others")
+
+(setq sync0-bibtex-bibliobraphy-directory (concat (getenv "HOME") "/Gdrive/bibliographies/")
+      sync0-bibtex-default-bibliography (concat (getenv "HOME") "/Gdrive/bibliographies/bibliography.bib")
+      sync0-bibtex-master-bibliography (concat (getenv "HOME") "/Gdrive/bibliographies/master.bib")
+      sync0-bibtex-sick-bibliography (concat (getenv "HOME") "/Gdrive/bibliographies/sick.bib"))
+
+(defvar sync0-bibtex-excluded-bibliographies '("/home/sync0/Gdrive/bibliographies/trash.bib"
+					       "/home/sync0/Gdrive/bibliographies/archived.bib"
+					       "/home/sync0/Gdrive/bibliographies/master.bib"
+					       "/home/sync0/Gdrive/bibliographies/jabref.bib"
+					       "/home/sync0/Gdrive/bibliographies/jabref.bib.sav"
+					       "/home/sync0/Gdrive/bibliographies/exclude.bib"
+					       "/home/sync0/Gdrive/bibliographies/sick.bib"
+					       "/home/sync0/Gdrive/bibliographies/backup.bib"
+					       "/home/sync0/Gdrive/bibliographies/bibliography.bib.bak")
+  "List of all excluded bibliography files from processing.")
+
+;; Exclude backup files from undo-tree
+(setq sync0-bibtex-excluded-bibliographies
+      (append sync0-bibtex-excluded-bibliographies
+	      (directory-files sync0-bibtex-bibliobraphy-directory t "\\.~undo-tree~$")))
+
+(defun sync0-bibtex-recalc-bibliographies ()
+  "Recalculate files in default bibliography directory
+(set by sync0-bibtex-bibliography-directory)."
+  (interactive)
+  (setq sync0-bibtex-bibliographies 
+        (cl-set-difference 
+         (directory-files sync0-bibtex-bibliobraphy-directory t ".+\\.bib")
+         sync0-bibtex-excluded-bibliographies :test #'equal))
+  (when (bound-and-true-p reftex-default-bibliography)
+    (setq reftex-default-bibliography sync0-bibtex-bibliographies))
+  (when (bound-and-true-p org-ref-default-bibliography)
+    (setq org-ref-default-bibliography sync0-bibtex-bibliographies))
+  (when (bound-and-true-p bibtex-completion-bibliography)
+    (setq bibtex-completion-bibliography sync0-bibtex-bibliographies))
+  (message "%s files have been recognized as bibliographies." (length sync0-bibtex-bibliographies)))
+
+  (sync0-bibtex-recalc-bibliographies)
+
+(defvar sync0-bibtex-choose-key-cache
+  nil 
+  "Dummy cache for last chosen biblatex key.")
 
 (defvar sync0-bibtex-default-key-length
   2 
   "Default length for biblatex keys")
+
+(defvar sync0-bibtex-completion-candidate-cache
+  nil 
+  "Variable with cache for the list of conses to feed to ivy-read
+for bibtex-completion")
 
 (defvar sync0-bibtex-temp-pdf-copy-new-path-and-filename
   nil 
@@ -23,8 +72,11 @@
 recently created entry. This variable is useless. It's used only
 for diagnostics purposes only.")
 
+(defvar sync0-bibtex-entry-bibentry nil
+  "Dummy var. to hold the bibtex entry to include in the database.")
+
 (defvar sync0-bibtex-fields
-  '("titleaddon" "title" "subtitle" "origtitle" "eventtitle" "date" "origdate" "eventdate" "author" "editor" "translator" "recipient" "introduction" "journaltitle" "edition" "booktitle" "booksubtitle" "crossref" "chapter" "volume" "volumes" "number" "series" "publisher" "location" "pages" "note" "doi" "url" "urldate" "language" "langid" "origlanguage" "medium" "institution" "library" "related" "relatedtype" "relatedstring" "file" "created" "password" "shorttitle" "doctype" "shorthand" "description" "keywords" "foreword" "afterword" "editortype" "pagetotal" "verba" "cote" "project" "site" "version" "people" "country" "lecture" "seminar" "theme" "currency" "value" "recommender" "podcast" "visibility" "source" "year" "status" "alive" "expages" "century" "aliases" "scanstatus" "issuetitle" "priority" "scheduled" "deadline" "supervisor" "lastseen" "seen" "amount" "revised" "mention" "format" "jury" "reviewer" "filetype" "extension" "mentioned" "bookloan")
+  '("titleaddon" "title" "subtitle" "origtitle" "eventtitle" "date" "origdate" "eventdate" "author" "editor" "translator" "recipient" "introduction" "journaltitle" "edition" "booktitle" "booksubtitle" "crossref" "chapter" "volume" "volumes" "number" "series" "publisher" "location" "pages" "note" "doi" "url" "urldate" "language" "langid" "origlanguage" "medium" "institution" "library" "related" "relatedtype" "relatedstring" "file" "created" "password" "shorttitle" "doctype" "shorthand" "description" "keywords" "foreword" "afterword" "editortype" "pagetotal" "verba" "cote" "project" "site" "version" "people" "country" "lecture" "seminar" "theme" "currency" "value" "recommender" "podcast" "visibility" "source" "year" "status" "alive" "expages" "century" "aliases" "scanstatus" "issuetitle" "priority" "scheduled" "deadline" "supervisor" "lastseen" "seen" "amount" "revised" "mention" "format" "jury" "reviewer" "filetype" "extension" "mentioned" "bookloan" "myrole" "pubstate" "titleaddon" "columns" "section" "paragraphs" "verses" "lines" "course" "origpublisher" "issuedate" "expirydate" "csl" "conference" "modified" "languages")
   "List of Bibtex entry fields")
 
 (defvar sync0-bibtex-automatic-fields
@@ -34,24 +86,24 @@ information and that although can be set by the user, are usually
 calculated automatically at entry for new biblatex entries.")
 
 (defvar sync0-bibtex-unique-fields
-  '("titleaddon" "title" "subtitle" "origtitle" "eventtitle" "date" "origdate" "eventdate" "journaltitle" "edition" "booktitle" "booksubtitle" "crossref" "chapter" "volume" "volumes" "number" "series" "publisher" "pages" "note" "doi" "url" "urldate" "language" "langid" "origlanguage" "institution" "library" "relatedtype" "relatedstring" "password" "shorttitle" "shorthand" "description" "editortype" "pagetotal" "verba" "cote" "site" "version" "lecture" "seminar" "currency" "value" "podcast" "visibility" "source" "year" "status" "alive" "expages" "century" "scanstatus" "issuetitle" "priority" "scheduled" "deadline" "format" "extension" "created" "bookloan")
+  '("titleaddon" "title" "subtitle" "origtitle" "eventtitle" "date" "origdate" "eventdate" "journaltitle" "edition" "booktitle" "booksubtitle" "crossref" "chapter" "volume" "volumes" "number" "series" "publisher" "pages" "note" "doi" "url" "urldate" "language" "langid" "origlanguage" "institution" "library" "relatedtype" "relatedstring" "password" "shorttitle" "shorthand" "description" "editortype" "pagetotal" "verba" "cote" "site" "version" "lecture" "seminar" "currency" "value" "podcast" "visibility" "source" "year" "status" "alive" "expages" "century" "scanstatus" "issuetitle" "priority" "scheduled" "deadline" "format" "extension" "created" "bookloan"  "pubstate" "titleaddon" "columns" "section" "paragraphs" "verses" "lines" "csl")
   "List of Bibtex fields that only take one value. No multiple values allowed.")
 
 (defvar sync0-bibtex-string-fields
-  '("eventdate" "edition" "chapter" "volume" "volumes" "number" "expages" "pages" "doi" "password" "shorttitle" "shorthand" "description" "verba" "cote" "version" "url" "value" "aliases" "issuetitle" "amount")
+  '("eventdate" "edition" "chapter" "volume" "volumes" "number" "expages" "pages" "doi" "password" "shorttitle" "shorthand" "description" "verba" "cote" "version" "url" "value" "aliases" "issuetitle" "amount" "columns" "section" "paragraphs" "verses" "lines")
   "List of Bibtex entry fields that use read-string without
 accompanying completion variable for being defined. The lambda functions for their
 definition are automatically calculated and added to the variable
 sync0-bibtex-entry-functions.")
 
 (defvar sync0-bibtex-string-multiple-fields
-  '("medium" "doctype" "project" "country" "theme" "keywords" "seen" "mention" "filetype" "mentioned")
+  '("medium" "doctype" "project" "country" "theme" "keywords" "seen" "mention" "filetype" "mentioned" "course" "conference" "languages")
   "List of Bibtex entry fields that use completing-read-multiple
 for being defined. The only exception is the field keywords
 because it requires a special treatment.")
 
 (defvar sync0-bibtex-date-fields
-  '("date" "origdate" "eventdate" "urldate" "created" "year" "deadline" "scheduled" "lastseen" "revised")
+  '("date" "origdate" "eventdate" "urldate" "created" "year" "deadline" "scheduled" "lastseen" "revised" "issuedate" "expirydate" "modified")
   "List of Bibtex entry fields for dates. These functions are manually")
 
 (defvar sync0-bibtex-people-fields
@@ -103,11 +155,11 @@ because it requires a special treatment.")
 ;;               "## Relations\n\n"))
 
 (setq sync0-bibtex-obsidian-reference-template-top
-      (concat  "\n## Description {.noexport}\n\n" 
-               "\n### Motivation\n\n" 
-               "\n### Aperçu\n\n" 
-               "### Progrès de la lecture\n\n"
-               "### Annotations\n\n"
+      (concat  "\n## Descriptio {.noexport}\n\n" 
+               "\n### Motivatio\n\n" 
+               "\n### Conspectus\n\n" 
+               "### Itineris\n\n"
+               "### Excerpta\n\n"
                "```dataview\n"
                "TABLE WITHOUT ID\n"
                "link(file.name, title) AS \"Title\", created AS \"Created\"\n"
@@ -117,7 +169,7 @@ because it requires a special treatment.")
       (concat "\n"
               "SORT created DESC\n"
               "```\n\n"
-              "### Relations\n\n"
+              "### Relationes\n\n"
               "### Index\n\n"
               "## Notes\n\n"))
 
@@ -138,7 +190,7 @@ because it requires a special treatment.")
   "List of Bibtex entry fields")
 
 (defvar sync0-bibtex-completion-single-fields
-  '("publisher" "journaltitle" "location" "titleaddon" "title" "eventtitle" "note" "library" "series" "institution" "language" "site" "relatedtype" "editortype" "lecture" "seminar" "podcast" "visibility" "source" "status" "alive" "scanstatus" "priority" "currency" "format" "extension" "bookloan")
+  '("publisher" "journaltitle" "location" "titleaddon" "title" "eventtitle" "note" "library" "series" "institution" "language" "site" "relatedtype" "editortype" "lecture" "seminar" "podcast" "visibility" "source" "status" "alive" "scanstatus" "priority" "currency" "format" "extension" "bookloan" "myrole" "pubstate" "titleaddon")
    "List of biblatex fields that are set with the completing-read
 function---as opposed to those defined with
 completing-read-multiple, which appear in
@@ -217,7 +269,7 @@ a Bibtex entry.")
        (no-key-list (remove "keywords" sync0-bibtex-string-multiple-fields))
        (mult-var-tag (mapcar (lambda (x) (concat x "-tag")) no-key-list))
        (mult-var-fix (mapcar (lambda (x) (concat x "-fixed")) no-key-list))
-       (raw-list (list "type-downcase" "crossref-entry" "title-fixed" "title-aliases" "editor-over-author" "title-compatible" "lastname" "related-tag" "key" "file-old" "journaltitle-tag" "library-tag"))
+       (raw-list (list "type-downcase" "crossref-entry" "title-fixed" "title-aliases" "editor-over-author" "title-compatible" "lastname" "related-tag" "key" "file-old" "journaltitle-tag" "library-tag" "institution-tag"))
        (full-list (append mult-var-tag mult-var-fix raw-list)))
   (dolist (element full-list) 
     (let ((my-var (intern (concat prefix element))))
@@ -260,11 +312,6 @@ a Bibtex entry.")
 ;;   "Possible alphabetic characters that can appear in BibLaTeX keys.
 ;; Use format of base58 encoding.")
 
-
-(defvar sync0-alpha "abcdefghijkmnpqrstuvwxyz"
-  "Possible alphabetic characters that can appear in BibLaTeX keys.
-Use format of base58 encoding.")
-
 (defvar sync0-bibtex-keys nil
   "List of all the keys used in of all of the bibliography files")
 
@@ -292,17 +339,32 @@ Use format of base58 encoding.")
   (with-temp-file sync0-bibtex-today-keys-file
     (insert (mapconcat 'identity sync0-bibtex-today-keys "\n"))))
 
+;; (defun sync0-bibtex-clear-today-keys ()
+;;   "Clear the contents of sync0-bibtex-today-keys.txt, removing entries not created today."
+;;   (with-temp-buffer
+;;     (insert-file-contents sync0-bibtex-today-keys-file)
+;;     (goto-char (point-min))
+;;     (while (not (eobp))
+;;       (let ((line-start (line-beginning-position)))
+;;         (if (looking-at-p (concat "^" sync0-bibtex-timeday))
+;;             (forward-line)
+;;           (delete-region line-start (1+ (line-end-position))))))
+;;     (write-region (point-min) (point-max) sync0-bibtex-today-keys-file nil 'no-message)))
+
 (defun sync0-bibtex-clear-today-keys ()
   "Clear the contents of sync0-bibtex-today-keys.txt, removing entries not created today."
-  (with-temp-buffer
-    (insert-file-contents sync0-bibtex-today-keys-file)
-    (goto-char (point-min))
-    (while (not (eobp))
-      (let ((line-start (line-beginning-position)))
-        (if (looking-at-p (concat "^" sync0-bibtex-timeday))
-            (forward-line)
-          (delete-region line-start (1+ (line-end-position))))))
-    (write-region (point-min) (point-max) sync0-bibtex-today-keys-file nil 'no-message)))
+  (when (file-exists-p sync0-bibtex-today-keys-file)
+    (with-temp-buffer
+      (insert-file-contents sync0-bibtex-today-keys-file)
+      (goto-char (point-min))
+      (while (not (eobp))
+        (let ((line-start (line-beginning-position)))
+          (if (looking-at-p (concat "^" sync0-bibtex-timeday))
+              (forward-line)
+            (let ((line-end (line-end-position)))
+              (delete-region line-start (min (1+ line-end) (point-max))))))
+        (forward-line))
+      (write-region (point-min) (point-max) sync0-bibtex-today-keys-file nil 'no-message))))
 
 (sync0-bibtex-load-today-keys)
 (sync0-bibtex-clear-today-keys)
@@ -385,6 +447,7 @@ titles and the like.")
     ("doctype" "[" "]" sync0-bibtex-entry-doctype-fixed)
     ("author" "[" "]" sync0-bibtex-entry-author-fixed)
     ("editor" "[" "]" sync0-bibtex-entry-editor-fixed)
+    ("course" "[" "]" sync0-bibtex-entry-course)
     ("seen" "[" "]" sync0-bibtex-entry-seen)
     ("people" "[" "]" sync0-bibtex-entry-people-fixed)
     ("title" "\"" "\"" sync0-bibtex-entry-title)
@@ -393,6 +456,8 @@ titles and the like.")
     ("bookloan" "" "" sync0-bibtex-entry-bookloan)
     ("amount" "" "" sync0-bibtex-entry-amount)
     ("currency" "" "" sync0-bibtex-entry-currency)
+    ("csl" "" "" sync0-bibtex-entry-csl)
+    ("chapter" "" "" sync0-bibtex-entry-chapter)
     ("lastseen" "" "" sync0-bibtex-entry-lastseen)
     ("scheduled" "" "" sync0-bibtex-entry-scheduled)
     ("deadline" "" "" sync0-bibtex-entry-deadline)
@@ -409,11 +474,14 @@ titles and the like.")
     ("parent" "\"" "\"" sync0-bibtex-entry-parent)
     ("journaltitle" "\"" "\"" sync0-bibtex-entry-journaltitle)
     ("volume" "" "" sync0-bibtex-entry-volume)
+    ("version" "" "" sync0-bibtex-entry-version)
     ("number" "" "" sync0-bibtex-entry-number)
     ("library" "\"" "\"" sync0-bibtex-entry-library)
+    ("institution" "\"" "\"" sync0-bibtex-entry-institution)
     ("related" "[" "]" sync0-bibtex-entry-related)
     ("relatedtype" "" "" sync0-bibtex-entry-relatedtype)
     ("pages" "" "" sync0-bibtex-entry-pages)
+    ("pubstate" "" "" sync0-bibtex-entry-pubstate)
     ("edition" "" "" sync0-bibtex-entry-edition)
     ("pagetotal" "" "" sync0-bibtex-entry-pagetotal)
     ("url" "\"" "\"" sync0-bibtex-entry-url)
@@ -442,14 +510,18 @@ Obsidian of produced markdown (corrupt YAML frontmatters).")
 (defvar sync0-bibtex-tag-fields-list
   '(("type" "reference/" sync0-bibtex-entry-type-downcase)
     ("journaltitle" "journaltitle/" sync0-bibtex-entry-journaltitle-tag)
+    ("institution" "institution/" sync0-bibtex-entry-institution-tag)
 ;;    ("publication" "publication/" sync0-bibtex-entry-publication)
     ("crossref" "crossref/" sync0-bibtex-entry-crossref)
     ("doctype" "" sync0-bibtex-entry-doctype-tag)
     ("visibility" "visibility/" sync0-bibtex-entry-visibility)
-    ("source" "century/" sync0-bibtex-entry-century)
-    ("century" "source/" sync0-bibtex-entry-source)
+    ("course" "" sync0-bibtex-entry-course-tag)
+    ("source" "source/" sync0-bibtex-entry-source)
+    ("myrole" "myrole/" sync0-bibtex-entry-myrole)
+    ("century" "century/" sync0-bibtex-entry-century)
     ("bookloan" "bookloan/" sync0-bibtex-entry-bookloan)
     ("theme" "" sync0-bibtex-entry-theme-tag)
+    ("pubstate" "pubstate/" sync0-bibtex-entry-pubstate)
     ("status" "status/" sync0-bibtex-entry-status)
     ("scanstatus" "scanstatus/" sync0-bibtex-entry-scanstatus)
     ("priority" "priority/" sync0-bibtex-entry-priority)
@@ -685,5 +757,47 @@ it.")
          ;; "library"
          ;; "note"
          "number")))
+
+
+;; SQL database vars
+
+(defvar sync0-bibtex-db-main-fields 
+  '("citekey" "type" "title")
+  "Main fields used in entries TABLE in database")
+
+(defvar sync0-bibtex-db-dirty t
+  "Function to determine whether it is necessary to update cache in emacs from database.")
+
+(defvar sync0-bibtex-db-cache nil
+  "Function to hold cached data from database")
+
+(defvar sync0-bibtex-db-purged-extra-fields 
+  (let* ((extra-fields-remove-plus (append sync0-bibtex-people-fields '("theme" "keywords" "langid" "subtitle" "date" "origdate" "title" "year" "century")))
+         (extra-fields-raw (cl-set-difference sync0-bibtex-fields sync0-bibtex-db-main-fields :test #'string=)))
+         (cl-set-difference extra-fields-raw extra-fields-remove-plus :test #'string=))
+  "Purged extra fields to pass to the db extra TABLE to prevent
+splicing it and breaking the schema.")
+
+(defvar sync0-bibtex-database-path
+  (concat sync0-databases-dir "sync0-bibliography.sqlite")
+  "Path to the SQLite database for managing BibTeX entries.")
+
+(defvar sync0-bibtex-db-connection nil
+  "Holds the connection to the BibTeX SQLite database.")
+
+(defvar sync0-bibtex-db-entries-fields 
+  '("sync0-bibtex-entry-key"
+    "sync0-bibtex-entry-type"
+    "sync0-bibtex-entry-title"
+    "sync0-bibtex-entry-subtitle"
+    "sync0-bibtex-entry-date"
+    "sync0-bibtex-entry-origdate"))
+
+(defvar sync0-bibtex-db-people-fields 
+  (let (x)
+    (dolist (element sync0-bibtex-people-fields x)
+      (let ((bibvar (concat "sync0-bibtex-entry-" element)))
+	(push bibvar x)))
+    x))
 
 (provide 'sync0-bibtex-vars)

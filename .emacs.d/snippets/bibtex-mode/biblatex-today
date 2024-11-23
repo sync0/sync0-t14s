@@ -1,5 +1,0 @@
-# -*- mode: snippet -*-
-# name: biblatex-today
-# key: today
-# --
-`(format-time-string "%Y-%m-%d")`$0

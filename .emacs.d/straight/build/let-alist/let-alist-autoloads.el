@@ -13,22 +13,23 @@
 Let-bind dotted symbols to their cdrs in ALIST and execute BODY.
 Dotted symbol is any symbol starting with a `.'.  Only those present
 in BODY are let-bound and this search is done at compile time.
+A number will result in a list index.
 
 For instance, the following code
 
   (let-alist alist
-    (if (and .title .body)
+    (if (and .title.0 .body)
         .body
       .site
       .site.contents))
 
 essentially expands to
 
-  (let ((.title (cdr (assq \\='title alist)))
+  (let ((.title (nth 0 (cdr (assq \\='title alist))))
         (.body  (cdr (assq \\='body alist)))
         (.site  (cdr (assq \\='site alist)))
         (.site.contents (cdr (assq \\='contents (cdr (assq \\='site alist))))))
-    (if (and .title .body)
+    (if (and .title.0 .body)
         .body
       .site
       .site.contents))

@@ -1,3 +1,4 @@
+(require 'sync0-bibtex-vars)
 (require 'sync0-bibtex-key-functions)
 (require 'sync0-bibtex-utils)
 (require 'sync0-bibtex-corrections)
@@ -56,7 +57,7 @@
                (message "New note created for %s %s %s with key %s" sync0-bibtex-entry-lastname sync0-bibtex-entry-date-fixed sync0-bibtex-entry-title-fixed sync0-bibtex-entry-key)))))
 
   (defun sync0-bibtex-entry-calculate-obsidian-title-aliases ()
-    "Calculate titles list to be used in obsidian notes."
+    "Produce a list of titles to be used in obsidian note aliases."
     (let* ((title (concat "*" sync0-bibtex-entry-title-fixed "*"))
            (altertitle (concat "*" sync0-bibtex-entry-title-aliases "*"))
            (shorttitle (when sync0-bibtex-entry-shorttitle
@@ -232,9 +233,8 @@
            (purged-title-list (if (equal sync0-bibtex-entry-title-shape "title")
                                   (cl-remove nil title-to-use)
                                 (cl-remove nil (cdddr title-to-use))))
-           (title-corrected (mapcar 'sync0-bibtex-fix-obsidian-chars purged-title-list))
-           (title-list (cl-remove-duplicates title-corrected :test #'equal)))
-       (sync0-show-elements-of-list title-list "\", \"")))
+           (title-corrected (mapcar 'sync0-bibtex-fix-obsidian-chars purged-title-list)))
+           (cl-remove-duplicates title-corrected :test #'equal)))
 
   (defun sync0-bibtex-entry-create-obsidian-note-from-entry (bibkey &optional rewrite)
     "Create new markdown note for corresponding bibkey in default
@@ -244,12 +244,21 @@ rewrite is true, this function rewrites the YAML frontmatter of
 the note, instead of attempting to create a new note."
     (let* ((obsidian-file (concat sync0-zettelkasten-references-directory bibkey ".md")) 
            (title-automated-list (sync0-bibtex-entry-calculate-obsidian-title-aliases))
-           (title-list-string (if sync0-bibtex-entry-aliases 
-                                  (concat sync0-bibtex-entry-aliases "\", \"" title-automated-list)
-                                title-automated-list))
-           (conversiont-title-list-to-list (sync0-string-split-with-sep-and-list title-list-string "\", \""))
-               ;; here I have every element ready in a list but without the quotation marks
-           (title-list-fixed-as-list  (mapcar (lambda (x) (concat "\"" x "\"")) conversiont-title-list-to-list))
+	   ;; (my-aliases (when sync0-bibtex-entry-aliases
+	   ;; 		 (if (string-match-p "\", \"" sync0-bibtex-entry-aliases)
+           ;;                   (mapcar (lambda (alias) (replace-regexp-in-string "^\"\\(.*\\)\"$" "\\1" alias))
+           ;;                           (split-string sync0-bibtex-entry-aliases "\", \""))
+	   ;; 		   (list (replace-regexp-in-string "^\"\\(.*\\)\"$" "\\1" sync0-bibtex-entry-aliases)))))
+	   (my-aliases (when sync0-bibtex-entry-aliases
+			 (if (string-match-p "\", \"" sync0-bibtex-entry-aliases)
+			     ;; (mapcar (lambda (alias) (replace-regexp-in-string "^\\(?:\"\\|, \\)\\(.*?\\)\\(?:\"\\|, \\)$" "\\1" alias))
+                        (mapcar (lambda (alias) (replace-regexp-in-string "^\"?\\(.*?\\)\"?$" "\\1" alias))
+				     (split-string sync0-bibtex-entry-aliases "\", \""))
+			   (list (replace-regexp-in-string "^\"\\(.*?\\)\"$" "\\1" sync0-bibtex-entry-aliases)))))
+	   (title-list (if my-aliases
+			   (append my-aliases title-automated-list)
+			 title-automated-list))
+	   (title-list-fixed-as-list  (mapcar (lambda (x) (concat "\"" x "\"")) title-list))
            (title-list-fixed (concat "  - " (sync0-show-elements-of-list title-list-fixed-as-list "\n  - ")))
            (obsidian-fields-string (let (x)
                                      (dolist (element sync0-bibtex-obsidian-fields-list x)
@@ -269,7 +278,7 @@ the note, instead of attempting to create a new note."
                                   "key: " bibkey "\n"
                                   "citekey: " bibkey "\n"
                                   "biblatex_type: " (downcase sync0-bibtex-entry-type)  "\n"
-                                  "export_template: zkn_literature_notes\n"
+                                  "export_template: bibnote\n"
                                   "lang: fr-FR\n"
                                   obsidian-fields-string
                                   (concat "\naliases:\n" title-list-fixed "\n")

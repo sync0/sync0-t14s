@@ -1,1 +1,1 @@
-/home/sync0/.emacs.d/straight/repos/emacs-doom-themes/themes/doom-nord-theme.el
+/home/sync0/.emacs.d/straight/repos/themes/themes/doom-nord-theme.el

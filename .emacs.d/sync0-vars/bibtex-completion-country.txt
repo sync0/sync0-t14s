@@ -196,3 +196,5 @@ Zambia
 Zimbabwe
 ranc
 {France}
+{Chile}
+{United States}

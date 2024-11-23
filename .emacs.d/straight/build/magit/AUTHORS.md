@@ -1,1 +1,1 @@
-/home/sync0/.emacs.d/straight/repos/magit/Documentation/AUTHORS.md
+/home/sync0/.emacs.d/straight/repos/magit/docs/AUTHORS.md

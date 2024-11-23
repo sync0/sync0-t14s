@@ -72,7 +72,8 @@
   '(("HAL scrapper" . "/home/sync0/Scripts/python/web_scrapper/hal_scrapper.py")
     ("BnF (Gallica)" . "/home/sync0/Scripts/python/web_scrapper/bnf_scrapper.py")
     ;; ("Webcat" . "/home/sync0/Scripts/python/worldcat_scrapper")
-    ("Theses.fr" . "/home/sync0/Scripts/python/web_scrapper/theses_scrapper.py"))
+    ("Theses.fr" . "/home/sync0/Scripts/python/web_scrapper/theses_scrapper.py")
+    ("Dumas.fr" . "/home/sync0/Scripts/python/web_scrapper/theses_scrapper.py"))
   "Paths of python webscrapper scripts")
 
 (defun sync0-url-clean-google-books-url (url)
@@ -91,7 +92,10 @@ script to use"
         ((string-match-p "books.google" url)
          "/home/sync0/Scripts/python/web_scrapper/google-books_scrapper.py")
         ((string-match-p "theses.fr" url)
-         "/home/sync0/Scripts/python/web_scrapper/theses_scrapper.py")))
+         "/home/sync0/Scripts/python/web_scrapper/theses_scrapper.py")
+        ((string-match-p "dumas" url)
+         "/home/sync0/Scripts/python/web_scrapper/theses_scrapper.py")
+	(t (error "No python script found for this webpabe"))))
 
 (defun sync0-bibtex-python-determine-doi-or-isbn (doi-or-isbn)
   "Analyze the string and determine the right python command

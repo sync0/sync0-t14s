@@ -148,17 +148,8 @@ dabbrev-like `company-mode' backend for code.
 The backend looks for all symbols in the current buffer that aren't in
 comments or strings.
 
-(fn COMMAND &optional ARG &rest IGNORED)" t)
-(register-definition-prefixes "company-dabbrev-code" '("company-dabbrev-code-"))
-
-
-;;; Generated autoloads from company-elisp.el
-
-(autoload 'company-elisp "company-elisp" "\
-`company-mode' completion backend for Emacs Lisp.
-
-(fn COMMAND &optional ARG &rest IGNORED)" t)
-(register-definition-prefixes "company-elisp" '("company-elisp-"))
+(fn COMMAND &optional ARG &rest REST)" t)
+(register-definition-prefixes "company-dabbrev-code" '("company-dabbrev-"))
 
 
 ;;; Generated autoloads from company-etags.el
@@ -166,7 +157,7 @@ comments or strings.
 (autoload 'company-etags "company-etags" "\
 `company-mode' completion backend for etags.
 
-(fn COMMAND &optional ARG &rest IGNORED)" t)
+(fn COMMAND &optional ARG &rest REST)" t)
 (register-definition-prefixes "company-etags" '("company-etags-"))
 
 
@@ -177,7 +168,7 @@ comments or strings.
 Completions works for proper absolute and relative files paths.
 File paths with spaces are only supported inside strings.
 
-(fn COMMAND &optional ARG &rest IGNORED)" t)
+(fn COMMAND &optional ARG &rest REST)" t)
 (register-definition-prefixes "company-files" '("company-file"))
 
 

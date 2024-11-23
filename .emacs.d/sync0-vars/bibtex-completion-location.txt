@@ -159,3 +159,27 @@ Trier
 {Paris}
 ari
 r
+Frankfurt
+Paris, La Roche-sur-Yon
+Saint-Amand-les-Eaux
+Saint-Amand-Les-Eaux
+France, Lyon
+Italy, Venice
+Colombia, Medellín
+Santiago, Chile
+Genova
+Chile, Santiago
+Batignolles
+{Lyon, France}
+Metz
+Montpellier
+Saint-Yrieix
+Paris, Boussac
+{New York}
+Bonn
+New York, London
+Boston, Chicago
+Stuttgart, Weimar
+Évreux
+Durnham, United States
+York, United Kingdom

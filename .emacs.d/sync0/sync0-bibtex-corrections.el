@@ -49,16 +49,27 @@ This function takes a string as argument; otherwise fails."
 
 (defun sync0-bibtex-entry-select-draft-prefix ()
   (unless (sync0-null-p sync0-bibtex-entry-doctype)
-    (when (string-match "draft" sync0-bibtex-entry-doctype)
-      (cond ((equal sync0-bibtex-entry-language "french")
-             "Ébauche : ")
-            ((equal sync0-bibtex-entry-language "english")
-             "Draft: ")
-            ((equal sync0-bibtex-entry-language "spanish")
-             "Esbozo: ")
-            ((equal sync0-bibtex-entry-language "portuguese")
-             "Esboço: ")
-            (t "Draft: ")))))
+    (cond ((sync0-string-member "draft" sync0-bibtex-entry-doctype)
+	   (cond ((equal sync0-bibtex-entry-language "french")
+		  "Ébauche : ")
+		 ((equal sync0-bibtex-entry-language "english")
+		  "Draft: ")
+		 ((equal sync0-bibtex-entry-language "spanish")
+		  "Esbozo: ")
+		 ((equal sync0-bibtex-entry-language "portuguese")
+		  "Esboço: ")
+		 (t "Draft: ")))
+	  ((sync0-string-member "proposal" sync0-bibtex-entry-doctype)
+	   (cond ((equal sync0-bibtex-entry-language "french")
+		  "Proposition : ")
+		 ((equal sync0-bibtex-entry-language "english")
+		  "Proposal: ")
+		 ((equal sync0-bibtex-entry-language "spanish")
+		  "Proposición: ")
+		 ((equal sync0-bibtex-entry-language "portuguese")
+		  "Proposta: ")
+		 (t "Proposal: ")))
+	  (t ""))))
 
 ;; (defun sync0-bibtex-entry-select-eventtitle-prefix ()
 ;;   (unless (sync0-null-p sync0-bibtex-entry-eventtitle)
@@ -387,6 +398,8 @@ biblatex entries and obsidian markdown files."
         ["l'" ""]
         ;; ["-de-" ""]
         ["l’" ""]
+        ["{" ""]
+        ["}" ""]
         ;; [" de " "-"]
         ;; ["-de-" "-"]
         ;; ["de-" ""]
@@ -636,8 +649,10 @@ bibtex-completion handles crossreferences."
                    (sync0-add-prefix-to-list-convert-to-string sync0-bibtex-entry-related ", " "related/"))
                   (t sync0-bibtex-entry-related))))
     ;; (sync0-bibtex-correct-journaltitle-keywords)
+    ;; Define certain variables that end with "-tag" in order to have them be calculated and included in keywords (biblatex entries)
     (sync0-bibtex-correct-keywords "journaltitle")
     (sync0-bibtex-correct-keywords "library")
+    (sync0-bibtex-correct-keywords "institution")
     ;; Fix problems with calculation of doctype tag.
     ;;;; (when sync0-bibtex-entry-doctype
     ;; (unless (sync0-null-p sync0-bibtex-entry-doctype)
@@ -750,6 +765,114 @@ bibtex-completion handles crossreferences."
         (sync0-bibtex-create-field-at-entry "status" status)
         (bibtex-fill-entry)))))
 
+(defun sync0-bibtex-corrections-format-insert-citation (bibkey)
+  "Format citation to insert according to conventions."
+  (sync0-bibtex-completion-load-entry bibkey)
+  (cond ((and (string= sync0-bibtex-entry-type-downcase "incollection")
+              sync0-bibtex-entry-booktitle)
+           (concat sync0-bibtex-entry-lastname
+                   (or (concat " " sync0-bibtex-entry-date-fixed " ")
+                       " ")
+                   "*" sync0-bibtex-entry-title-fixed "*"
+                   " in "
+                   (when sync0-bibtex-entry-editor
+                     (concat 
+                      (sync0-bibtex-abbreviate-lastnames   sync0-bibtex-entry-editor)
+                      ", "))
+                   sync0-bibtex-entry-booktitle
+                   (when sync0-bibtex-entry-volume
+                     (concat 
+                      ", T. "
+                      sync0-bibtex-entry-volume
+                      (when sync0-bibtex-entry-number
+                        (concat 
+                         ", No. "
+                         sync0-bibtex-entry-number))))
+                   (when sync0-bibtex-entry-pages
+                     (concat 
+                      ", p. "
+                      sync0-bibtex-entry-pages))))
+        ((and (string= sync0-bibtex-entry-type-downcase "article")
+          sync0-bibtex-entry-booktitle)
+           (concat sync0-bibtex-entry-lastname
+                   (or (concat " " sync0-bibtex-entry-date-fixed " ")
+                       " ")
+                   "*" sync0-bibtex-entry-title-fixed "*"
+                   (when sync0-bibtex-entry-volume
+                     (concat 
+                      ", T. "
+                      sync0-bibtex-entry-volume
+                      (when sync0-bibtex-entry-number
+                        (concat 
+                         ", No. "
+                         sync0-bibtex-entry-number))))
+                   (when sync0-bibtex-entry-pages
+                     (concat 
+                      ", p. "
+                      sync0-bibtex-entry-pages))))
+        ((string= sync0-bibtex-entry-type-downcase "article")
+         (concat sync0-bibtex-entry-lastname
+                 (or (concat " " sync0-bibtex-entry-date-fixed " ")
+                     " ")
+                   "*" sync0-bibtex-entry-title-fixed "*"
+               " in "
+               sync0-bibtex-entry-journaltitle
+               (when sync0-bibtex-entry-volume
+                 (concat 
+                  ", T. "
+                  sync0-bibtex-entry-volume
+               (when sync0-bibtex-entry-number
+                 (concat 
+                  ", No. "
+                  sync0-bibtex-entry-number))
+               (when sync0-bibtex-entry-pages
+                 (concat 
+                  ", p. "
+                  sync0-bibtex-entry-pages))))))
+        ((or (string= sync0-bibtex-entry-type-downcase "incollection")
+             (string= sync0-bibtex-entry-type-downcase "inproceedings"))
+         (concat sync0-bibtex-entry-lastname
+                 (or (concat " " sync0-bibtex-entry-date-fixed " ")
+                     " ")
+                   "*" sync0-bibtex-entry-title-fixed "*"
+               " in "
+               sync0-bibtex-entry-journaltitle
+               (when sync0-bibtex-entry-volume
+                 (concat 
+                  ", T. "
+                  sync0-bibtex-entry-volume
+               (when sync0-bibtex-entry-number
+                 (concat 
+                  ", No. "
+                  sync0-bibtex-entry-number))
+               (when sync0-bibtex-entry-pages
+                 (concat 
+                  ", p. "
+                  sync0-bibtex-entry-pages))))))
+        ((string= sync0-bibtex-entry-type-downcase "inbook")
+         (concat sync0-bibtex-entry-lastname
+                 (or (concat " " sync0-bibtex-entry-date-fixed " ")
+                     " ")
+                   "*" sync0-bibtex-entry-title-fixed "*"
+                 " in "
+                 sync0-bibtex-entry-booktitle
+                 (when sync0-bibtex-entry-volume
+                   (concat 
+                    ", T. "
+                    sync0-bibtex-entry-volume
+                    (when sync0-bibtex-entry-number
+                      (concat 
+                       ", No. "
+                       sync0-bibtex-entry-number))))
+                 (when sync0-bibtex-entry-pages
+                   (concat 
+                    ", p. "
+                    sync0-bibtex-entry-pages))))
+        (t (concat sync0-bibtex-entry-lastname
+                   (or (concat " " sync0-bibtex-entry-date-fixed " ")
+                       " ")
+                   "*" sync0-bibtex-entry-title-fixed "*"))))
+
 (defun sync0-bibtex-corrections-format-yank-citation (bibkey)
   "Format citation to yank according to conventions."
   (sync0-bibtex-completion-load-entry bibkey)
@@ -858,5 +981,376 @@ bibtex-completion handles crossreferences."
                        " ")
                    sync0-bibtex-entry-title-compatible))))
 
+(defun sync0-bibtex-ocr-language-chooser (bibentry)
+  "Choose OCR language(s) based on the BibTeX entry with BIBKEY.
+   Returns a string of languages formatted for OCRmyPDF."
+  (let* ((raw-languages (or (sync0-bibtex-completion-get-value "languages" bibentry)
+                            (sync0-bibtex-completion-get-value "language" bibentry)
+                            "")) ;; Default to empty string if nil
+         (lang-correspondance-alist '(("german" . "deu")
+                                      ("english" . "eng")
+                                      ("french" . "fra")
+                                      ("spanish" . "spa")
+                                      ("portuguese" . "por")
+                                      ("italian" . "ita")))
+         (langs (mapcar (lambda (lang)
+                          (let* ((trimmed-lang (string-trim (downcase (substring-no-properties lang))))
+                                 (lang-code (cdr (assoc trimmed-lang lang-correspondance-alist))))
+                            (if lang-code
+                                lang-code
+                              (progn
+                                (message "Warning: No OCR language code found for: %s" trimmed-lang)
+                                "eng"))))
+                        (split-string raw-languages "[, \t\n]")))
+         (unique-langs (delete-dups langs)))
+    (mapconcat 'identity unique-langs "+")))
+
+(defun sync0-bibtex-corrections-ensure-bibtex-year-field ()
+  (interactive)
+  (goto-char (point-min))
+  (while (re-search-forward "@\\(article\\|book\\|incollection\\|misc\\|conference\\){\\([^,]+\\)," nil t)
+    (save-excursion
+      (unless (re-search-forward "year\\s-*=" (save-excursion (bibtex-end-of-entry)) t)
+        (message "Warning: Entry %s has no year field." (match-string 2))))))
+
+;; (defun sync0-convert-online-to-misc ()
+;;   "Convert BibLaTeX @online entries to Natbib-compatible @misc entries."
+;;   (interactive)
+;;   (goto-char (point-min))
+;;   (while (re-search-forward "@online" nil t)
+;;     (replace-match "@misc")))
+
+;; (defun sync0-bibtex-convert-biblatex-to-natbib ()
+;;   "Convert BibLaTeX fields to Natbib-compatible fields in the current buffer."
+;;   (interactive)
+;;   ;; Convert all BibTeX entry types in the current buffer to lowercase.
+;;   (save-excursion
+;;     (goto-char (point-min))
+;;     (while (re-search-forward "@\\([A-Za-z]+\\){" nil t)
+;;       (replace-match (concat "@" (downcase (match-string 1)) "{") t t)))
+;;   (message "BibTeX entry types converted to lowercase.")
+;;   ;; Convert all BibTeX entry types in the current buffer to lowercase.
+;;   (goto-char (point-min))
+;;   (save-excursion
+;;     (while (re-search-forward "\\(journaltitle\\|origdate\\|location\\|booktitle\\|\\[.*\\]\\)" nil t)
+;;       (replace-match
+;;        (cond
+;; 	((string= (match-string 1) "journaltitle") "journal")
+;; 	((string= (match-string 1) "origdate") "origyear")
+;; 	((string= (match-string 1) "location") "address")
+;; 	((string= (match-string 1) "booktitle") "book")
+;; 	(t (match-string 1))) nil nil)))
+;; ;;   "Delete lines containing specified BibTeX fields from the current buffer.
+;; ;; The fields to be removed are hard-coded in the function."
+;;   (let ((fields '("url" "urldate" "file" "abstract" "langid" "people" "theme"
+;;                   "verba" "expages" "century" "verbb" "verbc" "source"
+;;                   "project" "country" "library" "pagetotal" "related"
+;;                   "relatedtype" "shorttitle" "shorthand" "cote" "format"
+;;                   "doctype" "aliases" "status" "priority" "foreword"
+;; 		  "introduction" "created"))
+;;         (case-fold-search t)) ; Case-insensitive search
+;;     (save-excursion
+;;       (goto-char (point-min))
+;;       (while (not (eobp))
+;;         (let ((line (thing-at-point 'line t)))
+;;           (when (cl-some (lambda (field)
+;;                            (string-match (concat "\\b" (regexp-quote field) "\\b") line))
+;;                          fields)
+;;             (delete-region (line-beginning-position) (line-end-position))
+;;             (forward-line -1))) ; Move back one line after deletion
+;;         (forward-line 1)))) ; Move to the next line
+;;   (message "Specified fields removed from the buffer."))
+
+(defun sync0-convert-utf8-to-latex-accents ()
+  "Convert accented UTF-8 characters in the buffer to LaTeX-compatible escape sequences using `xah-replace-pairs-in-region`."
+  (interactive)
+  (let ((accent-pairs
+         [["á" "\\'{a}"]
+          ["à" "\\`{a}"]
+          ["â" "\\^{a}"]
+          ["ä" "\\\"{a}"]
+          ["ã" "\\~{a}"]
+          ["å" "\\aa{}"]
+          ["é" "\\'{e}"]
+          ["è" "\\`{e}"]
+          ["ê" "\\^{e}"]
+          ["ë" "\\\"{e}"]
+          ["í" "\\'{i}"]
+          ["ì" "\\`{i}"]
+          ["î" "\\^{i}"]
+          ["ï" "\\\"{i}"]
+          ["ó" "\\'{o}"]
+          ["ò" "\\`{o}"]
+          ["ô" "\\^{o}"]
+          ["ö" "\\\"{o}"]
+          ["õ" "\\~{o}"]
+          ["ú" "\\'{u}"]
+          ["ù" "\\`{u}"]
+          ["û" "\\^{u}"]
+          ["ü" "\\\"{u}"]
+          ["ñ" "\\~{n}"]
+          ["ç" "\\c{c}"]
+          ["Á" "\\'{A}"]
+          ["À" "\\`{A}"]
+          ["Â" "\\^{A}"]
+          ["Ä" "\\\"{A}"]
+          ["Ã" "\\~{A}"]
+          ["Å" "\\AA{}"]
+          ["É" "\\'{E}"]
+          ["È" "\\`{E}"]
+          ["Ê" "\\^{E}"]
+          ["Ë" "\\\"{E}"]
+          ["Í" "\\'{I}"]
+          ["Ì" "\\`{I}"]
+          ["Î" "\\^{I}"]
+          ["Ï" "\\\"{I}"]
+          ["Ó" "\\'{O}"]
+          ["Ò" "\\`{O}"]
+          ["Ô" "\\^{O}"]
+          ["Ö" "\\\"{O}"]
+          ["Õ" "\\~{O}"]
+          ["Ú" "\\'{U}"]
+          ["Ù" "\\`{U}"]
+          ["Û" "\\^{U}"]
+          ["’" "'"]
+          ["Ü" "\\\"{U}"]
+          ["Ñ" "\\~{N}"]
+          ["«" "\\guillemotleft"]
+          ["»" "\\guillemotright"]
+          ["Ç" "\\c{C}"]
+          ;; German special characters
+          ["ß" "\\ss{}"]
+          ["ø" "\\o{}"]
+          ["Ø" "\\O{}"]]))
+    (xah-replace-pairs-region (point-min) (point-max) accent-pairs)))
+
+(defun sync0-bibtex-convert-biblatex-to-natbib ()
+  "Convert BibLaTeX fields to Natbib-compatible fields and remove specified fields in the current buffer.
+This function performs the following operations:
+1. Converts all BibTeX entry types to lowercase.
+2. Replaces specific BibTeX fields with their Natbib-compatible counterparts.
+3. Deletes lines containing specified BibTeX fields."
+  (interactive)
+  
+  ;; Convert BibTeX entry types to lowercase
+  (save-excursion
+    (goto-char (point-min))
+    (while (re-search-forward "@\\([A-Za-z]+\\){" nil t)
+      (replace-match (concat "@" (downcase (match-string 1)) "{") t t)))
+
+  ;; Replace specific BibTeX fields with Natbib-compatible fields
+  (save-excursion
+    (goto-char (point-min))
+    (while (re-search-forward "\\(journaltitle\\|origdate\\|location\\|booktitle\\|\\[.*\\]\\)" nil t)
+      (replace-match
+       (cond
+        ((string= (match-string 1) "journaltitle") "journal")
+        ((string= (match-string 1) "origdate") "origyear")
+        ((string= (match-string 1) "location") "address")
+        ((string= (match-string 1) "booktitle") "book")
+        (t (match-string 1))) nil nil)))
+
+  ;; Format date field appropriately
+  (let ((case-fold-search t)) ; Case-insensitive search
+    (save-excursion
+      (goto-char (point-min))
+      (while (re-search-forward "^\\s-*date\\s-*=[^}]*" nil t)
+        (let* ((date-field (thing-at-point 'line t))
+               (date-value (if (string-match "\\s-*=\\s-*{\\([^}]*\\)}" date-field)
+                               (match-string 1 date-field)
+                             ""))
+               (parts (split-string date-value "-"))
+               (year (if (>= (length parts) 1) (nth 0 parts) ""))
+               (month (if (>= (length parts) 2) (nth 1 parts) ""))
+               (day (if (>= (length parts) 3) (nth 2 parts) "")))
+          ;; Remove the old date field
+          (delete-region (line-beginning-position) (line-end-position))
+          (forward-line -1)
+          ;; Add new year, month, and day fields
+          (insert (format "  year = {%s},\n" year))
+          (when (and month (not (string-empty-p month)))
+            (insert (format "  month = {%s},\n" month)))
+          (when (and day (not (string-empty-p day)))
+            (insert (format "  day = {%s},\n" day)))
+          ;; Add remaining fields
+          (insert (thing-at-point 'line t))))))
+  (message "Date fields reformatted to Natbib-compatible format.")
+
+  ;; Delete lines containing specified BibTeX fields
+  (let ((fields '("url" "urldate" "file" "abstract" "langid" "people" "theme"
+                  "verba" "expages" "century" "verbb" "verbc" "source"
+                  "project" "country" "library" "pagetotal" "related"
+                  "relatedtype" "shorttitle" "shorthand" "cote" "format"
+                  "doctype" "aliases" "status" "priority" "foreword"
+                  "introduction" "created"))
+        (case-fold-search t)) ; Case-insensitive search
+    (save-excursion
+      (goto-char (point-min))
+      (while (not (eobp))
+        (let ((line (thing-at-point 'line t)))
+          (when (cl-some (lambda (field)
+                           (string-match (concat "\\b" (regexp-quote field) "\\b") line))
+                         fields)
+            (delete-region (line-beginning-position) (line-end-position))
+            (forward-line -1))) ; Move back one line after deletion
+        (forward-line 1)))) ; Move to the next line
+
+  (message "BibLaTeX fields converted to Natbib-compatible fields and specified fields removed from the buffer."))
+
+(defun sync0-bibtex-format-date-to-natbib ()
+  "Format the 'date' field to 'year', 'month', and 'day' in the current BibTeX buffer."
+  (interactive)
+  (let ((case-fold-search t)) ; Case-insensitive search
+    (save-excursion
+      (goto-char (point-min))
+      (while (re-search-forward "^\\s-*date\\s-*=[^}]*" nil t)
+        (let* ((date-field (thing-at-point 'line t))
+               (date-value (if (string-match "\\s-*=\\s-*{\\([^}]*\\)}" date-field)
+                               (match-string 1 date-field)
+                             ""))
+               (parts (split-string date-value "-"))
+               (year (if (>= (length parts) 1) (nth 0 parts) ""))
+               (month (if (>= (length parts) 2) (nth 1 parts) ""))
+               (day (if (>= (length parts) 3) (nth 2 parts) "")))
+          ;; Remove the old date field
+          (delete-region (line-beginning-position) (line-end-position))
+          (forward-line -1)
+          ;; Add new year, month, and day fields
+          (insert (format "  year = {%s},\n" year))
+          (when (and month (not (string-empty-p month)))
+            (insert (format "  month = {%s},\n" month)))
+          (when (and day (not (string-empty-p day)))
+            (insert (format "  day = {%s},\n" day)))
+          ;; Add remaining fields
+          (insert (thing-at-point 'line t))))))
+  (message "Date fields reformatted to Natbib-compatible format."))
+
+;; (defun sync0-bibtex-remove-duplicate-fields ()
+;;   "Remove duplicate BibTeX fields within each entry in the current buffer.
+;; Keeps only the first occurrence of each field and deletes any subsequent duplicates."
+;;   (interactive)
+;;   (let ((field-regex "^\\s-*\\([a-zA-Z0-9-]+\\)\\s-*=")
+;;         (entry-end-regex "^}\\s*$")
+;;         (case-fold-search t))
+;;     (save-excursion
+;;       (goto-char (point-min))
+;;       (while (re-search-forward "^\\s-*@" nil t)
+;;         (let ((entry-start (point))
+;;               (entry-end (progn
+;;                            (re-search-forward entry-end-regex nil t)
+;;                            (point)))
+;;               (seen-fields (make-hash-table :test 'equal)))
+;;           (goto-char entry-start)
+;;           (while (re-search-forward field-regex entry-end t)
+;;             (let ((field (match-string 1)))
+;;               (if (gethash field seen-fields)
+;;                   (progn
+;;                     ;; Delete the duplicate field
+;;                     (delete-region (line-beginning-position) (line-end-position))
+;;                     (forward-line -1))  ;; Move back one line after deletion
+;;                 (puthash field t seen-fields))))
+;;           ;; Move forward to the next entry
+;;           (goto-char entry-end)))))
+
+;;   (message "Duplicate fields removed within each BibTeX entry."))
+
+(setq my-bib-alist
+      '(("anf" . "/home/sync0/Gdrive/bibpubs/24263gu_anf.bib")
+        ("add" . "/home/sync0/Gdrive/bibpubs/24263gu_add.bib")
+        ("adhv" . "/home/sync0/Gdrive/bibpubs/24263gu_adhv.bib")
+        ("aml" . "/home/sync0/Gdrive/bibpubs/24263gu_aml.bib")))
+
+(defun my-modify-citations ()
+  "Modify citation commands in the current buffer based on my-bib-alist."
+  (interactive)
+  (let ((bib-key-alist '()))  ;; Temporary alist to store bibkey and labels
+    ;; Build the bib-key-alist from my-bib-alist
+    (dolist (bibfile my-bib-alist)
+      (let ((label (car bibfile))
+            (path (cdr bibfile)))
+        ;; Read the bib file and extract citation keys
+        (with-temp-buffer
+          (insert-file-contents path)
+          (while (re-search-forward "@\\w+{\\([^,]+\\)," nil t)
+            (let ((bibkey (match-string 1)))
+              ;; Add the bibkey and its corresponding label to the alist
+              (push (cons bibkey label) bib-key-alist))))))
+    
+    ;; Regex to match different citation commands
+    (let ((citation-regexp "\\\\cite\\(t\\|p\\|alp\\|alt\\|author\\|year\\|text\\)*\\(\\[.*?\\]\\)?{\\([^}]+\\)}"))
+      
+      ;; Define a local function to modify citations recursively
+      (defun modify-citation ()
+        (let ((pos (point)))
+          (while (re-search-forward citation-regexp nil t)
+            (let ((cmd (match-string 0))
+                  (options (match-string 2))
+                  (key (match-string 3)))
+              ;; Find the corresponding label for the bibkey
+              (let ((label (cdr (assoc key bib-key-alist))))
+                (when label
+                  ;; Modify the citation command to include the label
+                  (replace-match (concat "\\\\cite" label options "{" key "}") t))
+              ;; Check for nested commands and apply this function recursively
+              (when (looking-back "\\\\citetext{")
+                (modify-citation)))))))
+      
+      ;; Perform the modification in the current buffer
+      (save-excursion
+        (goto-char (point-min))
+        (modify-citation)))))
+
+;; (defun smarten-quotes ()
+;;   "Replace straight quotes in the current buffer with smart quotes, including apostrophes, without altering words."
+;;   (interactive)
+;;   (save-excursion
+;;     (goto-char (point-min))
+;;     ;; Replace straight double quotes (\" and ")
+;;     (while (re-search-forward "\\([^\x00-\x1F\x7F\\w\\d\\s]\\)\"" nil t)
+;;       (let ((before (match-string 1)))
+;;         (replace-match (concat before "“"))))
+;;     (goto-char (point-min))
+;;     ;; Replace straight single quotes (\' and ') including apostrophes
+;;     (while (re-search-forward "\\([^\x00-\x1F\x7F\\w\\d\\s]\\)'" nil t)
+;;       (let ((before (match-string 1)))
+;;         (replace-match (concat before "‘"))))
+;;     (goto-char (point-min))
+;;     ;; Smarten apostrophes (specific case for apostrophes inside words)
+;;     (while (re-search-forward "[^\\w\\d]\\'" nil t)
+;;       (replace-match "’"))))
+
+(defun smarten-quotes ()
+  "Replace straight quotes in the current buffer with smart quotes, including apostrophes, without altering words."
+  (interactive)
+  (save-excursion
+    (goto-char (point-min))
+    ;; Replace straight double quotes (\" and ") with correct orientation
+    (let ((in-quote nil))
+      (while (re-search-forward "\\([^\x00-\x1F\x7F\\w\\d\\s]\\)\"" nil t)
+        (let ((before (match-string 1)))
+          (if in-quote
+              (progn
+                (replace-match (concat before "”"))
+                (setq in-quote nil))  ;; Closing quote
+            (progn
+              (replace-match (concat before "“"))
+              (setq in-quote t)))))  ;; Opening quote
+    (goto-char (point-min))
+    ;; Replace straight single quotes (\' and ') with correct orientation, including apostrophes
+    (let ((in-quote nil))
+      (while (re-search-forward "\\([^\x00-\x1F\x7F\\w\\d\\s]\\)'" nil t)
+        (let ((before (match-string 1)))
+          (if in-quote
+              (progn
+                (replace-match (concat before "’"))
+                (setq in-quote nil))  ;; Closing quote
+            (progn
+              (replace-match (concat before "‘"))
+              (setq in-quote t)))))  ;; Opening quote
+    (goto-char (point-min))
+    ;; Smarten apostrophes inside words (specific case for apostrophes inside words like l'étude)
+    (while (re-search-forward "\\([a-zA-Z0-9]\\)'" nil t)
+      (replace-match (concat (match-string 1) "’")))))))
 
 (provide 'sync0-bibtex-corrections)
+

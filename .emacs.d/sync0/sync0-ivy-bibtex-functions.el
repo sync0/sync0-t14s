@@ -1,55 +1,59 @@
 (require 'sync0-bibtex-extraction)
 (require 'sync0-functions)
+(require 'sync0-bibtex-corrections)
 (require 'sync0-bibtex-python)
+(require 'sync0-ivy-bibtex)
+(require 'sync0-bibtex-sql)
 
-(defun sync0-update-bibtex-authors ()
+(defun sync0-bibtex-completion-insert-markdown-citation ()
+  "Insert a cached or new markdown citation at point, querying the database."
   (interactive)
-  (let ((current-authors)
-        (final-list)
-        (bibtex-authors  (append
-                          (mapcar #'(lambda (x) (cdr (assoc "editor" x)))
-                                  (bibtex-completion-candidates))
-                          (mapcar #'(lambda (x) (cdr (assoc "author" x)))
-                                  (bibtex-completion-candidates)))))
-    (with-temp-buffer
-      (insert-file-contents "~/.emacs.d/sync0-vars/bibtex-authors.txt")
-      (goto-char (point-min))
-      ;; (keep-lines "contexts" (point-min) (point-max)) 
-      (while (re-search-forward "^\\([[:print:]]+\\)\n" (point-max) t)
-        (push  (match-string 1) current-authors)))
-    (with-temp-file
-        "~/.emacs.d/sync0-vars/bibtex-authors.txt"
-      (setq final-list (delete-dups (append current-authors bibtex-authors)))
-      (sync0-insert-elements-of-list final-list))))
+  (let* ((cached-citation sync0-bibtex-completion-cache-citation)
+         (citation
+          (if (and cached-citation
+                   (y-or-n-p (format "Use cached citation: %s? " cached-citation)))
+              ;; Use the cached citation directly, with optional edit
+              (let ((insert-cit (read-string "Edit citation (if needed): " cached-citation)))
+                (setq sync0-bibtex-completion-cache-citation insert-cit)
+                (insert (concat " [" insert-cit "]")))
+            ;; Else, query the database and allow selection
+            (let ((key (sync0-bibtex-sql-query-entry))
+                  (pages (read-string "Pages: " sync0-bibtex-completion-cache-pages)))
+              (setq sync0-bibtex-completion-cache-key key)
+              (setq sync0-bibtex-completion-cache-pages pages)
+              (setq sync0-bibtex-completion-cache-citation
+                    (format "@%s, %s" key pages))
+              (insert (concat " [" sync0-bibtex-completion-cache-citation "]"))))))))
 
-(defun sync0-bibtex-completion-reverse-author (key)
-  "Reverse the author used for "
-  (let* ((string-key (number-to-string key))
-         (author (sync0-org-ref-get-citation-author string-key)))
-    (cond ((string-match " and " author)
-           ;; create a list with parts 
-           (let* ((author-list  (split-string author " and "))
-                  (names (let (x)
-                           (dolist  (element author-list x)
-                             (setq x (concat x
-                                             (progn
-                                               (string-match ", \\([[:graph:]]+\\)$"   element)
-                                               (match-string 1 element))
-                                             " "
-                                             (progn
-                                               (string-match "\\([[:graph:]]+\\),"   element)
-                                               (match-string 1 element))
-                                             ", "))))))
-             (substring names 0 -2)))
-          ;; check when author is an organization
-          ((string-match "^{" author)
-           (string-match "{\\([[:print:]]+\\)}" author)
-           (match-string 1 author))
-          ;; other cases
-          (t (let* ((author-list (split-string author ", "))
-                    (last-name (nth 0 author-list))
-                    (first-name (nth 1 author-list)))
-               (concat first-name " " last-name))))))
+(evil-leader/set-key-for-mode 'markdown-mode "i" 'sync0-bibtex-completion-insert-markdown-citation)
+
+(define-key markdown-mode-map (kbd "C-c i") #'sync0-bibtex-completion-insert-markdown-citation)
+
+(defun sync0-bibtex-completion-insert-markdown-link ()
+  "Insert a markdown link with a citation at point."
+  (interactive)
+  (let* ((key (sync0-bibtex-sql-query-entry))
+	 (formatted-citation (sync0-bibtex-corrections-format-insert-citation key))
+         (link (format "[%s](%s.md)" formatted-citation key)))
+    (insert link)))
+
+(defun sync0-bibtex-open-attachment ()
+  "Insert a markdown link with a citation at point."
+  (interactive)
+  (let* ((bibkey (sync0-bibtex-sql-query-entry))
+         (file (sync0-bibtex-choose-attachment bibkey))
+	 (extension (file-name-extension file))
+	 (program (if (assoc extension sync0-default-file-associations)
+                      (cdr (assoc extension sync0-default-file-associations))
+		    (completing-read "Which software to open attachment with? " sync0-bibtex-attachment-programs))))
+    (cond ((and (sync0-null-p program)
+                (file-exists-p file))
+             (org-open-file file))
+            ((file-exists-p file)
+             (call-process program nil 0 nil file))
+            (t (message "No attachment found for key %s" bibkey)))))
+
+(evil-leader/set-key-for-mode 'markdown-mode "I" 'sync0-bibtex-completion-insert-markdown-link)
 
 (defun sync0-bibtex-completion-journaltitle ()
   (completing-read "Journal title : "
@@ -60,70 +64,6 @@
   (completing-read "Auteur : "
                    (delete-dups (mapcar #'(lambda (x) (cdr (assoc "author" x)))
                                         (bibtex-completion-candidates)))))
-
-(defun sync0-ivy-bibtex-extractor ()
-  "Extract the target field from BibTeX entry"
-  (interactive)
-  (let* ((bibkey (let* ((candidates (bibtex-completion-candidates))
-                        (key-at-point (sync0-org-ref-search-bibkey-in-buffer))
-                        (preselect (and key-at-point
-                                        (cl-position-if (lambda (cand)
-                                                          (member (cons "=key=" key-at-point)
-                                                                  (cdr cand)))
-                                                        candidates)))
-                        (selection (ivy-read "Choose BibTeX key to extract from : "
-                                             candidates
-                                             :preselect preselect
-                                             :caller 'ivy-bibtex
-                                             :history 'ivy-bibtex-history)))
-                   (cdr (assoc "=key=" (cdr (assoc selection candidates))))))
-         (entry (bibtex-completion-get-entry bibkey))
-         (bibtex-field
-          (completing-read "Choose one: "
-                           '("=key=" "title" "author" "journaltitle" "date" "editor" "booktitle"))))
-    (insert (bibtex-completion-get-value bibtex-field entry))))
-
-;; (defhydra sync0-hydra-ivy-bibtex-functions (:color blue :hint nil)
-;;   "
-;; ^BibLaTeX^           ^Etc.^    
-;; ^--------------------------------------
-;; Open _n_otes         Open _d_eft
-;; _E_xtract field      _Q_uote (display)     
-;; PDF _o_pen           _F_oreign quote       
-;; PDF in _z_athura
-;; _V_isit corr. PDF
-;; _C_opy pdf
-;; _B_ib files
-;; Open _i_vy bibtex
-
-;; _q_uit
-;; "
-;;   ("B" sync0-visit-bibliography-in-buffer)
-;;   ("C" sync0-org-ref-copy-pdf-to-path)
-;;   ("d" deft)
-;;   ("i" ivy-bibtex)
-;;   ("n" sync0-ivy-bibtex-open-notes)
-;;   ("E" sync0-ivy-bibtex-extractor)
-;;   ("o" sync0-org-ref-open-pdf-at-point)
-;;   ("F" (progn (yas-expand-snippet (yas-lookup-snippet "csquotes_foreign_displayquote"))))
-;;   ("Q" (progn (yas-expand-snippet (yas-lookup-snippet "csquotes_displayquote"))))
-;;   ("V" sync0-org-open-corresponding-pdf)
-;;   ("z" sync0-org-ref-open-pdf-at-point-zathura)
-;;   ("q" nil :color blue))
-
-;; (evil-leader/set-key
-;;   "i" 'sync0-hydra-ivy-bibtex-functions/body)
-
-;; This action is for ivy-bibtex/bibtex-completion
-;; (defun bibtex-completion-print-pdf-list (keys)
-;;   "Print the PDFs of the entries with the given KEYS where available."
-;;   (let ((command (sync0-print-define-command)))
-;;     (dolist (key keys)
-;;       (let ((pdf (car (bibtex-completion-find-pdf key))))
-;;         (if pdf
-;;             (sync0-bibtex-print-pdf pdf command)
-;;           (message "No PDF(s) found for this entry: %s" key))))))
-
 
 (defun bibtex-completion-print-pdf-list (&optional keys)
   "Print the PDFs of the entries with the given KEYS where available."
@@ -162,8 +102,7 @@
 (defun bibtex-completion-copy-pdf-to-path-list (keys)
   "Print the PDFs of the entries with the given KEYS where available."
   (let* ((processed-keys (sync0-process-bibkeys keys))
-	 (path (sync0-correct-string-with-corrector
-		(read-string "Where should I send these PDFs? : " sync0-goodreads-directory) "/" t))
+	 (path (read-directory-name "Where should I send these PDFs? : " sync0-goodreads-directory))
          (compress
 	  (when (listp processed-keys)
 	    (yes-or-no-p "Compress selected files as one ZIP? ")))
@@ -198,13 +137,6 @@
 	    (message "PDF for %s succesfully copied to path %s" processed-keys path)))
       (message "Path/directory %s is unaccesable or does not exist." path))))
 
-;; (defun sync0-bibtex-python-search-pdf-define-shell-command (venv script-path search-term pdf alias separator &optional summary-only)
-;;   "Run shell commmand of python search for keyword in PDF and output as a string the product."
-;;   (let ((command (if summary-only 
-;;                 (format "source %s && python3 %s %s %s %s --summary_only" venv script-path search-term separator pdf alias)
-;;                (format "source %s && python3 %s %s %s %s" venv script-path search-term pdf alias))))
-;;     (shell-command-to-string command)))
-
 (defun sync0-bibtex-python-search-pdf-define-shell-command (venv script-path search-term pdf alias separator)
   "Run shell commmand of python search for keyword in PDF and output as a string the product."
   (let ((command (format "source %s && python3 %s %s %s %s %s" venv script-path search-term separator pdf alias)))
@@ -217,18 +149,6 @@
 	 (script-path sync0-bibtex-python-pdf-searcher-path)
          (venv sync0-bibtex-python-pdf-searcher-venv-path)
          (search-term (read-string "String or regex to search: "))
-         ;; (separator (cond ((string-match "[[:graph:]]+;[[:space:]]*" search-term)
-         ;;                ";")
-         ;;                  ((string-match "[[:graph:]]+,[[:space:]]*" search-term)
-         ;;                   ",")
-         ;;            (t "nil")))
-         ;; (separator (read-string "Separator: " ","))
-         ;; (summary-only (yes-or-no-p "Summary only? "))
-         ;; (summary-only "t")
-         ;; (separators (list "," ";" "|" "nil"))
-         ;; (separator (if (string-match "[[:graph:]]+,[[:space:]]*" search-term)
-         ;;                ","
-         ;;              (completing-read "Separator" separators nil t "nil")))
          (separator (if (string-match "[[:graph:]]+,[[:space:]]*[[:graph:]]+" search-term)
 			","
                       "nil")))
@@ -244,17 +164,6 @@
                         (output (sync0-bibtex-python-search-pdf-define-shell-command venv script-path search-term pdf alias separator)))
              (setq x (concat output "\n--------------------------------\n" x))))
           (message "%s" x))
-      (if (sync0-bibtex-buffer-p)
-	  (when-let* ((entry (save-excursion (bibtex-beginning-of-entry)
-					     (bibtex-parse-entry)))
-		      (bibkey (cdr (assoc "=key=" entry)))
-		      (pdf (car (bibtex-completion-find-pdf bibkey)))
-		      (alias (progn 
-			       (sync0-bibtex-completion-load-entry bibkey)
-			       (concat "\"" (sync0-bibtex-corrections-format-yank-citation bibkey) "\"")))
-		      ;; (output (sync0-bibtex-python-search-pdf-define-shell-command venv script-path search-term pdf alias separator summary-only))
-		      (output (sync0-bibtex-python-search-pdf-define-shell-command venv script-path search-term pdf alias separator)))
-            (message "%s" output))
 	(when-let* ((bibkey processed-keys)
 		    (pdf (car (bibtex-completion-find-pdf bibkey)))
                     (alias (progn 
@@ -262,7 +171,7 @@
                              (concat "\"" (sync0-bibtex-corrections-format-yank-citation bibkey) "\"")))
                     ;; (output (sync0-bibtex-python-search-pdf-define-shell-command venv script-path search-term pdf alias separator summary-only))
                     (output (sync0-bibtex-python-search-pdf-define-shell-command venv script-path search-term pdf alias separator)))
-          (message "%s" output))))))
+          (message "%s" output)))))
 
 (defun bibtex-completion-rewrite-notes-from-biblatex-data-list (keys)
   "Print the PDFs of the entries with the given KEYS where available."
@@ -276,25 +185,6 @@
           (sync0-bibtex-create-note-from-entry t processed-keys)
         (sync0-bibtex-create-note-from-entry nil processed-keys)))))
 
-;; (defun sync0-process-bibkeys (keys)
-;;   "Process the KEYS argument into a list of strings."
-;;   (cond
-;;     ;; Case 1: List of strings
-;;     ((listp keys)
-;;      (mapcar #'symbol-name keys))
-;;     ;; Case 2: List with a single string element
-;;     ((stringp keys)
-;;      (list keys))
-;;     ;; Case 3: String
-;;     (t
-;;      (list keys))))
-
-;; (defun bibtex-completion-recalc-tags (keys)
-;;   "Recalculate tags for entries with given KEYS."
-;;   (let ((processed-keys (sync0-process-bibkeys keys)))
-;;     (dolist (key processed-keys)
-;;       (sync0-bibtex-recalc-tags-and-mdnote key))))
-
 (defun bibtex-completion-recalc-tags (keys)
   "Recalculate tags for entries with given KEYS."
   (let ((processed-keys (sync0-process-bibkeys keys)))
@@ -302,14 +192,6 @@
         (dolist (key processed-keys)
           (sync0-bibtex-recalc-tags-and-mdnote key))
       (sync0-bibtex-recalc-tags-and-mdnote processed-keys))))
-
-;; (defun bibtex-completion-recalc-tags (keys)
-;;   "Print the PDFs of the entries with the given KEYS where available."
-;;   (when keys
-;;       (if (cdr keys)
-;; 	  (dolist (key keys)
-;; 	    (sync0-bibtex-recalc-tags-and-mdnote key))
-;;         (sync0-bibtex-recalc-tags-and-mdnote (car keys)))))
 
 (defun bibtex-completion-archive-entries-list (keys)
   "Print the PDFs of the entries with the given KEYS where available."
@@ -357,16 +239,20 @@
   "Print the PDFs of the entries with the given KEYS where available."
   (interactive)
   (if keys
-      (let ((processed-keys (sync0-process-bibkeys keys)))
+      (let ((processed-keys (sync0-process-bibkeys keys))
+	    (video-only (yes-or-no-p "Download videos for selected key? (Otherwise, audio only)")))
 	(if (listp processed-keys)
 	    (dolist (key processed-keys)
-	      (sync0-bibtex-download-from-youtube key))
-          (sync0-bibtex-download-from-youtube processed-keys)))
+	      (sync0-bibtex-download-from-youtube key video-only))
+          (sync0-bibtex-download-from-youtube processed-keys video-only)))
     (when (sync0-bibtex-buffer-p)
       (let* ((entry (save-excursion (bibtex-beginning-of-entry)
 			            (bibtex-parse-entry)))
-             (bibkey (cdr (assoc "=key=" entry))))
-      (sync0-bibtex-download-from-youtube bibkey)))))
+             (bibkey (cdr (assoc "=key=" entry)))
+             (title (cdr (assoc "title" entry)))
+	     (media-type-message (format "Download video for %s (%s)? (Otherwise, audio only)" title bibkey))
+             (video-only (yes-or-no-p media-type-message)))
+      (sync0-bibtex-download-from-youtube bibkey video-only)))))
 
 (defun bibtex-completion-concatenate-pdf-list (keys)
   "Concatenate pdfs corresponding to keys"
@@ -375,7 +261,7 @@
          (pdf (if (yes-or-no-p "Choose key from bibliographies?")
                   (let ((bibref (sync0-bibtex-completion-choose-key t)))
                     (concat sync0-zettelkasten-attachments-directory bibref ".pdf"))
-                (read-string "Input full path with name of output pdf: ")))
+                (read-file-name "Input full path with name of output pdf: ")))
          x
          command)
     (dolist (key keys)
@@ -417,43 +303,21 @@
 	  (sync0-bibtex-extract-from-crossref key t))
       (sync0-bibtex-extract-from-crossref processed-keys t))))
 
-  (defun bibtex-completion-delete-entry (keys)
-    "Print the PDFs of the entries with the given KEYS where available."
-    (let ((processed-keys (sync0-process-bibkeys keys)))
-      (if (listp processed-keys)
-	  (dolist (key processed-keys)
-            (sync0-bibtex-delete-entry key)))
-      (sync0-bibtex-delete-entry processed-keys)))
+(defun bibtex-completion-delete-entry (keys)
+  "Print the PDFs of the entries with the given KEYS where available."
+  (let ((processed-keys (sync0-process-bibkeys keys)))
+    (if (listp processed-keys)
+	(dolist (key processed-keys)
+          (sync0-bibtex-delete-entry key)))
+    (sync0-bibtex-delete-entry processed-keys)))
 
-  (defun bibtex-completion-open-pdf-external (keys)
-    "Print the PDFs of the entries with the given KEYS where available."
-    (let ((processed-keys (sync0-process-bibkeys keys)))
-      (if (listp processed-keys)
-	  (dolist (key processed-keys)
-            (sync0-bibtex-open-pdf key))
-        (sync0-bibtex-open-pdf processed-keys))))
-
-;; (defun bibtex-completion-string-keys-with-sep (keys)
-;;   "Produce strin of concatenated KEYS with separator."
-;;   (let ((separator ", ")
-;;         (x ""))
-;;     (dolist (key keys x)
-;;       (setq x (concat key separator x)))
-;;     (string-trim-right x ", ")))
-
-;; (defun bibtex-completion-string-keys-with-sep (keys)
-;;   "Produce strin of concatenated KEYS with separator."
-;;   (if (> (length keys) 1)
-;;       (sync0-show-elements-of-list keys ", ")
-;;     keys))
-
-;; (defun bibtex-completion-string-keys-with-sep (keys)
-;;   "Produce strin of concatenated KEYS with separator."
-;;   (let ((separator ", ")
-;;         (x ""))
-;;     (dolist (key keys x)
-;;       (setq x (concat key separator x)))
-;;     x))
+(defun bibtex-completion-open-pdf-external (keys)
+  "Print the PDFs of the entries with the given KEYS where available."
+  (let ((processed-keys (sync0-process-bibkeys keys)))
+    (if (listp processed-keys)
+	(dolist (key processed-keys)
+          (sync0-bibtex-open-pdf key))
+      (sync0-bibtex-open-pdf processed-keys))))
 
 (defun bibtex-completion-add-field-and-recalc-mdnote (keys)
   "Add biblatex field to an entry and recalc both tags and corresponding Md note."
@@ -520,108 +384,199 @@
           (kill-new citation)
           (message "%s copied to kill ring." citation))))))
 
-;; Before being able to call custom functions from ivy-bibtex, these
-;; have to be manually added to ivy-bibtex. 
-
-(ivy-bibtex-ivify-action bibtex-completion-yank-citations-from-bibkeys ivy-bibtex-yank-citations-from-bibkeys)
-
-(ivy-bibtex-ivify-action bibtex-completion-print-pdf-list ivy-bibtex-print-pdf-list)
-
-(ivy-bibtex-ivify-action bibtex-completion-crop-pdf-list ivy-bibtex-crop-pdf-list)
-
-(ivy-bibtex-ivify-action bibtex-completion-copy-pdf-to-path-list ivy-bibtex-copy-pdf-to-path-list)
-
-(ivy-bibtex-ivify-action bibtex-completion-rewrite-notes-from-biblatex-data-list ivy-bibtex-rewrite-notes-from-biblatex-data-list)
-
-(ivy-bibtex-ivify-action bibtex-completion-archive-entries-list ivy-bibtex-archive-entries-list)
-
-(ivy-bibtex-ivify-action bibtex-completion-move-entries-to-bibfile-list ivy-bibtex-move-entries-to-bibfile-list)
-
-(ivy-bibtex-ivify-action bibtex-completion-add-key-to-pdf-list ivy-bibtex-add-key-to-pdf-list)
-
-(ivy-bibtex-ivify-action bibtex-completion-concatenate-pdf-list ivy-bibtex-concatenate-pdf-list)
-
-(ivy-bibtex-ivify-action bibtex-completion-file-exists-p ivy-bibtex-file-exists-p)
-
-(ivy-bibtex-ivify-action bibtex-completion-download-pdf-from-url ivy-bibtex-download-pdf-from-url)
-
-(ivy-bibtex-ivify-action bibtex-completion-extract-pdf-from-crossref ivy-bibtex-extract-pdf-from-crossref)
-
-(ivy-bibtex-ivify-action bibtex-completion-add-field-and-recalc-mdnote ivy-bibtex-add-field-and-recalc-mdnote)
-
-(ivy-bibtex-ivify-action bibtex-completion-delete-entry ivy-bibtex-delete-entry)
-
-(ivy-bibtex-ivify-action bibtex-completion-open-url ivy-bibtex-open-url)
-
-(ivy-bibtex-ivify-action bibtex-completion-string-keys-with-sep ivy-bibtex-string-keys-with-sep)
-
-(ivy-bibtex-ivify-action bibtex-completion-open-pdf-external ivy-bibtex-open-pdf-external)
-
-(ivy-bibtex-ivify-action bibtex-completion-recalc-tags ivy-bibtex-recalc-tags)
-
-(ivy-bibtex-ivify-action bibtex-completion-recalc-tags ivy-bibtex-recalc-tags)
-
-(ivy-bibtex-ivify-action bibtex-convert-pdf-to-txt ivy-bibtex-convert-pdf-to-txt)
-
-(ivy-bibtex-ivify-action bibtex-completion-search-pdf-with-python ivy-bibtex-search-pdf-with-python)
-
-(ivy-bibtex-ivify-action bibtex-completion-download-from-youtube ivy-bibtex-download-from-youtube)
-
- ;; '(("p" ivy-bibtex-open-pdf "Open PDF file (if present)" ivy-bibtex-open-pdf)
- ;;   ("u" ivy-bibtex-open-url-or-doi "Open URL or DOI in browser" ivy-bibtex-open-url-or-doi)
- ;;   ("c" ivy-bibtex-insert-citation "Insert citation" ivy-bibtex-insert-citation)
- ;;   ("r" ivy-bibtex-insert-reference "Insert reference" ivy-bibtex-insert-reference)
- ;;   ("k" ivy-bibtex-insert-key "Insert BibTeX key" ivy-bibtex-insert-key)
- ;;   ("b" ivy-bibtex-insert-bibtex "Insert BibTeX entry" ivy-bibtex-insert-bibtex)
- ;;   ("a" ivy-bibtex-add-PDF-attachment "Attach PDF to email" ivy-bibtex-add-PDF-attachment)
- ;;   ("e" ivy-bibtex-edit-notes "Edit notes" ivy-bibtex-edit-notes)
- ;;   ("s" ivy-bibtex-show-entry "Show entry" ivy-bibtex-show-entry)
- ;;   ("l" ivy-bibtex-add-pdf-to-library "Add PDF to library" ivy-bibtex-add-pdf-to-library)
- ;;   ("f" (lambda (_candidate) (ivy-bibtex-fallback ivy-text)) "Fallback options")))
-
-
-;; This is the way to add actions to ivy-bibtex wituhout overwriting
-;; those already defined.
-
-(defvar sync0-ivy-bibtex-actions 
- '(("P" ivy-bibtex-print-pdf-list "Print PDF with default printer" ivy-bibtex-print-pdf-list)
-   ("C" ivy-bibtex-copy-pdf-to-path-list "Copy PDF to target path" ivy-bibtex-copy-pdf-to-path-list)
-   ("1" ivy-bibtex-convert-pdf-to-txt "Convert to TXT" ivy-bibtex-convert-pdf-to-txt)
-   ("y" ivy-bibtex-yank-citations-from-bibkeys "Yank citations from keys" ivy-bibtex-yank-citations-from-bibkeys)
-   ("Y" ivy-bibtex-rewrite-notes-from-biblatex-data-list "Rewrite mdnote metadata" ivy-bibtex-rewrite-notes-from-biblatex-data-list)
-   ;; ("A" ivy-bibtex-archive-entries-list "Archive entry" ivy-bibtex-archive-entries-list)
-   ;; ("p" ivy-bibtex-open-pdf-external "Open PDF" ivy-bibtex-open-pdf-external)
-   ("p" ivy-bibtex-search-pdf-with-python "Search PDF (Python)" ivy-bibtex-search-pdf-with-python)
-   ("w" ivy-bibtex-open-url "Open URL" ivy-bibtex-open-url)
-   ("M" ivy-bibtex-move-entries-to-bibfile-list "Move entry to bibfile" ivy-bibtex-move-entries-to-bibfile-list)
-   ;; ("S" ivy-bibtex-string-keys-with-sep "Produce string of keys" ivy-bibtex-string-keys-with-sep)
-   ("K" ivy-bibtex-add-key-to-pdf-list "Mark bibkey onto PDF" ivy-bibtex-add-key-to-pdf-list)
-   ("j" ivy-bibtex-concatenate-pdf-list "Concatenate PDFs" ivy-bibtex-concatenate-pdf-list)
-   ("f" ivy-bibtex-file-exists-p "Check existence of attachment" ivy-bibtex-file-exists-p)
-   ("d" ivy-bibtex-download-pdf-from-url "Download attachement from URL" ivy-bibtex-download-pdf-from-url)
-   ("D" ivy-bibtex-delete-entry "Delete entry" ivy-bibtex-delete-entry)
-   ("v" ivy-bibtex-download-from-youtube "Download Youtube video" ivy-bibtex-download-from-youtube)
-   ("E" ivy-bibtex-extract-pdf-from-crossref "Extract PDF from crossref" ivy-bibtex-extract-pdf-from-crossref)
-   ("a" ivy-bibtex-add-field-and-recalc-mdnote "Add field and recalc mdnote" ivy-bibtex-add-field-and-recalc-mdnote)
-   ("T" ivy-bibtex-recalc-tags "Recalc tags and mdnote" ivy-bibtex-recalc-tags)
-   ("x" ivy-bibtex-crop-pdf-list "Crop PDF with cropbox" ivy-bibtex-crop-pdf-list))
- "List of my custom ivy-bibtex actions")
-
-(ivy-add-actions
- 'ivy-bibtex
- sync0-ivy-bibtex-actions)
-
-(defun sync0-ivy-bibtex-with-local-bibliography ()
-  "Run ivy-bibtex with a local bibliography instead of global bib files"
+(defun bibtex-completion-ocr-pdf-files (&optional keys)
+  "OCR the PDF files referenced by a list of BibLaTeX KEYS by calling an external shell script.
+If KEYS are provided, OCR the PDFs associated with those keys.
+If no KEYS are provided, OCR the PDF linked to the current BibTeX entry.
+Optionally pass LANGUAGE to specify the OCR language(s)."
   (interactive)
-  (let ((current-buffer (buffer-file-name)))
-    (if (string-match ".+\\.bib" current-buffer)
-        (ivy-bibtex-with-local-bibliography)
-      (let* ((files (f-files "/home/sync0/Gdrive/bibliographies/" (lambda (x) (string-match ".+\\.bib" x))))
-             (selection (completing-read "Choose bibliography file to navigate: " files)))
-        (find-file selection)
-        (ivy-bibtex-with-local-bibliography)))))
+  (let ((command-base "bash /home/sync0/Scripts/shell/ocr_script.sh"))
+    (if keys
+        (let ((processed-keys (sync0-process-bibkeys keys)))
+          (if (listp processed-keys)
+              (dolist (key processed-keys)
+                (let* ((pdf-file (sync0-bibtex-choose-attachment key ".pdf"))
+                       (entry (bibtex-completion-get-entry key))
+                       (languages (sync0-bibtex-ocr-language-chooser entry))
+                       (command (format "%s %s %s" command-base (shell-quote-argument languages) (shell-quote-argument pdf-file))))
+                  (if (and pdf-file (file-readable-p pdf-file))
+                      (progn
+                        (async-shell-command command)
+                        (message "OCR produced for %s" key))
+                    (message "No readable PDF found for key: %s" key))))
+            (let* ((pdf-file (sync0-bibtex-choose-attachment processed-keys ".pdf"))
+                   (entry (bibtex-completion-get-entry processed-keys))
+                   (languages (sync0-bibtex-ocr-language-chooser entry))
+                   (command (format "%s %s %s" command-base (shell-quote-argument languages) (shell-quote-argument pdf-file))))
+              (if (and pdf-file (file-readable-p pdf-file))
+                  (progn
+                    (async-shell-command command)
+                    (message "OCR produced for %s" processed-keys))
+                (message "No readable PDF found for key: %s" processed-keys)))))
+    ;; No keys provided, OCR the PDF from the current BibTeX entry
+    (when (sync0-bibtex-buffer-p)
+      (let* ((entry (save-excursion (bibtex-beginning-of-entry)
+                                    (bibtex-parse-entry)))
+             (bibkey (cdr (assoc "=key=" entry)))
+             (entry (bibtex-completion-get-entry bibkey))
+             (languages (sync0-bibtex-ocr-language-chooser entry))
+             (pdf-file (sync0-bibtex-choose-attachment bibkey ".pdf"))
+             (command (format "%s %s %s" command-base (shell-quote-argument languages) (shell-quote-argument pdf-file))))
+        (if (and pdf-file (file-readable-p pdf-file))
+            (progn
+              (async-shell-command command)
+              (message "OCR produced for %s" bibkey))
+          (message "No readable PDF found for key: %s" bibkey)))))))
 
-  (evil-leader/set-key "V" 'sync0-ivy-bibtex-with-local-bibliography)
+(defun sync0-consult-bibtex-with-local-bibliography (&optional arg)
+  "Search BibTeX entries with local bibliography using consult.
+With a prefix ARG the cache is invalidated and the bibliography reread."
+  (interactive "P")
+  (let* ((local-bib (bibtex-completion-find-local-bibliography))
+         (bibtex-completion-bibliography
+          (if local-bib
+              (list local-bib)
+            (let* ((files (f-files "/home/sync0/Gdrive/bibliographies/" (lambda (x) (string-match ".+\\.bib" x))))
+                   (selection (consult--read
+                              "Choose bibliography file: "
+                              files
+                              :require-match t)))
+              (find-file selection)
+              (list selection)))))
+    (consult-bibtex arg bibtex-completion-bibliography)))
+
+(evil-leader/set-key "V" 'sync0-consult-bibtex-with-local-bibliography)
+
+(defvar sync0-consult-bibtex-action-map
+  '(
+    ("Show entry" . bibtex-completion-show-entry)
+    ("Yank citations" . bibtex-completion-yank-citations-from-bibkeys)
+    ("Print PDF list" . bibtex-completion-print-pdf-list)
+    ("Crop PDF list" . bibtex-completion-crop-pdf-list)
+    ("Copy PDFs to path" . bibtex-completion-copy-pdf-to-path-list)
+    ("Rewrite notes" . bibtex-completion-rewrite-notes-from-biblatex-data-list)
+    ("Archive entries" . bibtex-completion-archive-entries-list)
+    ("Move entries to bibfile" . bibtex-completion-move-entries-to-bibfile-list)
+    ("Add key to PDFs" . bibtex-completion-add-key-to-pdf-list)
+    ("Concatenate PDFs" . bibtex-completion-concatenate-pdf-list)
+    ("Check file existence" . bibtex-completion-file-exists-p)
+    ("Download PDF from URL" . bibtex-completion-download-pdf-from-url)
+    ("Extract PDF from CrossRef" . bibtex-completion-extract-pdf-from-crossref)
+    ("Add field and recalc mdnote" . bibtex-completion-add-field-and-recalc-mdnote)
+    ("Delete entry" . bibtex-completion-delete-entry)
+    ("Open URL" . bibtex-completion-open-url)
+    ("String keys with separator" . bibtex-completion-string-keys-with-sep)
+    ("Open PDF externally" . bibtex-completion-open-pdf-external)
+    ("Recalculate tags" . bibtex-completion-recalc-tags)
+    ("Convert PDF to text" . bibtex-convert-pdf-to-txt)
+    ("Search PDF with Python" . bibtex-completion-search-pdf-with-python)
+    ("Download from YouTube" . bibtex-completion-download-from-youtube)
+    ("OCR PDF files" . bibtex-completion-ocr-pdf-files))
+  "Mapping of action names to BibTeX-related commands.")
+
+(defun consult-bibtex--candidates (&optional cands)
+  "Convert `bibtex-completion' candidates to `completing-read' candidates.
+CANDS is an optional subset of candidates to convert. When omitted CANDS
+defaults to all the candidates configured by `bibtex-completion'."
+  (when (null sync0-ivy-bibtex-cache)
+    (sync0-ivy-bibtex-update-cache))
+  (or cands
+      (setq cands sync0-ivy-bibtex-cache))  ;; Use cached candidates here
+  (cl-loop
+   for cand in cands
+   with cand-str = nil
+   do (setq cand-str
+            (concat (bibtex-completion-get-value "=type=" cand) " "
+                    (bibtex-completion-format-entry (cdr cand) (1- (frame-width)))))
+   ;; Add a `consult--type' property for narrowing support.
+   do (add-text-properties 0 1
+                           `(consult--type
+                             ,(or
+                               (when-let ((type (bibtex-completion-get-value "=type=" cand)))
+                                 (car (rassoc (capitalize type) consult-bibtex-narrow)))
+                               (car (rassoc "Other" consult-bibtex-narrow)))
+                             ;; Symbols are more performant than strings for most situations.
+                             bib-type ,(intern (capitalize (bibtex-completion-get-value "=type=" cand)))
+                             consult--candidate ,(bibtex-completion-get-value "=key=" cand)
+                             has-pdf ,(not (not (bibtex-completion-get-value "=has-pdf=" cand)))
+                             has-note ,(not (not (bibtex-completion-get-value "=has-note=" cand))))
+                           ;; The trailing type text is there for matching, it'll be removed by consult.
+                           cand-str)
+   collect cand-str))
+
+(defun consult-bibtex--read-entry (&optional arg)
+  "Read a bibtex entry.
+Optional argument CANDS is the same as for `consult-bibtex--candidates'. ARG
+causes `bibtex-completion' re-read all bibtex entries from your bibtex files."
+  ;; (when arg
+  ;;   (bibtex-completion-clear-cache))
+  ;; (bibtex-completion-init)
+  (let* ((candidates (consult-bibtex--candidates))
+         (preselect
+          (when-let ((key (bibtex-completion-key-at-point)))
+            (cl-find-if (lambda (cand)
+                          (string-equal key (get-text-property 0 'consult--candidate cand)))
+                        candidates))))
+    (consult--read candidates
+                   :prompt "BibTeX entries: "
+                   :require-match t
+                   :category 'bibtex-completion
+                   :lookup 'consult--lookup-candidate
+                   :default preselect
+                   :group
+                   ;; (consult--type-title consult-bibtex-narrow)
+                   (lambda (cand transform)
+                     (if transform
+                         (substring cand (1+ (length (symbol-name (get-text-property 0 'bib-type cand)))))
+                       (symbol-name (get-text-property 0 'bib-type cand))))
+                   :narrow
+                   ;; Allow narrowing on PDFs and notes, alongside just `consult--type'.
+                   (let ((type-narrow (plist-get (consult--type-narrow consult-bibtex-narrow) :predicate)))
+                     (list :predicate
+                           (lambda (cand)
+                             (when consult--narrow
+                               (cond
+                                ((eq consult--narrow consult-bibtex-pdf-narrow-key)
+                                 (get-text-property 0 'has-pdf cand))
+                                ((eq consult--narrow consult-bibtex-note-narrow-key)
+                                 (get-text-property 0 'has-note cand))
+                                (t (funcall type-narrow cand)))))
+                           :keys
+                           `(,@(and consult-bibtex-pdf-narrow-key
+                                    `((,consult-bibtex-pdf-narrow-key . "With PDFs")))
+                             ,@(and consult-bibtex-note-narrow-key
+                                    `((,consult-bibtex-note-narrow-key . "With Notes")))
+                             ,@consult-bibtex-narrow)))
+                   :history consult-bibtex-history)))
+
+(defun sync0-consult-bibtex-batch-action (keys)
+  "Perform a batch action on a list of BibTeX KEYS."
+  (let* ((action-name (completing-read "Choose action: " (mapcar #'car sync0-consult-bibtex-action-map)))
+         (action-fn (cdr (assoc action-name sync0-consult-bibtex-action-map))))
+    (if action-fn
+        (funcall action-fn keys)
+      (message "No valid action selected"))))
+
+(defun sync0-consult-bibtex-multi-select (&optional cands)
+  "Allow multiple selection of BibTeX entries using consult-bibtex--read-entry and return their keys.
+CANDS is an optional list of candidates, which defaults to the list generated by
+`consult-bibtex--candidates`."
+  (interactive)
+  (let ((candidates (or cands (consult-bibtex--candidates)))  ;; Get all candidates
+        (selected-keys '())  ;; List to hold selected keys
+        (done nil))          ;; Flag to indicate when to stop
+    (while (not done)
+      (let ((selected (consult-bibtex--read-entry)))
+        (if selected
+            (progn
+              (push selected selected-keys)  ;; Add selected entry to the list
+              (message "Selected entry: %s" selected))
+          (setq done t)))  ;; Exit the loop if the user presses C-g or cancels
+      (when (not (yes-or-no-p "Continue selecting? "))
+        (setq done t)))  ;; Exit the loop if the user decides not to continue
+    (message "Final selection: %s" selected-keys)
+    (sync0-consult-bibtex-batch-action selected-keys)))
+
+(evil-leader/set-key "v" 'sync0-consult-bibtex-multi-select)
 
 (provide 'sync0-ivy-bibtex-functions)

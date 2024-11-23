@@ -1,6 +1,13 @@
 (require 'sync0-bibtex-key-functions)
 ;; (require 'sync0-bibtex-entry-functions)
 
+(defun sync0-bibtex-get-value-from-entry  (bibkey bibtex-field)
+  "Get content of BIBTEX-FIELD from the entry associated with
+BIBKEY. Depends on bibtex-completion-get-entry from the package
+helm-bibtex to work"
+  (let ((bibentry (bibtex-completion-get-entry bibkey)))
+	(cdr (assoc bibtex-field  bibentry))))
+
 (defun sync0-bibtex-entry-choose-bibliography-file ()
   "Outputs the full path of bibliography file .bib to create new biblatex entry." 
   (if (and (sync0-bibtex-buffer-p)
@@ -66,18 +73,10 @@ old-value, search for and replace the string with the old value."
     ;; extension.
     (sync0-file-has-extension-p (buffer-file-name) "bib")))
 
-(defun sync0-bibtex-entry-append-to-bibliography (bibkey &optional bibfile)
-  "Append new BibLaTeX entry to default bibliography file.
-   Beware, this function only constructs and appends the entry
-   to the bib file; the values of the entry must have been defined
-   elsewhere. For the sake of speed, this function does not
-   perform any sanity checks on duplicate entries, and thus a
-   unique correct entry is assumed to be supplied as mandatory
-   argument bibkey."
+(defun sync0-bibtex-entry-constitute-bibentry (bibkey)
+  "Constitute bibtex entry from values in dummy fields."
   (let* ((definitions (mapcar #'eval sync0-bibtex-entry-definitions-list))
          (bibtex-fields sync0-bibtex-fields)
-         (bibliography-file (or bibfile
-                                (sync0-bibtex-entry-choose-bibliography-file)))
          (fields (mapcar* #'(lambda (x y) (list x y)) bibtex-fields definitions))
          ;; define the bibtex entries
          (entries
@@ -86,28 +85,42 @@ old-value, search for and replace the string with the old value."
               (unless (sync0-null-p (cadr element))
                 (setq x (concat x (car element) " = {" (cadr element) "},\n"))))))
          (bibtex-entry (concat "@" sync0-bibtex-entry-type "{" bibkey ",\n" entries "}\n")))
+    (setq sync0-bibtex-entry-bibentry bibtex-entry)))
+
+(defun sync0-bibtex-entry-append-to-bibliography (bibkey &optional bibfile)
+  "Append new BibLaTeX entry to default bibliography file.
+   Beware, this function only constructs and appends the entry
+   to the bib file; the values of the entry must have been defined
+   elsewhere. For the sake of speed, this function does not
+   perform any sanity checks on duplicate entries, and thus a
+   unique correct entry is assumed to be supplied as mandatory
+   argument bibkey."
+  (let ((bibliography-file (or bibfile
+                               (sync0-bibtex-entry-choose-bibliography-file))))
     (progn
-      (append-to-file bibtex-entry nil bibliography-file)
+      (append-to-file sync0-bibtex-entry-bibentry nil bibliography-file)
       (sync0-bibtex-entry-inform-new-entry))))
 
 (defun sync0-bibtex-choose-attachment (&optional bibkey extension)
-  "REWRITE! Function used to select an attachment to be read by
-some other programs. This function is inteded to be used in
-pipes and not standalone. This function requires package
-bibtex-completion to be loaded; otherwise, fails."
-  (interactive)
+  "Choose an attachment associated with BIBKEY. Optionally filter by EXTENSION."
   (let* ((refkey (or bibkey
-                     (sync0-bibtex-completion-choose-key t t)))
-         (predicate (when extension
-                      (if (string-match-p "^\\." extension)
-                          (lambda (x) (string-match extension x))
-                        (lambda (x) (string-match (concat ".+\\." extension) x)))))
-         (attach-list  (bibtex-completion-find-pdf refkey)))
-    (cond ((> (length attach-list) 1)
-           (completing-read "Choose an attachment to open: " attach-list predicate))
-          ((equal (length attach-list) 1)
-           (car attach-list))
-          (t (error "File field for entry %s is empty." refkey)))))
+                     (sync0-bibtex-completion-choose-key t t "Which key to look for attachments?")))
+         (file-field (sync0-bibtex-get-value-from-entry refkey "file"))
+         (attachments (when file-field
+			(mapcar (lambda (attachment)
+				  ;; Handle cases with leading colons and split properly
+				  (let* ((cleaned-attachment (string-remove-prefix ":" attachment)) ;; Remove leading colon
+					 (path (car (split-string cleaned-attachment ":"))))          ;; Split by colon
+				    (string-trim path)))                                             ;; Trim any excess spaces
+				;; Split on semicolons, ignoring empty strings
+				(split-string file-field ";" t)))))
+    (cond
+     ((null attachments)
+      (error "No attachments found for entry %s" refkey))
+     ((= (length attachments) 1)
+      (car attachments))  ; Return the only attachment if there's just one
+     (t
+      (completing-read "Select an attachment: " attachments)))))
 
   (defun sync0-bibtex-entry-inform-new-entry ()
     "Inform the user about a new entry that has been just created."

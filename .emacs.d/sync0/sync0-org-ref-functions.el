@@ -522,6 +522,6 @@ buffer. Can also be called with key."
      (concat "[[id:" id "][" title "]]\n"))))
 
 (evil-leader/set-key
-  "C" 'org-ref-ivy-insert-cite-link)
+  "C" 'org-ref-cite-insert-ivy)
 
 (provide 'sync0-org-ref-functions)

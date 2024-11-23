@@ -21,3 +21,16 @@ etc
 inpeb
 peb
 topeb
+inspect
+tomend
+final
+presented
+presented
+{fetch}
+{inspect}
+topdf
+{final}
+toread
+getch
+{toread}
+delete

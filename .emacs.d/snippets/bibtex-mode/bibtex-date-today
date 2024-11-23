@@ -1,5 +1,0 @@
-# -*- mode: snippet -*-
-# name: bibtex-date-today
-# key: tdate
-# --
-`(format-time-string "%Y-%m-%d")`$0

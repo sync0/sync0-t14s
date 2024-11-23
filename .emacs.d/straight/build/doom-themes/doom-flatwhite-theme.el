@@ -1,1 +1,1 @@
-/home/sync0/.emacs.d/straight/repos/emacs-doom-themes/themes/doom-flatwhite-theme.el
+/home/sync0/.emacs.d/straight/repos/themes/themes/doom-flatwhite-theme.el

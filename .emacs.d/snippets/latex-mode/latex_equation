@@ -1,7 +1,0 @@
-# -*- mode: snippet -*-
-# name: latex_equation_environment
-# key: equation
-# --
-\begin{equation*}
-$1 = $2
-\end{equation*} $0

@@ -5,9 +5,8 @@
 
 ;;; Code:
 
+
 
-;;;### (autoloads nil "smooth-scrolling" "smooth-scrolling.el" (0
-;;;;;;  0 0 0))
 ;;; Generated autoloads from smooth-scrolling.el
 
 (defvar smooth-scrolling-mode nil "\
@@ -17,9 +16,7 @@ for a description of this minor mode.
 Setting this variable directly does not take effect;
 either customize it (see the info node `Easy Customization')
 or call the function `smooth-scrolling-mode'.")
-
 (custom-autoload 'smooth-scrolling-mode "smooth-scrolling" nil)
-
 (autoload 'smooth-scrolling-mode "smooth-scrolling" "\
 Make emacs scroll smoothly
 
@@ -38,8 +35,7 @@ evaluate `(default-value \\='smooth-scrolling-mode)'.
 The mode's hook is called both when the mode is enabled and when
 it is disabled.
 
-\(fn &optional ARG)" t)
-
+(fn &optional ARG)" t)
 (defvar smooth-scroll-margin 10 "\
 Number of lines of visible margin at the top and bottom of a window.
 If the point is within these margins, then scrolling will occur
@@ -60,9 +56,7 @@ margins cover the whole buffer (e.g. `smooth-scroll-margin' set
 to 5 and `window-height' returning 10 or less).
 
 See also `smooth-scroll-strict-margins'.")
-
 (custom-autoload 'smooth-scroll-margin "smooth-scrolling" t)
-
 (defvar smooth-scroll-strict-margins t "\
 If true, the advice code supporting `smooth-scroll-margin'
 will use `count-screen-lines' to determine the number of
@@ -79,9 +73,7 @@ performance issues in buffers with extremely long lines.  Setting
 alternatively you can set this variable to nil so that the advice
 code uses `count-lines', and put up with the fact that sometimes
 the point will be allowed to stray into the margin.")
-
 (custom-autoload 'smooth-scroll-strict-margins "smooth-scrolling" t)
-
 (autoload 'enable-smooth-scroll-for-function "smooth-scrolling" "\
 Define advice on FUNC to do smooth scrolling.
 
@@ -90,11 +82,8 @@ This adds after advice with name `smooth-scroll' to FUNC.
 Note that the advice will not have an effect unless
 `smooth-scrolling-mode' is enabled.
 
-\(fn FUNC)" nil t)
-
+(fn FUNC)" nil t)
 (register-definition-prefixes "smooth-scrolling" '("disable-smooth-scroll-for-function" "do-smooth-scroll" "enable-smooth-scroll-for-function-conditionally" "smooth-scroll-" "window-is-at-bob-p"))
-
-;;;***
 
 ;;; End of scraped data
 

@@ -3,8 +3,15 @@
 
 (defvar sync0-projects-alist 
 '(("2410pvu" . "49th EBHS and Association of Business Historians Conference")
+  ("2493pdn" . "Grupo de pesquisa: Crírica do direito e subjetivdade jurídica (Mascaro)")
   ("23199xnj" . "History of Economics Society Annual Meeting 2024 (Santiago, Chile)"))
 "My list of default projects")
+
+;; (defvar sync0-pedagogy-courses-alist 
+;; '(("2410pvu" . "49th EBHS and Association of Business Historians Conference")
+;;   ("2493pdn" . "Grupo de pesquisa: Crírica do direito e subjetivdade jurídica (Mascaro)")
+;;   ("23199xnj" . "History of Economics Society Annual Meeting 2024 (Santiago, Chile)"))
+;; "My list of default projects")
 
 (defun sync0-completing-read-projects (collection)
   "Read keywords with completion from COLLECTION.

@@ -1,244 +1,141 @@
+(require 'abbrev)
 
-(defun sync0-language-change (lang beginning end)
-  "Set of functions to run after a different language is detected."
-  (unless (string-equal guess-language-current-language lang)
-    (cond 
-     ((string-equal lang "es")
-      (progn
-        (setq sync0-language-active "spanish")
-        (setq local-abbrev-table spanish-mode-abbrev-table)
-        (set-input-method "spanish-prefix")
-        (ispell-change-dictionary "es")))
-     ((string-equal lang "de")
-      (progn
-        (setq sync0-language-active "german")
-        (setq local-abbrev-table german-mode-abbrev-table)
-        (set-input-method "german-prefix")
-        (ispell-change-dictionary "de_DE")))
-     ((string-equal lang "pt")
-      (progn
-        (setq sync0-language-active "portuguese")
-        (setq local-abbrev-table portuguese-mode-abbrev-table)
-        (set-input-method "portuguese-prefix")
-        (ispell-change-dictionary "pt_BR")))
-     ((string-equal lang "fr")
-      (progn
-        (setq sync0-language-active "french")
-        (setq local-abbrev-table french-mode-abbrev-table)
-        (set-input-method "french-postfix")
-        (ispell-change-dictionary "fr_FR")))
-     ((string-equal lang "it")
-      (progn
-        (setq sync0-language-active "italian")
-        (setq local-abbrev-table italian-mode-abbrev-table)
-        (set-input-method "italian-postfix")
-        (ispell-change-dictionary "it_IT")))
-     ((string-equal lang "en")
-      (progn
-        (setq sync0-language-active "english")
-        (setq local-abbrev-table english-mode-abbrev-table)
-        (set-input-method nil)
-        (ispell-change-dictionary "en_US-large"))))))
+;; ;; Define minor modes for each language with ispell dictionary and input method
+;; (defvar english-mode-abbrev-table nil "Abbreviation table for English.")
+;; (defvar spanish-mode-abbrev-table nil "Abbreviation table for Spanish.")
+;; (defvar portuguese-mode-abbrev-table nil "Abbreviation table for Portuguese.")
+;; (defvar french-mode-abbrev-table nil "Abbreviation table for French.")
+;; (defvar italian-mode-abbrev-table nil "Abbreviation table for Italian.")
 
-(defvar sync0-change-language-actions-alist
-  '((?1 "en" (lambda ()
-               (progn
-                 (setq  guess-language-current-language 'en)
-                 (setq sync0-language-active "english")
-                 (setq local-abbrev-table english-mode-abbrev-table)
-                 (set-input-method nil)
-                 (ispell-change-dictionary "en_US-large"))))
-    (?2 "es" (lambda ()
-               (progn
-                 (setq  guess-language-current-language 'es)
-                 (setq sync0-language-active "spanish")
-                 (setq local-abbrev-table spanish-mode-abbrev-table)
-                 (set-input-method "spanish-prefix")
-                 (ispell-change-dictionary "es"))))
-    (?3 "pt" (lambda ()
-               (progn
-                 (setq  guess-language-current-language 'pt)
-                 (setq sync0-language-active "portuguese")
-                 (setq local-abbrev-table portuguese-mode-abbrev-table)
-                 (set-input-method "portuguese-prefix")
-                 (ispell-change-dictionary "pt_BR"))))
-    (?4 "fr" (lambda ()
-               (progn
-                 (setq  guess-language-current-language 'fr)
-                 (setq sync0-language-active "french")
-                 (setq local-abbrev-table french-mode-abbrev-table)
-                 (set-input-method "french-postfix")
-                 (ispell-change-dictionary "fr_FR"))))
-    (?5 "it" (lambda ()
-               (progn
-                 (setq  guess-language-current-language 'it)
-                 (setq sync0-language-active "italian")
-                 (setq local-abbrev-table italian-mode-abbrev-table)
-                 (set-input-method "italian-postfix")
-                 (ispell-change-dictionary "it_IT"))))
-    (?6 "de" (lambda ()
-               (progn
-                 (message "Deutsch ist die aktuelle Sprache")
-                 (setq  guess-language-current-language 'de)
-                 (setq sync0-language-active "german")
-                 (setq local-abbrev-table german-mode-abbrev-table)
-                 (set-input-method "german-prefix")
-                 (ispell-change-dictionary "de_DE")))))
-  "List that associates number letters to descriptions and actions.")
+;; (defvar sync0-language-active-table nil "Abbreviation table.")
 
-(defun sync0-change-current-language ()
-  "Lets the user choose the animal and takes the corresponding action.
-    Returns whatever the action returns."
-  (interactive)
-  (let ((choice
-         (read-char-choice
-          (mapconcat
-           (lambda (item) (format "[%c] %s" (car item) (cadr item)))
-           sync0-change-language-actions-alist " ")
-          (mapcar #'car sync0-change-language-actions-alist))))
-    (funcall (nth 2 (assoc choice sync0-change-language-actions-alist)))))
+;; (defvar sync0-language-configs
+;;   '((:code "en" :mode "english-mode" :name "english" :input-method nil :ispell-dict "en_US-large" :abbrev-table english-mode-abbrev-table)
+;;     (:code "es" :mode "spanish-mode" :name "spanish" :input-method "spanish-prefix" :ispell-dict "es" :abbrev-table spanish-mode-abbrev-table)
+;;     (:code "pt" :mode "portuguese-mode" :name "portuguese" :input-method "portuguese-prefix" :ispell-dict "pt_BR" :abbrev-table portuguese-mode-abbrev-table)
+;;     (:code "fr" :mode "french-mode" :name "french" :input-method "french-postfix" :ispell-dict "fr_FR" :abbrev-table french-mode-abbrev-table)
+;;     (:code "it" :mode "italian-mode" :name "italian" :input-method "italian-postfix" :ispell-dict "it_IT" :abbrev-table italian-mode-abbrev-table)
+;;     (:code "de" :mode "german-mode" :name "german" :input-method "german-prefix" :ispell-dict "de_DE" :abbrev-table german-mode-abbrev-table))
+;;   "Alist of language configurations.")
+
+;; (defun sync0-choose-language-action (lang)
+;;   "Change language settings for the selected LANG."
+;;   (when-let ((lang-config (cl-find-if (lambda (config)
+;;                                        (string= (plist-get config :name) lang))
+;;                                      sync0-language-configs)))
+;;     (let ((code (plist-get lang-config :code))
+;;           (input-method (plist-get lang-config :input-method))
+;;           (ispell-dict (plist-get lang-config :ispell-dict))
+;;           (lang-minor-mode (plist-get lang-config :mode))
+;;           (abbrev-table (plist-get lang-config :abbrev-table)))
+      
+;;       ;; Disable all language minor modes
+;;       (dolist (config sync0-language-configs)
+;;         (let ((mode (plist-get config :mode)))
+;;           (when (and (boundp (intern (concat (symbol-name mode) "-mode")))
+;;                      (symbol-value (intern (concat (symbol-name mode) "-mode"))))
+;;             (funcall (intern (concat (symbol-name mode) "-mode")) -1))))
+      
+;;       ;; Enable the selected language's minor mode
+;;       (funcall (intern (concat (symbol-name lang-minor-mode) "-mode")) t)
+      
+;;       ;; Set the rest of the language settings
+;;       (setq guess-language-current-language code)
+;;       (setq sync0-language-active lang)
+;;       (set-input-method input-method)
+;;       (ispell-change-dictionary ispell-dict)
+;;       (message "Language switched to %s." lang))))
+
+;; (defun sync0-choose-language-action (lang)
+;;   "Change language settings for the selected LANG."
+;;   (when-let ((lang-config (cl-find-if (lambda (config)
+;; 					(string= (plist-get config :name) lang))
+;;                                       sync0-language-configs)))
+;;     (let ((code (plist-get lang-config :code))
+;;           (input-method (plist-get lang-config :input-method))
+;;           (ispell-dict (plist-get lang-config :ispell-dict))
+;;           (lang-minor-mode (plist-get lang-config :mode))
+;;           (abbrev-table (plist-get lang-config :abbrev-table)))
+;;       (setq guess-language-current-language code)
+;;       (setq sync0-language-active lang)
+;;       (set lang-minor-mode t)
+;;       (set-input-method input-method)
+;;       (ispell-change-dictionary ispell-dict)
+;;       (message "Language switched to %s." lang))))
+
+;; (defun sync0-choose-language-action (lang)
+;;   "Change language settings for the selected LANG."
+;;   (let ((lang-mode (intern (concat lang "-mode"))))
+;;     ;; Disable all language minor modes
+;;     (dolist (mode '(english-mode spanish-mode portuguese-mode french-mode italian-mode german-mode))
+;;       (when (boundp mode)
+;;         (funcall mode -1)))  ;; Disable each minor mode
+
+;;     ;; Enable the selected language's minor mode
+;;     (when (fboundp lang-mode)
+;;       (funcall lang-mode 1))
+
+;;     (message "Language switched to %s." lang)))
+
 
 (defun sync0-ispell-get-word ()
   (car-safe (save-excursion (ispell-get-word nil))))
 
-(defun sync0-ispell-word-then-abbrev ()
-  "Call `ispell-word', then create an abbrev for it.
-      With prefix P, create local abbrev. Otherwise it will
-      be global.
-      If there's nothing wrong with the word at point, keep
-      looking for a typo until the beginning of buffer. You can
-      skip typos you don't want to fix with `SPC', and you can
-      abort completely with `C-g'."
-  (interactive)
-  (let (bef aft)
-    (save-excursion
-      (while (if (setq bef (sync0-ispell-get-word))
-                 ;; Word was corrected or used quit.
-                 (if (ispell-word nil 'quiet)
-                     nil ; End the loop.
-                   ;; Also end if we reach `bob'.
-                   (not (bobp)))
-               ;; If there's no word at point, keep looking
-               ;; until `bob'.
-               (not (bobp)))
-        (backward-word)
-        (backward-char))
-      (setq aft (sync0-ispell-get-word)))
-    (if (and aft bef (not (equal aft bef)))
-        (let ((aft (downcase aft))
-              (bef (downcase bef)))
-          ;; (unless
-          ;;  (save-excursion
-          ;;   (with-temp-buffer
-          ;;    (insert-file-contents company-ispell-dictionary)
-          ;;    (goto-char (point-min))
-          ;;    (re-search-forward (concat "^" aft) nil t 1)))
-          ;;    (write-region (concat aft "\n") nil company-ispell-dictionary 'append))
-          (define-abbrev local-abbrev-table bef aft)
-          (message "\"%s\" now expands to \"%s\" %sally"
-                   bef aft "loc"))
-      (user-error "No typo at or before point"))))
+;; (defun sync0-ispell-word-then-abbrev ()
+;;   "Call `ispell-word', then create an abbrev for it.
+;;       With prefix P, create local abbrev. Otherwise it will
+;;       be global.
+;;       If there's nothing wrong with the word at point, keep
+;;       looking for a typo until the beginning of buffer. You can
+;;       skip typos you don't want to fix with `SPC', and you can
+;;       abort completely with `C-g'."
+;;   (interactive)
+;;   (if (bound-and-true-p sync0-language-active-table)
+;;       (let (bef aft)
+;; 	(save-excursion
+;; 	  (while (if (setq bef (sync0-ispell-get-word))
+;;                      ;; Word was corrected or used quit.
+;;                      (if (ispell-word nil 'quiet)
+;; 			 nil ; End the loop.
+;;                        ;; Also end if we reach `bob'.
+;;                        (not (bobp)))
+;; 		   ;; If there's no word at point, keep looking
+;; 		   ;; until `bob'.
+;; 		   (not (bobp)))
+;;             (backward-word)
+;;             (backward-char))
+;; 	  (setq aft (sync0-ispell-get-word)))
+;; 	;;     (unless
+;; 	;;         (save-excursion
+;; 	;;           (with-temp-buffer
+;; 	;;             (insert-file-contents company-ispell-dictionary)
+;; 	;;             (goto-char (point-min))
+;; 	;;             (re-search-forward (concat "^" aft) nil t 1)))
+;; 	;;       (write-region (concat aft "\n") nil company-ispell-dictionary 'append))
+;; 	(unless (equal aft bef)
+;; 	  (let* ((aft (downcase aft))
+;; 		 (bef (downcase bef))
+;; 		 (mode sync0-language-active-table)
+;; 		 (mode-table (concat mode "-abbrev-table"))
+;; 		 (mode-cache (assoc mode-table sync0-abbrev-cache))
+;; 		 (new-abbrev (list name expansion nil :count 0)))
+;; 	    ;; Check if the mode's abbrev cache exists, otherwise create it
+;; 	    (unless mode-cache
+;; 	      (setq sync0-abbrev-cache
+;; 		    (cons (cons mode-table nil) sync0-abbrev-cache))
+;; 	      (setq mode-cache (assoc mode-table sync0-abbrev-cache)))  ;; Re-fetch the mode cache after it's created
+;; 	    ;; Replace or add the abbrev in the cache
+;; 	    (if (assoc bef (cdr mode-cache))  ;; If abbrev already exists, replace it
+;; 		(setcdr mode-cache
+;; 			(cons new-abbrev (assq-delete-all bef (cdr mode-cache))))
+;; 	      ;; Otherwise, add the new abbrev to the cache
+;; 	      (setcdr mode-cache (cons new-abbrev (cdr mode-cache))))
+;; 	    ;; Define or redefine the abbrev in the local-abbrev-table
+;; 	    (define-abbrev local-abbrev-table bef aft)
+;; 	    (message "\"%s\" now expands to \"%s\" in %s." bef aft mode-table))))
+;;     (error "No local abbrev table active.")))
 
-(defun sync0-lookup-word (word)
-  "Search an online dictionary for the word at point according
-            to the active language minor mode."
-  (interactive (list (save-excursion (car (ispell-get-word nil)))))
-  (cond  ((string-equal guess-language-current-language "en") 
-          (browse-url (format "https://www.merriam-webster.com/dictionary/%s" word)))
-         ((string-equal guess-language-current-language "de") 
-          (browse-url (format "https://www.duden.de/rechtschreibung/%s" word)))
-         ((string-equal guess-language-current-language "it") 
-          (browse-url (format "https://www.duden.de/rechtschreibung/%s" word)))
-         ((string-equal guess-language-current-language "pt") 
-          (browse-url (format "https://www.dicio.com.br/%s" word)))
-         ((string-equal guess-language-current-language "fr") 
-          (browse-url (format "https://dictionnaire.lerobert.com/definition/%s#definitions" word)))
-         ((string-equal guess-language-current-language "es") 
-          (browse-url (format "https://dle.rae.es/?w=%s" word)))
-         (t "No language minor mode specified")))
 
-(defun sync0-lookup-conjugation (word)
-  "Search an online dictionary for the word at point according
-            to the active language minor mode."
-  (interactive (list (save-excursion (car (ispell-get-word nil)))))
-  (cond  ((string-equal guess-language-current-language "en") 
-          (browse-url (format "https://www.merriam-webster.com/dictionary/%s" word)))
-         ((string-equal guess-language-current-language "de") 
-          (browse-url (format "https://www.verbformen.de/konjugation/?w=%s" word)))
-         ((string-equal guess-language-current-language "it") 
-          (browse-url (format "https://www.verbformen.de/konjugation/?w=%s" word)))
-         ((string-equal guess-language-current-language "pt") 
-          (browse-url (format "https://www.conjugacao.com.br/verbo-%s/" word)))
-         ((string-equal guess-language-current-language "fr") 
-          (browse-url (format "http://la-conjugaison.nouvelobs.com/du/verbe/%s.php" word)))
-         ((string-equal guess-language-current-language "es") 
-          (browse-url (format "http://conjugador.reverso.net/conjugacion-espanol-verbo-%s.html" word)))
-         (t "No language minor mode specified")))
-
-(defun sync0-lookup-thesaurus (word)
-  "Search an online dictionary for the word at point according
-            to the active language minor mode."
-  (interactive (list (save-excursion (car (ispell-get-word nil)))))
-  (cond  ((string-equal guess-language-current-language "en") 
-          (browse-url (format "https://www.merriam-webster.com/thesaurus/%s" word)))
-         ((string-equal guess-language-current-language "fr") 
-          (browse-url (format "https://dictionnaire.lerobert.com/definition/%s#synonymes" word)))
-         ((string-equal guess-language-current-language "de") 
-          (browse-url (format "https://www.duden.de/rechtschreibung/%s#synonyme" word)))
-         ((string-equal guess-language-current-language "it") 
-          (browse-url (format "https://www.duden.de/rechtschreibung/%s#synonyme" word)))
-         ((string-equal guess-language-current-language "pt") 
-          (browse-url (format "https://www.dicio.com.br/%s" word)))
-         ((string-equal guess-language-current-language "es") 
-          (browse-url (format "http://conjugador.reverso.net/conjugacion-espanol-verbo-%s.html" word)))
-         (t "No language minor mode specified")))
-
-(defun sync0-guess-language-set-parts-of-speech ()
-  "Choose parts of speech according to active language"
-  (let* ((parts-list (list ()))
-         (lang (prin1-to-string guess-language-current-language)))
-    (cond ((string-equal lang "es")
-           (progn
-             (setq parts-list sync0-spanish-parts-speech)
-             (ivy-completing-read "Elija uno: " parts-list)))
-          ((string-equal lang "pt")
-           (progn
-             (setq parts-list sync0-portuguese-parts-speech)
-             (ivy-completing-read "Escolha um: " parts-list)))
-          ((string-equal lang "it")
-           (progn
-             (setq parts-list sync0-portuguese-parts-speech)
-             (ivy-completing-read "Escolha um: " parts-list)))
-          ((string-equal lang "fr")
-           (progn
-             (setq parts-list sync0-french-parts-speech)
-             (ivy-completing-read "Choississez un : " parts-list)))
-          ((string-equal lang "en")
-           (progn
-             (setq parts-list sync0-english-parts-speech)
-             (ivy-completing-read "Choose one: " parts-list)))
-          (t "No language minor mode specified"))))
-
-(defhydra sync0-hydra-language-functions (:color amaranth :hint nil :exit t)
-  "
-     ^Language functions^
-     ^^^------------------------
-     Show _d_efinition
-     Show _c_onjugation
-     Show in _t_hesaurus
-
-     _q_uit
-        "
-  ;; Quickly work with bookmarks
-  ("d" sync0-lookup-word)
-  ("i" sync0-ispell-word-then-abbrev)
-  ("c" sync0-lookup-conjugation)
-  ("t" sync0-lookup-thesaurus)
-  ("q"  nil :color blue))
-
-(evil-leader/set-key
-  "L" 'sync0-ispell-word-then-abbrev
-  "l" 'sync0-hydra-language-functions/body)
 
 (add-hook 'guess-language-after-detection-functions #'sync0-language-change)
 

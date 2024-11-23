@@ -2,3 +2,4 @@ toscan
 tesseract
 scantailor
 todo
+done

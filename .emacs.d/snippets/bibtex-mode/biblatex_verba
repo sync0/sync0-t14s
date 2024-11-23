@@ -1,5 +1,0 @@
-# -*- mode: snippet -*-
-# name: biblatex_verba
-# key: verba 
-# --
-verba = {${1:The pages are wrong. Consult the book}}, $0

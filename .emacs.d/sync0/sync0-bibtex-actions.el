@@ -2,9 +2,11 @@
 (require 'sync0-bibtex-key-functions)
 (require 'sync0-bibtex-utils)
 (require 'sync0-bibtex-corrections)
-(require 'sync0-obsidian)
+(require 'obsidian)
+;; (require 'sync0-obsidian)
 (require 'sync0-bibtex-obsidian)
 (require 'sync0-yaml)
+(require 'sync0-pdf)
 
 (defun sync0-bibtex-add-key-to-pdf (&optional bibkey)
   "Add bibkey to (only) the first page of the pdf on the top left
@@ -179,29 +181,20 @@ entry under point in a .bib file"
   (interactive)
   (let* ((entry (save-excursion (bibtex-beginning-of-entry)
 			        (bibtex-parse-entry)))
-         (bibkey (cdr (assoc "=key=" entry)))
-         (crossref (when op-crossref
-                   (substring (cdr (assoc "crossref" entry)) 1 -1)))
+         (bibkey (if op-crossref
+                     (substring (cdr (assoc "crossref" entry)) 1 -1)
+         	   (cdr (assoc "=key=" entry))))
          (file (sync0-bibtex-choose-attachment bibkey))
 	 (extension (file-name-extension file))
 	 (program (if (assoc extension sync0-default-file-associations)
                       (cdr (assoc extension sync0-default-file-associations))
-		    (completing-read "Which software to open attachment with? " sync0-bibtex-attachment-programs)))
-         (crossref-file (when op-crossref
-                          (sync0-bibtex-choose-attachment crossref))))
-    (if op-crossref 
-        (cond ((and (sync0-null-p program)
-                    (file-exists-p crossref-file))
-               (org-open-file crossref-file))
-              ((file-exists-p crossref-file)
-               (call-process program nil 0 nil crossref-file))
-              (t (message "No attachment found for key %s" crossref)))
+		    (completing-read "Which software to open attachment with? " sync0-bibtex-attachment-programs))))
       (cond ((and (sync0-null-p program)
                   (file-exists-p file))
              (org-open-file file))
             ((file-exists-p file)
              (call-process program nil 0 nil file))
-            (t (message "No attachment found for key %s" bibkey))))))
+            (t (message "No attachment found for key %s" bibkey)))))
 
 (defun sync0-bibtex-open-url (&optional bibkey)
   "Open the url for bibtex key under point if it exists."
@@ -214,7 +207,25 @@ entry under point in a .bib file"
         (browse-url url) ;; Replace with your desired function
       (message "No url found for %s" bibkey))))
 
-(defun sync0-bibtex-download-from-youtube (&optional bibkey)
+;; (defun sync0-bibtex-download-from-youtube (&optional bibkey)
+;;   "Open the URL for BibTeX key under point if it exists."
+;;   (interactive)
+;;   (let* ((bibkey (or bibkey 
+;;                      (sync0-bibtex-completion-choose-key t t)))
+;;          (entry (bibtex-completion-get-entry bibkey))
+;;          (url  (sync0-bibtex-completion-get-value "url" entry))
+;;          (output-directory sync0-zettelkasten-attachments-directory)
+;;          (output-file (concat (file-name-as-directory output-directory) bibkey ".%(ext)s"))
+;;          ;; Use yt-dlp; it has to be installed from AUR
+;;          (command (concat "yt-dlp --write-sub --write-auto-sub --sub-lang \"en.*\" -o " (shell-quote-argument output-file) " -f \"bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best\" " (shell-quote-argument url))))
+;;     (if (not (sync0-null-p url))
+;;         (progn
+;;           (message "Downloading video for %s" bibkey)
+;;           (shell-command command)
+;;           (message "Video downloaded successfully for %s" bibkey))
+;;       (message "No URL found for %s" bibkey))))
+
+(defun sync0-bibtex-download-from-youtube (&optional bibkey video-only)
   "Open the URL for BibTeX key under point if it exists."
   (interactive)
   (let* ((bibkey (or bibkey 
@@ -224,7 +235,16 @@ entry under point in a .bib file"
          (output-directory sync0-zettelkasten-attachments-directory)
          (output-file (concat (file-name-as-directory output-directory) bibkey ".%(ext)s"))
          ;; Use yt-dlp; it has to be installed from AUR
-         (command (concat "yt-dlp --write-sub --write-auto-sub --sub-lang \"en.*\" -o " (shell-quote-argument output-file) " -f \"bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best\" " (shell-quote-argument url))))
+	 (base-command (if video-only
+			   "yt-dlp --write-sub --write-auto-sub --sub-lang \"en.*\" -o"
+			 "yt-dlp -o"))
+         (command (format "%s %s -f \"%s\" %s"
+                          base-command
+                          (shell-quote-argument output-file)
+                          (if video-only
+                              "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best"
+                            "bestaudio[ext=m4a]/best")
+                          (shell-quote-argument url))))
     (if (not (sync0-null-p url))
         (progn
           (message "Downloading video for %s" bibkey)
@@ -627,5 +647,108 @@ file where it was found."
         ;; save newly created keywords
         (save-buffer)
         (sync0-bibtex-create-note-from-entry t bibkey)))))
+
+;; (defun sync0-bibtex-duplicate-attachment-from-bibkey (&optional bibkey target-bibkey)
+;;   "Creates copies of target entry but with different keys. This
+;; function also creates markdown notes for the created entries."
+;;   (interactive)
+;;   (sync0-bibtex-completion-load-entry (or bibkey
+;;                                           (sync0-bibtex-completion-choose-key t t)))
+;;   (let* ((attachment (sync0-bibtex-choose-attachment bibkey "tex"))
+;; 	 (file-extension (file-name-extension attachment t))
+;; 	 (target-key (or target-bibkey
+;; 			 (sync0-bibtex-completion-choose-key t t "Which entry to copy attachment" t)))
+;; 	 (attachment-duplicate (concat sync0-zettelkasten-attachments-directory target-key file-extension)))
+;;     (when (file-exists-p attachment)
+;;       (copy-file attachment attachment-duplicate)))) 
+
+(defun sync0-bibtex-duplicate-attachment-from-bibkey (&optional bibkey target-bibkey)
+  "Duplicate attachment associated with BIBKEY to a new entry identified by TARGET-BIBKEY.
+If BIBKEY or TARGET-BIBKEY are not provided, they are chosen interactively."
+  (interactive)
+  (let* ((thekey (or bibkey
+                     (sync0-bibtex-completion-choose-key t t "Choose key for duplication of attachments")))
+         (attachment (sync0-bibtex-choose-attachment thekey))
+         (file-extension (file-name-extension attachment t))
+         (target-key (or target-bibkey
+                         (sync0-bibtex-completion-choose-key t t "Which entry to copy attachment" t)))
+         (attachment-duplicate (concat sync0-zettelkasten-attachments-directory
+                                       target-key file-extension)))
+    (if (and attachment (file-exists-p attachment))
+        (progn
+          (copy-file attachment attachment-duplicate t)
+          (message "Attachment duplicated successfully to %s" attachment-duplicate))
+      (message "Failed to duplicate attachment. Either attachment not found or invalid path."))))
+
+(defun sync0-bibtex-replace-original-pdfs-with-ocrd ()
+  "Replace original PDFs with OCR'd versions in the cabinet."
+  (interactive)
+  (let ((command "bash /home/sync0/Scripts/shell/replace_with_ocrd.sh"))
+    (shell-command command)
+    (message "Replaced original PDFs with OCR'd versions where applicable.")))
+
+(defun sync0-bibtex-extract-pandoc-citekeys-from-markdown ()
+  "Extract all unique Pandoc citation keys from the current Markdown buffer."
+  (let ((citekey-regex "@\\([a-zA-Z0-9_:-]+\\)")
+        citekeys)
+    (save-excursion
+      (goto-char (point-min))
+      ;; Search for all occurrences of citekeys
+      (while (re-search-forward citekey-regex nil t)
+        (let ((citekey (match-string-no-properties 1)))
+          (push citekey citekeys))))
+    ;; Remove duplicates and return sorted list of keys
+    (delete-dups (sort citekeys #'string<))))
+
+(defun sync0-bibtex-copy-entries-to-bibfile (&optional bibfile)
+  "Search for all citation keys in the current markdown file and copy the corresponding
+BibTeX entries from the master bibliography file to the selected bibliography file in /home/sync0/Gdrive/bibpubs/."
+  (interactive)
+  (let* ((citekeys (sync0-bibtex-extract-pandoc-citekeys-from-markdown))
+         (master-bibfile "/home/sync0/Gdrive/bibliographies/master.bib")
+         (bibdestiny (or bibfile
+                         (completing-read "Choose bibliography file: "
+                                          (directory-files "/home/sync0/Gdrive/bibpubs/" nil "\\.bib$") nil t)))
+         (bibfile-path (concat "/home/sync0/Gdrive/bibpubs/" bibdestiny)))
+    (with-temp-buffer
+      (insert-file-contents master-bibfile)
+      (bibtex-mode) ;; Enable bibtex-mode in this temp buffer for searching entries
+      (dolist (key citekeys)
+        (goto-char (point-min)) ;; Ensure we search from the start of the buffer
+        (if (bibtex-search-entry key)
+	    (let ((beginning (save-excursion (1- (bibtex-beginning-of-entry))))
+		  (end (save-excursion (bibtex-end-of-entry))))
+              ;; Append the entry to the selected bib file
+              (append-to-file beginning end bibfile-path))
+          (message "Citation key %s not found in master bibliography." key))))
+    (message "Entries successfully copied to %s" bibfile-path)))
+
+(defun sync0-bibtex-typeset-bibnotes (&optional bibkey)
+  "Typeset bibnotes in the bibnotes directory when present. Do so in a a4 with 4 a6."
+  (interactive)
+  (let* ((thekey (or bibkey
+                     (sync0-bibtex-completion-choose-key t t "Choose key for duplication of attachments")))
+	 (bibnote (concat sync0-bibnotes-directory "bibnotes_" thekey ".pdf")))
+    (when (file-exists-p bibnote)
+	(sync0-create-pdf-with-overlay thekey bibnote))))
+
+;; (defun sync0-bibtex-extract-pandoc-citekeys ()
+;;   "Extract all unique Pandoc citation keys from the current Markdown buffer."
+;;   (interactive)
+;;   (let ((citekey-regex "@\\([a-zA-Z0-9_:-]+\\)")
+;;         citekeys)
+;;     (save-excursion
+;;       (goto-char (point-min))
+;;       ;; Search for all occurrences of citekeys
+;;       (while (re-search-forward citekey-regex nil t)
+;;         (let ((citekey (match-string-no-properties 1)))
+;;           (push citekey citekeys))))
+;;     ;; Remove duplicates and sort
+;;     (setq citekeys (delete-dups citekeys))
+;;     (setq citekeys (sort citekeys #'string<))
+;;     ;; Display the result in a temporary buffer
+;;     (with-output-to-temp-buffer "*Pandoc Citekeys*"
+;;       (dolist (citekey citekeys)
+;;         (princ (format "%s\n" citekey))))))
 
   (provide 'sync0-bibtex-actions)

@@ -1,0 +1,13 @@
+(undo-tree-save-format-version . 1)
+"4d2ff55c7d10858206d9bfa240086d5543981eca"
+[nil nil nil nil (26082 4342 627340 116000) 0 nil]
+([nil nil ((nil rear-nonsticky nil 16902 . 16903) (#("
+" 0 1 (fontified nil)) . -16980) (16896 . 16981) 16819 (t 26069 14248 425774 341000)) nil (26082 4342 627338 493000) 0 nil])
+([nil nil ((16905 . 16906) (#("W" 0 1 (face font-lock-string-face fontified t)) . 16905)) nil (26082 4342 627336 430000) 0 nil])
+([nil nil ((16942 . 16949) (16937 . 16942) (#("f" 0 1 (fontified t)) . -16937) (undo-tree-id1 . -1) (16937 . 16938) (#("from-webscrapper" 0 16 (fontified t)) . 16937) (undo-tree-id2 . -15) (undo-tree-id3 . -15) (undo-tree-id4 . -15) (undo-tree-id5 . -15) 16952) nil (26082 4342 627333 905000) 0 nil])
+([nil nil ((16963 . 16970) (#("webscrapper" 0 11 (face font-lock-string-face fontified t)) . 16963) (undo-tree-id0 . -10)) nil (26082 4342 627319 848000) 0 nil])
+([nil nil ((#("python" 0 6 (fontified t)) . 16921) (undo-tree-id2 . -5) (t 26082 4342 640731 982000)) nil (26082 16258 516582 181000) 0 nil])
+([nil nil ((#("-" 0 1 (fontified t)) . 16921)) nil (26082 16258 516578 844000) 0 nil])
+([nil nil ((16935 . 16943) (#("chatgpt" 0 7 (fontified t)) . 16935) (undo-tree-id1 . -6)) nil (26082 16258 516576 59000) 0 nil])
+([nil current ((16957 . 16965) (#("ChatGPT" 0 7 (face font-lock-string-face fontified t)) . 16957) (undo-tree-id0 . -6)) nil (26082 16258 516567 333000) 0 nil])
+nil

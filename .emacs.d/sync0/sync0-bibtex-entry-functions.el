@@ -1,7 +1,9 @@
+(require 'sync0-bibtex-vars)
 (require 'sync0-bibtex-key-functions)
 (require 'sync0-bibtex-corrections)
 (require 'sync0-bibtex-utils)
-(require 'sync0-obsidian)
+(require 'obsidian)
+;; (require 'sync0-obsidian)
 (require 'sync0-projects)
 
 (defun sync0-bibtex-nullify-all-variables ()
@@ -79,6 +81,9 @@ prevent undesired results."
                       (setq sync0-bibtex-entry-origlanguage
                             (completing-read "Choose original language : "
                                              sync0-bibtex-completion-language nil nil sync0-bibtex-entry-initial-language))))
+    ("languages" (lambda ()
+                (let ((x (completing-read-multiple "Languages: " sync0-bibtex-completion-language)))
+                  (setq sync0-bibtex-entry-languages (sync0-show-elements-of-list x ", ")))))
     ("mention" (lambda ()
                  (setq sync0-bibtex-entry-mention (sync0-bibtex-completion-choose-key nil t))))
     ("mentioned" (lambda ()
@@ -116,6 +121,10 @@ prevent undesired results."
                    (setq sync0-bibtex-entry-subtitle
                          (sync0-bibtex-correct-smartquotes 
                          (completing-read "Subtitle : " sync0-bibtex-completion-title)))))
+    ("origpublisher" (lambda ()
+                   (setq sync0-bibtex-entry-origpublisher
+                         (sync0-bibtex-correct-smartquotes 
+                         (completing-read "Origpublisher : " sync0-bibtex-completion-publisher)))))
     ("booktitle" (lambda ()
                    (setq sync0-bibtex-entry-booktitle
                          (sync0-bibtex-correct-smartquotes 
@@ -171,7 +180,7 @@ prevent undesired results."
                         (format-time-string "%Y-%m-%d"))
                 (let ((x (completing-read-multiple "Seen: " sync0-bibtex-completion-seen)))
                   (setq sync0-bibtex-entry-seen (concat sync0-bibtex-entry-seen ", " x))))))
-    ("project" (lambda nil
+    ("project" (lambda ()
 		 (setq sync0-bibtex-entry-project
 		       (sync0-show-elements-of-list
 			(let ((translated-projects (mapcar (lambda (proj)
@@ -244,6 +253,38 @@ carried to calculate the value it will take in a BibLaTeX entry.")
            (my-cons (cons element (list my-func))))
       (push my-cons sync0-bibtex-entry-functions))))
 
+(defun sync0-bibtex-entry-set-dummy-vars (entry fields)
+  "Set values for BibLaTeX FIELDS using lambda functions defined in
+sync0-bibtex-entry-functions. FIELDS must be a list of valid
+BibLaTeX fields (e.g., those in sync0-bibtex-fields). ENTRY must
+be specified in the format expected by
+bibtex-completion (helm-bibtex) package."
+  (unless (listp fields)
+    (error "FIELDS must be a list of BibLaTeX field names"))
+  (let ((field-alist nil)) ;; Collect results
+    (dolist (field fields field-alist)
+      (let* ((field-variable (concat "sync0-bibtex-entry-" field))
+             (field-symbol (intern field-variable))
+             (field-function (cadr (assoc field sync0-bibtex-entry-functions)))
+             (field-value (if entry
+                              (sync0-bibtex-completion-get-value field entry)
+                            (when field-function
+                              (condition-case err
+                                  (progn
+                                    ;; Calculate the value and related variables
+                                    (funcall field-function)
+                                    ;; Retrieve the calculated value
+                                    (symbol-value field-symbol))
+                                (error
+                                 (message "Error processing field '%s': %s" field err)))))))
+        ;; Update variable and collect result
+        (when field-value
+          (set field-symbol field-value)
+          (push (cons field-variable field-value) field-alist)
+          (sync0-bibtex-update-var field))))
+  ;; Optionally set this globally if required
+  (setq sync0-bibtex-entry-fields-alist field-alist)))
+
 (defun sync0-bibtex-entry-calculate-bibfield (bibfield)
   "Call corresponding function for bibfield from functions defined
 in the variable sync0-bibtex-entry-functions to get the value for
@@ -255,6 +296,75 @@ output is the value calculated by the called function."
   (if (member bibfield sync0-bibtex-fields)
       (funcall (cadr (assoc bibfield sync0-bibtex-entry-functions)))
     (error "%s is not part of BibLaTeX fields defined in sync0-bibtex-fields" bibfield)))
+
+(defun sync0-bibtex-load-entry-at-point () 
+  (interactive)
+  (sync0-bibtex-nullify-all-variables)
+  (let* ((entry (save-excursion (bibtex-beginning-of-entry)
+                                (bibtex-parse-entry)))
+         (bibkey (cdr (assoc "=key=" entry)))
+         (type (cdr (assoc "=type=" entry)))
+         (excluded-keys '("=key=" "=type="))
+         (curated-alist (mapcar (lambda (pair)
+                                  (let ((key (car pair))
+                                        (value (cdr pair)))
+                                    (cons (format "%s" key)
+                                          (when value
+                                            (format "%s"
+                                                    (replace-regexp-in-string "[{}]" "" value))))))
+                                entry))
+         (final-alist (cl-remove-if (lambda (pair)
+                                      (member (car pair) excluded-keys))
+                                    curated-alist)))
+    ;; Set global variables
+    (setq sync0-bibtex-entry-fields (mapcar #'car final-alist)
+          sync0-bibtex-entry-key bibkey
+          sync0-bibtex-entry-type type
+          sync0-bibtex-entry-alist final-alist)
+    ;; Create dynamic variables for each field
+    (dolist (field final-alist)
+      (let* ((field-name (car field))
+             (field-variable (concat "sync0-bibtex-entry-" field-name))
+             (field-symbol (intern field-variable))
+             (field-value (cdr field)))
+        (when field-value
+          (set field-symbol field-value))))
+    (sync0-bibtex-entry-constitute-bibentry bibkey)
+    ;; Return final-alist for debugging or further use
+    final-alist))
+
+;; (defun sync0-bibtex-load-entry-at-point () 
+;;   (interactive)
+;;   (let* ((entry (save-excursion (bibtex-beginning-of-entry)
+;;                                 (bibtex-parse-entry)))
+;;          (bibkey (cdr (assoc "=key=" entry)))
+;;          (type (cdr (assoc "=type=" entry)))
+;;          (fields (mapcar #'car entry)) ; Extract field names
+;;          (purged-fields (cl-set-difference fields '("=key=" "=type=") :test #'string=))
+;;          (curated-alist (mapcar (lambda (pair)
+;;                                   (let ((key (car pair))
+;;                                         (value (cdr pair)))
+;;                                     ;; Replace braces with double quotes in the value
+;;                                     ;; and enclose the field name (car) in double quotes
+;;                                     (cons (format "%s" key)
+;;                                           (when value
+;;                                             (format "%s" 
+;;                                                     (replace-regexp-in-string "[{}]" "" value))))))
+;;                                 entry))
+;;          (final-alist (cl-remove-if (lambda (pair)
+;;                                       (member (car pair) '("=key=" "=type=")))
+;;                                     curated-alist)))
+;;     (setq sync0-bibtex-entry-fields purged-fields)
+;;     (setq sync0-bibtex-entry-key bibkey)
+;;     (setq sync0-bibtex-entry-type type)
+;;     (dolist (field final-alist)
+;;       (let* ((field-name (car field))
+;; 	     (field-variable (concat "sync0-bibtex-entry-" field-name))
+;;              (field-symbol (intern field-variable))
+;;              (field-value (cdr field)))
+;;         ;; Update variable and collect result
+;;         (when field-value
+;;           (set field-symbol field-value))))))
 
 (defun sync0-bibtex-completion-load-entry (&optional bibkey quick)
   "Load the contents of the biblatex fields corresponding to a
@@ -302,31 +412,7 @@ output is the value calculated by the called function."
     ;; collect such conses into the list
     ;; sync0-bibtex-entry-fields-alist, which will be used by other
     ;; functions.
-    (let (x)
-      (dolist (element fields x)
-        (let* ((var (concat "sync0-bibtex-entry-" element))
-               (value (if entry
-			  (sync0-bibtex-completion-get-value element entry)
-                       (progn 
-                         ;; first calculate the values, this function
-                         ;; does not only calculate the value itself
-                         ;; but also some other accompanying dummy
-                         ;; variables that are necessary for
-                         ;; calculating titles and else. Be careful,
-                         ;; because the stdout of the function does
-                         ;; not neceesarily match the definition of
-                         ;; the value for "element"
-                         (funcall (cadr (assoc element sync0-bibtex-entry-functions)))
-                         ;; Retrieve the value for the corresponding
-                         ;; variable
-                         (symbol-value (intern var))))))
-          ;; set the variable to the value
-          (set (intern var) value)
-          ;; create cons of the form  ("sync0-bibtex-entry-title" . "The good old days") for an alist
-          (push (cons var value) x)
-          ;; Not sure whether this next functions works.
-          (sync0-bibtex-update-var element)))
-      (setq sync0-bibtex-entry-fields-alist x))
+    (sync0-bibtex-entry-set-dummy-vars entry fields)
     ;; After loading (or defining) the fields for the biblatex entry,
     ;; it is necessary to define these helper functions. Otherwise,
     ;; errors occur when calling functions to extract pdfs, creating
@@ -360,7 +446,8 @@ output is the value calculated by the called function."
       ;; fields when defining the keywords
       (if bibkey
           (sync0-bibtex-completion-get-value "keywords" entry)
-        (funcall (cadr (assoc "keywords" sync0-bibtex-entry-functions))))))
+        (funcall (cadr (assoc "keywords" sync0-bibtex-entry-functions))))
+      (sync0-bibtex-entry-constitute-bibentry bibkey)))
 
 
 (provide 'sync0-bibtex-entry-functions)

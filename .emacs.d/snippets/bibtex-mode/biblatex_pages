@@ -1,5 +1,0 @@
-# -*- mode: snippet -*-
-# name: biblatex_pages
-# key: pages
-# --
-pages = {${1:243--253}}, $0

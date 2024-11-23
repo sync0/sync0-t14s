@@ -1,0 +1,5 @@
+(undo-tree-save-format-version . 1)
+"da44594e4285fdc04111b87753c86ea36d803fb9"
+[nil nil nil nil (26082 27709 869010 868000) 0 nil]
+([nil current ((#("bibtex-completion-get-value" 0 27 (fontified t)) . -6526) (6553 . 6586) (#("bibtex-completion-get-value" 0 27 (fontified t)) . -6438) (6465 . 6498) (#("bibtex-completion-get-value" 0 27 (fontified t)) . -6350) (6377 . 6410) (#("bibtex-completion-get-value" 0 27 (fontified t)) . -6272) (t 26001 24912 234100 11000) (6299 . 6332) (t 26001 24912 234100 11000)) nil (26082 27709 869005 117000) 0 nil])
+nil

@@ -1,5 +1,0 @@
-# -*- mode: snippet -*-
-# name: biblatex_date
-# key: date
-# --
-date = {${1:1953}}, $0

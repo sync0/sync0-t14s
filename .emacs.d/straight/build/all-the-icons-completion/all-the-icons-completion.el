@@ -1,0 +1,1 @@
+/home/sync0/.emacs.d/straight/repos/all-the-icons-completion/all-the-icons-completion.el

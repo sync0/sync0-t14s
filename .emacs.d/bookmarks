@@ -2,7 +2,25 @@
 ;;; This format is meant to be slightly human-readable;
 ;;; nevertheless, you probably don't want to edit it.
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
-(("hyere"
+(("here´"
+ (filename . "~/Gdrive/obsidian/collages/24142vuk.md")
+ (front-context-string . " \n\nentrepreneur ")
+ (rear-context-string . "364rb, 29].\n\n   ")
+ (position . 69436)
+ (last-modified 26419 15226 779809 70000))
+("log"
+ (filename . "~/Gdrive/obsidian/drafts/24223umx.md")
+ (front-context-string . " \n- 2024-08-10 :")
+ (rear-context-string . "e de production.")
+ (position . 668)
+ (last-modified 26302 33557 148335 958000))
+("sync0"
+ (filename . "~/Gdrive/bibliographies/sync0_workshops.bib")
+ (front-context-string . "1-15},\n  eventda")
+ (rear-context-string . "e		    = {2023-1")
+ (position . 719)
+ (last-modified 26089 57014 695363 925000))
+("hyere"
  (filename . "~/Gdrive/bibliographies/study-techniques.bib")
  (front-context-string . "tten des Wissens")
  (rear-context-string . "      = {Werkstä")
@@ -148,10 +166,11 @@
  (rear-context-string . "Eles | têm    |\n")
  (position . 1687))
 ("here2"
- (filename . "~/Gdrive/cabinet/233sv.el")
- (front-context-string . "\n(sync0-bibtex-d")
- (rear-context-string . "the dictionary?\n")
- (position . 6672))
+ (filename . "~/.emacs.d/sync0_emacs.org")
+ (front-context-string . "delete-all name ")
+ (rear-context-string . "ew-abbrev (assq-")
+ (position . 94802)
+ (last-modified 26432 55884 197582 923000))
 ("matonti"
  (filename . "~/Dropbox/notes/matonti2012.org")
  (front-context-string . "\n\n* 無 Conclusion")
@@ -283,9 +302,9 @@
  (rear-context-string . "\"init.el\"))))))\n")
  (position . 5443))
 ("here"
- (filename . "~/.emacs.d/sync0/sync0-ebib.el")
- (front-context-string . "0)\n        (ebib")
- (rear-context-string . "ects\n	(setq sync")
- (position . 27598)
- (last-modified 26084 41000 118234 830000))
+ (filename . "~/Gdrive/obsidian/collages/24142vuk.md")
+ (front-context-string . "aut d’instructio")
+ (rear-context-string . "r et dont le déf")
+ (position . 91721)
+ (last-modified 26432 55869 901808 567000))
 )

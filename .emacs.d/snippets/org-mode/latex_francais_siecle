@@ -1,5 +1,0 @@
-# -*- mode: snippet -*-
-# name: latex_francais_siecle
-# key: sie
-# --
-\sie{$1}$0

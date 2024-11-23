@@ -1,1 +1,0 @@
-/home/sync0/.emacs.d/straight/repos/pkg-info/pkg-info.el

@@ -1,5 +1,0 @@
-# -*- mode: snippet -*-
-# name: koma_table_caption
-# key: tablecap
-# --
-#+ATTR_LATEX: :environment tabular :booktabs :caption \captionabove{${1:Lorem Ipsum}} $0

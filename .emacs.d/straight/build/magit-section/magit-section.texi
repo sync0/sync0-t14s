@@ -1,1 +1,1 @@
-/home/sync0/.emacs.d/straight/repos/magit/Documentation/magit-section.texi
+/home/sync0/.emacs.d/straight/repos/magit/docs/magit-section.texi

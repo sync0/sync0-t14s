@@ -95,9 +95,7 @@ yangben
 yiddish
 yoruba
 hungarian
-fr
-eng
-{french}
-renc
-en
 {english}
+{french}
+{portuguese}
+fr

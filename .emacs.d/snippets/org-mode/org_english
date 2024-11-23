@@ -1,9 +1,0 @@
-# -*- mode: snippet -*-
-# name: org_english 
-# key: english
-# --
-#+BEGIN_english
-$1
-#+END_english
-
-$0

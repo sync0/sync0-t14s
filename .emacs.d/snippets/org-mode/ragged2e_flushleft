@@ -1,7 +1,0 @@
-# -*- mode: snippet -*-
-# name: ragged2e_flushleft 
-# key: flushleft 
-# --
-\begin{FlushLeft}
-${1:enter_text_here}
-\end{FlushLeft}

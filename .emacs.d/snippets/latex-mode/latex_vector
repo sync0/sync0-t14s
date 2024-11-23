@@ -1,5 +1,0 @@
-# -*- mode: snippet -*-
-# name: latex_vector
-# key: vec
-# --
-\vec{${1:x}} $0 

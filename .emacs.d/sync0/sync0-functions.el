@@ -1,3 +1,4 @@
+(require 'sync0-vars)
 
 (defun sync0-insert-elements-of-list (list)
   "Print each element of LIST on a line of its own."
@@ -134,19 +135,48 @@ of all elements separeted by separator."
 ;;             x
 ;;           (car x)))))
 
-(defun sync0-define-list-interactively (define-string continue-string &optional initial-input)
-  (cond ((and initial-input 
-              (listp initial-input))
-         initial-input)
-        ((and initial-input 
-              (stringp initial-input))
-         (list initial-input))
-        (t 
-         (let (x)
-           (push (read-string define-string) x)
-           (while (yes-or-no-p continue-string) 
-             (push (read-string define-string) x))
-           x))))
+(defun sync0-define-list-interactively (prompt-string continue-string &optional initial-input)
+  "Interactively define a list of strings.
+  
+PROMPT-STRING is the prompt to display when defining each element of the list.
+CONTINUE-STRING is the prompt to display when asking whether to continue defining more elements.
+INITIAL-INPUT is an optional initial value or list of values.
+
+If INITIAL-INPUT is a list, it's used as the initial value.
+If INITIAL-INPUT is a string, it's converted to a single-element list.
+If no INITIAL-INPUT is provided, the user is prompted to enter the first element.
+
+When region is active, a list is automatically created, in which
+each element is every new-line-separated string in the region.
+
+Returns a list of strings."
+  (let ((input (if (and initial-input (listp initial-input))
+                   initial-input
+                 (if (stringp initial-input)
+                     (list initial-input)
+                   (if (use-region-p)
+                       (split-string (buffer-substring (region-beginning) (region-end)) "\n" t)
+                     nil)))))
+    (if input
+        input
+      (let ((result (list (read-string prompt-string))))
+        (while (yes-or-no-p continue-string)
+          (push (read-string prompt-string) result))
+        (nreverse result)))))
+
+;; (defun sync0-define-list-interactively (define-string continue-string &optional initial-input)
+;;   (cond ((and initial-input 
+;;               (listp initial-input))
+;;          initial-input)
+;;         ((and initial-input 
+;;               (stringp initial-input))
+;;          (list initial-input))
+;;         (t 
+;;          (let (x)
+;;            (push (read-string define-string) x)
+;;            (while (yes-or-no-p continue-string) 
+;;              (push (read-string define-string) x))
+;;            x))))
 
 ;; (defun sync0-define-list-interactively (define-string continue-string &optional initial-input)
 ;;   (interactive)
@@ -240,6 +270,144 @@ COMMAND is the command to finish, one of the symbols
     ;; Case 3: Other data types
     (t
      (error "You must supply either a list or a string as keys."))))
+
+(defun sync0-eval-last-sexp-or-region ()
+  "Evaluate the last sexp if no region is active, otherwise evaluate the region."
+  (interactive)
+  (if (region-active-p)
+      (eval-region (region-beginning) (region-end))
+    (eval-last-sexp nil)))
+
+(defun sync0-string-member (element string &optional separator)
+  "Check if ELEMENT is a member of STRING when split by SEPARATOR. Default separator is ', '."
+  (unless separator (setq separator ", "))
+  (let ((list (split-string string separator)))
+    (if list
+        (member element list)
+      (string= element string))))
+
+(defun sync0-generate-random-string (length)
+  "Generate a random string of LENGTH characters."
+  (let ((charset sync0-alpha))
+    (cl-loop for i below length
+             concat (string (elt charset (random (length charset)))))))
+
+(defun sync0-generate-unique-filename (existing-files)
+  "Generate a unique filename that does not exist in EXISTING-FILES."
+  (let ((current-date sync0-bibtex-timeday))
+    (cl-loop for i from 0
+             for filename = (concat current-date (sync0-generate-random-string 3))
+             until (not (member filename existing-files))
+             finally return filename)))
+
+;; (defun sync0-obsidian-generate-unique-filename (directory)
+;;   "Generate a unique filename for an Obsidian markdown note in DIRECTORY."
+;;   (let* ((current-date (format-time-string "%y%j"))
+;;          (regex (concat "^" current-date "[a-zA-Z]\\{3\\}$"))
+;;          (existing-files (sync0-obsidian-find-existing-markdown-files directory)))
+;;     (cl-loop for i from 0
+;;              for filename = (concat current-date (sync0-generate-random-string 3))
+;;              until (not (member filename existing-files))
+;;              finally return filename)))
+
+(defun sync0-list-files-in-directory (directory &optional full-path extension)
+  "Return a newline-separated list of all files in DIRECTORY.
+If FULL-PATH is non-nil, return the full paths of the files.
+Otherwise, return only the filenames with extensions.
+If EXTENSION is non-nil, only include files with that extension."
+  (interactive)
+  (let ((file-list (directory-files-recursively directory ".*"))
+        (result-list nil))
+    (when extension
+      (setq file-list (cl-remove-if-not
+                       (lambda (file)
+                         (string= (file-name-extension file) extension))
+                       file-list)))
+    (setq result-list
+          (if full-path
+              file-list
+            (mapcar 'file-name-nondirectory file-list)))
+    (mapconcat 'identity result-list "\n")))
+
+(defun sync0-delete-blank-lines-in-buffer ()
+  "Delete all blank lines in the current buffer."
+  (interactive)
+  (save-excursion
+    (goto-char (point-min))
+    (while (re-search-forward "^[[:space:]]*\n" nil t)
+      (replace-match "")))
+  (message "Blank lines removed from the buffer."))
+
+(defun sync0-write-to-file (content filepath)
+  "Write CONTENT to the file indicated by FILEPATH.
+If the file already exists, prompt for confirmation to overwrite.
+If the directory doesn't exist, create it."
+  (let ((directory (file-name-directory filepath)))
+    ;; Ensure the directory exists, create it if necessary
+    (unless (file-exists-p directory)
+      (make-directory directory t))
+    
+    ;; If file exists, ask for confirmation to overwrite, otherwise write without prompt
+    (if (file-exists-p filepath)
+        (if (y-or-n-p (format "File %s already exists. Overwrite?" filepath))
+            (with-temp-buffer 
+              (insert content)
+              (write-file filepath)))
+      (with-temp-buffer 
+        (insert content)
+        (write-file filepath)))))
+
+(defun sync0-downcase-and-no-whitespace (x)
+  "Downcase and replace whitespace by _ in the current string"
+  (downcase
+   (replace-regexp-in-string "[[:space:]-]+" "_" x)))
+
+(defun sync0-copy-file-name-to-clipboard ()
+  "Copy the current buffer file name to the clipboard."
+  (interactive)
+  (let ((filename (if (equal major-mode 'dired-mode)
+                      default-directory
+                    (buffer-file-name))))
+    (when filename
+      (kill-new filename)
+      (message "Copied buffer file name '%s' to the clipboard." filename))))
+
+(defun sync0-create-file-with-content (content filepath)
+  (if (file-exists-p filepath)
+      (error "%s is already present in file system." filepath)
+    (with-temp-buffer 
+      (insert content)
+      (write-file filepath))))
+
+(defun sync0-split-and-follow-horizontally ()
+  " Split the selected window into two side-by-side windows.
+  The selected window, which displays the same buffer, is on the
+  right."
+  (interactive)
+  (progn
+    (split-window-below)
+    (balance-windows)
+    (other-window 1)))
+
+(defun sync0-split-and-follow-vertically ()
+  " Split the selected window into two windows, one above the other.
+  The selected window, which displays the same buffer, is below."
+  (interactive)
+  (progn
+    (split-window-right)
+    (balance-windows)
+    ;; (sync0-restore-margins)
+    (other-window 1)))
+
+(defun sync0-delimiter-remover (string)
+  (let (x)
+    (setq x string)
+    (if (or (string-match "^\"" x)
+            (string-match "^\\[" x))
+        (progn
+          (setq x (substring x 1 -1))
+          (sync0-delimiter-remover x))
+      x)))
 
 (provide 'sync0-functions)
 

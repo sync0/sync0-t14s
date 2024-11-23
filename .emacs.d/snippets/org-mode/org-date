@@ -1,5 +1,0 @@
-# -*- mode: snippet -*-
-# name: org-date
-# key: assdate
-# --
-((format-time-string "%Y-%m-%d"))

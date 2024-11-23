@@ -111,6 +111,8 @@ Usage:
 :custom-face     Call `custom-set-faces' with each face definition.
 :ensure          Loads the package using package.el if necessary.
 :pin             Pin the package to an archive.
+:vc              Install the package directly from a version control system
+                 (using `package-vc.el').
 
 (fn NAME &rest ARGS)" nil t)
 (function-put 'use-package 'lisp-indent-function 'defun)
@@ -154,6 +156,19 @@ Normalize arguments to delight.
 
 (fn NAME KEYWORD ENSURE REST STATE)")
 (register-definition-prefixes "use-package-ensure" '("use-package-"))
+
+
+;;; Generated autoloads from use-package-ensure-system-package.el
+
+(autoload 'use-package-normalize/:ensure-system-package "use-package-ensure-system-package" "\
+Turn ARGS into a list of conses of the form (PACKAGE-NAME . INSTALL-COMMAND).
+
+(fn NAME-SYMBOL KEYWORD ARGS)")
+(autoload 'use-package-handler/:ensure-system-package "use-package-ensure-system-package" "\
+Execute the handler for `:ensure-system-package' keyword in `use-package'.
+
+(fn NAME KEYWORD ARG REST STATE)")
+(register-definition-prefixes "use-package-ensure-system-package" '("use-package-ensure-system-package-"))
 
 
 ;;; Generated autoloads from use-package-jump.el

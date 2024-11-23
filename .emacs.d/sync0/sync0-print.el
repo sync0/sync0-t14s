@@ -64,4 +64,25 @@
             double-sided
             quality)))
 
+(defun sync0-print-pdf (&optional pdf command)
+  "Print the pdf provided in the argument. Generalized for
+interactive use and use in pipes to output to the printer."
+  (interactive)
+  (cond ((and pdf
+              command)
+         (if (file-exists-p pdf)
+             (shell-command (concat command pdf))
+           (message "File %s does not exist" pdf)))
+        (pdf (let ((command (sync0-print-define-command)))
+               (if (file-exists-p pdf)
+                   (shell-command (concat command pdf))
+                 (message "File %s does not exist" pdf))))
+        (t (let* ((pdf (read-string "what pdf file (absolute path): "))
+                  (command (sync0-print-define-command))) 
+             (if (file-exists-p pdf)
+                 (shell-command (concat command pdf))
+               (message "No attachment found for entry %s" pdf))))))
+
+;; pdfjam --outfile output2.pdf --paper a4paper --nup 2x1 --landscape
+
 (provide 'sync0-print)

@@ -1,0 +1,24 @@
+(undo-tree-save-format-version . 1)
+"44de21795ecc1558dfc5b13c10d1afa06b6774a7"
+[nil nil nil nil (26082 27897 762174 113000) 0 nil]
+([nil nil ((#("bibtex-completion-get-value" 0 27 (fontified t)) . -10457) (10484 . 10517) (#("bibtex-completion-get-value" 0 27 (fontified t)) . -10007) (10034 . 10067) (#("bibtex-completion-get-value" 0 27 (fontified t)) . -3536) (3563 . 3596) (#("bibtex-completion-get-value" 0 27 (fontified t)) . -3468) (3495 . 3528) (#("bibtex-completion-get-value" 0 27 (face font-lock-comment-face fontified t)) . -2403) (2430 . 2463) (#("bibtex-completion-get-value" 0 27 (face font-lock-comment-face fontified t)) . -2332) (t 26069 14086 567846 114000) (2359 . 2392) (t 26069 14086 567846 114000)) nil (26082 27897 762168 483000) 0 nil])
+([nil nil ((#("         (file (sync0-bibtex-choose-attachment bibkey))
+" 0 56 (fontified t)) . 8940) (undo-tree-id29 . -16) (undo-tree-id30 . -16) (undo-tree-id31 . -16) (undo-tree-id32 . -16) (undo-tree-id33 . -55) 8956 (t 26082 27897 771338 502000)) nil (26082 40212 742145 376000) 0 nil])
+([nil nil ((nil rear-nonsticky nil 8831 . 8832) (#("
+" 0 1 (fontified nil)) . -8878) (8822 . 8879) 8770) nil (26082 40212 742142 180000) 0 nil])
+([nil nil ((8913 . 8917) (#("f" 0 1 (fontified t)) . -8913) (undo-tree-id13 . -1) (8912 . 8914) (8893 . 8912) (#("file-extensi" 0 12 (fontified t)) . -8893) (undo-tree-id14 . -12) (undo-tree-id15 . -12) 8905 (8898 . 8905) (#("t" 0 1 (fontified t)) . -8898) (undo-tree-id16 . -1) (undo-tree-id17 . -1) (#("e" 0 1 (fontified t)) . -8899) (undo-tree-id18 . -1) (undo-tree-id19 . -1) (#("x" 0 1 (fontified t)) . -8900) (undo-tree-id20 . -1) (undo-tree-id21 . -1) 8901 (8897 . 8901) (#(" " 0 1 (fontified t)) . -8897) (undo-tree-id22 . -1) (undo-tree-id23 . -1) (#("e" 0 1 (fontified t)) . -8898) (undo-tree-id24 . -1) (undo-tree-id25 . -1) (#("x" 0 1 (fontified t)) . -8899) (undo-tree-id26 . -1) (undo-tree-id27 . -1) 8900 (8893 . 8900) (#("f" 0 1 (fontified t)) . -8893) (undo-tree-id28 . -1) (8893 . 8894) (8892 . 8894) (#("(" 0 1 (fontified nil)) . -8892) (8882 . 8893) (8881 . 8883) (#("(" 0 1 (fontified nil)) . -8881) (8881 . 8882) (8878 . 8881) 8877) nil (26082 40212 742138 443000) 0 nil])
+([nil nil ((8917 . 8918)) nil (26082 40212 742125 8000) 0 nil])
+([nil nil ((#(" " 0 1 (fontified t)) . -8917) (undo-tree-id11 . -1) (#("n" 0 1 (fontified t)) . -8918) (undo-tree-id12 . -1) 8919 (8918 . 8919)) nil (26082 40212 742123 976000) 0 nil])
+([nil nil ((#("	 " 0 2 (fontified t)) . -8920) (undo-tree-id10 . -2) 8922 (8919 . 8922) 8918) nil (26082 40212 742121 722000) 0 nil])
+([nil nil ((nil rear-nonsticky nil 8928 . 8929) (#("
+" 0 1 (fontified nil)) . -9177) (8920 . 9178)) nil (26082 40212 742120 59000) 0 nil])
+([nil nil ((#("
+" 0 1 (fontified t)) . 8920)) nil (26082 40212 742118 876000) 0 nil])
+([nil nil ((#("	  " 0 3 (fontified nil)) . -9069) (9069 . 9070) (#("	" 0 1 (fontified nil)) . 9069) (9065 . 9069) (#("      " 0 6 (fontified t)) . -9007) (#("      " 0 5 (fontified t) 5 6 (rear-nonsticky t fontified t)) . -8922) 9177) nil (26082 40212 742117 764000) 0 nil])
+([nil nil ((#(")" 0 1 (fontified t rear-nonsticky t)) . 9164) (undo-tree-id7 . -1) (undo-tree-id8 . -1) (undo-tree-id9 . -1)) nil (26082 40212 742116 342000) 0 nil])
+([nil nil ((#(")" 0 1 (fontified t)) . 9163) (undo-tree-id6 . -1)) nil (26082 40212 742113 637000) 0 nil])
+([nil nil ((9163 . 9164)) nil (26082 40212 742111 623000) 0 nil])
+([nil current ((#("         (program
+          (completing-read \"Which softare to open attachment ?\" sync0-bibtex-attachment-programs))
+" 0 45 (fontified t) 45 81 (face font-lock-string-face fontified t) 81 117 (fontified t)) . 9165) (undo-tree-id0 . -115) (undo-tree-id1 . -115) (undo-tree-id2 . -17) (undo-tree-id3 . -116) (undo-tree-id4 . -117) (undo-tree-id5 . -17) 9182) nil (26082 40212 742107 735000) 0 nil])
+nil
