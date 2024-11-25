@@ -1,12 +1,6 @@
 (require 'sync0-bibtex-key-functions)
+(require 'sync0-bibtex-corrections)
 ;; (require 'sync0-bibtex-entry-functions)
-
-(defun sync0-bibtex-get-value-from-entry  (bibkey bibtex-field)
-  "Get content of BIBTEX-FIELD from the entry associated with
-BIBKEY. Depends on bibtex-completion-get-entry from the package
-helm-bibtex to work"
-  (let ((bibentry (bibtex-completion-get-entry bibkey)))
-	(cdr (assoc bibtex-field  bibentry))))
 
 (defun sync0-bibtex-entry-choose-bibliography-file ()
   "Outputs the full path of bibliography file .bib to create new biblatex entry." 
@@ -101,27 +95,6 @@ old-value, search for and replace the string with the old value."
       (append-to-file sync0-bibtex-entry-bibentry nil bibliography-file)
       (sync0-bibtex-entry-inform-new-entry))))
 
-(defun sync0-bibtex-choose-attachment (&optional bibkey extension)
-  "Choose an attachment associated with BIBKEY. Optionally filter by EXTENSION."
-  (let* ((refkey (or bibkey
-                     (sync0-bibtex-completion-choose-key t t "Which key to look for attachments?")))
-         (file-field (sync0-bibtex-get-value-from-entry refkey "file"))
-         (attachments (when file-field
-			(mapcar (lambda (attachment)
-				  ;; Handle cases with leading colons and split properly
-				  (let* ((cleaned-attachment (string-remove-prefix ":" attachment)) ;; Remove leading colon
-					 (path (car (split-string cleaned-attachment ":"))))          ;; Split by colon
-				    (string-trim path)))                                             ;; Trim any excess spaces
-				;; Split on semicolons, ignoring empty strings
-				(split-string file-field ";" t)))))
-    (cond
-     ((null attachments)
-      (error "No attachments found for entry %s" refkey))
-     ((= (length attachments) 1)
-      (car attachments))  ; Return the only attachment if there's just one
-     (t
-      (completing-read "Select an attachment: " attachments)))))
-
   (defun sync0-bibtex-entry-inform-new-entry ()
     "Inform the user about a new entry that has been just created."
     (if (sync0-null-p sync0-bibtex-entry-author)
@@ -163,5 +136,10 @@ parse correctly."
             author
             date
             title)))
+
+(defun sync0-bibtex-get-editortype (people-field)
+  (when (member people-field sync0-bibtex-editor-fields)
+    (let  ((editortype (intern (concat "sync0-bibtex-entry-" people-field "type"))))
+      (symbol-value editortype))))
 
 (provide 'sync0-bibtex-utils)

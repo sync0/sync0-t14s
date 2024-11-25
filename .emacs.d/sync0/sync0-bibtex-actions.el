@@ -1,12 +1,24 @@
+(require 'sync0-ivy-bibtex)
 (require 'sync0-bibtex-entry-functions)
 (require 'sync0-bibtex-key-functions)
 (require 'sync0-bibtex-utils)
 (require 'sync0-bibtex-corrections)
-(require 'obsidian)
-;; (require 'sync0-obsidian)
 (require 'sync0-bibtex-obsidian)
 (require 'sync0-yaml)
 (require 'sync0-pdf)
+
+(defun sync0-bibtex-arrange-pdf (&optional bibkey)
+  "Use PDF Arranger on target pdf."
+  (interactive)
+  (let* ((refkey (or bibkey
+                     (sync0-bibtex-completion-choose-key t t)))
+         (file (sync0-bibtex-choose-attachment refkey))
+         (extension (file-name-extension file))
+         (command (concat "pdfarranger " file)))
+    (if (and (file-exists-p file)
+             (equal extension "pdf"))
+        (shell-command command)
+      (message "Problem opening file for entry %s failed." refkey))))
 
 (defun sync0-bibtex-add-key-to-pdf (&optional bibkey)
   "Add bibkey to (only) the first page of the pdf on the top left
@@ -30,39 +42,6 @@ function is to be used only in pipes."
               (rename-file output file t)
             (message "cpdf failed to create the pdf; investigate the error.")))
       (funcall message-function))))
-
-(defun sync0-bibtex-arrange-pdf (&optional bibkey)
-  "Use PDF Arranger on target pdf."
-  (interactive)
-  (let* ((refkey (or bibkey
-                     (sync0-bibtex-completion-choose-key t t)))
-         (file (sync0-bibtex-choose-attachment refkey))
-         (extension (file-name-extension file))
-         (command (concat "pdfarranger " file)))
-    (if (and (file-exists-p file)
-             (equal extension "pdf"))
-        (shell-command command)
-      (message "Problem opening file for entry %s failed." refkey))))
-
-;; (defun sync0-bibtex-download-pdf (&optional refkey creation)
-;;   (interactive)
-;;   (if creation
-;;       (let ((file (string-trim sync0-bibtex-entry-file ":" ":PDF"))
-;;             (url sync0-bibtex-entry-url))
-;;         (sync0-pdf-download-from-url url file))
-;;     (let*    ((bibkey (or refkey 
-;;                           (sync0-bibtex-completion-choose-key t t)))
-;;               (entry (bibtex-completion-get-entry bibkey))
-;;               (url (sync0-bibtex-completion-get-value "url" entry))
-;;               (doi (sync0-bibtex-completion-get-value "doi" entry))
-;;               (file (concat sync0-zettelkasten-attachments-directory bibkey ".pdf")))
-;;       (if (yes-or-no-p "Call the pirates?")
-;;           (if doi
-;;               (scihub doi file)
-;;             (scihub url file))
-;;         (if (file-exists-p file)
-;;             (message "Cannot download. Attachment exists for key %s" bibkey)
-;;           (sync0-pdf-download-from-url url file))))))
 
 (defun sync0-bibtex-download-pdf (&optional refkey creation)
   (interactive)
@@ -206,24 +185,6 @@ entry under point in a .bib file"
     (if (not (sync0-null-p url))
         (browse-url url) ;; Replace with your desired function
       (message "No url found for %s" bibkey))))
-
-;; (defun sync0-bibtex-download-from-youtube (&optional bibkey)
-;;   "Open the URL for BibTeX key under point if it exists."
-;;   (interactive)
-;;   (let* ((bibkey (or bibkey 
-;;                      (sync0-bibtex-completion-choose-key t t)))
-;;          (entry (bibtex-completion-get-entry bibkey))
-;;          (url  (sync0-bibtex-completion-get-value "url" entry))
-;;          (output-directory sync0-zettelkasten-attachments-directory)
-;;          (output-file (concat (file-name-as-directory output-directory) bibkey ".%(ext)s"))
-;;          ;; Use yt-dlp; it has to be installed from AUR
-;;          (command (concat "yt-dlp --write-sub --write-auto-sub --sub-lang \"en.*\" -o " (shell-quote-argument output-file) " -f \"bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best\" " (shell-quote-argument url))))
-;;     (if (not (sync0-null-p url))
-;;         (progn
-;;           (message "Downloading video for %s" bibkey)
-;;           (shell-command command)
-;;           (message "Video downloaded successfully for %s" bibkey))
-;;       (message "No URL found for %s" bibkey))))
 
 (defun sync0-bibtex-download-from-youtube (&optional bibkey video-only)
   "Open the URL for BibTeX key under point if it exists."
@@ -732,23 +693,180 @@ BibTeX entries from the master bibliography file to the selected bibliography fi
     (when (file-exists-p bibnote)
 	(sync0-create-pdf-with-overlay thekey bibnote))))
 
-;; (defun sync0-bibtex-extract-pandoc-citekeys ()
-;;   "Extract all unique Pandoc citation keys from the current Markdown buffer."
-;;   (interactive)
-;;   (let ((citekey-regex "@\\([a-zA-Z0-9_:-]+\\)")
-;;         citekeys)
-;;     (save-excursion
-;;       (goto-char (point-min))
-;;       ;; Search for all occurrences of citekeys
-;;       (while (re-search-forward citekey-regex nil t)
-;;         (let ((citekey (match-string-no-properties 1)))
-;;           (push citekey citekeys))))
-;;     ;; Remove duplicates and sort
-;;     (setq citekeys (delete-dups citekeys))
-;;     (setq citekeys (sort citekeys #'string<))
-;;     ;; Display the result in a temporary buffer
-;;     (with-output-to-temp-buffer "*Pandoc Citekeys*"
-;;       (dolist (citekey citekeys)
-;;         (princ (format "%s\n" citekey))))))
+(defun sync0-bibtex-copy-attachment-at-point (&optional in-path bibkey)
+  "Copy attached pdf to path and change the title to make it
+readable."
+  (interactive)
+  (let* ((entry (save-excursion (bibtex-beginning-of-entry)
+			        (bibtex-parse-entry)))
+         (bibkey (cdr (assoc "=key=" entry)))
+         (file (sync0-bibtex-choose-attachment bibkey))
+         (extension  (file-name-extension file t))
+         (path (sync0-validate-path (or in-path
+                                        (read-directory-name "Où envoyer ce fichier ?" sync0-goodreads-directory)))))
+    (sync0-bibtex-completion-load-entry bibkey)
+    (if (and (file-exists-p file)
+             (file-accessible-directory-p path))
+        (let* ((filetitle (sync0-bibtex-define-attachment-copy-filename bibkey path))
+               (command (concat "cp "
+                                file
+                                " \""
+                                path
+                                filetitle
+                                extension
+                                "\"")))
+          (shell-command command)
+          (message "PDF for %s moved to target location" bibkey))
+      (message "No PDF found for %s" bibkey))))
+
+(defun sync0-bibtex-copy-pdf-to-path (&optional in-path bibkey)
+  "Copy attached pdf to path and change the title to make it
+readable."
+  (interactive)
+  (let* ((refkey (or bibkey
+                     (sync0-bibtex-completion-choose-key t t)))
+         (file (sync0-bibtex-choose-attachment refkey))
+         (path (or in-path
+                   (read-directory-name "Où envoyer ce fichier ? " sync0-goodreads-directory)))
+         (extension  (file-name-extension file t)))
+    (sync0-bibtex-completion-load-entry refkey)
+    (if (and (file-exists-p file)
+             (file-accessible-directory-p path))
+        (let* ((filetitle (sync0-bibtex-define-attachment-copy-filename refkey path))
+               (file-and-path (concat path filetitle extension))
+               (file-and-path-quotes (concat "\"" file-and-path "\""))
+               (command (concat "cp "
+                                file
+                                " "
+                                file-and-path-quotes)))
+          (shell-command command)
+          (setq sync0-bibtex-temp-pdf-copy-new-path-and-filename file-and-path)
+          (message "PDF for %s moved to target location" refkey))
+      (message "No PDF found for %s" refkey))))
+
+  (defun sync0-bibtex-archive-entry (&optional bibkey)
+    "Choose an entry to send to the archived bibliography. This
+function fails when the entry is at the top of the buffer becase
+the function 1- fails to compute."
+    (interactive)
+    (when bibkey
+      (bibtex-search-entry bibkey))
+    ;; (re-search-forward (concat "{" bibkey ",") nil t 1)
+    (let* ((beginning (save-excursion (1- (bibtex-beginning-of-entry))))
+           (end (save-excursion (bibtex-end-of-entry))))
+      (append-to-file beginning end sync0-bibtex-archived-bibliography)
+      (delete-region beginning end)))
+
+(defun sync0-bibtex-move-entry-to-bibfile (&optional bibkey bibfile)
+  "Choose an entry to send to the archived bibliography. This
+function fails when the entry is at the top of the buffer becase
+the function 1- fails to compute."
+  (interactive)
+  (when-let* ((refkey (or bibkey
+                     (sync0-bibtex-completion-choose-key t t)))
+         (bibdestiny (or bibfile
+                         (completing-read "Which bibliography file to send to ? "
+                                          sync0-bibtex-bibliographies nil t))))
+      (bibtex-search-entry refkey)
+      (let ((beginning (save-excursion (1- (bibtex-beginning-of-entry))))
+            (end (save-excursion (bibtex-end-of-entry))))
+      (append-to-file beginning end bibdestiny)
+      (delete-region beginning end))))
+
+(defun sync0-bibtex-delete-entry (&optional bibkey)
+  "Choose an entry to permanently delete. Remeber: The deleted
+entry could be recovered if previously commited on a
+version-controlled file. The attachments are sent to the system
+trash, as defined by the desktop environments (KDE, Gnome,
+etc.)."
+  (interactive)
+  (let ((refkey (or bibkey
+                    (sync0-bibtex-completion-choose-key t t))))
+    (bibtex-search-entry refkey)
+    (sync0-bibtex-completion-load-entry refkey)
+    (let* ((beginning (save-excursion (1- (bibtex-beginning-of-entry))))
+           (attachments (bibtex-completion-find-pdf refkey))
+           (num-of-attachments (length attachments))
+           (trash-message (concat "Send to trash entry "
+                                  sync0-bibtex-entry-lastname
+                                  (or sync0-bibtex-entry-date-fixed
+                                      " ")
+                                  sync0-bibtex-entry-title-compatible
+                                  "?"))
+           (trash-attach-message (format "Entry %s has %s attachments. Do you want to send these to trash?" refkey attachments))
+           (end (save-excursion (bibtex-end-of-entry))))
+      (when (yes-or-no-p trash-message)
+        (delete-region beginning end))
+      (when (yes-or-no-p trash-attach-message)
+        (mapc #'move-file-to-trash attachments)))))
+
+(defun sync0-bibtex-delete-attachments (&optional bibkey)
+  "Choose an entry to permanently delete. Remeber: The deleted
+entry could be recovered if previously commited on a
+version-controlled file. The attachments are sent to the system
+trash, as defined by the desktop environments (KDE, Gnome,
+etc.)."
+  (interactive)
+  (let ((refkey (or bibkey
+                    (sync0-bibtex-completion-choose-key t t))))
+    (sync0-bibtex-completion-load-entry refkey)
+    (let* ((attachments (bibtex-completion-find-pdf refkey))
+           (num-of-attachments (length attachments))
+           (trash-attach-message
+            (format "Entry %s has %s attachments. Do you want to send these to trash?" refkey num-of-attachments)))
+      (when (yes-or-no-p trash-attach-message)
+        (mapc #'move-file-to-trash attachments)))))
+
+  (defun sync0-bibtex-add-toc-to-pdf (&optional refkey)
+    "Add toc to pdf using cpdf command line"
+    (interactive)
+    (let* ((bibkey (or refkey 
+                       (sync0-bibtex-completion-choose-key t t)))
+           (file (sync0-bibtex-choose-attachment bibkey))
+           ;; necessary to prevent malfunction due to same input
+           ;; and output file
+           (output (concat sync0-zettelkasten-attachments-directory "temp.pdf"))
+           (toc-file (concat sync0-bibtex-tocs-directory bibkey ".txt"))
+           ;; (malformation (when (yes-or-no-p "Malformed? ")
+           ;;                 "-gs /usr/bin/gs -gs-malformed "))
+           ;; (command (concat "cpdf " (unless (sync0-null-p malformation) malformation) "-utf8 -add-bookmarks " toc-file " " file " -o " output)
+           (command (concat "cpdf -utf8 -add-bookmarks " toc-file " " file " -o " output)))
+      (if (and (file-exists-p toc-file)
+               (file-exists-p file))
+          (progn
+            (shell-command command)
+            (rename-file output file t))
+        (message "Conditions not satisfied by entry %s to attach corresponding toc." bibkey))))
+
+  (defun sync0-bibtex-yank-citation-from-bibkey (&optional bibkey)
+    "Add bibkey citation kill ring."
+    (interactive)
+    (let ((refkey (if bibkey
+                      bibkey
+                    (sync0-bibtex-completion-choose-key t t))))
+      (sync0-bibtex-completion-load-entry refkey)
+      (when-let ((citation (concat sync0-bibtex-entry-lastname
+                                   (or sync0-bibtex-entry-date-fixed
+                                       " ")
+                                   sync0-bibtex-entry-title-compatible)))
+        (kill-new citation)
+        (message "%s copied to kill ring." citation))))
+
+  (defun sync0-bibtex-convert-jpg-to-pdf (&optional bibkey)
+    "Copy attached pdf to path and change the title to make it
+readable."
+    (interactive)
+    (let* ((refkey (if bibkey
+                       bibkey
+                     (sync0-bibtex-completion-choose-key t t)))
+           (file (sync0-bibtex-choose-attachment refkey))
+           (image (concat sync0-bibtex-archive-directory refkey ".jpg"))
+           ;; (extension (file-name-extension file))
+           (command (concat "convert " image " -auto-orient " file)))
+      ;; (sync0-bibtex-completion-load-entry refkey)
+      (if (and (file-exists-p file)
+               (file-exists-p image))
+          (shell-command command)
+        (message "Conversion for entry %s failed." refkey))))
 
   (provide 'sync0-bibtex-actions)

@@ -77,14 +77,16 @@
 
 
 
-(defun sync0-define-local-abbrev (name expansion)
+(defun sync0-define-local-abbrev (name expansion &optional hook)
   "Define a new abbrev in the current mode and update the cache."
   (interactive "sEnter abbrev:\nsEnter expansion:")
   (if (bound-and-true-p sync0-language-active-table)
       (let* ((mode sync0-language-active-table)
              (mode-table (concat mode "-abbrev-table"))
              (mode-cache (assoc mode-table sync0-abbrev-cache))
-             (new-abbrev (list name expansion nil :count 0)))
+             (new-abbrev (if hook
+			     (list name expansion 'dont-insert-expansion-char :count 0)
+			   (list name expansion nil :count 0))))
         ;; Check if the mode's abbrev cache exists, otherwise create it
         (unless mode-cache
           (setq sync0-abbrev-cache
@@ -100,7 +102,8 @@
 
         ;; Define or redefine the abbrev in the local-abbrev-table
         (define-abbrev local-abbrev-table name expansion)
-        (message "\"%s\" now expands to \"%s\" in %s." name expansion mode-table))
+        (define-abbrev (symbol-value (intern mode-table)) name expansion)
+        (message "%s now expands to %s in %s." name expansion mode-table))
     (error "No local abbrev language table active.")))
 
   (add-hook 'kill-emacs-hook #'sync0-abbrev-save-to-file))

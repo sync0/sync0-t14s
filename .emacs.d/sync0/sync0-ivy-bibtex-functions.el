@@ -1,8 +1,10 @@
-(require 'sync0-bibtex-extraction)
 (require 'sync0-functions)
+(require 'bibtex-utils)
+(require 'sync0-ivy-bibtex)
+(require 'sync0-bibtex-extraction)
+(require 'sync0-bibtex-actions)
 (require 'sync0-bibtex-corrections)
 (require 'sync0-bibtex-python)
-(require 'sync0-ivy-bibtex)
 (require 'sync0-bibtex-sql)
 
 (defun sync0-bibtex-completion-insert-markdown-citation ()
@@ -474,109 +476,73 @@ With a prefix ARG the cache is invalidated and the bibliography reread."
     ("OCR PDF files" . bibtex-completion-ocr-pdf-files))
   "Mapping of action names to BibTeX-related commands.")
 
-(defun consult-bibtex--candidates (&optional cands)
-  "Convert `bibtex-completion' candidates to `completing-read' candidates.
-CANDS is an optional subset of candidates to convert. When omitted CANDS
-defaults to all the candidates configured by `bibtex-completion'."
-  (when (null sync0-ivy-bibtex-cache)
-    (sync0-ivy-bibtex-update-cache))
-  (or cands
-      (setq cands sync0-ivy-bibtex-cache))  ;; Use cached candidates here
-  (cl-loop
-   for cand in cands
-   with cand-str = nil
-   do (setq cand-str
-            (concat (bibtex-completion-get-value "=type=" cand) " "
-                    (bibtex-completion-format-entry (cdr cand) (1- (frame-width)))))
-   ;; Add a `consult--type' property for narrowing support.
-   do (add-text-properties 0 1
-                           `(consult--type
-                             ,(or
-                               (when-let ((type (bibtex-completion-get-value "=type=" cand)))
-                                 (car (rassoc (capitalize type) consult-bibtex-narrow)))
-                               (car (rassoc "Other" consult-bibtex-narrow)))
-                             ;; Symbols are more performant than strings for most situations.
-                             bib-type ,(intern (capitalize (bibtex-completion-get-value "=type=" cand)))
-                             consult--candidate ,(bibtex-completion-get-value "=key=" cand)
-                             has-pdf ,(not (not (bibtex-completion-get-value "=has-pdf=" cand)))
-                             has-note ,(not (not (bibtex-completion-get-value "=has-note=" cand))))
-                           ;; The trailing type text is there for matching, it'll be removed by consult.
-                           cand-str)
-   collect cand-str))
 
-(defun consult-bibtex--read-entry (&optional arg)
-  "Read a bibtex entry.
-Optional argument CANDS is the same as for `consult-bibtex--candidates'. ARG
-causes `bibtex-completion' re-read all bibtex entries from your bibtex files."
-  ;; (when arg
-  ;;   (bibtex-completion-clear-cache))
-  ;; (bibtex-completion-init)
-  (let* ((candidates (consult-bibtex--candidates))
-         (preselect
-          (when-let ((key (bibtex-completion-key-at-point)))
-            (cl-find-if (lambda (cand)
-                          (string-equal key (get-text-property 0 'consult--candidate cand)))
-                        candidates))))
-    (consult--read candidates
-                   :prompt "BibTeX entries: "
-                   :require-match t
-                   :category 'bibtex-completion
-                   :lookup 'consult--lookup-candidate
-                   :default preselect
-                   :group
-                   ;; (consult--type-title consult-bibtex-narrow)
-                   (lambda (cand transform)
-                     (if transform
-                         (substring cand (1+ (length (symbol-name (get-text-property 0 'bib-type cand)))))
-                       (symbol-name (get-text-property 0 'bib-type cand))))
-                   :narrow
-                   ;; Allow narrowing on PDFs and notes, alongside just `consult--type'.
-                   (let ((type-narrow (plist-get (consult--type-narrow consult-bibtex-narrow) :predicate)))
-                     (list :predicate
-                           (lambda (cand)
-                             (when consult--narrow
-                               (cond
-                                ((eq consult--narrow consult-bibtex-pdf-narrow-key)
-                                 (get-text-property 0 'has-pdf cand))
-                                ((eq consult--narrow consult-bibtex-note-narrow-key)
-                                 (get-text-property 0 'has-note cand))
-                                (t (funcall type-narrow cand)))))
-                           :keys
-                           `(,@(and consult-bibtex-pdf-narrow-key
-                                    `((,consult-bibtex-pdf-narrow-key . "With PDFs")))
-                             ,@(and consult-bibtex-note-narrow-key
-                                    `((,consult-bibtex-note-narrow-key . "With Notes")))
-                             ,@consult-bibtex-narrow)))
-                   :history consult-bibtex-history)))
-
-(defun sync0-consult-bibtex-batch-action (keys)
-  "Perform a batch action on a list of BibTeX KEYS."
-  (let* ((action-name (completing-read "Choose action: " (mapcar #'car sync0-consult-bibtex-action-map)))
-         (action-fn (cdr (assoc action-name sync0-consult-bibtex-action-map))))
-    (if action-fn
-        (funcall action-fn keys)
-      (message "No valid action selected"))))
-
-(defun sync0-consult-bibtex-multi-select (&optional cands)
-  "Allow multiple selection of BibTeX entries using consult-bibtex--read-entry and return their keys.
-CANDS is an optional list of candidates, which defaults to the list generated by
-`consult-bibtex--candidates`."
-  (interactive)
-  (let ((candidates (or cands (consult-bibtex--candidates)))  ;; Get all candidates
-        (selected-keys '())  ;; List to hold selected keys
-        (done nil))          ;; Flag to indicate when to stop
-    (while (not done)
-      (let ((selected (consult-bibtex--read-entry)))
-        (if selected
-            (progn
-              (push selected selected-keys)  ;; Add selected entry to the list
-              (message "Selected entry: %s" selected))
-          (setq done t)))  ;; Exit the loop if the user presses C-g or cancels
-      (when (not (yes-or-no-p "Continue selecting? "))
-        (setq done t)))  ;; Exit the loop if the user decides not to continue
-    (message "Final selection: %s" selected-keys)
-    (sync0-consult-bibtex-batch-action selected-keys)))
-
-(evil-leader/set-key "v" 'sync0-consult-bibtex-multi-select)
+(major-mode-hydra-define bibtex-mode nil 
+  ("Entries"
+   (("c" sync0-bibtex-clean-entry "Clean this entry")
+    ("E" sync0-bibtex-define-entry "New entry")
+    ("e" (sync0-bibtex-define-entry t) "Quick new entry")
+    ;; ("d" doi-utils-add-bibtex-entry-from-doi "Entry from DOI")
+    ;; ("m" sync0-bibtex-define-multiple-entries "Define entries")
+    ("d" sync0-bibtex-derive-entries-from-collection "Derive from collection")
+    ("t" sync0-bibtex-transplant-obsidian-ref-into-biblatex "Entry from mdnote")
+    ("u" sync0-bibtex-update-key "Update key")
+    ("n" sync0-bibtex-open-notes-at-point "Open notes")
+    ("M" sync0-bibtex-define-similar-type-entries "Define X similar entries")
+    ("f" sync0-bibtex-define-entries-from-bibkey "Define multiple from this entry")
+    ;; ("g" sync0-bibtex-python-bibentry-from-gallica "Define entry from Gallica")
+    ("W" sync0-bibtex-python-bibentry-from-webscrapper "Define from webscrapper")
+    ("Z" sync0-bibtex-bibentry-from-anystyle "Define from AnyStyle")
+    ("V" bibtex-completion-download-from-youtube "Download Youtube video")
+    ("2" sync0-bibtex-duplicate-attachment-from-bibkey "Duplicate attachment")
+    ("D" sync0-bibtex-python-bibentry-from-doi-or-isbn "Define from DOI or ISBN"))
+   ;; ("w" sync0-bibtex-open-url "Open url")
+   ;; ("M" sync0-bibtex-move-entry-to-bibfile "Move entry to bibfile")
+   ;; ("D" sync0-bibtex-delete-entry "Delete entry")
+   ;; ("A" sync0-bibtex-archive-entry "Archive entry")
+   ;; ("1" sync0-bibtex-file-exists-p "Check file exists")
+   "PDF editing & more"
+   (("X" sync0-bibtex-delete-attachments "Delete attachments")
+    ;; ("P" sync0-pandoc-export-epub-to-pdf "EPUB to PDF")
+    ("P" bibtex-completion-search-pdf-with-python "Search PDF (Python)")
+    ("C" sync0-bibtex-copy-attachment-at-point "Copy attachment")
+    ;; ("C" sync0-bibtex-crop-pdf "Crop attached PDF")
+    ("3" bibtex-completion-ocr-pdf-files "OCR pdf")
+    ("T" sync0-bibtex-recalc-tags-and-mdnote-at-point "Recalc keywords at point")
+    ("o" sync0-bibtex-open-pdf-at-point "Show PDF")
+    ("O" (sync0-bibtex-open-pdf-at-point t) "Show crossref PDF")
+    ;; ("x" sync0-bibtex-extract-from-crossref "Extract from crossref")
+    ;; ("P" sync0-bibtex-copy-pdf-to-path "Copy to path")
+    ("p" bibtex-completion-print-pdf-list "Print att. from entry"))
+   ;; This does note work for some reason
+   ;; ("x" sync0-bibtex-arrange-pdf "Arrange pdf")
+   ;; ("T" sync0-bibtex-add-toc-to-pdf "Add TOC to PDF")
+   ;; ("K" sync0-bibtex-add-key-to-pdf "Add key to PDF")
+   ;; ("s" sync0-bibtex-extract-subpdf "Extract subpdf")
+   ;; ("d" sync0-bibtex-download-pdf "Download pdf from url")
+   ;; "Visit"
+   ;; ("o" sync0-org-ref-open-pdf-at-point "Open in pdfview")
+   ;; ("n" sync0-bibtex-open-notes "Open annotations")
+   "Bibliographies"
+   (("U" sync0-ivy-bibtex-update-cache "Update BibTeX keys cache")
+    ("S" sync0-consult-bibtex-multi-select "Search entry")
+    ("s" sync0-consult-bibtex-with-local-bibliography "Search entry locally")
+    ("b" sync0-bibtex-recalc-bibliographies "Recalc bibliographies")
+    ("B" sync0-bibtex-recalc-master-bibliography "Recalc master bib file")
+    ("r" sync0-bibtex-populate-keys "Populate keys")
+    ("v" sync0-bibtex-visit-bibliography "Visit bibfile"))
+   "Etc"
+   ;; ("r" (sync0-bibtex-update-completion-files sync0-bibtex-completion-variables-list) "Refresh completion vars")
+   (("a" sync0-bibtex-add-field-at-point "Add field")
+    ("A" (sync0-bibtex-add-field-at-point t) "Add field and recalc")
+    ("I" sync0-bibtex-convert-jpg-to-pdf "Convert jpg to pdf")
+    ("i" bibtex-completion-open-url "Open URL")
+    ("k" sync0-add-field-theme "Add theme")
+    ("w" sync0-search-in-catalogs "Search in catalogs")
+    ("1" bibtex-convert-pdf-to-txt "Convert to TXT")
+    ;; ("2" sync0-bibtex-python-summarize-txt "Summarize TXT")
+    ("y" bibtex-completion-yank-citations-from-bibkeys "Yank citation.")
+    ("N" sync0-bibtex-create-note-at-point "Create mdnote")
+    ("R" (sync0-bibtex-create-note-at-point t) "Rewrite mdnote"))))
 
 (provide 'sync0-ivy-bibtex-functions)

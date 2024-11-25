@@ -1,6 +1,10 @@
+(use-package consult-bibtex
+  :after bibtex-completion
+  :straight (consult-bibtex :type git :host github :repo "mohkale/consult-bibtex")
+  :custom
+  (consult-bibtex-default-action 'consult-bibtex-show-entry))
+
 (use-package bibtex-completion
-  :init 
-  (require 'sync0-bibtex-vars)
   :custom 
   (bibtex-completion-bibliography sync0-bibtex-bibliographies)
   (bibtex-completion-notes-path sync0-zettelkasten-references-directory)
@@ -14,7 +18,6 @@
   ;; (bibtex-completion-pdf-extension sync0-bibtex-completion-extension)
   (bibtex-completion-additional-search-fields '(date volume edition))
   :config 
-  (require 'sync0-bibtex-functions)
 
   ;; (setq bu-keywords-values sync0-bibtex-completion-keywords)
 
@@ -54,20 +57,13 @@
          "## Description\n\n"
          "## Progrès de la lecture\n\n"
          "## Annotations\n\n"
-         "## Références\n\n")))
+         "## Références\n\n"))
 
-(use-package consult-bibtex
-  :after bibtex-completion
-  :straight (consult-bibtex :type git :host github :repo "mohkale/consult-bibtex")
-  :custom
-  (consult-bibtex-default-action 'consult-bibtex-show-entry)
-  :config
   (require 'sync0-ivy-bibtex)
-  (require 'sync0-ivy-bibtex-functions))
+  (require 'sync0-ivy-bibtex-functions)
+  (require 'sync0-bibtex-markdown))
 
 (with-eval-after-load 'embark
   (add-to-list 'embark-keymap-alist '(bibtex-completion . consult-bibtex-embark-map)))
-
-
 
 (provide 'sync0-bibtex-completion)

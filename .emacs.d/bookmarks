@@ -2,7 +2,25 @@
 ;;; This format is meant to be slightly human-readable;
 ;;; nevertheless, you probably don't want to edit it.
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
-(("here´"
+(("heer"
+ (filename . "~/Gdrive/obsidian/drafts/24330cqq.md")
+ (front-context-string . "Dans cette secti")
+ (rear-context-string . " de la section\n\n")
+ (position . 63816)
+ (last-modified 26437 1371 602192 587000))
+("ch2"
+ (filename . "~/Gdrive/obsidian/drafts/24330quy.md")
+ (front-context-string . "### 1.2 Fontes ^")
+ (rear-context-string . "lculi ^skipped\n\n")
+ (position . 1959)
+ (last-modified 26436 56147 571333 940000))
+("herew"
+ (filename . "~/.emacs.d/sync0/sync0-bibtex-sql.el")
+ (front-context-string . "  (let ((result ")
+ (rear-context-string . "given CITEKEY.\"\n")
+ (position . 317)
+ (last-modified 26434 25398 911046 155000))
+("here´"
  (filename . "~/Gdrive/obsidian/collages/24142vuk.md")
  (front-context-string . " \n\nentrepreneur ")
  (rear-context-string . "364rb, 29].\n\n   ")
@@ -166,11 +184,11 @@
  (rear-context-string . "Eles | têm    |\n")
  (position . 1687))
 ("here2"
- (filename . "~/.emacs.d/sync0_emacs.org")
- (front-context-string . "delete-all name ")
- (rear-context-string . "ew-abbrev (assq-")
- (position . 94802)
- (last-modified 26432 55884 197582 923000))
+ (filename . "~/Gdrive/obsidian/drafts/24330quy.md")
+ (front-context-string . "\n### 1.1 Descrip")
+ (rear-context-string . "ezettel →](.md)\n")
+ (position . 713)
+ (last-modified 26436 57117 998977 520000))
 ("matonti"
  (filename . "~/Dropbox/notes/matonti2012.org")
  (front-context-string . "\n\n* 無 Conclusion")
@@ -302,9 +320,9 @@
  (rear-context-string . "\"init.el\"))))))\n")
  (position . 5443))
 ("here"
- (filename . "~/Gdrive/obsidian/collages/24142vuk.md")
- (front-context-string . "aut d’instructio")
- (rear-context-string . "r et dont le déf")
- (position . 91721)
- (last-modified 26432 55869 901808 567000))
+ (filename . "~/Gdrive/obsidian/drafts/24330cqq.md")
+ (front-context-string . "Dans cette secti")
+ (rear-context-string . " de la section\n\n")
+ (position . 63816)
+ (last-modified 26437 1374 491842 658000))
 )

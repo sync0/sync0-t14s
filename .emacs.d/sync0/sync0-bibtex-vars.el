@@ -1,5 +1,6 @@
 ;; -*- lexical-binding: t -*-
 (require 'sync0-vars)
+(require 'cl-lib)
 
 (defvar sync0-bibtex-bibliographies nil
   "Default bibliographies to be read by helm-bibtex and others")
@@ -76,7 +77,7 @@ for diagnostics purposes only.")
   "Dummy var. to hold the bibtex entry to include in the database.")
 
 (defvar sync0-bibtex-fields
-  '("titleaddon" "title" "subtitle" "origtitle" "eventtitle" "date" "origdate" "eventdate" "author" "editor" "translator" "recipient" "introduction" "journaltitle" "edition" "booktitle" "booksubtitle" "crossref" "chapter" "volume" "volumes" "number" "series" "publisher" "location" "pages" "note" "doi" "url" "urldate" "language" "langid" "origlanguage" "medium" "institution" "library" "related" "relatedtype" "relatedstring" "file" "created" "password" "shorttitle" "doctype" "shorthand" "description" "keywords" "foreword" "afterword" "editortype" "pagetotal" "verba" "cote" "project" "site" "version" "people" "country" "lecture" "seminar" "theme" "currency" "value" "recommender" "podcast" "visibility" "source" "year" "status" "alive" "expages" "century" "aliases" "scanstatus" "issuetitle" "priority" "scheduled" "deadline" "supervisor" "lastseen" "seen" "amount" "revised" "mention" "format" "jury" "reviewer" "filetype" "extension" "mentioned" "bookloan" "myrole" "pubstate" "titleaddon" "columns" "section" "paragraphs" "verses" "lines" "course" "origpublisher" "issuedate" "expirydate" "csl" "conference" "modified" "languages")
+  '("titleaddon" "title" "subtitle" "origtitle" "eventtitle" "date" "origdate" "eventdate" "author" "editor" "translator" "recipient" "introduction" "journaltitle" "edition" "booktitle" "booksubtitle" "crossref" "chapter" "volume" "volumes" "number" "series" "publisher" "location" "pages" "note" "doi" "url" "urldate" "language" "langid" "origlanguage" "medium" "institution" "library" "related" "relatedtype" "relatedstring" "file" "created" "password" "shorttitle" "doctype" "shorthand" "description" "keywords" "foreword" "afterword" "editortype" "pagetotal" "verba" "cote" "project" "site" "version" "people" "country" "lecture" "seminar" "theme" "currency" "value" "recommender" "podcast" "visibility" "source" "year" "status" "alive" "expages" "century" "aliases" "scanstatus" "issuetitle" "priority" "scheduled" "deadline" "supervisor" "lastseen" "seen" "amount" "revised" "mention" "format" "jury" "reviewer" "filetype" "extension" "mentioned" "bookloan" "myrole" "pubstate" "titleaddon" "columns" "section" "paragraphs" "verses" "lines" "course" "origpublisher" "issuedate" "expirydate" "csl" "conference" "modified" "languages" "editora" "editoratype" "editorb" "editorbtype" "editorc" "editorctype")
   "List of Bibtex entry fields")
 
 (defvar sync0-bibtex-automatic-fields
@@ -107,7 +108,15 @@ because it requires a special treatment.")
   "List of Bibtex entry fields for dates. These functions are manually")
 
 (defvar sync0-bibtex-people-fields
-  '("author" "editor" "people" "recipient" "translator" "introduction" "foreword" "afterword" "recommender" "supervisor" "jury" "reviewer")
+  '("author" "editor" "people" "recipient" "translator" "introduction" "foreword" "afterword" "recommender" "supervisor" "jury" "reviewer" "editora" "editorb" "editorc")
+  "List of Bibtex entry fields")
+
+(defvar sync0-bibtex-editor-fields
+  '("editor" "editora" "editor" "editorc")
+  "List of Bibtex entry fields")
+
+(defvar sync0-bibtex-editortype-fields
+  '("editortype" "editoratype" "editorbtype" "editorctype")
   "List of Bibtex entry fields")
 
 ;; (defvar sync0-bibtex-full-fields
@@ -190,7 +199,7 @@ because it requires a special treatment.")
   "List of Bibtex entry fields")
 
 (defvar sync0-bibtex-completion-single-fields
-  '("publisher" "journaltitle" "location" "titleaddon" "title" "eventtitle" "note" "library" "series" "institution" "language" "site" "relatedtype" "editortype" "lecture" "seminar" "podcast" "visibility" "source" "status" "alive" "scanstatus" "priority" "currency" "format" "extension" "bookloan" "myrole" "pubstate" "titleaddon")
+  '("publisher" "journaltitle" "location" "titleaddon" "title" "eventtitle" "note" "library" "series" "institution" "language" "site" "relatedtype" "lecture" "seminar" "podcast" "visibility" "source" "status" "alive" "scanstatus" "priority" "currency" "format" "extension" "bookloan" "myrole" "pubstate" "titleaddon")
    "List of biblatex fields that are set with the completing-read
 function---as opposed to those defined with
 completing-read-multiple, which appear in
@@ -233,6 +242,14 @@ used by my biblatex functions.")
   (let* ((my-var (intern (concat "sync0-bibtex-entry-" element)))
          (comp-file (concat sync0-vars-dir "bibtex-completion-author.txt"))
          (my-list-elem (list element my-var 'sync0-bibtex-completion-author comp-file)))  
+    (unless (file-exists-p comp-file)
+      (make-empty-file comp-file))
+    (push my-list-elem sync0-bibtex-completion-variables-list)))
+
+(dolist (element sync0-bibtex-editortype-fields)
+  (let* ((my-var (intern (concat "sync0-bibtex-entry-" element)))
+         (comp-file (concat sync0-vars-dir "bibtex-completion-editortype.txt"))
+         (my-list-elem (list element my-var 'sync0-bibtex-completion-editortype comp-file)))  
     (unless (file-exists-p comp-file)
       (make-empty-file comp-file))
     (push my-list-elem sync0-bibtex-completion-variables-list)))
@@ -772,7 +789,7 @@ it.")
   "Function to hold cached data from database")
 
 (defvar sync0-bibtex-db-purged-extra-fields 
-  (let* ((extra-fields-remove-plus (append sync0-bibtex-people-fields '("theme" "keywords" "langid" "subtitle" "date" "origdate" "title" "year" "century")))
+  (let* ((extra-fields-remove-plus (append sync0-bibtex-people-fields '("theme" "keywords" "langid" "subtitle" "date" "origdate" "title" "year" "century" "editortype")))
          (extra-fields-raw (cl-set-difference sync0-bibtex-fields sync0-bibtex-db-main-fields :test #'string=)))
          (cl-set-difference extra-fields-raw extra-fields-remove-plus :test #'string=))
   "Purged extra fields to pass to the db extra TABLE to prevent

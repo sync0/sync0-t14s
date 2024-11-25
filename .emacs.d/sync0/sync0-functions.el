@@ -409,6 +409,60 @@ If the directory doesn't exist, create it."
           (sync0-delimiter-remover x))
       x)))
 
+(defun sync0-create-scratch-buffer nil
+  "create a scratch buffer"
+  (interactive)
+  (switch-to-buffer (get-buffer-create "*scratch*"))
+  (lisp-interaction-mode))
+
+(defun replace-smart-quotes-regexp (beg end)
+  "Replace 'smart quotes' in buffer or region with ascii quotes."
+  (interactive "r")
+  (mapcar
+   (lambda (r)
+     (save-excursion
+       (replace-regexp (car r) (cdr r) nil beg (min end (point-max)))))
+   smart-quote-regexp-replacements))
+
+(defun replace-smart-quotes (beg end)
+  "Replace 'smart quotes' in buffer or region with ascii quotes."
+  (interactive "r")
+  ;;(while (search-forward-regexp "- " nil to)
+  ;; (replace-match "") nil t)
+  ;; add alpha. And replace the alpha.
+
+  (replace-smart-quotes-regexp beg end)
+  (format-replace-strings '(("\x201C" . "``")
+                            ("“" . "``")
+                            ("\x201D" . "''")
+                            ("”" . "''")
+                            ("\x2018" . "`")
+                            ("\x2019" . "'")
+                            ("’" . "'")
+                            ;;("''" . "\"")
+                            ;;("​" . "")
+                            ;;("…" . "...")
+                            ("…" . "\\ldots")
+                            ("..." . "\\ldots")
+                            ;;("• " . "- ")
+                            ;;(" " . "")
+                            ("  " . " "))
+                          nil   beg (min end (point-max))))
+
+
+;; Taken from ESXML emacs mode
+;; https://github.com/tali713/esxml/blob/master/esxml.el
+
+(defun string-trim-whitespace (string)
+  "A simple function, strips the whitespace from beginning and
+end of the string.  Leaves all other whitespace untouched."
+  (replace-regexp-in-string
+   (rx string-start (* whitespace)
+       (group (+? anything))
+       (* whitespace) string-end)
+   "\\1"
+   string))
+
 (provide 'sync0-functions)
 
 

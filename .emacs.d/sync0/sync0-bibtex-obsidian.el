@@ -2,7 +2,7 @@
 (require 'sync0-bibtex-key-functions)
 (require 'sync0-bibtex-utils)
 (require 'sync0-bibtex-corrections)
-(require 'sync0-obsidian)
+(require 'sync0-zettelkasten)
 (require 'sync0-yaml)
 
 (defun sync0-bibtex-transplant-obsidian-ref-into-biblatex ()

@@ -1,6 +1,8 @@
 ;; (require 'sqlite-mode)
 (require 'sync0-bibtex-vars)
+(require 'sync0-bibtex-utils)
 (require 'sync0-bibtex-sql-utils)
+(require 'sync0-bibtex-entry-functions)
 
 (defun sync0-bibtex-sql-get-bibentry (citekey db)
   "Query the database DB for the value of bibentry in the extra_fields table for the given CITEKEY."
@@ -51,10 +53,10 @@ If the person is not found, insert the person into the database and return the n
 		       (sqlite-select db query)))))
     (caar result)))
 
-(defun sync0-bibtex-sql-rollback-transaction ()
+(defun sync0-bibtex-sql-rollback ()
   (interactive)
   (let ((db (sync0-bibtex-sql-get-database)))
-    (sqlite-execute db "ROLLBACK;")))
+    (sqlite-rollback db)))
 
 ;;   (let ((db (sync0-bibtex-sql-get-database)))
 ;; (sync0-bibtex-sql-add-authors db sync0-bibtex-completion-author))
@@ -125,14 +127,14 @@ If a keyword already exists, retrieve its keyword_id, otherwise insert it."
   (let ((query "SELECT person_id, person_name FROM people LIMIT 20;"))
     (sqlite-select db query)))
 
-(defun sync0-bibtex-sql-insert-person-role (citekey db person role)
+(defun sync0-bibtex-sql-insert-person-role (citekey db person role &optional roletype)
   "Insert a person with a specific ROLE for a given CITEKEY into the database DB."
-  (let ((person-id (sync0-bibtex-sql-get-person-id person db)))
+  (let* ((person-id (sync0-bibtex-sql-get-person-id person db))
+	 (command (if roletype
+	  (format "INSERT INTO entry_people (citekey, person_id, role, roletype) VALUES ('%s', %d, '%s', '%s');" citekey person-id role roletype)
+	  (format "INSERT INTO entry_people (citekey, person_id, role) VALUES ('%s', %d, '%s');" citekey person-id role))))
     ;; Insert the person-role relationship
-    (sqlite-execute db
-                    (format "INSERT INTO entry_people (citekey, person_id, role)
-                             VALUES ('%s', %d, '%s');"
-                            citekey person-id role))))
+    (sqlite-execute db command)))
 
 ;; This function has been tested and works properly to insert the
 ;; relations between people, their roles and the citekeys.
@@ -145,9 +147,12 @@ If a keyword already exists, retrieve its keyword_id, otherwise insert it."
           ;; Handle case where there is only one person (no "and")
           (dolist (person people-list)
             ;; Check if the person already exists, if not, insert them
-            (let ((person-id (sync0-bibtex-sql-get-person-id person db)))
+            (let ((person-id (sync0-bibtex-sql-get-person-id person db))
+		  (roletype (sync0-bibtex-get-editortype people-field)))  
               ;; Insert the person into `entry_people` with the correct role
-              (sync0-bibtex-sql-insert-person-role citekey db person people-field))))))))
+	      (if roletype
+              (sync0-bibtex-sql-insert-person-role citekey db person people-field roletype)
+              (sync0-bibtex-sql-insert-person-role citekey db person people-field)))))))))
 
 (defun sync0-bibtex-sql-insert-keywords (citekey db)
   "Insert keywords from the predefined `sync0-bibtex-people-theme`
@@ -354,7 +359,7 @@ into the database DB and associate with ENTRY."
 	  (push value main-values))))
 
     ;; Wrap in a transaction
-    (sqlite-execute db "BEGIN TRANSACTION;")
+    (sqlite-transaction db)
     (unwind-protect
         (progn
           ;; Insert main entry
@@ -370,7 +375,7 @@ into the database DB and associate with ENTRY."
 	  (sync0-bibtex-sql-insert-keywords citekey db)
 	  ;; **Insert Extra fields**
           (sync0-bibtex-sql-insert-extra-fields citekey db))
-      (sqlite-execute db "COMMIT;")
+      (sqlite-commit db)
       (setq sync0-bibtex-db-dirty t))))
 
       ;; **Print SQL for inserting into `extra_fields`**
@@ -851,7 +856,7 @@ into the database DB and associate with ENTRY."
 (defun sync0-bibtex-update-bibkey-in-db (citekey db)
   "Update the database DB with the BibTeX entry identified by CITEKEY.
 Compares values in the database and performs actual SQL updates or inserts."
-  (sqlite-execute db "BEGIN TRANSACTION;")
+  (sqlite-transaction db)
   (unwind-protect
       (progn
 	;; **Main Fields Update**
@@ -859,7 +864,7 @@ Compares values in the database and performs actual SQL updates or inserts."
 	;; **Extra Fields Update**
         (sync0-bibtex-sql-update-extra-fields citekey db)
         ;; First, get the list of existing columns in extra_fields
-	(sqlite-execute db "COMMIT;")
+	(sqlite-commit db)
 	(setq sync0-bibtex-db-dirty t))))
 
     ;; **People and Keywords Update** (Optional: Implement actual logic here if needed)

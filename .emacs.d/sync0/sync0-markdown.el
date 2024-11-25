@@ -1,9 +1,7 @@
 (require 'sync0-pandoc)
 (require 'sync0-print)
 (require 'sync0-yaml)
-(require 'sync0-obsidian)
-(require 'sync0-bibtex-utils)
-(require 'sync0-bibtex-actions)
+(require 'sync0-zettelkasten)
 
 (defun sync0-markdown-next-heading ()
   "Move to the next heading in the document."
@@ -34,7 +32,6 @@
 
 ;; (setq markdown-list-item-bullets '("●" "◎" "○" "◆" "◇" "►" "•"))
 (setq markdown-list-item-bullets '("•"))
-
 
 (setq sync0-markdown-zettel-template 
       (concat
@@ -599,66 +596,5 @@ If not found, fallback to an interactive search using `sync0-search-obsidian-not
 
 ;; Add our enhanced function to the markdown-follow-link hook
 (add-hook 'markdown-follow-link-functions 'sync0-markdown-link-finder-with-search)
-
-(defun sync0-markdown-open-attachment-at-point ()
-  "Open the PDF associated with the nearest citation in Markdown.
-Searches backward for a citation in visual lines, or prompts for a BibTeX key if none is found."
-  (interactive)
-  (save-excursion
-    (let ((citation-id nil)
-          (search-regex "\\[@\\([a-zA-Z0-9-]+\\)[^]]*\\]")) ;; Regex to match citation
-      ;; Check if the point is already at a citation
-      (if (looking-at search-regex)
-          (setq citation-id (match-string 1))
-        ;; Otherwise, search backward within the current visual line
-        (progn
-          (beginning-of-visual-line)
-          (if (re-search-backward search-regex (line-beginning-position) t)
-              (setq citation-id (match-string 1))
-            ;; If no citation is found, prompt for a key
-            (setq citation-id (sync0-bibtex-completion-choose-key t nil "Attachment to search: ")))))
-      ;; Open the PDF if a citation ID is found
-      (if citation-id
-          (sync0-bibtex-open-pdf citation-id)
-        (message "No citation found or provided.")))))
-
-(major-mode-hydra-define markdown-mode nil 
-  ("Links"
-   ;; ("s" org-store-link)
-   (("i" markdown-insert-wiki-link "Insert wiki-link")
-    ("k" markdown-insert-link "Insert markdown link")
-    ("I" markdown-insert-image "Insert image"))
-   "Scholarly"
-   (("f" sync0-toggle-footnote "Add or navigate footnote")
-;;     ("F" markdown-footnote-return "Footnote navigate back")
-    ("o" sync0-markdown-open-attachment-at-point "Open citation")
-    ("c" counsel-bibtex "Show bibtex entry"))
-   "Visualization"
-   (("m" markdown-toggle-markup-hiding "Toggle markup")
-    ("b" markdown-narrow-to-subtree "Narrow to header")
-    ("z" sync0-markdown-open-pdf-in-zathura "Show PDF")
-    ("L" sync0-markdown-open-docx-in-libreoffice "Show DOCX")
-    ("r" sync0-org-ref-open-pdf-at-point-zathura "Open reference pdf"))
-   "Export"
-   (("p" sync0-pandoc-export-md-to-pdf "Pdf")
-;;     ("p" sync0-pandoc-process-markdown "Pdf (quick)")
-    ("l" sync0-pandoc-export-md-to-tex "TeX")
-    ("d" sync0-pandoc-export-md-to-docx "Docx"))
-   ;; ("b" org-epub-export-to-epub)
-   ;; ("t" sync0-pandoc-export-md-to-tex)
-   ;; ("E" sync0-org-export-headlines-to-latex)
-   "Etc"
-   (("a" sync0-define-local-abbrev "Define abbrev")
-   ("P" sync0-markdown-print-pdf "Print corresp. pdf")
-   ("C" sync0-markdown-copy-pdf-in-cabinet "Copy pdf to cabinet")
-;;    ("P" sync0-markdown-print-pdf-from-markdown "Print pdf")
-   ("1" sync0-markdown-correct-footnotes "Correct footnotes (all)")
-   ;; ("2" sync0-markdown-rename-footnotes-in-section "Correct footnotes (section)")
-   ("2" sync0-markdown-correct-footnotes-with-starting-number "Correct footnotes (w/ number)")
-   ("3" sync0-markdown-copy-header-choose "Copy text under header")
-   ("4" sync0-markdown-generate-toc "Generate TOC")
-   ("g" sync0-markdown-copy-pdf-to-goodreads "Copy pdf to goodreads")
-   ;; ("C" sync0-markdown-save-exported-pdf-in-cabinet "Copy pdf to cabinet")
-   ("M" sync0-markdown-copy-pdf-to-path "Move to path"))))
 
 (provide 'sync0-markdown)

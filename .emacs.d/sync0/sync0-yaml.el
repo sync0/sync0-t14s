@@ -1,3 +1,4 @@
+(require 'sync0-functions)
 (require 'yaml-mode)
 
 (defun sync0-parse-yaml-front-matter ()

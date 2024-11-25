@@ -93,6 +93,11 @@
   (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_labeling" . "#\\+END_labeling"))
   (add-to-list 'ispell-skip-region-alist '("#\\+[A-z]+: .+$"))
   (add-to-list 'ispell-skip-region-alist '("\\[\\[" . "\\]\\]"))
+  ;; ignore pandoc markdown citations
+  (add-to-list 'ispell-skip-region-alist '("\\[@" "\\]"))
+  (add-to-list 'ispell-skip-region-alist '("\\](" "md)"))
+  (add-to-list 'ispell-skip-region-alist '("{\\." "}"))
+  (add-to-list 'ispell-skip-region-alist '("^---$" "^---$"))
   (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_equation*" . "#\\+END_equation*"))
   (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_align" . "#\\+END_align"))
   (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_align*" . "#\\+END_align*"))

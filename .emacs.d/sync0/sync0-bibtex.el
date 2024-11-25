@@ -21,6 +21,12 @@
   (bibtex-entry-format '(opts-or-alts page-dashes whitespace braces last-comma inherit-booktitle delimiters sort-fields realign))
   :config
   (require 'sync0-bibtex-vars)
+  (require 'sync0-bibtex-fields)
+  (require 'sync0-bibtex-var-functions)
+  (require 'sync0-bibtex-key-functions)
+  (require 'sync0-zettelkasten)
+  (require 'sync0-bibtex-corrections)
+  (require 'sync0-bibtex-utils)
 
   (unbind-key "TAB" bibtex-mode-map)
 

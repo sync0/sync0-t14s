@@ -1,8 +1,11 @@
+(require 'sync0-macros)
+(require 'bibtex-utils)
 (require 'sync0-bibtex-vars)
 (require 'sync0-bibtex-key-functions)
 (require 'sync0-bibtex-corrections)
 (require 'sync0-bibtex-utils)
-(require 'obsidian)
+(require 'sync0-ivy-bibtex)
+;; (require 'obsidian)
 ;; (require 'sync0-obsidian)
 (require 'sync0-projects)
 

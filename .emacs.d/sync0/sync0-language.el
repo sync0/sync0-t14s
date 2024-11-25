@@ -1,72 +1,138 @@
 (require 'ispell)
+
 (defvar sync0-language-active-table nil "Abbreviation table for language minor modes.")
 
 (define-minor-mode english-mode
   "Minor mode for English language."
   :lighter " en"
   :keymap nil
+  (if english-mode
       (progn
         (setq-local local-abbrev-table english-mode-abbrev-table)
         (setq sync0-language-active-code "en")
         (setq sync0-language-active-table "english-mode")
         (set-input-method nil)               ;; No input method needed for English
-        (ispell-change-dictionary "en_US-large")))
+        (ispell-change-dictionary "en_US-large"))
+    ;; Reset changes when mode is disabled
+    (kill-local-variable 'local-abbrev-table)
+    (kill-local-variable 'sync0-language-active-code)
+    (kill-local-variable 'sync0-language-active-table)))
 
+(define-globalized-minor-mode global-english-mode
+  english-mode
+  (lambda ()
+    (when (derived-mode-p 'text-mode) ;; Only activate in text-based modes
+      (english-mode 1))))
+
+;; Define Spanish Mode
 (define-minor-mode spanish-mode
   "Minor mode for Spanish language."
   :lighter " es"
   :keymap nil
+  (if spanish-mode
       (progn
         (setq-local local-abbrev-table spanish-mode-abbrev-table)
         (setq sync0-language-active-code "es")
         (setq sync0-language-active-table "spanish-mode")
         (set-input-method "spanish-prefix")
-        (ispell-change-dictionary "es")))
+        (ispell-change-dictionary "es"))
+    (kill-local-variable 'local-abbrev-table)
+    (kill-local-variable 'sync0-language-active-code)
+    (kill-local-variable 'sync0-language-active-table)))
 
+(define-globalized-minor-mode global-spanish-mode
+  spanish-mode
+  (lambda ()
+    (when (derived-mode-p 'text-mode)
+      (spanish-mode 1))))
+
+;; Define Portuguese Mode
 (define-minor-mode portuguese-mode
   "Minor mode for Portuguese language."
   :lighter " pr"
   :keymap nil
+  (if portuguese-mode
       (progn
         (setq-local local-abbrev-table portuguese-mode-abbrev-table)
         (setq sync0-language-active-code "pt")
         (setq sync0-language-active-table "portuguese-mode")
         (set-input-method "portuguese-prefix")
-        (ispell-change-dictionary "pt_BR")))
+        (ispell-change-dictionary "pt_BR"))
+    (kill-local-variable 'local-abbrev-table)
+    (kill-local-variable 'sync0-language-active-code)
+    (kill-local-variable 'sync0-language-active-table)))
 
+(define-globalized-minor-mode global-portuguese-mode
+  portuguese-mode
+  (lambda ()
+    (when (derived-mode-p 'text-mode)
+      (portuguese-mode 1))))
+
+;; Define French Mode
 (define-minor-mode french-mode
   "Minor mode for French language."
   :lighter " fr"
   :keymap nil
+  (if french-mode
       (progn
         (setq-local local-abbrev-table french-mode-abbrev-table)
         (setq sync0-language-active-code "fr")
-;;         (set-input-method "french-prefix")
         (setq sync0-language-active-table "french-mode")
         (set-input-method "french-postfix")
-        (ispell-change-dictionary "fr_FR")))
+        (ispell-change-dictionary "fr_FR"))
+    (kill-local-variable 'local-abbrev-table)
+    (kill-local-variable 'sync0-language-active-code)
+    (kill-local-variable 'sync0-language-active-table)))
 
+(define-globalized-minor-mode global-french-mode
+  french-mode
+  (lambda ()
+    (when (derived-mode-p 'text-mode)
+      (french-mode 1))))
+
+;; Define Italian Mode
 (define-minor-mode italian-mode
   "Minor mode for Italian language."
   :lighter " it"
   :keymap nil
+  (if italian-mode
       (progn
         (setq-local local-abbrev-table italian-mode-abbrev-table)
         (setq sync0-language-active-code "it")
         (setq sync0-language-active-table "italian-mode")
         (set-input-method "italian-postfix")
-        (ispell-change-dictionary "it_IT")))
+        (ispell-change-dictionary "it_IT"))
+    (kill-local-variable 'local-abbrev-table)
+    (kill-local-variable 'sync0-language-active-code)
+    (kill-local-variable 'sync0-language-active-table)))
 
+(define-globalized-minor-mode global-italian-mode
+  italian-mode
+  (lambda ()
+    (when (derived-mode-p 'text-mode)
+      (italian-mode 1))))
+
+;; Define German Mode
 (define-minor-mode german-mode
   "Minor mode for German language."
   :lighter " de"
   :keymap nil
+  (if german-mode
       (progn
         (setq-local local-abbrev-table german-mode-abbrev-table)
         (setq sync0-language-active-code "de")
         (setq sync0-language-active-table "german-mode")
         (set-input-method "german-prefix")
-        (ispell-change-dictionary "de_DE")))
+        (ispell-change-dictionary "de_DE"))
+    (kill-local-variable 'local-abbrev-table)
+    (kill-local-variable 'sync0-language-active-code)
+    (kill-local-variable 'sync0-language-active-table)))
+
+(define-globalized-minor-mode global-german-mode
+  german-mode
+  (lambda ()
+    (when (derived-mode-p 'text-mode)
+      (german-mode 1))))
 
 (setq abbrev-minor-mode-table-alist '(("english-mode" .   english-mode-abbrev-table)
                                       ("french-mode" .   french-mode-abbrev-table)
@@ -74,6 +140,37 @@
                                       ("french-mode" .   french-mode-abbrev-table)
                                       ("italian-mode" .   italian-mode-abbrev-table)
                                       ("german-mode" .   german-mode-abbrev-table)))
+
+;; (defun sync0-choose-language-action (lang-code)
+;;   "Change language settings for the selected LANG-CODE."
+;;   (let* ((language-map '(("en" . "english")
+;;                         ("fr" . "french")
+;;                         ("es" . "spanish")
+;;                         ("de" . "german")
+;;                         ("it" . "italian")
+;;                         ("pt" . "portuguese")))
+;;          (lang-name (cdr (assoc lang-code language-map)))  ;; Get language name from lang-code
+;;          (lang-mode (intern (concat lang-name "-mode"))))  ;; Construct the mode name (e.g., "english-mode")
+
+;;     ;; Disable all language minor modes
+;;     (dolist (mode '(english-mode spanish-mode portuguese-mode french-mode italian-mode german-mode))
+;;       (when (boundp mode)
+;;         (funcall mode -1)))  ;; Disable each minor mode
+
+;;     ;; Enable the selected language's minor mode
+;;     (when (fboundp lang-mode)
+;;       (funcall lang-mode 1))
+
+;;     (message "Language switched to %s." lang-name)))
+
+;; (defun sync0-choose-current-language ()
+;;   "Let the user choose a language interactively and perform the corresponding action."
+;;   (interactive)
+;;   (let ((chosen-language (completing-read
+;;                            "Choose language: "
+;;                            (list "en" "fr" "es" "de" "it" "pt")
+;;                            nil t)))  ;; t for require match, nil for case insensitive
+;;     (sync0-choose-language-action chosen-language)))
 
 (defun sync0-choose-language-action (lang-code)
   "Change language settings for the selected LANG-CODE."
@@ -84,16 +181,16 @@
                         ("it" . "italian")
                         ("pt" . "portuguese")))
          (lang-name (cdr (assoc lang-code language-map)))  ;; Get language name from lang-code
-         (lang-mode (intern (concat lang-name "-mode"))))  ;; Construct the mode name (e.g., "english-mode")
+         (global-lang-mode (intern (concat "global-" lang-name "-mode"))))  ;; Construct the global mode name (e.g., "global-english-mode")
 
-    ;; Disable all language minor modes
-    (dolist (mode '(english-mode spanish-mode portuguese-mode french-mode italian-mode german-mode))
+    ;; Disable all global language minor modes
+    (dolist (mode '(global-english-mode global-spanish-mode global-portuguese-mode global-french-mode global-italian-mode global-german-mode))
       (when (boundp mode)
-        (funcall mode -1)))  ;; Disable each minor mode
+        (funcall mode -1)))  ;; Disable each global minor mode
 
-    ;; Enable the selected language's minor mode
-    (when (fboundp lang-mode)
-      (funcall lang-mode 1))
+    ;; Enable the selected language's global minor mode
+    (when (fboundp global-lang-mode)
+      (funcall global-lang-mode 1))
 
     (message "Language switched to %s." lang-name)))
 
@@ -106,11 +203,14 @@
                            nil t)))  ;; t for require match, nil for case insensitive
     (sync0-choose-language-action chosen-language)))
 
+
 (defun sync0-language-change (lang beginning end)
   "Set of functions to run after a different language is detected."
   (unless (string-equal guess-language-current-language lang)
 (sync0-choose-language-action lang)))
 
+(defun sync0-ispell-get-word ()
+  (car-safe (save-excursion (ispell-get-word nil))))
 
 (defun sync0-ispell-word-then-abbrev ()
   "Call `ispell-word`, then create an abbrev for it.
@@ -120,13 +220,14 @@
   (if (bound-and-true-p sync0-language-active-table)
       (let (name expansion)
         (save-excursion
-          (while (setq name (sync0-ispell-get-word))
-            ;; Check the word with `ispell`
-            (if (ispell-word nil 'quiet)
-                nil  ; End the loop if word is corrected
-              (unless (bobp)
-                (backward-word)  ;; Keep searching for typos until beginning of buffer
-                (backward-char))))
+          (while  (if (setq name (sync0-ispell-get-word))
+		      ;; Check the word with `ispell`
+		      (if (ispell-word nil 'quiet)
+			  nil  ; End the loop if word is corrected
+			(not (bobp)))
+		    (not (bobp)))
+            (backward-word)  ;; Keep searching for typos until beginning of buffer
+            (backward-char))
           ;; Get the word after spell check
           (setq expansion (sync0-ispell-get-word)))
         ;; Proceed only if the word has changed (i.e., there was an actual typo)

@@ -46,6 +46,9 @@
 (require 'sync0-custom)
 (require 'sync0-sane-defaults)
 (require 'sync0-vars)
+;; Setup for bibtex things
+(require 'sync0-corrections)
+;; Rest
 (require 'sync0-scratch)
 (require 'sync0-predicates)
 (require 'sync0-functions)
@@ -82,6 +85,10 @@
               ("j"  . next-line)
               ("k"  . previous-line))
   :hook (after-init . recentf-mode))
+
+(use-package saveplace
+  :straight nil
+  :config (save-place-mode))
 
 (use-package which-key
   :custom
@@ -121,6 +128,9 @@
 (require 'sync0-bibtex)
 (require 'sync0-markdown-setup)
 (require 'sync0-bibtex-completion)
+(require 'sync0-bibtex-markdown)
+(require 'sync0-obsidian)
+;; (require 'sync0-bibtex-bindings)
 (require 'sync0-programming)
 (require 'sync0-python)
 
@@ -131,7 +141,9 @@
   ;; Fix conflict with Yasnippets
   ;; See https://emacs.stackexchange.com/questions/29758/yasnippets-and-org-mode-yas-next-field-or-maybe-expand-does-not-expand
   (defun yas-org-very-safe-expand ()
-    (let ((yas-fallback-behavior 'return-nil)) (yas-expand))))
+    (let ((yas-fallback-behavior 'return-nil)) (yas-expand))
+    (yas-reload-all)
+    (yas-global-mode)))
 
 (use-package csv-mode
   :disabled t

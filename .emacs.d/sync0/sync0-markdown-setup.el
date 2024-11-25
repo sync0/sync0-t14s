@@ -36,10 +36,14 @@
     (kbd "<tab>") 'markdown-cycle
     (kbd "C-<") 'markdown-backward-same-level
     (kbd "C->") 'markdown-forward-same-level
+    (kbd "C-k") 'markdown-move-up
+    (kbd "C-j") 'markdown-move-down
+    (kbd "C-h") 'markdown-promote
+    (kbd "C-l") 'markdown-demote
     "H" 'markdown-promote
     "L" 'markdown-demote
-    "K" 'markdown-move-up
-    ;; "J" 'markdown-move-down
+;;     "K" 'markdown-move-up
+;;     "J" 'markdown-move-down
     "k" 'evil-previous-visual-line
     "j" 'evil-next-visual-line
     "$" 'evil-end-of-visual-line
