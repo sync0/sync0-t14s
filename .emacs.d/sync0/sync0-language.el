@@ -90,6 +90,14 @@
     (when (derived-mode-p 'text-mode)
       (french-mode 1))))
 
+(defun sync0-enable-french-mode-for-specific-modes ()
+  "Enable french-mode for org-mode and markdown-mode."
+  (when (or (derived-mode-p 'org-mode 'markdown-mode))
+    (french-mode 1)))
+
+(add-hook 'org-mode-hook #'sync0-enable-french-mode-for-specific-modes)
+(add-hook 'markdown-mode-hook #'sync0-enable-french-mode-for-specific-modes)
+
 ;; Define Italian Mode
 (define-minor-mode italian-mode
   "Minor mode for Italian language."
@@ -252,9 +260,6 @@
             (message "\"%s\" now expands to \"%s\" in %s." name expansion mode-table))))
     (error "No local abbrev table active.")))
 
-(global-set-key (kbd "M-i") 'sync0-ispell-word-then-abbrev)
-(evil-leader/set-key "L" 'sync0-ispell-word-then-abbrev)
-
 (defun sync0-lookup-word (word)
   "Search an online dictionary for the word at point according
             to the active language minor mode."
@@ -334,25 +339,5 @@
              (setq parts-list sync0-english-parts-speech)
              (ivy-completing-read "Choose one: " parts-list)))
           (t "No language minor mode specified"))))
-
-(defhydra sync0-hydra-language-functions (:color amaranth :hint nil :exit t)
-  "
-     ^Language functions^
-     ^^^------------------------
-     Show _d_efinition
-     Show _c_onjugation
-     Show in _t_hesaurus
-
-     _q_uit
-        "
-  ;; Quickly work with bookmarks
-  ("d" sync0-lookup-word)
-  ;; ("i" sync0-ispell-word-then-abbrev)
-  ("c" sync0-lookup-conjugation)
-  ("t" sync0-lookup-thesaurus)
-  ("q"  nil :color blue))
-
-(evil-leader/set-key
-  "l" 'sync0-hydra-language-functions/body)
 
 (provide 'sync0-language)

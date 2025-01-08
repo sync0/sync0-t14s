@@ -2,18 +2,36 @@
 ;;; This format is meant to be slightly human-readable;
 ;;; nevertheless, you probably don't want to edit it.
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
-(("heer"
+(("duso"
+ (filename . "~/Gdrive/obsidian/references/23195yz.org")
+ (front-context-string . "\n\n\n** 1.7 Un pia")
+ (rear-context-string . "3195yz, 41-2].\n\n")
+ (position . 11702)
+ (last-modified 26489 22600 894732 381000))
+("coding"
+ (filename . "~/.emacs.d/sync0/sync0-bibtex-sql.el")
+ (front-context-string . " ;; Insert main ")
+ (rear-context-string . "(progn\n         ")
+ (position . 10492)
+ (last-modified 26447 50665 85079 351000))
+("doctorat"
+ (filename . "~/Gdrive/obsidian/drafts/24330cqq.md")
+ (front-context-string . "Dans cette secti")
+ (rear-context-string . " de la section\n\n")
+ (position . 63816)
+ (last-modified 26437 58585 474898 779000))
+("heer"
  (filename . "~/Gdrive/obsidian/drafts/24330cqq.md")
  (front-context-string . "Dans cette secti")
  (rear-context-string . " de la section\n\n")
  (position . 63816)
  (last-modified 26437 1371 602192 587000))
 ("ch2"
- (filename . "~/Gdrive/obsidian/drafts/24330quy.md")
- (front-context-string . "### 1.2 Fontes ^")
- (rear-context-string . "lculi ^skipped\n\n")
- (position . 1959)
- (last-modified 26436 56147 571333 940000))
+ (filename . "~/Gdrive/obsidian/drafts/24330cqq.md")
+ (front-context-string . "Dans cette secti")
+ (rear-context-string . " de la section\n\n")
+ (position . 63816)
+ (last-modified 26437 58580 761988 516000))
 ("herew"
  (filename . "~/.emacs.d/sync0/sync0-bibtex-sql.el")
  (front-context-string . "  (let ((result ")
@@ -69,10 +87,11 @@
  (rear-context-string . "y-functions)))))")
  (position . 36780))
 ("here3"
- (filename . "~/Gdrive/bibliographies/courcelle-seneuil_jde_unverified.bib")
- (front-context-string . "nch},\n  century ")
- (rear-context-string . "          = {fre")
- (position . 65880))
+ (filename . "~/Gdrive/bibliographies/location_lyon.bib")
+ (front-context-string . "{Rivera Carreño,")
+ (rear-context-string . "or            = ")
+ (position . 276)
+ (last-modified 26454 26656 604536 830000))
 ("h3432"
  (filename . "~/Dropbox/obsidian/requisicao2.tex")
  (front-context-string . "\\chapter[head={\\")
@@ -184,11 +203,11 @@
  (rear-context-string . "Eles | têm    |\n")
  (position . 1687))
 ("here2"
- (filename . "~/Gdrive/obsidian/drafts/24330quy.md")
- (front-context-string . "\n### 1.1 Descrip")
- (rear-context-string . "ezettel →](.md)\n")
- (position . 713)
- (last-modified 26436 57117 998977 520000))
+ (filename . "~/.emacs.d/sync0/sync0-org-roam.el")
+ (front-context-string . "(with-temp-buffe")
+ (rear-context-string . " Org file\n      ")
+ (position . 9361)
+ (last-modified 26482 62326 129653 917000))
 ("matonti"
  (filename . "~/Dropbox/notes/matonti2012.org")
  (front-context-string . "\n\n* 無 Conclusion")
@@ -280,10 +299,11 @@
  (rear-context-string . "2020-01-27 Mon>\n")
  (position . 4723))
 ("org-refile-last-stored"
- (filename . "~/Dropbox/org/notes.org")
- (front-context-string . "** 無 Candidature")
- (rear-context-string . "isse du dollar.\n")
- (position . 1575))
+ (filename . "~/Gdrive/obsidian/org/doctorat.org")
+ (front-context-string . "** 未 Enovyer que")
+ (rear-context-string . "025-01, January\n")
+ (position . 3640)
+ (last-modified 26468 11194 958924 824000))
 ("bibliography.bib"
  (filename . "~/Dropbox/research/bibliography.bib")
  (front-context-string . "  subtitle = {So")
@@ -305,10 +325,11 @@
  (rear-context-string . "Jérôme Lallment\n")
  (position . 883))
 ("org-capture-last-stored"
- (filename . "~/Dropbox/org/permanent/20210927132130.org")
- (front-context-string . ":PROPERTIES:\n:ID")
- (rear-context-string)
- (position . 1))
+ (filename . "~/Gdrive/obsidian/project_notes/257pms.org")
+ (front-context-string . "\n* Incipit\n\n* Ad")
+ (rear-context-string . " vsia americana\n")
+ (position . 190)
+ (last-modified 26493 17504 115128 541000))
 ("carc"
  (filename . "~/Dropbox/formularios.org")
  (front-context-string . "* Formulario par")
@@ -320,9 +341,9 @@
  (rear-context-string . "\"init.el\"))))))\n")
  (position . 5443))
 ("here"
- (filename . "~/Gdrive/obsidian/drafts/24330cqq.md")
- (front-context-string . "Dans cette secti")
- (rear-context-string . " de la section\n\n")
- (position . 63816)
- (last-modified 26437 1374 491842 658000))
+ (filename . "~/Gdrive/obsidian/drafts/24344gpe.org")
+ (front-context-string . "\n\n#+BEGIN_QUOTE\n")
+ (rear-context-string . "E \n\n[bookmark]\n\n")
+ (position . 103890)
+ (last-modified 26459 19651 986623 374000))
 )

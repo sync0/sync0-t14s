@@ -1,6 +1,6 @@
 ;; (require 'all-the-icons)
 (require 'sync0-projects)
-(require 'sync0-bibtex-functions)
+;; (require 'sync0-bibtex-functions)
 (require 'sync0-bibtex-vars)
 (require 'sync0-bibtex-var-functions)
 (require 'sync0-ivy-bibtex-functions)
@@ -115,7 +115,7 @@
   (interactive)
   (when (eq major-mode 'ebib-index-mode)
     (let* ((key (ebib--get-key-at-point))
-           (notes-file  (concat sync0-zettelkasten-references-directory key ".md")))
+           (notes-file  (concat sync0-zkn-references-dir key ".md")))
       (if (file-exists-p notes-file)
           (find-file notes-file)
 	(progn

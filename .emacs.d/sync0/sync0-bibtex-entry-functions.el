@@ -4,9 +4,7 @@
 (require 'sync0-bibtex-key-functions)
 (require 'sync0-bibtex-corrections)
 (require 'sync0-bibtex-utils)
-(require 'sync0-ivy-bibtex)
-;; (require 'obsidian)
-;; (require 'sync0-obsidian)
+(require 'sync0-citar)
 (require 'sync0-projects)
 
 (defun sync0-bibtex-nullify-all-variables ()
@@ -88,38 +86,27 @@ prevent undesired results."
                 (let ((x (completing-read-multiple "Languages: " sync0-bibtex-completion-language)))
                   (setq sync0-bibtex-entry-languages (sync0-show-elements-of-list x ", ")))))
     ("mention" (lambda ()
-                 (setq sync0-bibtex-entry-mention (sync0-bibtex-completion-choose-key nil t))))
+                 (setq sync0-bibtex-entry-mention (sync0-bibtex-choose-key))))
     ("mentioned" (lambda ()
-                 (setq sync0-bibtex-entry-mentioned (sync0-bibtex-completion-choose-key nil t))))
+                 (setq sync0-bibtex-entry-mentioned (sync0-bibtex-choose-key))))
     ("file" (lambda ()
               (if sync0-bibtex-entry-creation
                   (let* ((extension (or sync0-bibtex-entry-extension "pdf"))
                          (coda (concat "." extension ":" (upcase extension))))
                     (setq sync0-bibtex-entry-file
-                          (concat ":" sync0-zettelkasten-attachments-directory sync0-bibtex-entry-key coda)))
+                          (concat ":" sync0-zkn-attachments-dir sync0-bibtex-entry-key coda)))
                 (if sync0-bibtex-entry-file-old
                     (setq sync0-bibtex-entry-file
-                          (let* ((attachments (bibtex-completion-find-pdf sync0-bibtex-entry-key))
+                          (let* ((attachments  (citar-get-value "file" sync0-bibtex-entry-key))
                                  (new-extension (completing-read "Choose extension to add: " sync0-bibtex-completion-extension))
                                  (new-extension-caps (upcase new-extension))
-                                 (new-attach (concat ":" sync0-zettelkasten-attachments-directory sync0-bibtex-entry-key "." new-extension ":" new-extension-caps)))
-                            (cond ((> (length attachments) 1)
-                                   (let (x)
-                                     (dolist (element attachments x)
-                                       (let* ((extension (file-name-extension element t))
-                                              (extension-sans (upcase (substring extension 1 nil))))
-                                         (setq x (concat x ":" element extension ":" extension-sans ";"))))
-                                     (concat x new-attach)))
-                                  ((equal (length attachments) 1)
-                                   (let* ((single-attach (car attachments))
-                                          (old-extension-caps (upcase (file-name-extension single-attach))))
-                                     (concat ":" single-attach ":" old-extension-caps ";" new-attach)))
-                                  (t new-attach))))
+                                 (new-attach (concat ":" sync0-zkn-attachments-dir sync0-bibtex-entry-key "." new-extension ":" new-extension-caps)))
+                          (concat attachments ";" new-attach)))
                   (setq sync0-bibtex-entry-file
                         (let* ((extension (or sync0-bibtex-entry-extension
                                               (completing-read "Choose extension to add: " sync0-bibtex-completion-extension)))
                                (extension-upcase (upcase extension)))
-                          (concat ":" sync0-zettelkasten-attachments-directory sync0-bibtex-entry-key "." extension ":" extension-upcase)))))))
+                          (concat ":" sync0-zkn-attachments-dir sync0-bibtex-entry-key "." extension ":" extension-upcase)))))))
     ("subtitle" (lambda ()
                    (setq sync0-bibtex-entry-subtitle
                          (sync0-bibtex-correct-smartquotes 
@@ -133,32 +120,32 @@ prevent undesired results."
                          (sync0-bibtex-correct-smartquotes 
                           (if (and sync0-bibtex-entry-crossref 
                                    sync0-bibtex-entry-crossref-entry)
-                              (sync0-bibtex-completion-get-value "title" sync0-bibtex-entry-crossref-entry)
+                              (citar-get-value "title" sync0-bibtex-entry-crossref-entry)
                             (completing-read "Booktitle : " sync0-bibtex-completion-title))))))
     ("booksubtitle" (lambda ()
                       (setq sync0-bibtex-entry-booksubtitle
                             (sync0-bibtex-correct-smartquotes 
                              (if sync0-bibtex-entry-crossref 
-                                 (sync0-bibtex-completion-get-value "subtitle" sync0-bibtex-entry-crossref-entry)
+                                 (citar-get-value "subtitle" sync0-bibtex-entry-crossref-entry)
                                (completing-read "Booksubtitle : " sync0-bibtex-completion-title))))))
     ("crossref" (lambda ()
                   (when (yes-or-no-p "Load crossref? ")
                     (setq sync0-bibtex-entry-crossref 
-                          (sync0-bibtex-completion-choose-key t t "Crossref: "))
+                          (sync0-bibtex-choose-key "Crossref: "))
                     (setq sync0-bibtex-entry-crossref-entry
-                          (bibtex-completion-get-entry sync0-bibtex-entry-crossref))
+                          (citar-get-entry sync0-bibtex-entry-crossref))
                     (setq sync0-bibtex-entry-initial-date
-                          (sync0-bibtex-completion-get-value "date" sync0-bibtex-entry-crossref-entry)
+                          (citar-get-value "date" sync0-bibtex-entry-crossref-entry)
                           sync0-bibtex-entry-initial-origdate
-                          (sync0-bibtex-completion-get-value "origdate" sync0-bibtex-entry-crossref-entry)
+                          (citar-get-value "origdate" sync0-bibtex-entry-crossref-entry)
                           sync0-bibtex-entry-initial-author
                           (if (member sync0-bibtex-entry-type sync0-bibtex-entry-editor-types)
-                              (sync0-bibtex-completion-get-value "editor" sync0-bibtex-entry-crossref-entry)
-                            (sync0-bibtex-completion-get-value "author" sync0-bibtex-entry-crossref-entry))
+                              (citar-get-value "editor" sync0-bibtex-entry-crossref-entry)
+                            (citar-get-value "author" sync0-bibtex-entry-crossref-entry))
                           sync0-bibtex-entry-initial-language
-                          (sync0-bibtex-completion-get-value "language" sync0-bibtex-entry-crossref-entry)))))
+                          (citar-get-value "language" sync0-bibtex-entry-crossref-entry)))))
     ("related" (lambda ()
-                 (setq sync0-bibtex-entry-related (sync0-bibtex-completion-choose-key t t))))
+                 (setq sync0-bibtex-entry-related (sync0-bibtex-choose-key))))
     ;; ("seen" (lambda ()
     ;;           (if sync0-bibtex-entry-creation
     ;;               (progn
@@ -270,7 +257,7 @@ bibtex-completion (helm-bibtex) package."
              (field-symbol (intern field-variable))
              (field-function (cadr (assoc field sync0-bibtex-entry-functions)))
              (field-value (if entry
-                              (sync0-bibtex-completion-get-value field entry)
+                              (citar-get-value field entry)
                             (when field-function
                               (condition-case err
                                   (progn
@@ -336,39 +323,6 @@ output is the value calculated by the called function."
     ;; Return final-alist for debugging or further use
     final-alist))
 
-;; (defun sync0-bibtex-load-entry-at-point () 
-;;   (interactive)
-;;   (let* ((entry (save-excursion (bibtex-beginning-of-entry)
-;;                                 (bibtex-parse-entry)))
-;;          (bibkey (cdr (assoc "=key=" entry)))
-;;          (type (cdr (assoc "=type=" entry)))
-;;          (fields (mapcar #'car entry)) ; Extract field names
-;;          (purged-fields (cl-set-difference fields '("=key=" "=type=") :test #'string=))
-;;          (curated-alist (mapcar (lambda (pair)
-;;                                   (let ((key (car pair))
-;;                                         (value (cdr pair)))
-;;                                     ;; Replace braces with double quotes in the value
-;;                                     ;; and enclose the field name (car) in double quotes
-;;                                     (cons (format "%s" key)
-;;                                           (when value
-;;                                             (format "%s" 
-;;                                                     (replace-regexp-in-string "[{}]" "" value))))))
-;;                                 entry))
-;;          (final-alist (cl-remove-if (lambda (pair)
-;;                                       (member (car pair) '("=key=" "=type=")))
-;;                                     curated-alist)))
-;;     (setq sync0-bibtex-entry-fields purged-fields)
-;;     (setq sync0-bibtex-entry-key bibkey)
-;;     (setq sync0-bibtex-entry-type type)
-;;     (dolist (field final-alist)
-;;       (let* ((field-name (car field))
-;; 	     (field-variable (concat "sync0-bibtex-entry-" field-name))
-;;              (field-symbol (intern field-variable))
-;;              (field-value (cdr field)))
-;;         ;; Update variable and collect result
-;;         (when field-value
-;;           (set field-symbol field-value))))))
-
 (defun sync0-bibtex-completion-load-entry (&optional bibkey quick)
   "Load the contents of the biblatex fields corresponding to a
   biblatex key into their respective dummy variables. When
@@ -388,10 +342,10 @@ output is the value calculated by the called function."
   (sync0-bibtex-nullify-all-variables)
   ;; When optional bibkey is specified, load that entry; otherwise,
   ;; define a new one
-  (let* ((entry (when bibkey (bibtex-completion-get-entry bibkey)))
+  (let* ((entry (when bibkey (citar-get-entry bibkey)))
          (type (if entry
                    (sync0-bibtex-normalize-case
-                    (sync0-bibtex-completion-get-value "=type="  entry))
+                    (citar-get-value "=type="  entry))
                  (completing-read "Choose Bibtex entry type: " sync0-bibtex-entry-types)))
          ;; Specify which fields to load
          (fields (cond (bibkey
@@ -409,6 +363,11 @@ output is the value calculated by the called function."
     ;; the following field is used to avoid inconsistensies in
     ;; case when using the type for boolean operations
     (setq sync0-bibtex-entry-type-downcase (downcase type))
+    (setq sync0-bibtex-entry-author-or-editor-priority
+	  (when sync0-bibtex-entry-author-or-editor-p
+            (if (string= type (or "Collection" "MvCollection" "Proceedings"))
+		"editor"
+	      "author")))
     ;; Call the appropriate functions to define the biblatex fields.
     ;; Collect the result in an alist of the form:
     ;; ("sync0-bibtex-entry-title" . "The good old days"). Finally,
@@ -435,22 +394,21 @@ output is the value calculated by the called function."
           ;; Corrections
       (sync0-bibtex-correct-entry-fields)
       ;; Set parent extra field
-      (setq sync0-bibtex-entry-parent
-            (cond ((string= sync0-bibtex-entry-type-downcase "article")
-                   sync0-bibtex-entry-journaltitle)
-                  ((or (string= sync0-bibtex-entry-type-downcase "inbook")
-                       (string= sync0-bibtex-entry-type-downcase "incollection")
-                       (string= sync0-bibtex-entry-type-downcase "inproceedings"))
-                   (if (sync0-null-p sync0-bibtex-entry-booksubtitle)
-                       sync0-bibtex-entry-booktitle
-                     (concat sync0-bibtex-entry-booktitle sync0-bibtex-entry-separator sync0-bibtex-entry-booksubtitle)))
-                  (t sync0-bibtex-entry-series)))
+      ;; (setq sync0-bibtex-entry-parent
+      ;;       (cond ((string= sync0-bibtex-entry-type-downcase "article")
+      ;;              sync0-bibtex-entry-journaltitle)
+      ;;             ((or (string= sync0-bibtex-entry-type-downcase "inbook")
+      ;;                  (string= sync0-bibtex-entry-type-downcase "incollection")
+      ;;                  (string= sync0-bibtex-entry-type-downcase "inproceedings"))
+      ;;              (if (sync0-null-p sync0-bibtex-entry-booksubtitle)
+      ;;                  sync0-bibtex-entry-booktitle
+      ;;                (concat sync0-bibtex-entry-booktitle sync0-bibtex-entry-separator sync0-bibtex-entry-booksubtitle)))
+      ;;             (t sync0-bibtex-entry-series)))
       ;; keywors have to be calculated last in order to prevent empty
       ;; fields when defining the keywords
       (if bibkey
-          (sync0-bibtex-completion-get-value "keywords" entry)
+          (citar-get-value "keywords" entry)
         (funcall (cadr (assoc "keywords" sync0-bibtex-entry-functions))))
-      (sync0-bibtex-entry-constitute-bibentry bibkey)))
-
+      (sync0-bibtex-entry-constitute-bibentry sync0-bibtex-entry-key)))
 
 (provide 'sync0-bibtex-entry-functions)

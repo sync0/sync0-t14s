@@ -35,37 +35,54 @@
 	      'display
 	      `((space :align-to (- (+ right right-fringe right-margin) ,reserve)))))
 
-;; (defun sync0-mode-line-zettel-identification ()
-;;   "For org-mode files display contents of the TITLE keyword when
-;;      not null. Otherwise, display the file title with extension."
-;;   (if (equal major-mode 'org-mode)
-;;       (if-let* ((type (org-entry-get 1 "ZETTEL_TYPE"))
-;;                 (subtype (upcase-initials (substring type 0 3)))
-;;                 ;; (subtype (upcase (substring type 0 1)))
-;;                 (type-string (concat "[" subtype "] ")))
-;;           (propertize type-string 'face '(:weight bold))
-;;         "")
-;;     ""))
-
-;; (defun sync0-mode-line-buffer-identification ()
-;;   "For org-mode files display contents of the TITLE keyword when
-;;      not null. Otherwise, display the file title with extension."
-;;   (if (and (equal major-mode 'org-mode)
-;;            (org-keyword-title-p))
-;;       (let*  ((title (cadar (org-collect-keywords '("TITLE")))) 
-;;               (fixed-title (if (> (length title) 60) 
-;;                                (let ((start (substring title 0 35))
-;;                                      (end (substring title -20 nil)))
-;;                                  (concat start  "..." end))
-;;                              title)))
-;;         (propertize fixed-title 'face '(:height 1.0 :family "Verlag") 'help-echo (buffer-file-name)))
-;;     ;; (propertize fixed-title 'face '(:height 1.0 :family "Helvetica Neue LT Std" :width condensed :weight medium) 'help-echo (buffer-file-name))
-;;     ;; (propertize fixed-title 'face '(:height 1.0 :family "Myriad Pro" :weight medium) 'help-echo (buffer-file-name))
-;;     (propertize (buffer-name) 'face '(:weight bold) 'help-echo (buffer-file-name))))
+(defun sync0-mode-line-zettel-identification ()
+  "For org-mode files display contents of the TITLE keyword when
+     not null. Otherwise, display the file title with extension."
+  (if (derived-mode-p 'org-mode)
+      (let* ((type (org-entry-get 1 "ZTYPE"))
+	     (subtype (org-entry-get 1 "ZSTYPE"))
+	     (uptype (when type (upcase (substring type 0 3))))
+	     (upsubtype (when subtype (upcase (substring subtype 0 3))))
+	     (type-string (if subtype
+			      (concat uptype ":" upsubtype " ")
+			    (concat uptype " "))))
+	(unless (null type)
+          (propertize type-string 'face '(:weight bold))))
+    ""))
 
 (defun sync0-mode-line-buffer-identification ()
-  (propertize (buffer-name) 'face '(:weight bold) 'help-echo (buffer-file-name)))
+  "For org-mode files display contents of the TITLE keyword when
+     not null. Otherwise, display the file title with extension."
+  (if (and (derived-mode-p 'org-mode)
+           (org-keyword-title-p))
+      (let*  ((title (cadar (org-collect-keywords '("TITLE")))) 
+              (fixed-title (if (> (length title) 60) 
+                               (let ((start (substring title 0 35))
+                                     (end (substring title -20 nil)))
+                                 (concat start  "..." end))
+                             title))
+	      (version (org-entry-get 1 "VERSION"))
+	      (lastversion (org-entry-get 1 "LAST_VERSION"))
+	      (versionstring 
+	       (cond ((and version lastversion
+			   (string= version lastversion))
+		      (concat " V"  version))
+		     (lastversion
+		      (concat " V"  version "/" lastversion))
+		     (version
+		      (concat " V"  version))
+		     (t ""))))
+	    (concat "["
+		    (propertize (buffer-name) 'face '(:weight bold) 'help-echo (buffer-file-name))
+		    "] "
+		    (propertize fixed-title 'face '(:height 1.0 :family "Verlag") 'help-echo (buffer-file-name))
+		    (propertize versionstring 'face '(:weight bold) 'help-echo (buffer-file-name))))
+    ;; (propertize fixed-title 'face '(:height 1.0 :family "Helvetica Neue LT Std" :width condensed :weight medium) 'help-echo (buffer-file-name))
+    ;; (propertize fixed-title 'face '(:height 1.0 :family "Myriad Pro" :weight medium) 'help-echo (buffer-file-name))
+    (propertize (buffer-name) 'face '(:weight bold) 'help-echo (buffer-file-name))))
 
+;; (defun sync0-mode-line-buffer-identification ()
+;;   (propertize (buffer-name) 'face '(:weight bold) 'help-echo (buffer-file-name)))
 
 (defun sync0-mode-line-guess-language ()
   (if (boundp 'sync0-language-active-code) 
@@ -95,7 +112,7 @@
                         (t (propertize "✓"
                                        'face '(:family "Noto Color Emoji")))))
                 "  " 
-                ;; (:eval (sync0-mode-line-zettel-identification))
+                (:eval (sync0-mode-line-zettel-identification))
                 (:eval (sync0-mode-line-buffer-identification))
                 "  " 
                 (:eval (sync0-mode-line-guess-language))
@@ -103,7 +120,7 @@
                 "  "
                 (:eval 
                  (let ((line-string "%l"))
-                   (if (equal major-mode 'pdf-view-mode)
+                   (if (derived-mode-p 'pdf-view-mode)
                        ;; this is necessary so that pdf-view displays the page numbers of the pdf
                        ;; otherwise, it is very hard to read documents. 
                        mode-line-position
@@ -134,71 +151,5 @@
                 (:eval  (propertize "⚡" 'face '(:family "Noto Color Emoji")))
                 mode-line-misc-info
                 emacs-mode-line-end-spaces))
-
-(if (> (display-pixel-width) 1900)
-    ;; high resolution font size (t14s)
-    (progn (set-face-attribute 'default nil 
-                               :family "Inconsolata"
-                               :height 150)
-           ;;:height 175
-           (setq line-spacing 7))
-  ;; low resolution font size
-  (progn (set-face-attribute 'default nil 
-                             :family "Inconsolata"
-                             :height 130)
-         (setq line-spacing 3)))
-
-(defun sync0-buffer-face-proportional ()
-  "Set font to a variable width (proportional) fonts in current buffer"
-  (if (> (display-pixel-width) 1900)
-      ;; high resolution font size (t14s)
-      (progn
-        (setq buffer-face-mode-face '(:family "Literata" :height 165))
-        (setq line-spacing 0.25))
-    ;; low resolution font size
-    (progn
-      ;; (setq buffer-face-mode-face '(:family "Minion Pro" :height 155 :spacing proportional))
-      (setq buffer-face-mode-face '(:family "Literata" :height 130))
-      ;; (setq line-spacing 0.2)
-      (setq line-spacing 0.225)))
-  (buffer-face-mode))
-
-(add-hook 'erc-mode-hook #'sync0-buffer-face-proportional)
-(add-hook 'Info-mode-hook #'sync0-buffer-face-proportional)
-(add-hook 'org-mode-hook #'sync0-buffer-face-proportional)
-(add-hook 'markdown-mode-hook #'sync0-buffer-face-proportional)
-
-(require 'display-line-numbers)
-
-(defcustom display-line-numbers-exempt-modes
-  '(vterm-mode eshell-mode shell-mode term-mode ansi-term-mode org-mode neotree-mode markdown-mode deft-mode help-mode nov-mode pdf-view-mode)
-  "Major modes on which to disable line numbers."
-  :group 'display-line-numbers
-  :type 'list
-  :version "green")
-
-(defun display-line-numbers--turn-on ()
-  "Turn on line numbers except for certain major modes.
-Exempt major modes are defined in `display-line-numbers-exempt-modes'."
-  (unless (or (minibufferp)
-              (member major-mode display-line-numbers-exempt-modes))
-    (display-line-numbers-mode)))
-
-(global-display-line-numbers-mode)
-
-(defun sync0-set-margins ()
-  "Set margins in current buffer."
-  (setq left-margin-width 0)
-  (setq right-margin-width 0))
-
-;; (defun sync0-set-neotree-margins ()
-;;   "Set margins in current buffer."
-;;   (setq left-margin-width 0)
-;;   (setq left-fringe-width 0)
-;;   (setq right-margin-width 0))
-
-(add-hook 'prog-mode-hook #'sync0-set-margins)
-;; (add-hook 'bibtex-mode-hook #'sync0-set-margins)
-;; (add-hook 'neotree-mode-hook #'sync0-set-neotree-margins)
 
 (provide 'sync0-modeline)

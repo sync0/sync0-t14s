@@ -1,6 +1,6 @@
 (setq user-full-name "Carlos Alberto Rivera Carreño"
       ;; Define my Gdrive location
-      sync0-cloud-directory "~/Gdrive/"
+      sync0-cloud-dir "~/Gdrive/"
       user-mail-address "carc.sync0@gmail.com")
 
  ;; Bookmarks directory

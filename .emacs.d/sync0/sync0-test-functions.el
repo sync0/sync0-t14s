@@ -4,7 +4,7 @@
   (let* ((key (read-string "Input existing key: "))
          (contents 
           (with-temp-buffer 
-            (insert-file-contents (concat sync0-obsidian-directory key ".md"))
+            (insert-file-contents (concat sync0-obsidian-dir key ".md"))
             (buffer-string)))
          (end (string-match  "^# .+\n" contents))
          (yaml (substring contents 0 end))
@@ -156,7 +156,7 @@
 ;; (roam-aliases )
 ;; (zettel-type)
 
-;; (obsidian-file (concat sync0-obsidian-directory filename ".md")) 
+;; (obsidian-file (concat sync0-obsidian-dir filename ".md")) 
 ;; (obsidian-entry (concat "---\n"
 ;;                         "citekey: " filename "\n"
 ;;                         "biblatex_type: " type "\n"
@@ -225,7 +225,7 @@
 ;;               ;; (creation-fixed (if (string-match "/" creation)
 ;;               ;;                     (replace-regexp-in-string "/" "-" creation)
 ;;               ;;                   creation))
-;;               (obsidian-file (concat sync0-obsidian-directory citekey ".md")) 
+;;               (obsidian-file (concat sync0-obsidian-dir citekey ".md")) 
 ;;               (obsidian-entry (concat "---\n"
 ;;                                       "zettel_type: reference\n"
 ;;                                       "citekey: " citekey "\n"
@@ -428,7 +428,7 @@
   ;;   (sync0-obsidian-reference-migrate)))
 
 ;;     (dolist (f
-;; (f-files sync0-obsidian-directory
+;; (f-files sync0-obsidian-dir
 ;;          (lambda (k) (string-match-p ".md" k)) t))
 ;;   (with-current-buffer (find-file-noselect f)
 ;;     (sync0-obsidian-correct-aliases)))
@@ -438,14 +438,14 @@
 ;;     (re-search-forward "^tags: \\[\\(.+\\)\\]$" nil t 1))
 
 
-;;  (setq sync0-test-directory (concat (getenv "HOME") "/Dropbox/test/"))
+;;  (setq sync0-test-dir (concat (getenv "HOME") "/Dropbox/test/"))
 
 (defun sync0-org-roam-replace-id-with-markdown-links ()
   (interactive)
   (let* ((current-path (buffer-file-name))
          (current-file (when (string-match ".+\\([0-9]+\\)\\.org$" current-path)
                          (match-string-no-properties 1 current-path)))
-         (obsidian-file (concat sync0-test-directory current-file ".org")))  
+         (obsidian-file (concat sync0-test-dir current-file ".org")))  
     (with-temp-buffer 
       (insert-file-contents-literally current-path)
       (while (re-search-forward org-link-bracket-re nil t)
@@ -469,7 +469,7 @@
   (let* ((current-path (buffer-file-name))
          (current-file (when (string-match ".+\\([0-9]+\\)\\.org$" current-path)
                          (match-string-no-properties 1 current-path)))
-         (obsidian-file (concat sync0-test-directory current-file ".md")) 
+         (obsidian-file (concat sync0-test-dir current-file ".md")) 
          (command
           (concat "pandoc -s -f org -t markdown+yaml_metadata_block " current-path  " -o " obsidian-file)))
     (shell-command command)))
@@ -515,7 +515,7 @@ to Obsian markdown using my custom Zettel format."
               (current-path (buffer-file-name))
               (current-file (when (string-match "^.+/\\([0-9]+\\)\\.org$" current-path)
                               (match-string-no-properties 1 current-path)))
-              (obsidian-file (concat sync0-obsidian-directory current-file ".md")) 
+              (obsidian-file (concat sync0-obsidian-dir current-file ".md")) 
               (obsidian-entry (concat "---\n"
                                       "zettel_type: " zettel-type "\n"
                                       "created: " creation "\n"
@@ -577,7 +577,7 @@ to Obsian markdown using my custom Zettel format."
               (current-path (buffer-file-name))
               (current-file (when (string-match "^.+/\\([0-9]+\\)\\.org$" current-path)
                               (match-string-no-properties 1 current-path)))
-              (obsidian-file (concat sync0-obsidian-directory current-file ".md")) 
+              (obsidian-file (concat sync0-obsidian-dir current-file ".md")) 
               (obsidian-entry (concat "---\n"
                                       "zettel_type: " zettel-type "\n"
                                       "created: " creation "\n"
@@ -652,7 +652,7 @@ to Obsian markdown using my custom Zettel format."
                      (org-entry-get 1 "WEBSITE")))
               (language (when (org-entry-get 1 "LANGUAGE")
                           (org-entry-get 1 "LANGUAGE")))
-              (obsidian-file (concat sync0-obsidian-directory citekey ".md")) 
+              (obsidian-file (concat sync0-obsidian-dir citekey ".md")) 
               (obsidian-entry (concat "---\n"
                                       "zettel_type: reference\n"
                                       "citekey: " citekey "\n"
@@ -745,7 +745,7 @@ to Obsian markdown using my custom Zettel format."
 ;;               (current-path (buffer-file-name))
 ;;               (current-file (when (string-match "^.+/\\([0-9]+\\)\\.org$" current-path)
 ;;                               (match-string-no-properties 1 current-path)))
-;;               (obsidian-file (concat sync0-obsidian-directory current-file ".md"))) 
+;;               (obsidian-file (concat sync0-obsidian-dir current-file ".md"))) 
 ;;       (when (file-exists-p obsidian-file)
 ;;         (with-temp-buffer 
 ;;           (insert-file-contents obsidian-file)
@@ -794,22 +794,22 @@ to Obsian markdown using my custom Zettel format."
 ;;     (org-roam-replace-links-with-id)))
 
 
-;; (dolist (f (f-files sync0-obsidian-directory
+;; (dolist (f (f-files sync0-obsidian-dir
 ;;                     (lambda (k) (string-match-p ".md" k)) t))
 ;;   (with-current-buffer (find-file-noselect f)
 ;;     (sync0-obsidian-migrate-org-images-to-markdown)))
 
-;; (dolist (f (f-files sync0-obsidian-directory
+;; (dolist (f (f-files sync0-obsidian-dir
 ;;                     (lambda (k) (string-match-p ".md" k)) t))
 ;;   (with-current-buffer (find-file-noselect f)
 ;;     (sync0-obsidian-correct-biblatex)))
 
-;; (dolist (f (f-files sync0-obsidian-directory
+;; (dolist (f (f-files sync0-obsidian-dir
 ;;                     (lambda (k) (string-match-p ".md" k)) t))
 ;;   (with-current-buffer (find-file-noselect f)
 ;;     (sync0-obsidian-correct-bibkeys)))
 
-;; (dolist (f (f-files sync0-zettelkasten-directory
+;; (dolist (f (f-files sync0-zkn-dir
 ;;                     (lambda (k) (string-match-p "permanent" k)) t))
 ;;   (with-current-buffer (find-file-noselect f)
 ;;     (sync0-obsidian-migrate-reference)))

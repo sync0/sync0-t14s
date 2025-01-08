@@ -161,8 +161,8 @@ bibfile."
   "Summarize a PDF file based on the specified type and languages."
   (interactive)
   (let* ((bibkey (or setbibkey
-          (sync0-bibtex-completion-choose-key t t)))
-         (entry (bibtex-completion-get-entry bibkey))
+          (sync0-bibtex-choose-key)))
+         (entry (citar-get-entry bibkey))
          (file (sync0-bibtex-choose-attachment bibkey))
          (script-file sync0-bibtex-python-summarizer-script-path)
          (venv sync0-bibtex-python-summarizer-venv-path))

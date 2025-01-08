@@ -9,6 +9,7 @@
 
 (setq default-file-name-coding-system 'utf-8)
 (setq locale-coding-system 'utf-8)
+(setq save-interprogram-paste-before-kill t)
 
 (if (boundp buffer-file-coding-system)
     (setq buffer-file-coding-system 'utf-8)
@@ -66,10 +67,6 @@
 
 ;; Font size change
 (setq text-scale-mode-step 1.05)
-(define-key global-map (kbd "C-=") 'text-scale-increase)
-(define-key global-map (kbd "C--") 'text-scale-decrease)
-;; Cycle through buffers
-(global-set-key (kbd "<C-tab>") 'bury-buffer)
 ;; EVIL friendly keybindings for next-buffer
 ;; (global-set-key (kbd "M-h") 'next-buffer)
 ;; Quickly save
@@ -77,8 +74,8 @@
 ;; EVIL friendly keybindings for previous-buffer
 ;; (global-set-key (kbd "M-l") 'previous-buffer)
 
-(require 'echo-bell)
-(echo-bell-mode)
+;; (require 'echo-bell)
+;; (echo-bell-mode)
 
 (use-package smooth-scrolling 
   ;; :commands (sync0-scroll-up sync0-scroll-down)
@@ -107,16 +104,61 @@
     (interactive)
     (scroll-left 1))
 
-  :config (smooth-scrolling-mode 1)
-  :bind (("M-k" . sync0-scroll-up)
-         ("M-h" . sync0-scroll-right)
-         ("M-l" . sync0-scroll-left)
-         ("M-j" . sync0-scroll-down)))
+  :config (smooth-scrolling-mode 1))
 
 (use-package warnings
   :straight nil
   :config
   ;; Remove annoying message when expanding yasnippets. 
   (add-to-list 'warning-suppress-types '(yasnippet backquote-change)))
+
+(use-package s)
+
+(use-package f)
+
+(use-package undo-tree
+  :custom
+  (undo-tree-enable-undo-in-region nil)
+  (undo-tree-history-directory-alist '(("." . (concat sync0-emacs-directory "undo-tree-files/"))))
+  (undo-tree-auto-save-history nil)
+  :config
+  (global-undo-tree-mode))
+
+(use-package recentf
+  :straight nil
+  :custom
+  (recentf-max-saved-items 100)
+  (recentf-max-menu-items 10)
+  :config 
+  (recentf-mode +1)
+  ;; (require 'dired-x)
+  :hook (after-init . recentf-mode))
+
+(use-package saveplace
+  :straight nil
+  :config (save-place-mode))
+
+(use-package dired+ 
+  :disabled t
+  :after dired
+  :custom
+  (dired-listing-switches "-alhS"))
+
+(use-package dired-quick-sort
+  :after dired
+  :custom
+  (dired-listing-switches "-alhS")
+  :config
+  (dired-quick-sort-setup)
+  (add-to-list 'evil-emacs-state-modes 'dired-mode))
+
+(use-package which-key
+  :custom
+  (which-key-popup-type 'side-window)
+  (which-key-side-window-location 'bottom)
+  (which-key-side-window-max-width 0.33)
+  (which-key-side-window-max-height 0.25)
+  :config
+  (which-key-mode))
 
 (provide 'sync0-sane-defaults)

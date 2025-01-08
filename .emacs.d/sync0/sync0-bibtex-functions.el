@@ -66,7 +66,7 @@ readable."
          (file (sync0-bibtex-choose-attachment bibkey))
          (extension  (file-name-extension file t))
          (path (sync0-validate-path (or in-path
-                                        (read-directory-name "Où envoyer ce fichier ?" sync0-goodreads-directory)))))
+                                        (read-directory-name "Où envoyer ce fichier ?" sync0-goodreads-dir)))))
     (sync0-bibtex-completion-load-entry bibkey)
     (if (and (file-exists-p file)
              (file-accessible-directory-p path))
@@ -90,7 +90,7 @@ readable."
                      (sync0-bibtex-completion-choose-key t t)))
          (file (sync0-bibtex-choose-attachment refkey))
          (path (or in-path
-                   (read-directory-name "Où envoyer ce fichier ? " sync0-goodreads-directory)))
+                   (read-directory-name "Où envoyer ce fichier ? " sync0-goodreads-dir)))
          (extension  (file-name-extension file t)))
     (sync0-bibtex-completion-load-entry refkey)
     (if (and (file-exists-p file)
@@ -197,8 +197,8 @@ etc.)."
            (file (sync0-bibtex-choose-attachment bibkey))
            ;; necessary to prevent malfunction due to same input
            ;; and output file
-           (output (concat sync0-zettelkasten-attachments-directory "temp.pdf"))
-           (toc-file (concat sync0-bibtex-tocs-directory bibkey ".txt"))
+           (output (concat sync0-zkn-attachments-dir "temp.pdf"))
+           (toc-file (concat sync0-bibtex-tocs-dir bibkey ".txt"))
            ;; (malformation (when (yes-or-no-p "Malformed? ")
            ;;                 "-gs /usr/bin/gs -gs-malformed "))
            ;; (command (concat "cpdf " (unless (sync0-null-p malformation) malformation) "-utf8 -add-bookmarks " toc-file " " file " -o " output)
@@ -232,7 +232,7 @@ readable."
                        bibkey
                      (sync0-bibtex-completion-choose-key t t)))
            (file (sync0-bibtex-choose-attachment refkey))
-           (image (concat sync0-bibtex-archive-directory refkey ".jpg"))
+           (image (concat sync0-bibtex-archive-dir refkey ".jpg"))
            ;; (extension (file-name-extension file))
            (command (concat "convert " image " -auto-orient " file)))
       ;; (sync0-bibtex-completion-load-entry refkey)

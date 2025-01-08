@@ -2,7 +2,7 @@
 (defun sync0-bibtex-has-attachments-p (bibkey)
   "Check if there are any attachments associated with BIBKEY.
 Returns t if attachments are found, nil otherwise."
-  (let ((attachment-dir sync0-zettelkasten-attachments-directory)
+  (let ((attachment-dir sync0-zkn-attachments-dir)
         (key-prefix (concat "^" (regexp-quote bibkey))))
     (if (file-exists-p attachment-dir)
         (directory-files attachment-dir nil key-prefix)

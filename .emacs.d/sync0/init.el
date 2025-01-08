@@ -32,7 +32,7 @@
 
 (setq user-full-name "Carlos Alberto Rivera Carreño"
 ;; Define my Dropbox location
-         sync0-dropbox-directory "~/Dropbox/"
+         sync0-dropbox-dir "~/Dropbox/"
          user-mail-address "carc.sync0@gmail.com")
 
 ;; Bookmarks directory
@@ -171,40 +171,40 @@
 ;; EVIL friendly keybindings for previous-buffer
 (global-set-key (kbd "M-l") 'previous-buffer)
 
-(defvar sync0-zettelkasten-all-properties-list
+(defvar sync0-zkn-all-properties-list
     '("ZETTEL_TYPE" "BIBLATEX_TYPE" "ZETTEL_FUNCTION" "FICHE_TYPE" "PROJECT_TITLE" "ANNOTATION_REFS" "ROAM_REFS" "ROAM_ALIASES" "CROSSREF" "PARENT" "WEBSITE") 
     "List of zettel properties")
 
-    (defvar sync0-zettelkasten-properties-list
+    (defvar sync0-zkn-properties-list
     '("PROJECT_TITLE" "DATE" "ORIG_DATE") 
     "List of zettel properties")
 
-    (defvar sync0-zettelkasten-excluded-candidates
+    (defvar sync0-zkn-excluded-candidates
     '("journal" "fiche" "etc" "project" "todo" "reference"))
 
-    (defvar sync0-zettelkasten-project-directories '("project" "todo"))
+    (defvar sync0-zkn-project-dirs '("project" "todo"))
 
-    (defvar sync0-zettelkasten-zettel-types 
+    (defvar sync0-zkn-zettel-types 
      '()
-    "List of projects in my Zettelkasten.")
+    "List of projects in my Zkn.")
 
-    (defvar sync0-zettelkasten-projects 
+    (defvar sync0-zkn-projects 
      '()
-    "List of projects in my Zettelkasten.")
+    "List of projects in my Zkn.")
 
-    (defvar sync0-zettelkasten-zettel-functions 
+    (defvar sync0-zkn-zettel-functions 
     '() 
     "List of possible functions for a Zettel.")
 
-    (defvar sync0-zettelkasten-fiche-types 
+    (defvar sync0-zkn-fiche-types 
     '() 
     "List of fiche types.")
 
-  (defvar sync0-zettelkasten-variables-list
-  '((sync0-zettelkasten-projects . "~/.emacs.d/sync0-vars/projects.txt")
-  (sync0-zettelkasten-zettel-types . "~/.emacs.d/sync0-vars/zettel-types.txt")
-  (sync0-zettelkasten-zettel-functions . "~/.emacs.d/sync0-vars/zettel-functions.txt")
-  (sync0-zettelkasten-fiche-types . "~/.emacs.d/sync0-vars/fiche-types.txt")))
+  (defvar sync0-zkn-variables-list
+  '((sync0-zkn-projects . "~/.emacs.d/sync0-vars/projects.txt")
+  (sync0-zkn-zettel-types . "~/.emacs.d/sync0-vars/zettel-types.txt")
+  (sync0-zkn-zettel-functions . "~/.emacs.d/sync0-vars/zettel-functions.txt")
+  (sync0-zkn-fiche-types . "~/.emacs.d/sync0-vars/fiche-types.txt")))
 
   (defvar sync0-biblatex-entry-types
     '("article" "book" "inbook" "incollection" "collection" "unpublished" "thesis" "proceedings" "inproceedings" "online" "report" "manual")
@@ -261,12 +261,12 @@
   (sync0-bibtex-languages .  "~/.emacs.d/sync0-vars/languages.txt")))
 
   ;; define the rest
-    (setq sync0-zettelkasten-directory (concat (getenv "HOME") "/Dropbox/org/")
-    sync0-zettelkasten-directory-sans (concat (getenv "HOME") "/Dropbox/org")
-    sync0-exported-pdfs-directory (concat (getenv "HOME") "/Dropbox/pdfs/")
+    (setq sync0-zkn-dir (concat (getenv "HOME") "/Dropbox/org/")
+    sync0-zkn-dir-sans (concat (getenv "HOME") "/Dropbox/org")
+    sync0-exported-pdfs-dir (concat (getenv "HOME") "/Dropbox/pdfs/")
     sync0-default-bibliography (concat (getenv "HOME") "/Dropbox/bibliographies/doctorat.bib")
-    sync0-zettelkasten-directory-references (concat (getenv "HOME") "/Dropbox/org/reference/")
-    sync0-emacs-directory (concat (getenv "HOME") "/.emacs.d/sync0/")
+    sync0-zkn-dir-references (concat (getenv "HOME") "/Dropbox/org/reference/")
+    sync0-emacs-dir (concat (getenv "HOME") "/.emacs.d/sync0/")
     sync0-pdfs-folder (concat (getenv "HOME") "/Documents/pdfs/")
     sync0-current-year (format-time-string "%Y")
     sync0-current-month (format-time-string "%B")
@@ -298,7 +298,7 @@
           (while (re-search-forward "^\\([[:print:]]+\\)\n" (point-max) t)
             (add-to-list var (match-string-no-properties 1)))))))
 
-(sync0-set-variable-from-files sync0-zettelkasten-variables-list)
+(sync0-set-variable-from-files sync0-zkn-variables-list)
 (sync0-set-variable-from-files sync0-bibtex-variables-list)
 
 (defun sync0-downcase-and-no-whitespace (x)
@@ -322,10 +322,10 @@
                (when (re-search-forward regex nil nil 1)
                      (replace-match date nil nil nil 1)))))
 
-  (defun sync0-zettelkasten-update-org-properties ()
+  (defun sync0-zkn-update-org-properties ()
     (let*  ((zettel-properties
              (let (x)
-               (dolist (property sync0-zettelkasten-properties-list x)
+               (dolist (property sync0-zkn-properties-list x)
                  (when-let ((value (org-entry-get 1 property)))
                    (if (string-match-p "\" \"" value)
                        (let ((elements
@@ -343,9 +343,9 @@
                x))
             ;; (path default-directory)
             ;; (path-dirs (split-string-and-unquote path "/"))
-            ;; (zettelkasten-dirs (split-string-and-unquote sync0-zettelkasten-directory "/"))
+            ;; (zkn-dirs (split-string-and-unquote sync0-zkn-dir "/"))
             ;; ;; this produces a list not a string
-            ;; (current-dir  (cl-set-difference path-dirs zettelkasten-dirs  :test #'equal))
+            ;; (current-dir  (cl-set-difference path-dirs zkn-dirs  :test #'equal))
             ;; (corrected-properties (cl-union current-dir zettel-properties  :test #'equal))                                 
             (tags-line (cadar (org-collect-keywords '("FILETAGS"))))
             (tags (split-string-and-unquote tags-line ":"))
@@ -360,19 +360,19 @@
         (re-search-forward "^#\\+FILETAGS:" (point-max) t)
         (kill-whole-line 1)
         (insert (concat "#+FILETAGS: " corrected-tags-line "\n"))
-  (dolist (property sync0-zettelkasten-properties-list)
+  (dolist (property sync0-zkn-properties-list)
          (when-let ((value (org-entry-get 1 property)))
            (unless (or (string-match-p "\" \"" value)
                        (string-match-p "\"[[:print:]]+\"" value))
             (org-set-property property (concat "\""  value "\""))))))))
 
         (add-hook 'before-save-hook (lambda ()
-      ;; Check whether file is in org-mode and whether it is located in my Zettelkasten directory
+      ;; Check whether file is in org-mode and whether it is located in my Zkn directory
                                       (when (and (equal major-mode 'org-mode)
                                             ;;(not (string-prefix-p "archives" (buffer-file-name)))
-                                            (string-prefix-p sync0-zettelkasten-directory (buffer-file-name)))
-                                                     ;; (equal default-directory (concat (getenv "HOME") "/Dropbox/annotations/"))
-                                        (sync0-zettelkasten-update-org-properties)
+                                            (string-prefix-p sync0-zkn-dir (buffer-file-name)))
+                                                     ;; (equal default-dir (concat (getenv "HOME") "/Dropbox/annotations/"))
+                                        (sync0-zkn-update-org-properties)
                                         (sync0-update-timestamp))))
 
 (defun sync0-show-file-path ()
@@ -1220,7 +1220,7 @@ _q_uit
    (deft-recursive t)
    (deft-use-filter-string-for-filename t)
    (deft-default-extension "org")
-   (deft-directory sync0-zettelkasten-directory-sans)
+   (deft-directory sync0-zkn-dir-sans)
    (deft-new-file-format "%Y%m%d%H%M%S")
    :config
 (require 'sync0-deft))
@@ -1630,8 +1630,8 @@ _q_uit
     :straight (org-journal :type git :host github :repo "bastibe/org-journal") 
     :custom
     ;; Set default directory to search for journal files. 
-    ;;(org-journal-dir (concat sync0-dropbox-directory "org"))
-    (org-journal-dir (concat sync0-dropbox-directory "org/journal"))
+    ;;(org-journal-dir (concat sync0-dropbox-dir "org"))
+    (org-journal-dir (concat sync0-dropbox-dir "org/journal"))
     ;; Delete the date prefix to new journal entries.
     (org-journal-time-format "")
     ;; Create one journal file per month. 
@@ -1792,7 +1792,7 @@ _q_uit
            org-fc-review
            org-fc-review-all)
 :custom
-(org-fc-directories sync0-zettelkasten-directory)
+(org-fc-directories sync0-zkn-dir)
 :config
 (require 'org-fc-hydra)
 
@@ -1836,7 +1836,7 @@ _q_uit
     (reftex-default-bibliography '("~/Dropbox/bibliographies/bibliography.bib"
                                    "~/Dropbox/bibliographies/doctorat.bib"))
     (org-ref-default-bibliography reftex-default-bibliography)
-    (org-ref-pdf-directory sync0-pdfs-folder)
+    (org-ref-pdf-directory sync0-zkn-attachments-dir)
     (org-ref-completion-library 'org-ref-ivy-cite)
     (org-ref-open-pdf-function 'sync0-org-ref-open-pdf-at-point)
 
@@ -2232,7 +2232,7 @@ _q_uit
        ;; 
        org-noter-default-heading-title (format-time-string "%Y%m%d%H%M%S")
        ;; Everything is relative to the main notes file
-       org-noter-notes-search-path (list sync0-zettelkasten-directory)))
+       org-noter-notes-search-path (list sync0-zkn-dir)))
 
 (use-package org-download
 :straight (org-download :type git :host github :repo "abo-abo/org-download") 

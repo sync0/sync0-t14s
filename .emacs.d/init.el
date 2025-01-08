@@ -30,88 +30,46 @@
 
 (add-to-list 'load-path (concat user-emacs-directory "sync0/"))
 
+(use-package cl-lib
+     :straight nil)
+
+(require 'yaml)
 (require 'sync0-user)
+(require 'sync0-vars)
+(require 'sync0-bibtex-vars)
+(require 'sync0-zettelkasten)
+(require 'sync0-predicates)
+(require 'sync0-functions)
 
-(use-package hydra)
+(require 'sync0-evil)
 
-(use-package major-mode-hydra
-  :bind
-  ("M-SPC" . major-mode-hydra)
-  :custom
-  (major-mode-hydra-invisible-quit-key "q"))
+(use-package yaml-mode
+  :init
+  (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode))
+  (add-to-list 'auto-mode-alist '("\\.yaml\\'" . yaml-mode))
+  :config
+  (require 'sync0-yaml))
 
-(require 'sync0-evil-packages)
-(require 'sync0-org)
-(require 'sync0-org-stuff)
 (require 'sync0-custom)
 (require 'sync0-sane-defaults)
-(require 'sync0-vars)
+(require 'sync0-completion)
+
 ;; Setup for bibtex things
+(require 'sync0-bibtex)
+(require 'sync0-bibtex-completion)
+
+(require 'sync0-org-stuff)
+(require 'sync0-org-agenda)
+(require 'sync0-org-roam)
+(require 'sync0-org)
+
 (require 'sync0-corrections)
 ;; Rest
 (require 'sync0-scratch)
-(require 'sync0-predicates)
-(require 'sync0-functions)
 (require 'sync0-text)
 (require 'sync0-url)
 (require 'sync0-window)
 (require 'sync0-modeline)
-
-(use-package cl-lib
-     :straight nil)
-
-(use-package s)
-
-(use-package f)
-
-
-(use-package undo-tree
-  :custom
-  (undo-tree-enable-undo-in-region nil)
-  (undo-tree-history-directory-alist '(("." . (concat sync0-emacs-directory "undo-tree-files/"))))
-  (undo-tree-auto-save-history nil)
-  :config
-  (global-undo-tree-mode))
-
-(use-package recentf
-  :straight nil
-  :custom
-  (recentf-max-saved-items 100)
-  (recentf-max-menu-items 10)
-  :config 
-  (recentf-mode +1)
-  (require 'dired-x)
-  :bind (:map recentf-dialog-mode-map
-              ("j"  . next-line)
-              ("k"  . previous-line))
-  :hook (after-init . recentf-mode))
-
-(use-package saveplace
-  :straight nil
-  :config (save-place-mode))
-
-(use-package which-key
-  :custom
-  (which-key-popup-type 'side-window)
-  (which-key-side-window-location 'bottom)
-  (which-key-side-window-max-width 0.33)
-  (which-key-side-window-max-height 0.25)
-  :config
-  (which-key-mode))
-
-(require 'sync0-completion)
-
- (use-package move-text
-  :commands (move-text-up move-text-down))
-
-(use-package fcitx
-  :straight t
-  :custom
-  (fcitx5-use-dbus t)  ;; or set to 'fcitx5 if you use fcitx5
-  :config
-  ;; (fcitx-aggressive-setup)
-  )
-
 
 (require 'sync0-appearance)
 
@@ -121,13 +79,9 @@
   (magit-branch-arguments nil)
   (magit-push-always-verify nil)
   ;; Get rid of the previous advice to go into fullscreen
-  (magit-restore-window-configuration t)
-  :config
-  (evil-leader/set-key  "g" 'magit-status))
+  (magit-restore-window-configuration t))
 
-(require 'sync0-bibtex)
-(require 'sync0-markdown-setup)
-(require 'sync0-bibtex-completion)
+(require 'sync0-markdown)
 (require 'sync0-bibtex-markdown)
 (require 'sync0-obsidian)
 ;; (require 'sync0-bibtex-bindings)
@@ -136,14 +90,15 @@
 
 (use-package lua-mode) 
 
-(use-package yasnippet 
+(use-package yasnippet
   :config
-  ;; Fix conflict with Yasnippets
-  ;; See https://emacs.stackexchange.com/questions/29758/yasnippets-and-org-mode-yas-next-field-or-maybe-expand-does-not-expand
+  (yas-global-mode 1)  ;; Enable yasnippet globally
+  ;; Optional: Fix conflict with Yasnippets in Org-mode
   (defun yas-org-very-safe-expand ()
-    (let ((yas-fallback-behavior 'return-nil)) (yas-expand))
-    (yas-reload-all)
-    (yas-global-mode)))
+    (let ((yas-fallback-behavior 'return-nil))
+      (yas-expand)))
+  ;; Optionally, reload all snippets to ensure everything is loaded
+  (yas-reload-all))
 
 (use-package csv-mode
   :disabled t
@@ -154,3 +109,39 @@
   :straight nil
   :config
   (require 'sync0-bibtex-sql))
+
+(use-package pdf-tools
+  :magic ("%PDF" . pdf-view-mode)
+  :custom
+  ;; automatically annotate highlights
+  ;; (pdf-annot-activate-created-annotations t)
+  ;; more fine-grained zooming
+  (pdf-view-resize-factor 1.1)
+  (pdf-view-midnight-colors '("#C0C5CE" . "#4F5B66" ))
+  :config
+  (pdf-tools-install :no-query)
+  (add-to-list 'evil-emacs-state-modes 'pdf-view-mode)
+  (add-to-list 'evil-emacs-state-modes 'pdf-outline-buffer-mode)
+  ;; open pdfs scaled to fit page
+  (setq-default pdf-view-display-size 'fit-page)
+
+  ;; change midnite mode colours functions
+  (defun sync0-pdf-view--original-colors ()
+    "Set pdf-view-midnight-colors to original colours."
+    (interactive)
+    (setq pdf-view-midnight-colors '("#839496" . "#002b36" )) ; original values
+    (pdf-view-midnight-minor-mode))
+
+  (defun sync0-pdf-view-dark-colors ()
+    "Set pdf-view-midnight-colors to amber on dark slate blue."
+    (interactive)
+    (setq pdf-view-midnight-colors '("#C0C5CE" . "#4F5B66" )) ; amber
+    (pdf-view-midnight-minor-mode))
+
+  (unbind-key "<SPC>" pdf-view-mode-map))
+
+(use-package pdf-outline
+  :straight nil
+  :after pdf-tools)
+
+(require 'sync0-keybindings)

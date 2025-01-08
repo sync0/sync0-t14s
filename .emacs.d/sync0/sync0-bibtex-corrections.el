@@ -146,19 +146,19 @@ such (they are not present in the .bib file), but that are
 necessary for other functions. This function is essential to
 calculate the variables used to calculate titles in files and
 Obsidian aliases."
-  (cond ((and (sync0-null-p sync0-bibtex-entry-author)
-              (sync0-null-p sync0-bibtex-entry-editor))
+  (cond ((and (null sync0-bibtex-entry-author)
+              (null sync0-bibtex-entry-editor))
          (setq sync0-bibtex-entry-editor-over-author nil)
          (setq sync0-bibtex-entry-author-or-editor-p nil)
          (setq sync0-bibtex-entry-lastname nil))
-        ((and (sync0-null-p sync0-bibtex-entry-author)
+        ((and (null sync0-bibtex-entry-author)
               sync0-bibtex-entry-editor)
          (setq sync0-bibtex-entry-editor-over-author t)
          (setq sync0-bibtex-entry-author-or-editor-p t)
          ;; (sync0-bibtex-fix-names sync0-bibtex-entry-editor)
          (setq sync0-bibtex-entry-lastname
                (sync0-bibtex-abbreviate-lastnames sync0-bibtex-entry-editor-lastname)))
-        ((and (sync0-null-p sync0-bibtex-entry-editor)
+        ((and (null sync0-bibtex-entry-editor)
                sync0-bibtex-entry-author)
          (setq sync0-bibtex-entry-editor-over-author nil)
          (setq sync0-bibtex-entry-author-or-editor-p t)
@@ -177,34 +177,70 @@ Obsidian aliases."
 Set fields that do not appear on the biblatex entry as such (they
 are not present in the .bib file), but that are necessary for
 other functions."
-  ;; this function needs correction to deal with composite dates of
-  ;; the type 2022/2933
-  (cond  ((and (sync0-null-p sync0-bibtex-entry-origdate)
-               (sync0-null-p sync0-bibtex-entry-eventdate)
-               (sync0-null-p sync0-bibtex-entry-date))
-          (setq sync0-bibtex-entry-date-or-origdate-p nil))
-         ((equal (or sync0-bibtex-entry-origdate
-                     sync0-bibtex-entry-eventdate)
+(let* ((has-origdate sync0-bibtex-entry-origdate)
+       (has-eventdate sync0-bibtex-entry-eventdate)
+       (has-date sync0-bibtex-entry-date)
+       (date-origdate-p
+        (cond
+         ;; Case: No dates at all
+         ((and (null has-origdate)
+               (null has-eventdate)
+               (null has-date))
+          nil)
+         ;; Case: origdate or eventdate matches date
+         ((equal (or sync0-bibtex-entry-origdate sync0-bibtex-entry-eventdate)
                  sync0-bibtex-entry-date)
-          (setq sync0-bibtex-entry-date-or-origdate-p "equal"))
-         ((and (sync0-null-p sync0-bibtex-entry-origdate)
-               (sync0-null-p sync0-bibtex-entry-eventdate)
-               sync0-bibtex-entry-date)
-          (setq sync0-bibtex-entry-date-or-origdate-p "date"))
-         ((and (sync0-null-p sync0-bibtex-entry-origdate)
-               sync0-bibtex-entry-eventdate
-               sync0-bibtex-entry-date)
-          (setq sync0-bibtex-entry-date-or-origdate-p "eventdate"))
-         ((and (sync0-null-p sync0-bibtex-entry-origdate)
-               (sync0-null-p sync0-bibtex-entry-date)
-               sync0-bibtex-entry-eventdate)
-          (setq sync0-bibtex-entry-date-or-origdate-p "eventdate-nodate"))
-         ((and (sync0-null-p sync0-bibtex-entry-date)
-               (sync0-null-p sync0-bibtex-entry-eventdate)
-               sync0-bibtex-entry-origdate)
-          (setq sync0-bibtex-entry-date-or-origdate-p "origdate-nodate"))
-         (t (setq sync0-bibtex-entry-date-or-origdate-p "origdate")))
-  ;; calculate tag date fields for use in keywords
+          "equal")
+         ;; Case: Only date is available
+         ((and (null has-origdate)
+               (null has-eventdate)
+               has-date)
+          "date")
+         ;; Case: Eventdate and date are available, but no origdate
+         ((and (null has-origdate)
+               has-eventdate
+               has-date)
+          "eventdate")
+         ;; Case: Only eventdate is available
+         ((and (null has-origdate)
+               (null has-date)
+               has-eventdate)
+          "eventdate-nodate")
+         ;; Case: Only origdate is available
+         ((and (null has-date)
+               (null has-eventdate)
+               has-origdate)
+          "origdate-nodate")
+         ;; Default: origdate and date available
+         (t "origdate")))
+       (entry-date-fixed
+        (cond
+         ;; Case: No author/editor and no date info
+         ((and (null sync0-bibtex-entry-author-or-editor-p)
+               (null date-origdate-p))
+          nil)
+         ;; Case: Author/editor present but no date
+         ((and sync0-bibtex-entry-author-or-editor-p
+               (null date-origdate-p))
+          ", ")
+         ;; Case: Date equals "equal" or "date"
+         ((member date-origdate-p '("equal" "date"))
+          (concat "(" sync0-bibtex-entry-date ")"))
+         ;; Case: Eventdate and date
+         ((equal date-origdate-p "eventdate")
+          (concat "(" sync0-bibtex-entry-eventdate ") (" sync0-bibtex-entry-date ")"))
+         ;; Case: Only eventdate
+         ((equal date-origdate-p "eventdate-nodate")
+          (concat "(" sync0-bibtex-entry-eventdate ")"))
+         ;; Case: Only origdate
+         ((equal date-origdate-p "origdate-nodate")
+          (concat "[" sync0-bibtex-entry-origdate "]"))
+         ;; Default: Origdate and date
+         (t (concat "[" sync0-bibtex-entry-origdate "] (" sync0-bibtex-entry-date ")")))))
+  ;; Set the final variables
+  (setq sync0-bibtex-entry-date-or-origdate-p date-origdate-p
+        sync0-bibtex-entry-date-fixed entry-date-fixed))
+  ;; Set tags variables for keywords
   (dolist (element sync0-bibtex-date-fields)
     (when-let* ((var (intern (concat "sync0-bibtex-entry-" element)))
                 (value (symbol-value var))
@@ -214,24 +250,61 @@ other functions."
       (set var-tag (let (x)
                      (dolist (date dates x)
                        (push (concat element "/" (replace-regexp-in-string "-" "/" date)) x))
-                     (sync0-show-elements-of-list x ", ")))))
-  (setq sync0-bibtex-entry-date-fixed
-        (cond ((and (null sync0-bibtex-entry-author-or-editor-p)
-                    (null sync0-bibtex-entry-date-or-origdate-p))
-               " ")
-              ((and sync0-bibtex-entry-author-or-editor-p
-                    (null sync0-bibtex-entry-date-or-origdate-p))
-               ", ")
-              ((or (equal sync0-bibtex-entry-date-or-origdate-p "equal")
-                   (equal sync0-bibtex-entry-date-or-origdate-p "date"))
-               (concat "(" sync0-bibtex-entry-date ")"))
-              ((equal sync0-bibtex-entry-date-or-origdate-p "eventdate")
-               (concat "(" sync0-bibtex-entry-eventdate ") (" sync0-bibtex-entry-date ")"))
-              ((equal sync0-bibtex-entry-date-or-origdate-p "eventdate-nodate")
-               (concat "(" sync0-bibtex-entry-eventdate ")"))
-              ((equal sync0-bibtex-entry-date-or-origdate-p "origdate-nodate")
-               (concat "(" sync0-bibtex-entry-origdate ")"))
-              (t (concat "(" sync0-bibtex-entry-origdate ") (" sync0-bibtex-entry-date ")")))))
+                     (sync0-show-elements-of-list x ", "))))))
+
+;;   (cond  ((and (sync0-null-p sync0-bibtex-entry-origdate)
+;;                (sync0-null-p sync0-bibtex-entry-eventdate)
+;;                (sync0-null-p sync0-bibtex-entry-date))
+;;           (setq sync0-bibtex-entry-date-or-origdate-p nil))
+;;          ((equal (or sync0-bibtex-entry-origdate
+;;                      sync0-bibtex-entry-eventdate)
+;;                  sync0-bibtex-entry-date)
+;;           (setq sync0-bibtex-entry-date-or-origdate-p "equal"))
+;;          ((and (sync0-null-p sync0-bibtex-entry-origdate)
+;;                (sync0-null-p sync0-bibtex-entry-eventdate)
+;;                sync0-bibtex-entry-date)
+;;           (setq sync0-bibtex-entry-date-or-origdate-p "date"))
+;;          ((and (sync0-null-p sync0-bibtex-entry-origdate)
+;;                sync0-bibtex-entry-eventdate
+;;                sync0-bibtex-entry-date)
+;;           (setq sync0-bibtex-entry-date-or-origdate-p "eventdate"))
+;;          ((and (sync0-null-p sync0-bibtex-entry-origdate)
+;;                (sync0-null-p sync0-bibtex-entry-date)
+;;                sync0-bibtex-entry-eventdate)
+;;           (setq sync0-bibtex-entry-date-or-origdate-p "eventdate-nodate"))
+;;          ((and (sync0-null-p sync0-bibtex-entry-date)
+;;                (sync0-null-p sync0-bibtex-entry-eventdate)
+;;                sync0-bibtex-entry-origdate)
+;;           (setq sync0-bibtex-entry-date-or-origdate-p "origdate-nodate"))
+;;          (t (setq sync0-bibtex-entry-date-or-origdate-p "origdate")))
+  ;; calculate tag date fields for use in keywords
+;;   (dolist (element sync0-bibtex-date-fields)
+;;     (when-let* ((var (intern (concat "sync0-bibtex-entry-" element)))
+;;                 (value (symbol-value var))
+;;                 (var-tag (intern (concat "sync0-bibtex-entry-" element "-tag")))
+;;                 (dates (unless (sync0-null-p value) 
+;;                          (sync0-string-split-with-sep-and-list value "/"))))
+;;       (set var-tag (let (x)
+;;                      (dolist (date dates x)
+;;                        (push (concat element "/" (replace-regexp-in-string "-" "/" date)) x))
+;;                      (sync0-show-elements-of-list x ", ")))))
+;;   (setq sync0-bibtex-entry-date-fixed
+;;         (cond ((and (null sync0-bibtex-entry-author-or-editor-p)
+;;                     (null sync0-bibtex-entry-date-or-origdate-p))
+;;                " ")
+;;               ((and sync0-bibtex-entry-author-or-editor-p
+;;                     (null sync0-bibtex-entry-date-or-origdate-p))
+;;                ", ")
+;;               ((or (equal sync0-bibtex-entry-date-or-origdate-p "equal")
+;;                    (equal sync0-bibtex-entry-date-or-origdate-p "date"))
+;;                (concat "(" sync0-bibtex-entry-date ")"))
+;;               ((equal sync0-bibtex-entry-date-or-origdate-p "eventdate")
+;;                (concat "(" sync0-bibtex-entry-eventdate ") (" sync0-bibtex-entry-date ")"))
+;;               ((equal sync0-bibtex-entry-date-or-origdate-p "eventdate-nodate")
+;;                (concat "(" sync0-bibtex-entry-eventdate ")"))
+;;               ((equal sync0-bibtex-entry-date-or-origdate-p "origdate-nodate")
+;;                (concat "(" sync0-bibtex-entry-origdate ")"))
+;;               (t (concat "(" sync0-bibtex-entry-origdate ") (" sync0-bibtex-entry-date ")"))))
 
 (defun sync0-bibtex-abbreviate-lastnames (string)
   "For very long lists of last names, cut it up with a chosen
@@ -248,48 +321,6 @@ bibtex does not take lists but strings as arguments."
                 sync0-bibtex-lastname-abbrev-string)
       string)))
 
-;; (defun sync0-bibtex-obsidian-keyword-tagify (my-string)
-;;   "Make my-string compatible with the tags of obsidian by
-;; downcasing and removing whitespace from tags to be included as
-;; keywords in biblatex entries and obsidian markdown files."
-;;   (let ((x (if (string-match-p ",[[:space:]]" my-string)
-;;                my-string
-;;              (let ((nospace (replace-regexp-in-string "[[:space:]]+" "_" my-string)))
-;;                (downcase nospace)))))
-;;     (xah-replace-pairs-in-string-recursive
-;;      x
-;;      [["d'" ""]
-;;       ["l'" ""]
-;;       ["l’" ""]
-;;       ["." ""]
-;;       ["_/&_" "_"]
-;;       ["_//&_" "_"]
-;;       [" /& " "_"]
-;;       [" //& " "_"]
-;;       [", " "_"]
-;;       ["d’" ""]])))
-
-;; (defun sync0-bibtex-obsidian-keyword-cleanup (keyword-string)
-;;   (xah-replace-pairs-in-string-recursive
-;;    keyword-string 
-;;    [["d'" ""]
-;;     ["l'" ""]
-;;     ;; ["-de-" ""]
-;;     ["l’" ""]
-;;     ["." ""]
-;;     ;; ["&" "_"]
-;;     ["\&" ""]
-;;     ["\\&" ""]
-;;     ["\\_" "_"]
-;;     ["\_" "_"]
-;;     ["__" "_"]
-;;     ;; [" /& " "_"]
-;;     ;; [" & " "_"]
-;;     ;; [" //& " "_"]
-;;     ;; [", " "_"]
-;;     [",_" "_"]
-;;     ["d’" ""]]))
-
 (defun sync0-bibtex-filesystem-cleanup (stringy)
   "Correct characters forbidden in system filenames."
     (xah-replace-pairs-in-string
@@ -302,31 +333,6 @@ bibtex does not take lists but strings as arguments."
     (xah-replace-pairs-in-string-recursive
      x
      [["/de-" "/"]])))
-
-;; (defun sync0-bibtex-correct-journaltitle-keywords ()
-;;   "Corrections for the whole keyword string."
-;;   (when (or (string= sync0-bibtex-entry-type-downcase "article")
-;;             (string= sync0-bibtex-entry-type-downcase "collection"))
-;;     (unless (null sync0-bibtex-entry-journaltitle)
-;;       (setq sync0-bibtex-entry-journaltitle-tag
-;;             (xah-replace-pairs-in-string
-;;              sync0-bibtex-entry-journaltitle
-;;              [[" de " "_"]
-;;               [" la " "_"]
-;;               ["la " ""]
-;;               ["le " ""]
-;;               ["les " ""]
-;;               ["the " ""]
-;;               [" et " "_"]
-;;               [" of " "_"]
-;;               [" the " "_"]
-;;               [" les " "_"]
-;;               [" and " "_"]
-;;               [" du " "_"]
-;;               [" des " "_"]
-;;               [" da " "_"]
-;;               [" do " "_"]
-;;               [" du " "_"]])))))
 
 (defun sync0-bibtex-correct-keywords (field)
   "Create corrected var-tag for field to appear in keyword string."
@@ -353,9 +359,6 @@ bibtex does not take lists but strings as arguments."
               [" da " "_"]
               [" do " "_"]
               [" du " "_"]])))))
-
-  ;; (let* ((nospace (replace-regexp-in-string "[^,][[:space:]]+" "_" my-string))
-  ;;        (x (downcase nospace)))
 
 (defun sync0-bibtex-obsidian-keyword-tagify (my-string)
   "Corrections for individual fields used in keywords. Make
@@ -665,7 +668,7 @@ markdown."
              (created (unless  (assoc "created" entry)
                         (format-time-string "%Y-%m-%d")))
              (new-path (unless (assoc "file" entry)
-                         (concat ":" sync0-zettelkasten-attachments-directory new-key ".pdf:PDF")))
+                         (concat ":" sync0-zkn-attachments-dir new-key ".pdf:PDF")))
              (regex-journal "^[[:blank:]]+journal[[:blank:]]+=")
              (beg (save-excursion (bibtex-beginning-of-entry)))
              (end (save-excursion (bibtex-end-of-entry)))
@@ -708,8 +711,6 @@ markdown."
         (sync0-bibtex-create-field-at-entry "langid" language)
         (sync0-bibtex-create-field-at-entry "status" status)
         (bibtex-fill-entry)))))
-
-
 
 (defun sync0-bibtex-corrections-ensure-bibtex-year-field ()
   (interactive)
@@ -976,6 +977,262 @@ This function performs the following operations:
       (save-excursion
         (goto-char (point-min))
         (modify-citation)))))
+
+;; (defun sync0-bibtex-corrections-format-insert-citation (bibkey)
+;;   "Format citation to insert according to conventions."
+;;   (sync0-bibtex-completion-load-entry bibkey)
+;;   (cond ((and (string= sync0-bibtex-entry-type-downcase "incollection")
+;;               sync0-bibtex-entry-booktitle)
+;;            (concat sync0-bibtex-entry-lastname
+;;                    (or (concat " " sync0-bibtex-entry-date-fixed " ")
+;;                        " ")
+;;                    "/" sync0-bibtex-entry-title-fixed "/"
+;;                    " in "
+;;                    (when sync0-bibtex-entry-editor
+;;                      (concat 
+;;                       (sync0-bibtex-abbreviate-lastnames   sync0-bibtex-entry-editor)
+;;                       ", "))
+;;                    sync0-bibtex-entry-booktitle
+;;                    (when sync0-bibtex-entry-volume
+;;                      (concat 
+;;                       ", T. "
+;;                       sync0-bibtex-entry-volume
+;;                       (when sync0-bibtex-entry-number
+;;                         (concat 
+;;                          ", No. "
+;;                          sync0-bibtex-entry-number))))
+;;                    (when sync0-bibtex-entry-pages
+;;                      (concat 
+;;                       ", p. "
+;;                       sync0-bibtex-entry-pages))))
+;;         ((and (string= sync0-bibtex-entry-type-downcase "article")
+;;           sync0-bibtex-entry-booktitle)
+;;            (concat sync0-bibtex-entry-lastname
+;;                    (or (concat " " sync0-bibtex-entry-date-fixed " ")
+;;                        " ")
+;;                    "/" sync0-bibtex-entry-title-fixed "/"
+;;                    (when sync0-bibtex-entry-volume
+;;                      (concat 
+;;                       ", T. "
+;;                       sync0-bibtex-entry-volume
+;;                       (when sync0-bibtex-entry-number
+;;                         (concat 
+;;                          ", No. "
+;;                          sync0-bibtex-entry-number))))
+;;                    (when sync0-bibtex-entry-pages
+;;                      (concat 
+;;                       ", p. "
+;;                       sync0-bibtex-entry-pages))))
+;;         ((string= sync0-bibtex-entry-type-downcase "article")
+;;          (concat sync0-bibtex-entry-lastname
+;;                  (or (concat " " sync0-bibtex-entry-date-fixed " ")
+;;                      " ")
+;;                    "/" sync0-bibtex-entry-title-fixed "/"
+;;                " in "
+;;                sync0-bibtex-entry-journaltitle
+;;                (when sync0-bibtex-entry-volume
+;;                  (concat 
+;;                   ", T. "
+;;                   sync0-bibtex-entry-volume
+;;                (when sync0-bibtex-entry-number
+;;                  (concat 
+;;                   ", No. "
+;;                   sync0-bibtex-entry-number))
+;;                (when sync0-bibtex-entry-pages
+;;                  (concat 
+;;                   ", p. "
+;;                   sync0-bibtex-entry-pages))))))
+;;         ((or (string= sync0-bibtex-entry-type-downcase "incollection")
+;;              (string= sync0-bibtex-entry-type-downcase "inproceedings"))
+;;          (concat sync0-bibtex-entry-lastname
+;;                  (or (concat " " sync0-bibtex-entry-date-fixed " ")
+;;                      " ")
+;;                    "/" sync0-bibtex-entry-title-fixed "/"
+;;                " in "
+;;                sync0-bibtex-entry-journaltitle
+;;                (when sync0-bibtex-entry-volume
+;;                  (concat 
+;;                   ", T. "
+;;                   sync0-bibtex-entry-volume
+;;                (when sync0-bibtex-entry-number
+;;                  (concat 
+;;                   ", No. "
+;;                   sync0-bibtex-entry-number))
+;;                (when sync0-bibtex-entry-pages
+;;                  (concat 
+;;                   ", p. "
+;;                   sync0-bibtex-entry-pages))))))
+;;         ((string= sync0-bibtex-entry-type-downcase "inbook")
+;;          (concat sync0-bibtex-entry-lastname
+;;                  (or (concat " " sync0-bibtex-entry-date-fixed " ")
+;;                      " ")
+;;                    "/" sync0-bibtex-entry-title-fixed "/"
+;;                  " in "
+;;                  sync0-bibtex-entry-booktitle
+;;                  (when sync0-bibtex-entry-volume
+;;                    (concat 
+;;                     ", T. "
+;;                     sync0-bibtex-entry-volume
+;;                     (when sync0-bibtex-entry-number
+;;                       (concat 
+;;                        ", No. "
+;;                        sync0-bibtex-entry-number))))
+;;                  (when sync0-bibtex-entry-pages
+;;                    (concat 
+;;                     ", p. "
+;;                     sync0-bibtex-entry-pages))))
+;;         (t (concat sync0-bibtex-entry-lastname
+;;                    (or (concat " " sync0-bibtex-entry-date-fixed " ")
+;;                        " ")
+;;                    "/" sync0-bibtex-entry-title-fixed "/"))))
+
+(defun sync0-bibtex-corrections-format-insert-citation (bibkey &optional style)
+  "Format citation to insert according to conventions.
+The style parameter can be one of:
+- 'author-title'
+- 'title-date'
+- 'date-title'
+- 'author-date-title'
+Falls back to `sync0-bibtex-default-citation-style` if not specified."
+  (sync0-bibtex-completion-load-entry bibkey)
+  (let* ((citation-style (or style sync0-bibtex-citation-style))
+         (author (when sync0-bibtex-entry-author-or-editor-p sync0-bibtex-entry-lastname))
+         (title sync0-bibtex-entry-title-fixed)
+         (date (when sync0-bibtex-entry-date-or-origdate-p sync0-bibtex-entry-date-fixed))
+         (formatted-citation
+          (pcase citation-style
+            ("author-title"
+             (if author
+                 (concat author ", " title)
+               title))
+            ("title-date"
+             (if date
+                 (concat title " " date)
+               title))
+            ("date-title"
+             (if date
+                 (concat date " " title)
+               title))
+            ("author-date-title"
+             (if author
+                 (if date
+                     (concat author " " date " " title)
+                   (concat author ", " title))
+               (if date
+                   (concat date " " title)
+                 title)))
+            (_ (error "Unsupported citation style: %s" citation-style)))))
+    ;; Add per-entry type extra info (e.g., volume, pages) here if needed
+    formatted-citation))
+
+
+(defun sync0-bibtex-corrections-format-yank-citation (bibkey)
+  "Format citation to yank according to conventions."
+  (sync0-bibtex-completion-load-entry bibkey)
+  (cond ((and (string= sync0-bibtex-entry-type-downcase "incollection")
+              sync0-bibtex-entry-booktitle)
+           (concat sync0-bibtex-entry-lastname
+                   (or (concat " " sync0-bibtex-entry-date-fixed " ")
+                       " ")
+                   sync0-bibtex-entry-title-compatible
+                   " in "
+                   (when sync0-bibtex-entry-editor
+                     (concat 
+                      (sync0-bibtex-abbreviate-lastnames   sync0-bibtex-entry-editor)
+                      ", "))
+                   sync0-bibtex-entry-booktitle
+                   (when sync0-bibtex-entry-volume
+                     (concat 
+                      ", T. "
+                      sync0-bibtex-entry-volume
+                      (when sync0-bibtex-entry-number
+                        (concat 
+                         ", No. "
+                         sync0-bibtex-entry-number))))
+                   (when sync0-bibtex-entry-pages
+                     (concat 
+                      ", p. "
+                      sync0-bibtex-entry-pages))))
+        ((and (string= sync0-bibtex-entry-type-downcase "article")
+          sync0-bibtex-entry-booktitle)
+           (concat sync0-bibtex-entry-lastname
+                   (or (concat " " sync0-bibtex-entry-date-fixed " ")
+                       " ")
+                   sync0-bibtex-entry-title-compatible
+                   (when sync0-bibtex-entry-volume
+                     (concat 
+                      ", T. "
+                      sync0-bibtex-entry-volume
+                      (when sync0-bibtex-entry-number
+                        (concat 
+                         ", No. "
+                         sync0-bibtex-entry-number))))
+                   (when sync0-bibtex-entry-pages
+                     (concat 
+                      ", p. "
+                      sync0-bibtex-entry-pages))))
+        ((string= sync0-bibtex-entry-type-downcase "article")
+         (concat sync0-bibtex-entry-lastname
+                 (or (concat " " sync0-bibtex-entry-date-fixed " ")
+                     " ")
+               sync0-bibtex-entry-title-compatible
+               " in "
+               sync0-bibtex-entry-journaltitle
+               (when sync0-bibtex-entry-volume
+                 (concat 
+                  ", T. "
+                  sync0-bibtex-entry-volume
+               (when sync0-bibtex-entry-number
+                 (concat 
+                  ", No. "
+                  sync0-bibtex-entry-number))
+               (when sync0-bibtex-entry-pages
+                 (concat 
+                  ", p. "
+                  sync0-bibtex-entry-pages))))))
+        ((or (string= sync0-bibtex-entry-type-downcase "incollection")
+             (string= sync0-bibtex-entry-type-downcase "inproceedings"))
+         (concat sync0-bibtex-entry-lastname
+                 (or (concat " " sync0-bibtex-entry-date-fixed " ")
+                     " ")
+               sync0-bibtex-entry-title-compatible
+               " in "
+               sync0-bibtex-entry-journaltitle
+               (when sync0-bibtex-entry-volume
+                 (concat 
+                  ", T. "
+                  sync0-bibtex-entry-volume
+               (when sync0-bibtex-entry-number
+                 (concat 
+                  ", No. "
+                  sync0-bibtex-entry-number))
+               (when sync0-bibtex-entry-pages
+                 (concat 
+                  ", p. "
+                  sync0-bibtex-entry-pages))))))
+        ((string= sync0-bibtex-entry-type-downcase "inbook")
+         (concat sync0-bibtex-entry-lastname
+                 (or (concat " " sync0-bibtex-entry-date-fixed " ")
+                     " ")
+                 sync0-bibtex-entry-title-compatible
+                 " in "
+                 sync0-bibtex-entry-booktitle
+                 (when sync0-bibtex-entry-volume
+                   (concat 
+                    ", T. "
+                    sync0-bibtex-entry-volume
+                    (when sync0-bibtex-entry-number
+                      (concat 
+                       ", No. "
+                       sync0-bibtex-entry-number))))
+                 (when sync0-bibtex-entry-pages
+                   (concat 
+                    ", p. "
+                    sync0-bibtex-entry-pages))))
+        (t (concat sync0-bibtex-entry-lastname
+                   (or (concat " " sync0-bibtex-entry-date-fixed " ")
+                       " ")
+                   sync0-bibtex-entry-title-compatible))))
 
 (provide 'sync0-bibtex-corrections)
 

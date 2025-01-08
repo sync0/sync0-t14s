@@ -1,4 +1,3 @@
-
 (use-package pyvenv
   :hook (python-mode . pyvenv-mode)
   :custom

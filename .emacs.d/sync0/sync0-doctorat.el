@@ -104,7 +104,7 @@
                                          year "/" month-end ", reference/collection, journaltitle/journal_des_economistes, language/french, relatedtype/partof, related/" 
                                          crossrefkey ", year/" year ", theme/political_economy, theme/economics, theme/politics, theme/liberalism, theme/laissez_faire, theme/publications, country/france"))
       (setq sync0-bibtex-entry-file
-            (concat ":" sync0-zettelkasten-attachments-directory bibkey ".pdf:PDF"))
+            (concat ":" sync0-zkn-attachments-dir bibkey ".pdf:PDF"))
           ;; Beginning of loop actions
           ;; append entry to bibfile file.
       (sync0-bibtex-entry-append-to-bibliography bibkey bibfile)))
@@ -203,7 +203,7 @@
                                          year "/" month-end ", reference/collection, journaltitle/journal_des_economistes, language/french, relatedtype/partof, related/" 
                                          crossrefkey ", year/" year ", theme/political_economy, theme/economics, theme/politics, theme/liberalism, theme/laissez_faire, theme/publications, country/france"))
       (setq sync0-bibtex-entry-file
-            (concat ":" sync0-zettelkasten-attachments-directory bibkey ".pdf:PDF"))
+            (concat ":" sync0-zkn-attachments-dir bibkey ".pdf:PDF"))
           ;; Beginning of loop actions
           ;; append entry to bibfile file.
       (sync0-bibtex-entry-append-to-bibliography bibkey bibfile)))
@@ -307,7 +307,7 @@
                                          year "/" month-end ", reference/collection, journaltitle/journal_des_economistes, language/french, relatedtype/partof, related/" 
                                          crossrefkey ", year/" year ", theme/political_economy, theme/economics, theme/politics, theme/liberalism, theme/laissez_faire, theme/publications, country/france"))
       (setq sync0-bibtex-entry-file
-            (concat ":" sync0-zettelkasten-attachments-directory bibkey ".pdf:PDF"))
+            (concat ":" sync0-zkn-attachments-dir bibkey ".pdf:PDF"))
           ;; Beginning of loop actions
           ;; append entry to bibfile file.
       (sync0-bibtex-entry-append-to-bibliography bibkey bibfile)))

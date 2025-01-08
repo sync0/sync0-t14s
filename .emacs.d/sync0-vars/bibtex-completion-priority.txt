@@ -5,3 +5,7 @@
 5
 nil
 high
+none
+medium
+medium_high
+medium_low

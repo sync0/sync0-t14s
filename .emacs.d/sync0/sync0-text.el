@@ -1,10 +1,75 @@
+;; (if (> (display-pixel-width) 1900)
+;;     ;; high resolution font size (t14s)
+;;     (progn (set-face-attribute 'default nil 
+;;                                :family "Inconsolata"
+;;                                :height 150)
+;;            ;;:height 175
+;;            (setq line-spacing 7))
+;;   ;; low resolution font size
+;;   (progn (set-face-attribute 'default nil 
+;;                              :family "Inconsolata"
+;;                              :height 130)
+;;          (setq line-spacing 3)))
+
+(if (> (display-pixel-width) 1900)
+    ;; High resolution font size
+    (progn (set-face-attribute 'default nil 
+                               :family "Inconsolata"
+                               :height 144) ; Base size
+           (setq line-spacing 2))
+  ;; Low resolution font size
+  (progn (set-face-attribute 'default nil 
+                             :family "Inconsolata"
+                             :height 120) ; Base size
+         (setq line-spacing 3)))
+
+(defun sync0-buffer-face-proportional ()
+  "Set font to a variable width (proportional) fonts in the current buffer."
+  (if (> (display-pixel-width) 1900)
+      (progn
+        (setq buffer-face-mode-face '(:family "Literata" :height 160))
+        (setq line-spacing 0.25))
+    (progn
+      (setq buffer-face-mode-face '(:family "Literata" :height 128))
+      (setq line-spacing 0.225)))
+  (buffer-face-mode))
+
+;; (defun sync0-buffer-face-proportional ()
+;;   "Set font to a variable width (proportional) fonts in current buffer"
+;;   (if (> (display-pixel-width) 1900)
+;;       ;; high resolution font size (t14s)
+;;       (progn
+;;         (setq buffer-face-mode-face '(:family "Literata" :height 165))
+;;         (setq line-spacing 0.25))
+;;     ;; low resolution font size
+;;     (progn
+;;       ;; (setq buffer-face-mode-face '(:family "Minion Pro" :height 155 :spacing proportional))
+;;       (setq buffer-face-mode-face '(:family "Literata" :height 130))
+;;       ;; (setq line-spacing 0.2)
+;;       (setq line-spacing 0.225)))
+;;   (buffer-face-mode))
+
+
+(add-hook 'erc-mode-hook #'sync0-buffer-face-proportional)
+(add-hook 'Info-mode-hook #'sync0-buffer-face-proportional)
+(add-hook 'org-mode-hook #'sync0-buffer-face-proportional)
+(add-hook 'markdown-mode-hook #'sync0-buffer-face-proportional)
+
+(use-package fcitx
+  :straight t
+  :custom
+  (fcitx5-use-dbus t)  ;; or set to 'fcitx5 if you use fcitx5
+  :config
+  ;; (fcitx-aggressive-setup)
+  )
+
 ;; End sentences with a single espace.
 (use-package unidecode)
 
 (add-hook 'text-mode-hook
-          '(lambda ()
-             (setq indent-tabs-mode nil)
-             (setq tab-width 4)))
+          (lambda ()
+            (setq indent-tabs-mode nil)
+            (setq tab-width (if (derived-mode-p 'org-mode) 8 4))))
 
 (setq-default sentence-end-double-space nil
               header-line-format " "
@@ -21,8 +86,8 @@
 (use-package auto-fill
   :straight nil
   :hook 
-  (text-mode . turn-on-auto-fill)
-  (markdown-mode . turn-off-auto-fill)
+  ((text-mode . turn-off-auto-fill)
+  (markdown-mode . turn-off-auto-fill))
   :preface
   ;; Configure exceptions for auto-fill mode. 
   (defun sync0-nobreak-p ()
@@ -39,7 +104,8 @@
   :commands visual-line-mode
   :hook 
   ;; (text-mode . visual-line-mode) 
-  (markdown-mode . visual-line-mode))
+  ((markdown-mode . visual-line-mode)
+  (org-mode . visual-line-mode)))
 
 (use-package visual-fill-column
   :commands visual-fill-column-mode
@@ -113,7 +179,9 @@
   (flyspell-issue-message-flag nil))
 
 (use-package smart-quotes 
-  :hook (markdown-mode . smart-quotes-mode))
+  :hook
+  ((markdown-mode . smart-quotes-mode)
+   (org-mode . smart-quotes-mode)))
 
 (use-package writeroom-mode
 :commands writeroom-mode
@@ -124,5 +192,40 @@
   :straight nil
   :commands follow-mode
   :custom (follow-auto t))
+
+;; (use-package proselint)
+
+(use-package avy
+  :custom
+  ;;   (avy-background t)              ;; Dim the background while selecting
+  ;;   (avy-style 'at-full)            ;; Highlight the entire character
+  (avy-style 'words))            ;; Highlight the entire character
+;; Adjust the display faces for better visibility
+;;   (set-face-attribute 'avy-lead-face nil
+;;                       :foreground "white"
+;;                       :background "blue"
+;;                       :weight 'bold)
+;;   (set-face-attribute 'avy-lead-face-0 nil
+;;                       :foreground "white"
+;;                       :background "green"
+;;                       :weight 'bold)
+;;   (set-face-attribute 'avy-lead-face-2 nil
+;;                       :foreground "white"
+;;                       :background "red"
+;;                       :weight 'bold)
+
+(use-package focus
+  :disabled t
+  :commands focus-mode
+  :custom
+  (focus-mode-to-thing '((markdown-mode . sentence) ;; Focus on paragraphs in Markdown
+                         (org-mode . sentence)      ;; Focus on sentences in Org-mode
+                         ;; (prog-mode . defun)      ;; Focus on sentences in Org-mode
+                         ;; (python-mode . paragraph)      ;; Focus on sentences in Org-mode
+                         (text-mode . sentence)))  ;; Default to paragraphs in plain text
+  :hook
+  (text-mode . focus-mode)) ;; Automatically enable in `text-mode` and derivatives
+
+
 
 (provide 'sync0-text)

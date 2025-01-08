@@ -3,9 +3,9 @@
 
 "29.4"
 
-#s(hash-table size 97 test equal rehash-size 1.5 rehash-threshold 0.8125 data ("straight" ("2024-11-25 21:36:38" ("emacs") (:type git :host github :repo "radian-software/straight.el" :files ("straight*.el") :branch "master" :package "straight" :local-repo "straight.el")) "org-elpa" ("2024-11-25 21:36:38" nil (:local-repo nil :package "org-elpa" :type git)) "melpa" ("2024-11-25 21:36:38" nil (:type git :host github :repo "melpa/melpa" :build nil :package "melpa" :local-repo "melpa")) "gnu-elpa-mirror" ("2024-11-25 21:36:38" nil (:type git :host github :repo "emacs-straight/gnu-elpa-mirror" :build nil :package "gnu-elpa-mirror" :local-repo "gnu-elpa-mirror")) "nongnu-elpa" ("2024-11-25 21:36:38" nil (:type git :repo "https://git.savannah.gnu.org/git/emacs/nongnu.git" :depth (full single-branch) :local-repo "nongnu-elpa" :build nil :package "nongnu-elpa")) "el-get" ("2024-11-25 21:36:38" nil (:type git :host github :repo "dimitri/el-get" :build nil :files (:defaults "methods" ("recipes" "recipes/el-get.rcp") "el-get-pkg.el") :package "el-get" :local-repo "el-get")) "emacsmirror-mirror" ("2024-11-25 21:36:38" nil (:type git :host github :repo "emacs-straight/emacsmirror-mirror" :build nil :package "emacsmirror-mirror" :local-repo "emacsmirror-mirror")) "use-package" ("2024-11-25 21:36:38" ("emacs" "bind-key") (:type git :host github :repo "emacs-straight/use-package" :files ("*" (:exclude ".git")) :package "use-package" :local-repo "use-package")) "bind-key" ("2024-11-25 21:36:38" ("emacs") (:type git :host github :repo "emacs-straight/bind-key" :files ("*" (:exclude ".git")) :package "bind-key" :local-repo "bind-key")) "evil" ("2024-11-25 21:36:38" ("emacs" "cl-lib" "goto-chg" "nadvice") (:type git :files (:defaults "doc/build/texinfo/evil.texi" (:exclude "evil-test-helpers.el") "evil-pkg.el") :host github :repo "emacs-evil/evil" :package "evil" :local-repo "evil")) "goto-chg" ("2024-11-25 21:36:38" ("emacs") (:type git :host github :repo "emacs-evil/goto-chg" :package "goto-chg" :local-repo "goto-chg")) "undo-tree" ("2024-11-25 21:36:41" ("queue" "emacs") (:type git :host github :repo "emacs-straight/undo-tree" :files ("*" (:exclude ".git")) :package "undo-tree" :local-repo "undo-tree")) "queue" ("2024-11-25 21:36:38" ("cl-lib") (:type git :host github :repo "emacs-straight/queue" :files ("*" (:exclude ".git")) :package "queue" :local-repo "queue")) "s" ("2024-11-25 21:36:38" nil (:type git :host github :repo "magnars/s.el" :package "s" :local-repo "s.el")) "f" ("2024-11-25 21:36:38" ("emacs" "s" "dash") (:type git :host github :repo "rejeep/f.el" :package "f" :local-repo "f.el")) "dash" ("2024-11-25 21:36:38" ("emacs") (:type git :files ("dash.el" "dash.texi" "dash-pkg.el") :host github :repo "magnars/dash.el" :package "dash" :local-repo "dash.el")) "hydra" ("2024-11-25 21:36:38" ("cl-lib" "lv") (:type git :files (:defaults (:exclude "lv.el") "hydra-pkg.el") :host github :repo "abo-abo/hydra" :package "hydra" :local-repo "hydra")) "lv" ("2024-11-25 21:36:38" nil (:files ("lv.el" "lv-pkg.el") :package "lv" :local-repo "hydra" :type git :repo "abo-abo/hydra" :host github)) "major-mode-hydra" ("2024-11-25 21:36:38" ("dash" "pretty-hydra" "emacs") (:type git :files ("major-mode-hydra.el" "major-mode-hydra-pkg.el") :host github :repo "jerrypnz/major-mode-hydra.el" :package "major-mode-hydra" :local-repo "major-mode-hydra.el")) "pretty-hydra" ("2024-11-25 21:36:38" ("hydra" "s" "dash" "emacs" "compat") (:files ("pretty-hydra.el" "pretty-hydra-pkg.el") :package "pretty-hydra" :local-repo "major-mode-hydra.el" :type git :repo "jerrypnz/major-mode-hydra.el" :host github)) "compat" ("2024-11-25 21:36:38" ("emacs" "seq") (:type git :host github :repo "emacs-straight/compat" :files ("*" (:exclude ".git")) :package "compat" :local-repo "compat")) "seq" ("2024-11-25 21:36:38" nil (:type git :host github :repo "emacs-straight/seq" :files ("*" (:exclude ".git")) :package "seq" :local-repo "seq")) "which-key" ("2024-11-25 21:36:41" ("emacs") (:type git :host github :repo "justbur/emacs-which-key" :package "which-key" :local-repo "emacs-which-key")) "vertico" ("2024-11-25 21:36:41" ("emacs" "compat") (:files (:defaults "extensions/*") :includes (vertico-indexed vertico-flat vertico-grid vertico-mouse vertico-quick vertico-buffer vertico-repeat vertico-reverse vertico-directory vertico-multiform vertico-unobtrusive) :repo "minad/vertico" :host github :package "vertico" :type git :local-repo "vertico")) "embark" ("2024-11-25 21:36:41" ("emacs" "compat") (:type git :files ("embark.el" "embark-org.el" "embark.texi" "embark-pkg.el") :host github :repo "oantolin/embark" :package "embark" :local-repo "embark")) "embark-consult" ("2024-11-25 21:36:41" ("emacs" "compat" "embark" "consult") (:files ("embark-consult.el" "embark-consult-pkg.el") :package "embark-consult" :local-repo "embark" :type git :repo "oantolin/embark" :host github)) "consult" ("2024-11-25 21:36:41" ("emacs" "compat") (:type git :host github :repo "minad/consult" :package "consult" :local-repo "consult")) "marginalia" ("2024-11-25 21:36:41" ("emacs" "compat") (:type git :host github :repo "minad/marginalia" :package "marginalia" :local-repo "marginalia")) "move-text" ("2024-11-25 21:36:38" nil (:type git :host github :repo "emacsfodder/move-text" :package "move-text" :local-repo "move-text")) "fcitx" ("2024-11-25 21:36:41" nil (:type git :host github :repo "cute-jumper/fcitx.el" :package "fcitx" :local-repo "fcitx.el")) "evil-escape" ("2024-11-25 21:36:38" ("emacs" "evil" "cl-lib") (:type git :host github :repo "emacsorphanage/evil-escape" :package "evil-escape" :local-repo "evil-escape")) "evil-leader" ("2024-11-25 21:36:38" ("evil") (:type git :host github :repo "cofi/evil-leader" :package "evil-leader" :local-repo "evil-leader")) "orderless" ("2024-11-25 21:36:41" ("emacs" "compat") (:type git :host github :repo "oantolin/orderless" :package "orderless" :local-repo "orderless")) "projectile" ("2024-11-22 22:27:17" ("emacs") (:type git :host github :repo "bbatsov/projectile" :package "projectile" :local-repo "projectile")) "doom-themes" ("2024-11-25 21:36:41" ("emacs" "cl-lib") (:type git :files (:defaults "themes/*.el" "themes/*/*.el" "extensions/*.el" "doom-themes-pkg.el") :host github :repo "doomemacs/themes" :package "doom-themes" :local-repo "themes")) "smooth-scrolling" ("2024-11-25 21:36:40" nil (:type git :host github :repo "aspiers/smooth-scrolling" :package "smooth-scrolling" :local-repo "smooth-scrolling")) "all-the-icons" ("2024-11-25 21:36:41" ("emacs") (:type git :files (:defaults "data" "all-the-icons-pkg.el") :host github :repo "domtronn/all-the-icons.el" :package "all-the-icons" :local-repo "all-the-icons.el")) "all-the-icons-completion" ("2024-11-25 21:36:41" ("emacs" "all-the-icons") (:type git :host github :repo "iyefrat/all-the-icons-completion" :package "all-the-icons-completion" :local-repo "all-the-icons-completion")) "magit" ("2024-11-25 21:36:42" ("emacs" "compat" "dash" "magit-section" "seq" "transient" "with-editor") (:type git :files ("lisp/magit*.el" "lisp/git-*.el" "docs/magit.texi" "docs/AUTHORS.md" "LICENSE" "magit-pkg.el" (:exclude "lisp/magit-section.el") "magit-pkg.el") :host github :repo "magit/magit" :package "magit" :local-repo "magit")) "magit-section" ("2024-11-25 21:36:42" ("emacs" "compat" "dash" "seq") (:files ("lisp/magit-section.el" "docs/magit-section.texi" "magit-section-pkg.el" "magit-section-pkg.el") :package "magit-section" :local-repo "magit" :type git :repo "magit/magit" :host github)) "transient" ("2024-11-25 21:36:42" ("emacs" "compat" "seq") (:type git :host github :repo "magit/transient" :package "transient" :local-repo "transient")) "with-editor" ("2024-11-25 21:36:42" ("emacs" "compat") (:type git :host github :repo "magit/with-editor" :package "with-editor" :local-repo "with-editor")) "unidecode" ("2024-11-25 21:36:41" nil (:type git :files (:defaults "data" "unidecode-pkg.el") :host github :repo "sindikat/unidecode" :package "unidecode" :local-repo "unidecode")) "smart-quotes" ("2024-11-25 21:36:41" nil (:type git :host github :repo "gareth-rees/smart-quotes" :files (:defaults) :package "smart-quotes" :local-repo "smart-quotes")) "writeroom-mode" ("2024-11-25 21:36:41" ("emacs" "visual-fill-column") (:type git :host github :repo "joostkremers/writeroom-mode" :package "writeroom-mode" :local-repo "writeroom-mode")) "visual-fill-column" ("2024-11-25 21:36:41" ("emacs") (:type git :host codeberg :repo "joostkremers/visual-fill-column" :package "visual-fill-column" :local-repo "visual-fill-column")) "yaml-mode" ("2024-11-25 21:36:42" ("emacs") (:type git :host github :repo "yoshiki/yaml-mode" :package "yaml-mode" :local-repo "yaml-mode")) "markdown-mode" ("2024-11-25 21:36:41" ("emacs") (:type git :host github :repo "jrblevin/markdown-mode" :package "markdown-mode" :local-repo "markdown-mode")) "lsp-mode" ("2024-11-25 21:36:41" ("emacs" "dash" "f" "ht" "spinner" "markdown-mode" "lv" "eldoc") (:type git :files (:defaults "clients/*.el" "lsp-mode-pkg.el") :host github :repo "emacs-lsp/lsp-mode" :package "lsp-mode" :local-repo "lsp-mode")) "ht" ("2024-11-25 21:36:38" ("dash") (:type git :host github :repo "Wilfred/ht.el" :package "ht" :local-repo "ht.el")) "spinner" ("2024-11-25 21:36:41" ("emacs") (:type git :host github :repo "emacs-straight/spinner" :files ("*" (:exclude ".git")) :package "spinner" :local-repo "spinner")) "eldoc" ("2024-11-25 21:36:41" ("emacs") (:type git :host github :repo "emacs-straight/eldoc" :files ("*" (:exclude ".git")) :package "eldoc" :local-repo "eldoc")) "lua-mode" ("2024-11-25 21:36:43" ("emacs") (:type git :files (:defaults (:exclude "init-tryout.el") "lua-mode-pkg.el") :host github :repo "immerrr/lua-mode" :package "lua-mode" :local-repo "lua-mode")) "yasnippet" ("2024-11-25 21:36:43" ("cl-lib" "emacs") (:type git :files ("yasnippet.el" "snippets" "yasnippet-pkg.el") :host github :repo "joaotavora/yasnippet" :package "yasnippet" :local-repo "yasnippet")) "bibtex-completion" ("2024-11-25 21:36:38" ("parsebib" "s" "dash" "f" "cl-lib" "biblio" "emacs") (:type git :files ("bibtex-completion.el" "bibtex-completion-pkg.el") :host github :repo "tmalsburg/helm-bibtex" :package "bibtex-completion" :local-repo "helm-bibtex")) "parsebib" ("2024-11-25 21:36:38" ("emacs") (:type git :host github :repo "joostkremers/parsebib" :package "parsebib" :local-repo "parsebib")) "biblio" ("2024-11-25 21:36:38" ("emacs" "biblio-core") (:type git :files (:defaults (:exclude "biblio-core.el") "biblio-pkg.el") :host github :repo "cpitclaudel/biblio.el" :package "biblio" :local-repo "biblio.el")) "biblio-core" ("2024-11-25 21:36:38" ("emacs" "let-alist" "seq" "dash") (:files ("biblio-core.el" "biblio-core-pkg.el") :package "biblio-core" :local-repo "biblio.el" :type git :repo "cpitclaudel/biblio.el" :host github)) "let-alist" ("2024-11-25 21:36:38" ("emacs") (:type git :host github :repo "emacs-straight/let-alist" :files ("*" (:exclude ".git")) :package "let-alist" :local-repo "let-alist")) "smartparens" ("2024-11-25 21:36:43" ("dash" "cl-lib") (:type git :host github :repo "Fuco1/smartparens" :package "smartparens" :local-repo "smartparens")) "flycheck" ("2024-11-25 21:36:43" ("emacs") (:type git :host github :repo "flycheck/flycheck" :package "flycheck" :local-repo "flycheck")) "lsp-ui" ("2024-11-25 21:36:43" ("emacs" "dash" "lsp-mode" "markdown-mode") (:type git :files (:defaults "lsp-ui-doc.html" "resources" "lsp-ui-pkg.el") :host github :repo "emacs-lsp/lsp-ui" :package "lsp-ui" :local-repo "lsp-ui")) "dap-mode" ("2024-11-25 21:36:43" ("emacs" "dash" "lsp-mode" "bui" "f" "s" "lsp-treemacs" "posframe" "ht" "lsp-docker") (:type git :files (:defaults "icons" "dap-mode-pkg.el") :host github :repo "emacs-lsp/dap-mode" :package "dap-mode" :local-repo "dap-mode")) "bui" ("2024-11-25 21:36:43" ("emacs" "dash") (:type git :host github :repo "alezost/bui.el" :package "bui" :local-repo "bui.el")) "lsp-treemacs" ("2024-11-25 21:36:43" ("emacs" "dash" "f" "ht" "treemacs" "lsp-mode") (:type git :files (:defaults "icons" "lsp-treemacs-pkg.el") :host github :repo "emacs-lsp/lsp-treemacs" :package "lsp-treemacs" :local-repo "lsp-treemacs")) "treemacs" ("2024-11-25 21:36:43" ("emacs" "cl-lib" "dash" "s" "ace-window" "pfuture" "hydra" "ht" "cfrs") (:type git :files (:defaults "Changelog.org" "icons" "src/elisp/treemacs*.el" "src/scripts/treemacs*.py" (:exclude "src/extra/*") "treemacs-pkg.el") :host github :repo "Alexander-Miller/treemacs" :package "treemacs" :local-repo "treemacs")) "ace-window" ("2024-11-25 21:36:43" ("avy") (:type git :host github :repo "abo-abo/ace-window" :package "ace-window" :local-repo "ace-window")) "avy" ("2024-11-25 21:36:38" ("emacs" "cl-lib") (:type git :host github :repo "abo-abo/avy" :package "avy" :local-repo "avy")) "pfuture" ("2024-11-25 21:36:43" ("emacs") (:type git :host github :repo "Alexander-Miller/pfuture" :package "pfuture" :local-repo "pfuture")) "cfrs" ("2024-11-25 21:36:43" ("emacs" "dash" "s" "posframe") (:type git :host github :repo "Alexander-Miller/cfrs" :package "cfrs" :local-repo "cfrs")) "posframe" ("2024-11-25 21:36:43" ("emacs") (:type git :host github :repo "tumashu/posframe" :package "posframe" :local-repo "posframe")) "lsp-docker" ("2024-11-25 21:36:43" ("emacs" "dash" "lsp-mode" "f" "s" "yaml" "ht") (:type git :host github :repo "emacs-lsp/lsp-docker" :package "lsp-docker" :local-repo "lsp-docker")) "yaml" ("2024-11-25 21:36:42" ("emacs") (:type git :host github :repo "zkry/yaml.el" :package "yaml" :local-repo "yaml.el")) "org-ref" ("2024-11-25 21:36:38" ("org" "dash" "s" "f" "htmlize" "hydra" "avy" "parsebib" "bibtex-completion" "citeproc" "ox-pandoc" "request") (:type git :files (:defaults "org-ref.org" "org-ref.bib" "citeproc" "org-ref-pkg.el") :host github :repo "jkitchin/org-ref" :package "org-ref" :local-repo "org-ref")) "org" ("2024-11-25 21:36:38" ("emacs") (:type git :repo "https://git.savannah.gnu.org/git/emacs/org-mode.git" :local-repo "org" :depth full :pre-build (straight-recipes-org-elpa--build) :build (:not autoloads) :files (:defaults "lisp/*.el" ("etc/styles/" "etc/styles/*")) :package "org")) "htmlize" ("2024-11-25 21:36:38" ("emacs") (:type git :host github :repo "hniksic/emacs-htmlize" :package "htmlize" :local-repo "emacs-htmlize")) "citeproc" ("2024-11-25 21:36:38" ("emacs" "dash" "s" "f" "queue" "string-inflection" "org" "parsebib" "compat") (:type git :host github :repo "andras-simonyi/citeproc-el" :package "citeproc" :local-repo "citeproc-el")) "string-inflection" ("2024-11-25 21:36:38" nil (:type git :host github :repo "akicho8/string-inflection" :package "string-inflection" :local-repo "string-inflection")) "ox-pandoc" ("2024-11-25 21:36:38" ("org" "emacs" "dash" "ht") (:type git :host github :repo "emacsorphanage/ox-pandoc" :package "ox-pandoc" :local-repo "ox-pandoc")) "request" ("2024-11-25 21:36:38" ("emacs") (:type git :files ("request.el" "request-pkg.el") :host github :repo "tkf/emacs-request" :package "request" :local-repo "emacs-request")) "consult-bibtex" ("2024-11-25 21:36:43" ("emacs" "bibtex-completion" "consult") (:type git :host github :repo "mohkale/consult-bibtex" :package "consult-bibtex" :local-repo "consult-bibtex")) "pyenv" ("2024-11-23 00:38:49" nil (:type git :host github :repo "shellbj/pyenv.el" :files (:defaults) :package "pyenv" :local-repo "pyenv.el")) "elpy" ("2024-11-25 21:36:43" ("company" "emacs" "highlight-indentation" "pyvenv" "yasnippet" "s") (:type git :files ("*.el" "NEWS.rst" "snippets" "elpy" "elpy-pkg.el") :host github :repo "jorgenschaefer/elpy" :package "elpy" :local-repo "elpy")) "company" ("2024-11-25 21:36:41" ("emacs") (:type git :files (:defaults "icons" ("images/small" "doc/images/small/*.png") "company-pkg.el") :host github :repo "company-mode/company-mode" :package "company" :local-repo "company-mode")) "highlight-indentation" ("2024-11-25 21:36:43" nil (:type git :host github :repo "antonj/Highlight-Indentation-for-Emacs" :package "highlight-indentation" :local-repo "Highlight-Indentation-for-Emacs")) "pyvenv" ("2024-11-25 21:36:43" nil (:type git :host github :repo "jorgenschaefer/pyvenv" :package "pyvenv" :local-repo "pyvenv")) "obsidian" ("2024-11-25 21:36:42" ("emacs" "f" "s" "dash" "markdown-mode" "elgrep" "yaml") (:type git :host github :repo "licht1stein/obsidian.el" :package "obsidian" :local-repo "obsidian.el")) "elgrep" ("2024-11-25 21:36:42" ("emacs" "async") (:type git :host github :repo "TobiasZawada/elgrep" :package "elgrep" :local-repo "elgrep")) "async" ("2024-11-25 21:36:42" ("emacs") (:type git :host github :repo "jwiegley/emacs-async" :package "async" :local-repo "emacs-async")) "company-lsp" ("2024-11-25 21:36:41" ("emacs" "lsp-mode" "company" "s" "dash") (:type git :host github :repo "emacsattic/company-lsp" :package "company-lsp" :local-repo "company-lsp")) "company-box" ("2024-11-25 21:36:41" ("emacs" "dash" "company" "frame-local") (:type git :files (:defaults "images" "company-box-pkg.el") :host github :repo "sebastiencs/company-box" :package "company-box" :local-repo "company-box")) "frame-local" ("2024-11-25 21:36:41" ("emacs") (:type git :host github :repo "sebastiencs/frame-local" :package "frame-local" :local-repo "frame-local")) "auto-virtualenv" ("2024-11-25 21:36:43" ("cl-lib") (:type git :host github :repo "marcwebbie/auto-virtualenv" :package "auto-virtualenv" :local-repo "auto-virtualenv")) "exec-path-from-shell" ("2024-11-25 21:36:43" ("emacs") (:type git :host github :repo "purcell/exec-path-from-shell" :package "exec-path-from-shell" :local-repo "exec-path-from-shell"))))
+#s(hash-table size 145 test equal rehash-size 1.5 rehash-threshold 0.8125 data ("straight" ("2025-01-08 01:47:13" ("emacs") (:type git :host github :repo "radian-software/straight.el" :files ("straight*.el") :branch "master" :package "straight" :local-repo "straight.el")) "org-elpa" ("2025-01-08 01:47:12" nil (:local-repo nil :package "org-elpa" :type git)) "melpa" ("2025-01-08 01:47:13" nil (:type git :host github :repo "melpa/melpa" :build nil :package "melpa" :local-repo "melpa")) "gnu-elpa-mirror" ("2025-01-08 01:47:13" nil (:type git :host github :repo "emacs-straight/gnu-elpa-mirror" :build nil :package "gnu-elpa-mirror" :local-repo "gnu-elpa-mirror")) "nongnu-elpa" ("2025-01-08 01:47:13" nil (:type git :repo "https://git.savannah.gnu.org/git/emacs/nongnu.git" :depth (full single-branch) :local-repo "nongnu-elpa" :build nil :package "nongnu-elpa")) "el-get" ("2025-01-08 01:47:13" nil (:type git :host github :repo "dimitri/el-get" :build nil :files (:defaults "methods" ("recipes" "recipes/el-get.rcp") "el-get-pkg.el") :package "el-get" :local-repo "el-get")) "emacsmirror-mirror" ("2025-01-08 01:47:13" nil (:type git :host github :repo "emacs-straight/emacsmirror-mirror" :build nil :package "emacsmirror-mirror" :local-repo "emacsmirror-mirror")) "use-package" ("2025-01-08 01:47:13" ("emacs" "bind-key") (:type git :host github :repo "emacs-straight/use-package" :files ("*" (:exclude ".git")) :package "use-package" :local-repo "use-package")) "bind-key" ("2025-01-08 01:47:13" ("emacs") (:type git :host github :repo "emacs-straight/bind-key" :files ("*" (:exclude ".git")) :package "bind-key" :local-repo "bind-key")) "evil" ("2025-01-08 01:47:13" ("emacs" "cl-lib" "goto-chg" "nadvice") (:type git :files (:defaults "doc/build/texinfo/evil.texi" (:exclude "evil-test-helpers.el") "evil-pkg.el") :host github :repo "emacs-evil/evil" :package "evil" :local-repo "evil")) "goto-chg" ("2025-01-08 01:47:13" ("emacs") (:type git :host github :repo "emacs-evil/goto-chg" :package "goto-chg" :local-repo "goto-chg")) "undo-tree" ("2025-01-08 01:47:13" ("queue" "emacs") (:type git :host github :repo "emacs-straight/undo-tree" :files ("*" (:exclude ".git")) :package "undo-tree" :local-repo "undo-tree")) "queue" ("2025-01-08 01:47:13" ("cl-lib") (:type git :host github :repo "emacs-straight/queue" :files ("*" (:exclude ".git")) :package "queue" :local-repo "queue")) "s" ("2025-01-08 01:47:13" nil (:type git :host github :repo "magnars/s.el" :package "s" :local-repo "s.el")) "f" ("2025-01-08 01:47:13" ("emacs" "s" "dash") (:type git :host github :repo "rejeep/f.el" :package "f" :local-repo "f.el")) "dash" ("2025-01-08 01:47:13" ("emacs") (:type git :files ("dash.el" "dash.texi" "dash-pkg.el") :host github :repo "magnars/dash.el" :package "dash" :local-repo "dash.el")) "hydra" ("2025-01-08 01:47:13" ("cl-lib" "lv") (:type git :files (:defaults (:exclude "lv.el") "hydra-pkg.el") :host github :repo "abo-abo/hydra" :package "hydra" :local-repo "hydra")) "lv" ("2025-01-08 01:47:13" nil (:files ("lv.el" "lv-pkg.el") :package "lv" :local-repo "hydra" :type git :repo "abo-abo/hydra" :host github)) "major-mode-hydra" ("2025-01-08 01:47:24" ("dash" "pretty-hydra" "emacs") (:type git :files ("major-mode-hydra.el" "major-mode-hydra-pkg.el") :host github :repo "jerrypnz/major-mode-hydra.el" :package "major-mode-hydra" :local-repo "major-mode-hydra.el")) "pretty-hydra" ("2025-01-08 01:47:24" ("hydra" "s" "dash" "emacs" "compat") (:files ("pretty-hydra.el" "pretty-hydra-pkg.el") :package "pretty-hydra" :local-repo "major-mode-hydra.el" :type git :repo "jerrypnz/major-mode-hydra.el" :host github)) "compat" ("2025-01-08 01:47:13" ("emacs" "seq") (:type git :host github :repo "emacs-straight/compat" :files ("*" (:exclude ".git")) :package "compat" :local-repo "compat")) "seq" ("2025-01-08 01:47:13" nil (:type git :host github :repo "emacs-straight/seq" :files ("*" (:exclude ".git")) :package "seq" :local-repo "seq")) "which-key" ("2025-01-08 01:47:13" ("emacs") (:type git :host github :repo "justbur/emacs-which-key" :package "which-key" :local-repo "emacs-which-key")) "vertico" ("2025-01-08 01:47:13" ("emacs" "compat") (:files (:defaults "extensions/*") :includes (vertico-indexed vertico-flat vertico-grid vertico-mouse vertico-quick vertico-buffer vertico-repeat vertico-reverse vertico-directory vertico-multiform vertico-unobtrusive) :repo "minad/vertico" :host github :package "vertico" :type git :local-repo "vertico")) "embark" ("2025-01-08 01:47:13" ("emacs" "compat") (:type git :files ("embark.el" "embark-org.el" "embark.texi" "embark-pkg.el") :host github :repo "oantolin/embark" :package "embark" :local-repo "embark")) "embark-consult" ("2025-01-08 01:47:14" ("emacs" "compat" "embark" "consult") (:files ("embark-consult.el" "embark-consult-pkg.el") :package "embark-consult" :local-repo "embark" :type git :repo "oantolin/embark" :host github)) "consult" ("2025-01-08 01:47:14" ("emacs" "compat") (:type git :host github :repo "minad/consult" :package "consult" :local-repo "consult")) "marginalia" ("2025-01-08 01:47:14" ("emacs" "compat") (:type git :host github :repo "minad/marginalia" :package "marginalia" :local-repo "marginalia")) "move-text" ("2025-01-08 01:47:13" nil (:type git :host github :repo "emacsfodder/move-text" :package "move-text" :local-repo "move-text")) "fcitx" ("2025-01-08 01:47:22" nil (:type git :host github :repo "cute-jumper/fcitx.el" :package "fcitx" :local-repo "fcitx.el")) "evil-escape" ("2025-01-08 01:47:13" ("emacs" "evil" "cl-lib") (:type git :host github :repo "emacsorphanage/evil-escape" :package "evil-escape" :local-repo "evil-escape")) "evil-leader" ("2025-01-08 01:47:24" ("evil") (:type git :host github :repo "cofi/evil-leader" :package "evil-leader" :local-repo "evil-leader")) "orderless" ("2025-01-08 01:47:14" ("emacs" "compat") (:type git :host github :repo "oantolin/orderless" :package "orderless" :local-repo "orderless")) "projectile" ("2024-11-22 22:27:17" ("emacs") (:type git :host github :repo "bbatsov/projectile" :package "projectile" :local-repo "projectile")) "doom-themes" ("2025-01-08 01:47:22" ("emacs" "cl-lib") (:type git :files (:defaults "themes/*.el" "themes/*/*.el" "extensions/*.el" "doom-themes-pkg.el") :host github :repo "doomemacs/themes" :package "doom-themes" :local-repo "themes")) "smooth-scrolling" ("2025-01-08 01:47:13" nil (:type git :host github :repo "aspiers/smooth-scrolling" :package "smooth-scrolling" :local-repo "smooth-scrolling")) "all-the-icons" ("2025-01-08 01:47:22" ("emacs") (:type git :files (:defaults "data" "all-the-icons-pkg.el") :host github :repo "domtronn/all-the-icons.el" :package "all-the-icons" :local-repo "all-the-icons.el")) "all-the-icons-completion" ("2025-01-08 01:47:22" ("emacs" "all-the-icons") (:type git :host github :repo "iyefrat/all-the-icons-completion" :package "all-the-icons-completion" :local-repo "all-the-icons-completion")) "magit" ("2025-01-08 01:47:23" ("emacs" "compat" "dash" "magit-section" "seq" "transient" "with-editor") (:files ("lisp/magit*.el" "lisp/git-*.el" "docs/magit.texi" "docs/AUTHORS.md" "LICENSE" "magit-pkg.el" (:exclude "lisp/magit-section.el") "magit-pkg.el") :package "magit" :local-repo "magit" :type git :repo "magit/magit" :host github)) "magit-section" ("2025-01-08 01:47:14" ("emacs" "compat" "dash" "seq") (:type git :files ("lisp/magit-section.el" "docs/magit-section.texi" "magit-section-pkg.el" "magit-section-pkg.el") :host github :repo "magit/magit" :package "magit-section" :local-repo "magit")) "transient" ("2025-01-08 01:47:23" ("emacs" "compat" "seq") (:type git :host github :repo "magit/transient" :package "transient" :local-repo "transient")) "with-editor" ("2025-01-08 01:47:23" ("emacs" "compat") (:type git :host github :repo "magit/with-editor" :package "with-editor" :local-repo "with-editor")) "unidecode" ("2025-01-08 01:47:22" nil (:type git :files (:defaults "data" "unidecode-pkg.el") :host github :repo "sindikat/unidecode" :package "unidecode" :local-repo "unidecode")) "smart-quotes" ("2025-01-08 01:47:22" nil (:type git :host github :repo "gareth-rees/smart-quotes" :files (:defaults) :package "smart-quotes" :local-repo "smart-quotes")) "writeroom-mode" ("2025-01-08 01:47:22" ("emacs" "visual-fill-column") (:type git :host github :repo "joostkremers/writeroom-mode" :package "writeroom-mode" :local-repo "writeroom-mode")) "visual-fill-column" ("2025-01-08 01:47:22" ("emacs") (:type git :host codeberg :repo "joostkremers/visual-fill-column" :package "visual-fill-column" :local-repo "visual-fill-column")) "yaml-mode" ("2025-01-08 01:47:13" ("emacs") (:type git :host github :repo "yoshiki/yaml-mode" :package "yaml-mode" :local-repo "yaml-mode")) "markdown-mode" ("2025-01-08 01:47:14" ("emacs") (:type git :host github :repo "jrblevin/markdown-mode" :package "markdown-mode" :local-repo "markdown-mode")) "lsp-mode" ("2025-01-08 01:47:14" ("emacs" "dash" "f" "ht" "spinner" "markdown-mode" "lv" "eldoc") (:type git :files (:defaults "clients/*.el" "lsp-mode-pkg.el") :host github :repo "emacs-lsp/lsp-mode" :package "lsp-mode" :local-repo "lsp-mode")) "ht" ("2025-01-08 01:47:14" ("dash") (:type git :host github :repo "Wilfred/ht.el" :package "ht" :local-repo "ht.el")) "spinner" ("2025-01-08 01:47:14" ("emacs") (:type git :host github :repo "emacs-straight/spinner" :files ("*" (:exclude ".git")) :package "spinner" :local-repo "spinner")) "eldoc" ("2025-01-08 01:47:14" ("emacs") (:type git :host github :repo "emacs-straight/eldoc" :files ("*" (:exclude ".git")) :package "eldoc" :local-repo "eldoc")) "lua-mode" ("2025-01-08 01:47:24" ("emacs") (:type git :files (:defaults (:exclude "init-tryout.el") "lua-mode-pkg.el") :host github :repo "immerrr/lua-mode" :package "lua-mode" :local-repo "lua-mode")) "yasnippet" ("2025-01-08 01:47:23" ("cl-lib" "emacs") (:type git :files ("yasnippet.el" "snippets" "yasnippet-pkg.el") :host github :repo "joaotavora/yasnippet" :package "yasnippet" :local-repo "yasnippet")) "bibtex-completion" ("2025-01-08 01:47:14" ("parsebib" "s" "dash" "f" "cl-lib" "biblio" "emacs") (:type git :files ("bibtex-completion.el" "bibtex-completion-pkg.el") :host github :repo "tmalsburg/helm-bibtex" :package "bibtex-completion" :local-repo "helm-bibtex")) "parsebib" ("2025-01-08 01:47:14" ("emacs") (:type git :host github :repo "joostkremers/parsebib" :package "parsebib" :local-repo "parsebib")) "biblio" ("2025-01-08 01:47:14" ("emacs" "biblio-core") (:type git :files (:defaults (:exclude "biblio-core.el") "biblio-pkg.el") :host github :repo "cpitclaudel/biblio.el" :package "biblio" :local-repo "biblio.el")) "biblio-core" ("2025-01-08 01:47:14" ("emacs" "let-alist" "seq" "dash") (:files ("biblio-core.el" "biblio-core-pkg.el") :package "biblio-core" :local-repo "biblio.el" :type git :repo "cpitclaudel/biblio.el" :host github)) "let-alist" ("2025-01-08 01:47:14" ("emacs") (:type git :host github :repo "emacs-straight/let-alist" :files ("*" (:exclude ".git")) :package "let-alist" :local-repo "let-alist")) "smartparens" ("2025-01-08 01:47:23" ("dash" "cl-lib") (:type git :host github :repo "Fuco1/smartparens" :package "smartparens" :local-repo "smartparens")) "flycheck" ("2025-01-08 01:47:23" ("emacs") (:type git :host github :repo "flycheck/flycheck" :package "flycheck" :local-repo "flycheck")) "lsp-ui" ("2025-01-08 01:47:23" ("emacs" "dash" "lsp-mode" "markdown-mode") (:type git :files (:defaults "lsp-ui-doc.html" "resources" "lsp-ui-pkg.el") :host github :repo "emacs-lsp/lsp-ui" :package "lsp-ui" :local-repo "lsp-ui")) "dap-mode" ("2025-01-08 01:47:23" ("emacs" "dash" "lsp-mode" "bui" "f" "s" "lsp-treemacs" "posframe" "ht" "lsp-docker") (:type git :files (:defaults "icons" "dap-mode-pkg.el") :host github :repo "emacs-lsp/dap-mode" :package "dap-mode" :local-repo "dap-mode")) "bui" ("2025-01-08 01:47:23" ("emacs" "dash") (:type git :host github :repo "alezost/bui.el" :package "bui" :local-repo "bui.el")) "lsp-treemacs" ("2025-01-08 01:47:23" ("emacs" "dash" "f" "ht" "treemacs" "lsp-mode") (:type git :files (:defaults "icons" "lsp-treemacs-pkg.el") :host github :repo "emacs-lsp/lsp-treemacs" :package "lsp-treemacs" :local-repo "lsp-treemacs")) "treemacs" ("2025-01-08 01:47:23" ("emacs" "cl-lib" "dash" "s" "ace-window" "pfuture" "hydra" "ht" "cfrs") (:type git :files (:defaults "Changelog.org" "icons" "src/elisp/treemacs*.el" "src/scripts/treemacs*.py" (:exclude "src/extra/*") "treemacs-pkg.el") :host github :repo "Alexander-Miller/treemacs" :package "treemacs" :local-repo "treemacs")) "ace-window" ("2025-01-08 01:47:23" ("avy") (:type git :host github :repo "abo-abo/ace-window" :package "ace-window" :local-repo "ace-window")) "avy" ("2025-01-08 01:47:14" ("emacs" "cl-lib") (:type git :host github :repo "abo-abo/avy" :package "avy" :local-repo "avy")) "pfuture" ("2025-01-08 01:47:23" ("emacs") (:type git :host github :repo "Alexander-Miller/pfuture" :package "pfuture" :local-repo "pfuture")) "cfrs" ("2025-01-08 01:47:23" ("emacs" "dash" "s" "posframe") (:type git :host github :repo "Alexander-Miller/cfrs" :package "cfrs" :local-repo "cfrs")) "posframe" ("2025-01-08 01:47:23" ("emacs") (:type git :host github :repo "tumashu/posframe" :package "posframe" :local-repo "posframe")) "lsp-docker" ("2025-01-08 01:47:23" ("emacs" "dash" "lsp-mode" "f" "s" "yaml" "ht") (:type git :host github :repo "emacs-lsp/lsp-docker" :package "lsp-docker" :local-repo "lsp-docker")) "yaml" ("2025-01-08 01:47:23" ("emacs") (:type git :host github :repo "zkry/yaml.el" :package "yaml" :local-repo "yaml.el")) "org-ref" ("2025-01-08 01:47:14" ("org" "dash" "s" "f" "htmlize" "hydra" "avy" "parsebib" "bibtex-completion" "citeproc" "ox-pandoc" "request") (:type git :files (:defaults "org-ref.org" "org-ref.bib" "citeproc" "org-ref-pkg.el") :host github :repo "jkitchin/org-ref" :package "org-ref" :local-repo "org-ref")) "org" ("2025-01-08 01:47:14" ("emacs") (:type git :repo "https://git.savannah.gnu.org/git/emacs/org-mode.git" :local-repo "org" :depth full :pre-build (straight-recipes-org-elpa--build) :build (:not autoloads) :files (:defaults "lisp/*.el" ("etc/styles/" "etc/styles/*")) :package "org")) "htmlize" ("2025-01-08 01:47:14" ("emacs") (:type git :host github :repo "hniksic/emacs-htmlize" :package "htmlize" :local-repo "emacs-htmlize")) "citeproc" ("2025-01-08 01:47:14" ("emacs" "dash" "s" "f" "queue" "string-inflection" "org" "parsebib" "compat") (:type git :host github :repo "andras-simonyi/citeproc-el" :package "citeproc" :local-repo "citeproc-el")) "string-inflection" ("2025-01-08 01:47:14" nil (:type git :host github :repo "akicho8/string-inflection" :package "string-inflection" :local-repo "string-inflection")) "ox-pandoc" ("2025-01-08 01:47:14" ("org" "emacs" "dash" "ht") (:type git :host github :repo "emacsorphanage/ox-pandoc" :package "ox-pandoc" :local-repo "ox-pandoc")) "request" ("2025-01-08 01:47:14" ("emacs") (:type git :files ("request.el" "request-pkg.el") :host github :repo "tkf/emacs-request" :package "request" :local-repo "emacs-request")) "consult-bibtex" ("2024-12-30 13:38:44" ("emacs" "bibtex-completion" "consult") (:type git :host github :repo "mohkale/consult-bibtex" :package "consult-bibtex" :local-repo "consult-bibtex")) "pyenv" ("2024-11-23 00:38:49" nil (:type git :host github :repo "shellbj/pyenv.el" :files (:defaults) :package "pyenv" :local-repo "pyenv.el")) "elpy" ("2025-01-08 01:47:23" ("company" "emacs" "highlight-indentation" "pyvenv" "yasnippet" "s") (:type git :files ("*.el" "NEWS.rst" "snippets" "elpy" "elpy-pkg.el") :host github :repo "jorgenschaefer/elpy" :package "elpy" :local-repo "elpy")) "company" ("2025-01-08 01:47:14" ("emacs") (:type git :files (:defaults "icons" ("images/small" "doc/images/small/*.png") "company-pkg.el") :host github :repo "company-mode/company-mode" :package "company" :local-repo "company-mode")) "highlight-indentation" ("2025-01-08 01:47:23" nil (:type git :host github :repo "antonj/Highlight-Indentation-for-Emacs" :package "highlight-indentation" :local-repo "Highlight-Indentation-for-Emacs")) "pyvenv" ("2025-01-08 01:47:23" nil (:type git :host github :repo "jorgenschaefer/pyvenv" :package "pyvenv" :local-repo "pyvenv")) "obsidian" ("2024-12-11 14:58:02" ("emacs" "f" "s" "dash" "markdown-mode" "elgrep" "yaml") (:type git :host github :repo "licht1stein/obsidian.el" :package "obsidian" :local-repo "obsidian.el")) "elgrep" ("2024-12-11 14:58:02" ("emacs" "async") (:type git :host github :repo "TobiasZawada/elgrep" :package "elgrep" :local-repo "elgrep")) "async" ("2025-01-08 01:47:14" ("emacs") (:type git :host github :repo "jwiegley/emacs-async" :package "async" :local-repo "emacs-async")) "company-lsp" ("2025-01-08 01:47:14" ("emacs" "lsp-mode" "company" "s" "dash") (:type git :host github :repo "emacsattic/company-lsp" :package "company-lsp" :local-repo "company-lsp")) "company-box" ("2025-01-08 01:47:14" ("emacs" "dash" "company" "frame-local") (:type git :files (:defaults "images" "company-box-pkg.el") :host github :repo "sebastiencs/company-box" :package "company-box" :local-repo "company-box")) "frame-local" ("2025-01-08 01:47:14" ("emacs") (:type git :host github :repo "sebastiencs/frame-local" :package "frame-local" :local-repo "frame-local")) "auto-virtualenv" ("2025-01-08 01:47:23" ("cl-lib") (:type git :host github :repo "marcwebbie/auto-virtualenv" :package "auto-virtualenv" :local-repo "auto-virtualenv")) "exec-path-from-shell" ("2025-01-08 01:47:23" ("emacs") (:type git :host github :repo "purcell/exec-path-from-shell" :package "exec-path-from-shell" :local-repo "exec-path-from-shell")) "orgalist" ("2025-01-08 01:47:23" ("emacs") (:type git :host github :repo "emacs-straight/orgalist" :files ("*" (:exclude ".git")) :package "orgalist" :local-repo "orgalist")) "org-pomodoro" ("2025-01-08 01:47:14" ("alert" "cl-lib") (:type git :files (:defaults "resources" "org-pomodoro-pkg.el") :host github :repo "marcinkoziej/org-pomodoro" :package "org-pomodoro" :local-repo "org-pomodoro")) "alert" ("2025-01-08 01:47:14" ("gntp" "log4e" "cl-lib") (:type git :host github :repo "jwiegley/alert" :package "alert" :local-repo "alert")) "gntp" ("2025-01-08 01:47:14" nil (:type git :host github :repo "tekai/gntp.el" :package "gntp" :local-repo "gntp.el")) "log4e" ("2025-01-08 01:47:14" nil (:type git :host github :repo "aki2o/log4e" :package "log4e" :local-repo "log4e")) "workgroups2" ("2025-01-08 01:47:22" ("emacs") (:type git :files ("src/*.el" "workgroups2-pkg.el") :host github :repo "pashinin/workgroups2" :package "workgroups2" :local-repo "workgroups2")) "focus" ("2024-12-07 04:38:57" ("emacs" "cl-lib") (:type git :host github :repo "larstvei/Focus" :package "focus" :local-repo "Focus")) "org-roam" ("2025-01-08 01:47:14" ("emacs" "dash" "org" "emacsql" "magit-section") (:type git :files (:defaults "extensions/*" "org-roam-pkg.el") :host github :repo "org-roam/org-roam" :package "org-roam" :local-repo "org-roam")) "emacsql" ("2025-01-08 01:47:14" ("emacs") (:type git :files (:defaults "README.md" "sqlite" "emacsql-pkg.el") :host github :repo "magit/emacsql" :package "emacsql" :local-repo "emacsql")) "md-roam" ("2025-01-08 01:47:14" ("emacs" "org-roam" "markdown-mode") (:type git :host github :repo "nobiot/md-roam" :package "md-roam" :local-repo "md-roam")) "pdf-tools" ("2025-01-08 01:47:24" ("emacs" "tablist" "let-alist") (:type git :files (:defaults "README" ("build" "Makefile") ("build" "server") "pdf-tools-pkg.el") :host github :repo "vedang/pdf-tools" :package "pdf-tools" :local-repo "pdf-tools")) "tablist" ("2025-01-08 01:47:24" ("emacs") (:type git :host github :repo "emacsorphanage/tablist" :package "tablist" :local-repo "tablist")) "general" ("2025-01-08 01:47:24" ("emacs" "cl-lib") (:type git :host github :repo "noctuid/general.el" :package "general" :local-repo "general.el")) "org-bullets" ("2025-01-08 01:47:14" nil (:type git :host github :repo "integral-dw/org-bullets" :package "org-bullets" :local-repo "org-bullets")) "citar" ("2025-01-08 01:47:14" ("emacs" "parsebib" "org" "citeproc") (:type git :files (:defaults (:exclude "citar-embark.el") "citar-pkg.el") :host github :repo "emacs-citar/citar" :package "citar" :local-repo "citar")) "citar-embark" ("2025-01-08 01:47:14" ("emacs" "embark" "citar") (:files ("citar-embark.el" "citar-embark-pkg.el") :package "citar-embark" :local-repo "citar" :type git :repo "emacs-citar/citar" :host github)) "citar-org-roam" ("2025-01-08 01:47:14" ("emacs" "org-roam" "citar") (:type git :host github :repo "emacs-citar/citar-org-roam" :package "citar-org-roam" :local-repo "citar-org-roam")) "org-download" ("2025-01-08 01:47:14" ("emacs" "async") (:type git :host github :repo "abo-abo/org-download" :package "org-download" :local-repo "org-download")) "dired+" ("2024-12-30 01:26:17" nil (:type git :host github :repo "emacsmirror/dired-plus" :package "dired+" :local-repo "dired-plus")) "dired-quick-sort" ("2025-01-08 01:47:13" ("hydra" "emacs") (:type git :host gitlab :repo "xuhdev/dired-quick-sort" :package "dired-quick-sort" :local-repo "dired-quick-sort"))))
 
-#s(hash-table size 97 test equal rehash-size 1.5 rehash-threshold 0.8125 data ("straight" ((straight straight-autoloads straight-ert-print-hack straight-x) (autoload 'straight-remove-unused-repos "straight" "Remove unused repositories from the repos and build directories.
+#s(hash-table size 145 test equal rehash-size 1.5 rehash-threshold 0.8125 data ("straight" ((straight straight-autoloads straight-ert-print-hack straight-x) (autoload 'straight-remove-unused-repos "straight" "Remove unused repositories from the repos and build directories.
 A repo is considered \"unused\" if it was not explicitly requested via
 `straight-use-package' during the current Emacs session.
 If FORCE is non-nil do not prompt before deleting repos.
@@ -7205,10 +7205,3551 @@ Return the value of the environment variable.
 
 The values of all the environment variables named in
 `exec-path-from-shell-variables' are set from the corresponding
-values used in the user's shell." t) (register-definition-prefixes "exec-path-from-shell" '("exec-path-from-shell-")) (provide 'exec-path-from-shell-autoloads))))
+values used in the user's shell." t) (register-definition-prefixes "exec-path-from-shell" '("exec-path-from-shell-")) (provide 'exec-path-from-shell-autoloads)) "orgalist" ((orgalist-pkg orgalist-autoloads orgalist) (autoload 'orgalist-mode "orgalist" "Toggle Org-like lists and their relative commands.
 
-#s(hash-table size 65 test eq rehash-size 1.5 rehash-threshold 0.8125 data (org-elpa #s(hash-table size 145 test equal rehash-size 1.5 rehash-threshold 0.8125 data (version 15 "melpa" nil "gnu-elpa-mirror" nil "nongnu-elpa" nil "el-get" nil "emacsmirror-mirror" nil "straight" nil "use-package" nil "bind-key" nil "evil" nil "cl-lib" nil "goto-chg" nil "undo-tree" nil "queue" nil "s" nil "f" nil "dash" nil "hydra" nil "lv" nil "major-mode-hydra" nil "pretty-hydra" nil "compat" nil "seq" nil "which-key" nil "vertico" nil "embark" nil "embark-consult" nil "consult" nil "marginalia" nil "move-text" nil "fcitx" nil "evil-escape" nil "evil-leader" nil "orderless" nil "battery" nil "projectile" nil "doom-themes" nil "smooth-scrolling" nil "all-the-icons" nil "all-the-icons-completion" nil "magit" nil "magit-section" nil "transient" nil "with-editor" nil "unidecode" nil "diredx" nil "ispell" nil "flyspell" nil "smart-quotes" nil "writeroom-mode" nil "visual-fill-column" nil "yaml-mode" nil "markdown-mode" nil "lsp-mode" nil "ht" nil "spinner" nil "eldoc" nil "lua-mode" nil "yasnippet" nil "consult-bibtex" nil "bibtex-completion" nil "parsebib" nil "biblio" nil "biblio-core" nil "let-alist" nil "smartparens" nil "flycheck" nil "lsp-ui" nil "dap-mode" nil "bui" nil "lsp-treemacs" nil "treemacs" nil "ace-window" nil "avy" nil "pfuture" nil "cfrs" nil "posframe" nil "lsp-docker" nil "yaml" nil "doi-utils" nil "org-ref" nil "org" (org :type git :repo "https://git.savannah.gnu.org/git/emacs/org-mode.git" :local-repo "org" :depth full :pre-build (straight-recipes-org-elpa--build) :build (:not autoloads) :files (:defaults "lisp/*.el" ("etc/styles/" "etc/styles/*"))) "htmlize" nil "citeproc" nil "string-inflection" nil "ox-pandoc" nil "request" nil "pyenv" nil "elpy" nil "company" nil "highlight-indentation" nil "pyvenv" nil "obsidian" nil "elgrep" nil "async" nil "company-lsp" nil "company-box" nil "frame-local" nil "auto-virtualenv" nil "exec-path-from-shell" nil)) melpa #s(hash-table size 145 test equal rehash-size 1.5 rehash-threshold 0.8125 data (version 2 "gnu-elpa-mirror" nil "nongnu-elpa" nil "el-get" (el-get :type git :files (:defaults "methods" ("recipes" "recipes/el-get.rcp") "el-get-pkg.el") :host github :repo "dimitri/el-get") "emacsmirror-mirror" nil "straight" nil "use-package" nil "bind-key" nil "evil" (evil :type git :files (:defaults "doc/build/texinfo/evil.texi" (:exclude "evil-test-helpers.el") "evil-pkg.el") :host github :repo "emacs-evil/evil") "cl-lib" nil "goto-chg" (goto-chg :type git :host github :repo "emacs-evil/goto-chg") "undo-tree" nil "queue" nil "s" (s :type git :host github :repo "magnars/s.el") "f" (f :type git :host github :repo "rejeep/f.el") "dash" (dash :type git :files ("dash.el" "dash.texi" "dash-pkg.el") :host github :repo "magnars/dash.el") "hydra" (hydra :type git :files (:defaults (:exclude "lv.el") "hydra-pkg.el") :host github :repo "abo-abo/hydra") "lv" (lv :type git :files ("lv.el" "lv-pkg.el") :host github :repo "abo-abo/hydra") "major-mode-hydra" (major-mode-hydra :type git :files ("major-mode-hydra.el" "major-mode-hydra-pkg.el") :host github :repo "jerrypnz/major-mode-hydra.el") "pretty-hydra" (pretty-hydra :type git :files ("pretty-hydra.el" "pretty-hydra-pkg.el") :host github :repo "jerrypnz/major-mode-hydra.el") "compat" nil "seq" nil "which-key" (which-key :type git :host github :repo "justbur/emacs-which-key") "vertico" (vertico :type git :files (:defaults "extensions/vertico-*.el" "vertico-pkg.el") :host github :repo "minad/vertico") "embark" (embark :type git :files ("embark.el" "embark-org.el" "embark.texi" "embark-pkg.el") :host github :repo "oantolin/embark") "embark-consult" (embark-consult :type git :files ("embark-consult.el" "embark-consult-pkg.el") :host github :repo "oantolin/embark") "consult" (consult :type git :host github :repo "minad/consult") "marginalia" (marginalia :type git :host github :repo "minad/marginalia") "move-text" (move-text :type git :host github :repo "emacsfodder/move-text") "fcitx" (fcitx :type git :host github :repo "cute-jumper/fcitx.el") "evil-escape" (evil-escape :type git :host github :repo "emacsorphanage/evil-escape") "evil-leader" (evil-leader :type git :host github :repo "cofi/evil-leader") "orderless" (orderless :type git :host github :repo "oantolin/orderless") "battery" nil "projectile" (projectile :type git :host github :repo "bbatsov/projectile") "doom-themes" (doom-themes :type git :files (:defaults "themes/*.el" "themes/*/*.el" "extensions/*.el" "doom-themes-pkg.el") :host github :repo "doomemacs/themes") "smooth-scrolling" (smooth-scrolling :type git :host github :repo "aspiers/smooth-scrolling") "all-the-icons" (all-the-icons :type git :files (:defaults "data" "all-the-icons-pkg.el") :host github :repo "domtronn/all-the-icons.el") "all-the-icons-completion" (all-the-icons-completion :type git :host github :repo "iyefrat/all-the-icons-completion") "magit" (magit :type git :files ("lisp/magit*.el" "lisp/git-*.el" "docs/magit.texi" "docs/AUTHORS.md" "LICENSE" "magit-pkg.el" (:exclude "lisp/magit-section.el") "magit-pkg.el") :host github :repo "magit/magit") "magit-section" (magit-section :type git :files ("lisp/magit-section.el" "docs/magit-section.texi" "magit-section-pkg.el" "magit-section-pkg.el") :host github :repo "magit/magit") "transient" (transient :type git :host github :repo "magit/transient") "with-editor" (with-editor :type git :host github :repo "magit/with-editor") "unidecode" (unidecode :type git :files (:defaults "data" "unidecode-pkg.el") :host github :repo "sindikat/unidecode") "diredx" nil "ispell" nil "flyspell" nil "smart-quotes" nil "writeroom-mode" (writeroom-mode :type git :host github :repo "joostkremers/writeroom-mode") "visual-fill-column" (visual-fill-column :type git :host codeberg :repo "joostkremers/visual-fill-column") "yaml-mode" (yaml-mode :type git :host github :repo "yoshiki/yaml-mode") "markdown-mode" (markdown-mode :type git :host github :repo "jrblevin/markdown-mode") "lsp-mode" (lsp-mode :type git :files (:defaults "clients/*.el" "lsp-mode-pkg.el") :host github :repo "emacs-lsp/lsp-mode") "ht" (ht :type git :host github :repo "Wilfred/ht.el") "spinner" nil "eldoc" nil "lua-mode" (lua-mode :type git :files (:defaults (:exclude "init-tryout.el") "lua-mode-pkg.el") :host github :repo "immerrr/lua-mode") "yasnippet" (yasnippet :type git :files ("yasnippet.el" "snippets" "yasnippet-pkg.el") :host github :repo "joaotavora/yasnippet") "consult-bibtex" nil "bibtex-completion" (bibtex-completion :type git :files ("bibtex-completion.el" "bibtex-completion-pkg.el") :host github :repo "tmalsburg/helm-bibtex") "parsebib" (parsebib :type git :host github :repo "joostkremers/parsebib") "biblio" (biblio :type git :files (:defaults (:exclude "biblio-core.el") "biblio-pkg.el") :host github :repo "cpitclaudel/biblio.el") "biblio-core" (biblio-core :type git :files ("biblio-core.el" "biblio-core-pkg.el") :host github :repo "cpitclaudel/biblio.el") "let-alist" nil "smartparens" (smartparens :type git :host github :repo "Fuco1/smartparens") "flycheck" (flycheck :type git :host github :repo "flycheck/flycheck") "lsp-ui" (lsp-ui :type git :files (:defaults "lsp-ui-doc.html" "resources" "lsp-ui-pkg.el") :host github :repo "emacs-lsp/lsp-ui") "dap-mode" (dap-mode :type git :files (:defaults "icons" "dap-mode-pkg.el") :host github :repo "emacs-lsp/dap-mode") "bui" (bui :type git :host github :repo "alezost/bui.el") "lsp-treemacs" (lsp-treemacs :type git :files (:defaults "icons" "lsp-treemacs-pkg.el") :host github :repo "emacs-lsp/lsp-treemacs") "treemacs" (treemacs :type git :files (:defaults "Changelog.org" "icons" "src/elisp/treemacs*.el" "src/scripts/treemacs*.py" (:exclude "src/extra/*") "treemacs-pkg.el") :host github :repo "Alexander-Miller/treemacs") "ace-window" (ace-window :type git :host github :repo "abo-abo/ace-window") "avy" (avy :type git :host github :repo "abo-abo/avy") "pfuture" (pfuture :type git :host github :repo "Alexander-Miller/pfuture") "cfrs" (cfrs :type git :host github :repo "Alexander-Miller/cfrs") "posframe" (posframe :type git :host github :repo "tumashu/posframe") "lsp-docker" (lsp-docker :type git :host github :repo "emacs-lsp/lsp-docker") "yaml" (yaml :type git :host github :repo "zkry/yaml.el") "doi-utils" nil "org-ref" (org-ref :type git :files (:defaults "org-ref.org" "org-ref.bib" "citeproc" "org-ref-pkg.el") :host github :repo "jkitchin/org-ref") "htmlize" (htmlize :type git :host github :repo "hniksic/emacs-htmlize") "citeproc" (citeproc :type git :host github :repo "andras-simonyi/citeproc-el") "string-inflection" (string-inflection :type git :host github :repo "akicho8/string-inflection") "ox-pandoc" (ox-pandoc :type git :host github :repo "emacsorphanage/ox-pandoc") "request" (request :type git :files ("request.el" "request-pkg.el") :host github :repo "tkf/emacs-request") "pyenv" nil "elpy" (elpy :type git :files ("*.el" "NEWS.rst" "snippets" "elpy" "elpy-pkg.el") :host github :repo "jorgenschaefer/elpy") "company" (company :type git :files (:defaults "icons" ("images/small" "doc/images/small/*.png") "company-pkg.el") :host github :repo "company-mode/company-mode") "highlight-indentation" (highlight-indentation :type git :host github :repo "antonj/Highlight-Indentation-for-Emacs") "pyvenv" (pyvenv :type git :host github :repo "jorgenschaefer/pyvenv") "obsidian" (obsidian :type git :host github :repo "licht1stein/obsidian.el") "elgrep" (elgrep :type git :host github :repo "TobiasZawada/elgrep") "async" (async :type git :host github :repo "jwiegley/emacs-async") "company-lsp" nil "company-box" (company-box :type git :files (:defaults "images" "company-box-pkg.el") :host github :repo "sebastiencs/company-box") "frame-local" (frame-local :type git :host github :repo "sebastiencs/frame-local") "auto-virtualenv" (auto-virtualenv :type git :host github :repo "marcwebbie/auto-virtualenv") "exec-path-from-shell" (exec-path-from-shell :type git :host github :repo "purcell/exec-path-from-shell"))) gnu-elpa-mirror #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8125 data (version 3 "nongnu-elpa" nil "emacsmirror-mirror" nil "straight" nil "use-package" (use-package :type git :host github :repo "emacs-straight/use-package" :files ("*" (:exclude ".git"))) "bind-key" (bind-key :type git :host github :repo "emacs-straight/bind-key" :files ("*" (:exclude ".git"))) "cl-lib" nil "undo-tree" (undo-tree :type git :host github :repo "emacs-straight/undo-tree" :files ("*" (:exclude ".git"))) "queue" (queue :type git :host github :repo "emacs-straight/queue" :files ("*" (:exclude ".git"))) "compat" (compat :type git :host github :repo "emacs-straight/compat" :files ("*" (:exclude ".git"))) "seq" (seq :type git :host github :repo "emacs-straight/seq" :files ("*" (:exclude ".git"))) "battery" nil "diredx" nil "ispell" nil "flyspell" nil "smart-quotes" nil "spinner" (spinner :type git :host github :repo "emacs-straight/spinner" :files ("*" (:exclude ".git"))) "eldoc" (eldoc :type git :host github :repo "emacs-straight/eldoc" :files ("*" (:exclude ".git"))) "consult-bibtex" nil "let-alist" (let-alist :type git :host github :repo "emacs-straight/let-alist" :files ("*" (:exclude ".git"))) "doi-utils" nil "pyenv" nil "company-lsp" nil)) nongnu-elpa #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8125 data (version 4 "emacsmirror-mirror" nil "straight" nil "cl-lib" nil "battery" nil "diredx" nil "ispell" nil "flyspell" nil "smart-quotes" nil "consult-bibtex" nil "doi-utils" nil "pyenv" nil "company-lsp" nil)) el-get #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8125 data (version 2 "emacsmirror-mirror" nil "straight" nil "cl-lib" nil "battery" nil "diredx" nil "ispell" nil "flyspell" nil "smart-quotes" `(smart-quotes :type git :host github :repo "gareth-rees/smart-quotes" :files (:defaults)) "consult-bibtex" nil "doi-utils" nil "pyenv" `(pyenv :type git :host github :repo "shellbj/pyenv.el" :files (:defaults)) "company-lsp" nil)) emacsmirror-mirror #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8125 data (version 2 "straight" (straight :type git :host github :repo "emacsmirror/straight") "cl-lib" nil "battery" nil "diredx" nil "ispell" nil "flyspell" nil "consult-bibtex" nil "doi-utils" nil "company-lsp" (company-lsp :type git :host github :repo "emacsattic/company-lsp")))))
+With a prefix argument ARG, enable Auto Fill mode if ARG is
+positive, and disable it otherwise.  If called from Lisp, enable
+the mode if ARG is omitted or nil.
 
-("lua-mode" "yasnippet" "highlight-indentation" "elpy" "auto-virtualenv" "pyvenv" "lsp-docker" "posframe" "cfrs" "pfuture" "ace-window" "treemacs" "lsp-treemacs" "bui" "dap-mode" "lsp-ui" "flycheck" "smartparens" "exec-path-from-shell" "consult-bibtex" "yaml" "async" "elgrep" "obsidian" "yaml-mode" "with-editor" "transient" "magit-section" "magit" "doom-themes" "all-the-icons-completion" "all-the-icons" "fcitx" "frame-local" "company-box" "company" "eldoc" "markdown-mode" "spinner" "lsp-mode" "company-lsp" "marginalia" "orderless" "consult" "embark-consult" "embark" "vertico" "which-key" "undo-tree" "battery" "writeroom-mode" "smart-quotes" "flyspell" "ispell" "visual-fill-column" "unidecode" "smooth-scrolling" "request" "ht" "ox-pandoc" "string-inflection" "queue" "citeproc" "let-alist" "biblio-core" "biblio" "bibtex-completion" "parsebib" "avy" "htmlize" "f" "org-ref" "org" "evil-leader" "nadvice" "goto-chg" "evil" "evil-escape" "move-text" "seq" "compat" "s" "pretty-hydra" "dash" "major-mode-hydra" "lv" "cl-lib" "hydra" "bind-key" "use-package" "emacs" "straight" "emacsmirror-mirror" "el-get" "nongnu-elpa" "gnu-elpa-mirror" "melpa" "org-elpa")
+When Orgalist mode is enabled, any line beginning with \"-\",
+\"+\", \"1.\" or \"a.\" followed by a space starts a list.  You
+can then operate locally on the list, e.g., to insert new items,
+move items or sort them.  See below for details.
+
+Moreover, you can add check-boxes to items
+
+  - [ ] A checkbox, toggled with `C-c C-c'
+
+turn an unordered list into a description list
+
+  - term :: description
+
+and control numbering in an ordered list
+
+  4. [@4] a forced numbered item
+
+key             binding
+---             -------
+M-<RET>         `orgalist-insert-item'
+M-<UP>          `orgalist-previous-item'
+M-<DOWN>        `orgalist-next-item'
+M-S-<UP>        `orgalist-move-item-up'
+M-S-<DOWN>      `orgalist-move-item-down'
+M-<LEFT>        `orgalist-outdent-item'
+M-<RIGHT>       `orgalist-indent-item'
+M-S-<LEFT>      `orgalist-outdent-item-tree'
+M-S-<RIGHT>     `orgalist-indent-item-tree'
+C-c -           `orgalist-cycle-bullet'
+C-c ^           `orgalist-sort-items'
+C-c C-c         `orgalist-check-item'
+
+(fn &optional ARG)" t) (register-definition-prefixes "orgalist" '("orgalist-")) (provide 'orgalist-autoloads)) "gntp" ((gntp gntp-autoloads) (autoload 'gntp-notify "gntp" "Send notification NAME with TITLE, TEXT, PRIORITY and ICON to SERVER:PORT.
+PORT defaults to `gntp-server-port'
+
+(fn NAME TITLE TEXT SERVER &optional PORT PRIORITY ICON)") (register-definition-prefixes "gntp" '("gntp-")) (provide 'gntp-autoloads)) "log4e" ((log4e-autoloads log4e) (autoload 'log4e-mode "log4e" "Major mode for browsing a buffer made by log4e.
+
+\\<log4e-mode-map>
+\\{log4e-mode-map}
+
+(fn)" t) (autoload 'log4e:insert-start-log-quickly "log4e" "Insert logging statment for trace level log at start of current function/macro." t) (register-definition-prefixes "log4e" '("log4e")) (provide 'log4e-autoloads)) "alert" ((alert alert-autoloads) (autoload 'alert-add-rule "alert" "Programmatically add an alert configuration rule.
+
+Normally, users should custoimze `alert-user-configuration'.
+This facility is for module writers and users that need to do
+things the Lisp way.
+
+Here is a rule the author currently uses with ERC, so that the
+fringe gets colored whenever people chat on BitlBee:
+
+(alert-add-rule :status   \\='(buried visible idle)
+                :severity \\='(moderate high urgent)
+                :mode     \\='erc-mode
+                :predicate
+                #\\='(lambda (info)
+                    (string-match (concat \"\\\\`[^&].*@BitlBee\\\\\\='\")
+                                  (erc-format-target-and/or-network)))
+                :persistent
+                #\\='(lambda (info)
+                    ;; If the buffer is buried, or the user has been
+                    ;; idle for `alert-reveal-idle-time' seconds,
+                    ;; make this alert persistent.  Normally, alerts
+                    ;; become persistent after
+                    ;; `alert-persist-idle-time' seconds.
+                    (memq (plist-get info :status) \\='(buried idle)))
+                :style \\='fringe
+                :continue t)
+
+(fn &key SEVERITY STATUS MODE CATEGORY TITLE MESSAGE PREDICATE ICON (STYLE alert-default-style) PERSISTENT CONTINUE NEVER-PERSIST APPEND)") (autoload 'alert "alert" "Alert the user that something has happened.
+MESSAGE is what the user will see.  You may also use keyword
+arguments to specify additional details.  Here is a full example:
+
+(alert \"This is a message\"
+       :severity \\='high            ;; The default severity is `normal'
+       :title \"Title\"              ;; An optional title
+       :category \\='example         ;; A symbol to identify the message
+       :mode \\='text-mode           ;; Normally determined automatically
+       :buffer (current-buffer)      ;; This is the default
+       :data nil                     ;; Unused by alert.el itself
+       :persistent nil               ;; Force the alert to be persistent;
+                                     ;; it is best not to use this
+       :never-persist nil            ;; Force this alert to never persist
+       :id \\='my-id)                ;; Used to replace previous message of
+                                     ;; the same id in styles that support it
+       :style \\='fringe)            ;; Force a given style to be used;
+                                     ;; this is only for debugging!
+       :icon \\=\"mail-message-new\" ;; if style supports icon then add icon
+                                     ;; name or path here
+
+If no :title is given, the buffer-name of :buffer is used.  If
+:buffer is nil, it is the current buffer at the point of call.
+
+:data is an opaque value which modules can pass through to their
+own styles if they wish.
+
+Here are some more typical examples of usage:
+
+  ;; This is the most basic form usage
+  (alert \"This is an alert\")
+
+  ;; You can adjust the severity for more important messages
+  (alert \"This is an alert\" :severity \\='high)
+
+  ;; Or decrease it for purely informative ones
+  (alert \"This is an alert\" :severity \\='trivial)
+
+  ;; Alerts can have optional titles.  Otherwise, the title is the
+  ;; buffer-name of the (current-buffer) where the alert originated.
+  (alert \"This is an alert\" :title \"My Alert\")
+
+  ;; Further, alerts can have categories.  This allows users to
+  ;; selectively filter on them.
+  (alert \"This is an alert\" :title \"My Alert\"
+         :category \\='some-category-or-other)
+
+(fn MESSAGE &key (SEVERITY \\='normal) TITLE ICON CATEGORY BUFFER MODE DATA STYLE PERSISTENT NEVER-PERSIST ID)") (register-definition-prefixes "alert" '("alert-" "x-urgen")) (provide 'alert-autoloads)) "org-pomodoro" ((org-pomodoro-autoloads org-pomodoro org-pomodoro-pidgin) (autoload 'org-pomodoro "org-pomodoro" "Start a new pomodoro or stop the current one.
+
+When no timer is running for `org-pomodoro` a new pomodoro is started and
+the current task is clocked in.  Otherwise EMACS will ask whether we´d like to
+kill the current timer, this may be a break or a running pomodoro.
+
+(fn &optional ARG)" t) (register-definition-prefixes "org-pomodoro" '("org-pomodoro-")) (register-definition-prefixes "org-pomodoro-pidgin" '("org-pom")) (provide 'org-pomodoro-autoloads)) "workgroups2" ((workgroups2-autoloads workgroups2-support workgroups2-sdk workgroups2) (autoload 'workgroups-mode "workgroups2" "Turn `workgroups-mode' on and off.
+ARG is nil - toggle
+ARG >= 1   - turn on
+ARG == 0   - turn off
+ARG is anything else, turn on `workgroups-mode'.
+
+(fn &optional ARG)" t) (autoload 'wg-open-workgroup "workgroups2" "Open specific workgroup by GROUP-NAME.
+
+(fn &optional GROUP-NAME)" t) (autoload 'wg-kill-workgroup "workgroups2" "Delete existing workgroup." t) (register-definition-prefixes "workgroups2" '("buffer-list" "wg-" "workgroups-mode")) (register-definition-prefixes "workgroups2-sdk" '("wg-")) (register-definition-prefixes "workgroups2-support" '("wg-")) (provide 'workgroups2-autoloads)) "focus" ((focus-autoloads focus) (autoload 'focus-mode "focus" "Dim the font color of text in surrounding sections.
+
+This is a minor mode.  If called interactively, toggle the `Focus
+mode' mode.  If the prefix argument is positive, enable the mode,
+and if it is zero or negative, disable the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable
+the mode if ARG is nil, omitted, or is a positive number.
+Disable the mode if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate `focus-mode'.
+
+The mode's hook is called both when the mode is enabled and when
+it is disabled.
+
+(fn &optional ARG)" t) (autoload 'focus-read-only-mode "focus" "A read-only mode optimized for `focus-mode'.
+
+This is a minor mode.  If called interactively, toggle the
+`Focus-Read-Only mode' mode.  If the prefix argument is positive,
+enable the mode, and if it is zero or negative, disable the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable
+the mode if ARG is nil, omitted, or is a positive number.
+Disable the mode if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate `focus-read-only-mode'.
+
+The mode's hook is called both when the mode is enabled and when
+it is disabled.
+
+(fn &optional ARG)" t) (register-definition-prefixes "focus" '("focus-")) (provide 'focus-autoloads)) "emacsql" ((emacsql emacsql-pg emacsql-compiler emacsql-psql emacsql-sqlite-module emacsql-autoloads emacsql-sqlite emacsql-mysql emacsql-sqlite-builtin emacsql-sqlite-common) (autoload 'emacsql-show-last-sql "emacsql" "Display the compiled SQL of the s-expression SQL expression before point.
+A prefix argument causes the SQL to be printed into the current buffer.
+
+(fn &optional PREFIX)" t) (register-definition-prefixes "emacsql" '("emacsql-")) (register-definition-prefixes "emacsql-compiler" '("emacsql-")) (register-definition-prefixes "emacsql-mysql" '("emacsql-mysql-")) (register-definition-prefixes "emacsql-pg" '("emacsql-pg-connection")) (register-definition-prefixes "emacsql-psql" '("emacsql-psql-")) (register-definition-prefixes "emacsql-sqlite" '("emacsql-")) (register-definition-prefixes "emacsql-sqlite-builtin" '("emacsql-sqlite-builtin-connection")) (register-definition-prefixes "emacsql-sqlite-module" '("emacsql-sqlite-module-connection")) (provide 'emacsql-autoloads)) "org-roam" ((org-roam-node org-roam-graph org-roam-id org-roam-export org-roam-overlay org-roam-utils org-roam org-roam-compat org-roam-protocol org-roam-capture org-roam-dailies org-roam-mode org-roam-autoloads org-roam-db org-roam-log org-roam-migrate) (autoload 'org-roam-list-files "org-roam" "Return a list of all Org-roam files under `org-roam-directory'.
+See `org-roam-file-p' for how each file is determined to be as
+part of Org-Roam.") (register-definition-prefixes "org-roam" '("org-roam-")) (autoload 'org-roam-capture- "org-roam-capture" "Main entry point of `org-roam-capture' module.
+GOTO and KEYS correspond to `org-capture' arguments.
+INFO is a plist for filling up Org-roam's capture templates.
+NODE is an `org-roam-node' construct containing information about the node.
+PROPS is a plist containing additional Org-roam properties for each template.
+TEMPLATES is a list of org-roam templates.
+
+(fn &key GOTO KEYS NODE INFO PROPS TEMPLATES)") (autoload 'org-roam-capture "org-roam-capture" "Launches an `org-capture' process for a new or existing node.
+This uses the templates defined at `org-roam-capture-templates'.
+Arguments GOTO and KEYS see `org-capture'.
+FILTER-FN is a function to filter out nodes: it takes an `org-roam-node',
+and when nil is returned the node will be filtered out.
+The TEMPLATES, if provided, override the list of capture templates (see
+`org-roam-capture-'.)
+The INFO, if provided, is passed along to the underlying `org-roam-capture-'.
+
+(fn &optional GOTO KEYS &key FILTER-FN TEMPLATES INFO)" t) (register-definition-prefixes "org-roam-capture" '("org-roam-capture-")) (register-definition-prefixes "org-roam-compat" '("org-roam--")) (autoload 'org-roam-dailies-capture-today "org-roam-dailies" "Create an entry in the daily-note for today.
+When GOTO is non-nil, go the note without creating an entry.
+
+ELisp programs can set KEYS to a string associated with a template.
+In this case, interactive selection will be bypassed.
+
+(fn &optional GOTO KEYS)" t) (autoload 'org-roam-dailies-goto-today "org-roam-dailies" "Find the daily-note for today, creating it if necessary.
+
+ELisp programs can set KEYS to a string associated with a template.
+In this case, interactive selection will be bypassed.
+
+(fn &optional KEYS)" t) (autoload 'org-roam-dailies-capture-tomorrow "org-roam-dailies" "Create an entry in the daily-note for tomorrow.
+
+With numeric argument N, use the daily-note N days in the future.
+
+With a `C-u' prefix or when GOTO is non-nil, go the note without
+creating an entry.
+
+ELisp programs can set KEYS to a string associated with a template.
+In this case, interactive selection will be bypassed.
+
+(fn N &optional GOTO KEYS)" t) (autoload 'org-roam-dailies-goto-tomorrow "org-roam-dailies" "Find the daily-note for tomorrow, creating it if necessary.
+
+With numeric argument N, use the daily-note N days in the
+future.
+
+ELisp programs can set KEYS to a string associated with a template.
+In this case, interactive selection will be bypassed.
+
+(fn N &optional KEYS)" t) (autoload 'org-roam-dailies-capture-yesterday "org-roam-dailies" "Create an entry in the daily-note for yesteday.
+
+With numeric argument N, use the daily-note N days in the past.
+
+When GOTO is non-nil, go the note without creating an entry.
+
+ELisp programs can set KEYS to a string associated with a template.
+In this case, interactive selection will be bypassed.
+
+(fn N &optional GOTO KEYS)" t) (autoload 'org-roam-dailies-goto-yesterday "org-roam-dailies" "Find the daily-note for yesterday, creating it if necessary.
+
+With numeric argument N, use the daily-note N days in the
+future.
+
+ELisp programs can set KEYS to a string associated with a template.
+In this case, interactive selection will be bypassed.
+
+(fn N &optional KEYS)" t) (autoload 'org-roam-dailies-capture-date "org-roam-dailies" "Create an entry in the daily-note for a date using the calendar.
+Prefer past dates, unless PREFER-FUTURE is non-nil.
+With a `C-u' prefix or when GOTO is non-nil, go the note without
+creating an entry.
+
+ELisp programs can set KEYS to a string associated with a template.
+In this case, interactive selection will be bypassed.
+
+(fn &optional GOTO PREFER-FUTURE KEYS)" t) (autoload 'org-roam-dailies-goto-date "org-roam-dailies" "Find the daily-note for a date using the calendar, creating it if necessary.
+Prefer past dates, unless PREFER-FUTURE is non-nil.
+
+ELisp programs can set KEYS to a string associated with a template.
+In this case, interactive selection will be bypassed.
+
+(fn &optional PREFER-FUTURE KEYS)" t) (autoload 'org-roam-dailies-find-directory "org-roam-dailies" "Find and open `org-roam-dailies-directory'." t) (register-definition-prefixes "org-roam-dailies" '("org-roam-dailies-")) (autoload 'org-roam-db-sync "org-roam-db" "Synchronize the cache state with the current Org files on-disk.
+If FORCE, force a rebuild of the cache from scratch.
+
+(fn &optional FORCE)" t) (defvar org-roam-db-autosync-mode nil "Non-nil if Org-Roam-Db-Autosync mode is enabled.
+See the `org-roam-db-autosync-mode' command
+for a description of this minor mode.
+Setting this variable directly does not take effect;
+either customize it (see the info node `Easy Customization')
+or call the function `org-roam-db-autosync-mode'.") (custom-autoload 'org-roam-db-autosync-mode "org-roam-db" nil) (autoload 'org-roam-db-autosync-mode "org-roam-db" "Global minor mode to keep your Org-roam session automatically synchronized.
+
+Through the session this will continue to setup your
+buffers (that are Org-roam file visiting), keep track of the
+related changes, maintain cache consistency and incrementally
+update the currently active database.
+
+If you need to manually trigger resync of the currently active
+database, see `org-roam-db-sync' command.
+
+This is a global minor mode.  If called interactively, toggle the
+`Org-Roam-Db-Autosync mode' mode.  If the prefix argument is
+positive, enable the mode, and if it is zero or negative, disable
+the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable
+the mode if ARG is nil, omitted, or is a positive number.
+Disable the mode if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate `(default-value \\='org-roam-db-autosync-mode)'.
+
+The mode's hook is called both when the mode is enabled and when
+it is disabled.
+
+(fn &optional ARG)" t) (autoload 'org-roam-db-autosync-enable "org-roam-db" "Activate `org-roam-db-autosync-mode'.") (register-definition-prefixes "org-roam-db" '("emacsql-constraint" "org-roam-d")) (register-definition-prefixes "org-roam-export" '("org-roam-export--org-html--reference")) (autoload 'org-roam-graph "org-roam-graph" "Build and possibly display a graph for NODE.
+ARG may be any of the following values:
+  - nil       show the graph.
+  - `\\[universal-argument]'     show the graph for NODE.
+  - `\\[universal-argument]' N   show the graph for NODE limiting nodes to N steps.
+
+(fn &optional ARG NODE)" t) (register-definition-prefixes "org-roam-graph" '("org-roam-")) (autoload 'org-roam-update-org-id-locations "org-roam-id" "Scan Org-roam files to update `org-id' related state.
+This is like `org-id-update-id-locations', but will automatically
+use the currently bound `org-directory' and `org-roam-directory'
+along with DIRECTORIES (if any), where the lookup for files in
+these directories will be always recursive.
+
+Note: Org-roam doesn't have hard dependency on
+`org-id-locations-file' to lookup IDs for nodes that are stored
+in the database, but it still tries to properly integrates with
+`org-id'. This allows the user to cross-reference IDs outside of
+the current `org-roam-directory', and also link with \"id:\"
+links to headings/files within the current `org-roam-directory'
+that are excluded from identification in Org-roam as
+`org-roam-node's, e.g. with \"ROAM_EXCLUDE\" property.
+
+(fn &rest DIRECTORIES)" t) (register-definition-prefixes "org-roam-id" '("org-roam-id-")) (register-definition-prefixes "org-roam-log" '("org-roam-log-")) (autoload 'org-roam-migrate-wizard "org-roam-migrate" "Migrate all notes from to be compatible with Org-roam v2.
+1. Convert all notes from v1 format to v2.
+2. Rebuild the cache.
+3. Replace all file links with ID links." t) (register-definition-prefixes "org-roam-migrate" '("org-roam-migrate-")) (autoload 'org-roam-buffer-display-dedicated "org-roam-mode" "Launch NODE dedicated Org-roam buffer.
+Unlike the persistent `org-roam-buffer', the contents of this
+buffer won't be automatically changed and will be held in place.
+
+In interactive calls prompt to select NODE, unless called with
+`universal-argument', in which case NODE will be set to
+`org-roam-node-at-point'.
+
+(fn NODE)" t) (register-definition-prefixes "org-roam-mode" '("org-roam-")) (autoload 'org-roam-node-find "org-roam-node" "Find and open an Org-roam node by its title or alias.
+INITIAL-INPUT is the initial input for the prompt.
+FILTER-FN is a function to filter out nodes: it takes an `org-roam-node',
+and when nil is returned the node will be filtered out.
+If OTHER-WINDOW, visit the NODE in another window.
+The TEMPLATES, if provided, override the list of capture templates (see
+`org-roam-capture-'.)
+
+(fn &optional OTHER-WINDOW INITIAL-INPUT FILTER-FN PRED &key TEMPLATES)" t) (autoload 'org-roam-node-random "org-roam-node" "Find and open a random Org-roam node.
+With prefix argument OTHER-WINDOW, visit the node in another
+window instead.
+FILTER-FN is a function to filter out nodes: it takes an `org-roam-node',
+and when nil is returned the node will be filtered out.
+
+(fn &optional OTHER-WINDOW FILTER-FN)" t) (autoload 'org-roam-node-insert "org-roam-node" "Find an Org-roam node and insert (where the point is) an \"id:\" link to it.
+FILTER-FN is a function to filter out nodes: it takes an `org-roam-node',
+and when nil is returned the node will be filtered out.
+The TEMPLATES, if provided, override the list of capture templates (see
+`org-roam-capture-'.)
+The INFO, if provided, is passed to the underlying `org-roam-capture-'.
+
+(fn &optional FILTER-FN &key TEMPLATES INFO)" t) (autoload 'org-roam-refile "org-roam-node" "Refile node at point to an Org-roam node.
+If region is active, then use it instead of the node at point.
+
+(fn NODE)" t) (autoload 'org-roam-extract-subtree "org-roam-node" "Convert current subtree at point to a node, and extract it into a new file." t) (autoload 'org-roam-ref-find "org-roam-node" "Find and open an Org-roam node that's dedicated to a specific ref.
+INITIAL-INPUT is the initial input to the prompt.
+FILTER-FN is a function to filter out nodes: it takes an `org-roam-node',
+and when nil is returned the node will be filtered out.
+
+(fn &optional INITIAL-INPUT FILTER-FN)" t) (register-definition-prefixes "org-roam-node" '("org-roam-")) (register-definition-prefixes "org-roam-overlay" '("org-roam-overlay-")) (register-definition-prefixes "org-roam-protocol" '("org-roam-")) (autoload 'org-roam-version "org-roam-utils" "Return `org-roam' version.
+Interactively, or when MESSAGE is non-nil, show in the echo area.
+
+(fn &optional MESSAGE)" t) (autoload 'org-roam-diagnostics "org-roam-utils" "Collect and print info for `org-roam' issues." t) (register-definition-prefixes "org-roam-utils" '("org-roam-")) (provide 'org-roam-autoloads)) "md-roam" ((md-roam md-roam-autoloads) (defvar md-roam-mode nil "Non-nil if md-roam mode is enabled.
+See the `md-roam-mode' command
+for a description of this minor mode.
+Setting this variable directly does not take effect;
+either customize it (see the info node `Easy Customization')
+or call the function `md-roam-mode'.") (custom-autoload 'md-roam-mode "md-roam" nil) (autoload 'md-roam-mode "md-roam" "Md-roam mode needs to be turned before `org-roam-db-sync'.
+
+It needs to be turned on before `org-roam-db-autosync-mode'.
+
+This is a global minor mode.  If called interactively, toggle the
+`md-roam mode' mode.  If the prefix argument is positive, enable
+the mode, and if it is zero or negative, disable the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable
+the mode if ARG is nil, omitted, or is a positive number.
+Disable the mode if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate `(default-value \\='md-roam-mode)'.
+
+The mode's hook is called both when the mode is enabled and when
+it is disabled.
+
+(fn &optional ARG)" t) (register-definition-prefixes "md-roam" '("md-roam-")) (provide 'md-roam-autoloads)) "tablist" ((tablist tablist-autoloads tablist-filter) (autoload 'tablist-minor-mode "tablist" "Toggle tablist minor mode.
+
+This is a minor mode.  If called interactively, toggle the
+`Tablist minor mode' mode.  If the prefix argument is positive,
+enable the mode, and if it is zero or negative, disable the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable
+the mode if ARG is nil, omitted, or is a positive number.
+Disable the mode if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate `tablist-minor-mode'.
+
+The mode's hook is called both when the mode is enabled and when
+it is disabled.
+
+(fn &optional ARG)" t) (autoload 'tablist-mode "tablist" "
+
+(fn)" t) (register-definition-prefixes "tablist" '("tablist-")) (register-definition-prefixes "tablist-filter" '("tablist-filter-")) (provide 'tablist-autoloads)) "pdf-tools" ((pdf-tools pdf-virtual pdf-annot pdf-sync pdf-view pdf-loader pdf-util pdf-misc pdf-cache pdf-dev pdf-history pdf-macs pdf-links pdf-info pdf-outline pdf-tools-autoloads pdf-isearch pdf-occur) (autoload 'pdf-annot-minor-mode "pdf-annot" "Support for PDF Annotations.
+
+\\{pdf-annot-minor-mode-map}
+
+This is a minor mode.  If called interactively, toggle the
+`Pdf-Annot minor mode' mode.  If the prefix argument is positive,
+enable the mode, and if it is zero or negative, disable the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable
+the mode if ARG is nil, omitted, or is a positive number.
+Disable the mode if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate `pdf-annot-minor-mode'.
+
+The mode's hook is called both when the mode is enabled and when
+it is disabled.
+
+(fn &optional ARG)" t) (register-definition-prefixes "pdf-annot" '("pdf-annot-")) (register-definition-prefixes "pdf-cache" '("boundingbox" "define-pdf-cache-function" "page" "pdf-cache-" "textregions")) (register-definition-prefixes "pdf-dev" '("pdf-dev-")) (autoload 'pdf-history-minor-mode "pdf-history" "Keep a history of previously visited pages.
+
+This is a simple stack-based history.  Turning the page or
+following a link pushes the left-behind page on the stack, which
+may be navigated with the following keys.
+
+\\{pdf-history-minor-mode-map}
+
+This is a minor mode.  If called interactively, toggle the
+`Pdf-History minor mode' mode.  If the prefix argument is
+positive, enable the mode, and if it is zero or negative, disable
+the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable
+the mode if ARG is nil, omitted, or is a positive number.
+Disable the mode if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate `pdf-history-minor-mode'.
+
+The mode's hook is called both when the mode is enabled and when
+it is disabled.
+
+(fn &optional ARG)" t) (register-definition-prefixes "pdf-history" '("pdf-history-")) (register-definition-prefixes "pdf-info" '("pdf-info-")) (autoload 'pdf-isearch-minor-mode "pdf-isearch" "Isearch mode for PDF buffer.
+
+When this mode is enabled \\[isearch-forward], among other keys,
+starts an incremental search in this PDF document.  Since this mode
+uses external programs to highlight found matches via
+image-processing, proceeding to the next match may be slow.
+
+Therefore two isearch behaviours have been defined: Normal isearch and
+batch mode.  The later one is a minor mode
+(`pdf-isearch-batch-mode'), which when activated inhibits isearch
+from stopping at and highlighting every single match, but rather
+display them batch-wise.  Here a batch means a number of matches
+currently visible in the selected window.
+
+The kind of highlighting is determined by three faces
+`pdf-isearch-match' (for the current match), `pdf-isearch-lazy'
+(for all other matches) and `pdf-isearch-batch' (when in batch
+mode), which see.
+
+Colors may also be influenced by the minor-mode
+`pdf-view-dark-minor-mode'.  If this is minor mode enabled, each face's
+dark colors, are used (see e.g. `frame-background-mode'), instead
+of the light ones.
+
+\\{pdf-isearch-minor-mode-map}
+While in `isearch-mode' the following keys are available. Note
+that not every isearch command work as expected.
+
+\\{pdf-isearch-active-mode-map}
+
+This is a minor mode.  If called interactively, toggle the
+`Pdf-Isearch minor mode' mode.  If the prefix argument is
+positive, enable the mode, and if it is zero or negative, disable
+the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable
+the mode if ARG is nil, omitted, or is a positive number.
+Disable the mode if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate `pdf-isearch-minor-mode'.
+
+The mode's hook is called both when the mode is enabled and when
+it is disabled.
+
+(fn &optional ARG)" t) (register-definition-prefixes "pdf-isearch" '("pdf-isearch-")) (autoload 'pdf-links-minor-mode "pdf-links" "Handle links in PDF documents.\\<pdf-links-minor-mode-map>
+
+If this mode is enabled, most links in the document may be
+activated by clicking on them or by pressing \\[pdf-links-action-perform] and selecting
+one of the displayed keys, or by using isearch limited to
+links via \\[pdf-links-isearch-link].
+
+\\{pdf-links-minor-mode-map}
+
+This is a minor mode.  If called interactively, toggle the
+`Pdf-Links minor mode' mode.  If the prefix argument is positive,
+enable the mode, and if it is zero or negative, disable the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable
+the mode if ARG is nil, omitted, or is a positive number.
+Disable the mode if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate `pdf-links-minor-mode'.
+
+The mode's hook is called both when the mode is enabled and when
+it is disabled.
+
+(fn &optional ARG)" t) (autoload 'pdf-links-action-perform "pdf-links" "Follow LINK, depending on its type.
+
+This may turn to another page, switch to another PDF buffer or
+invoke `pdf-links-browse-uri-function'.
+
+Interactively, link is read via `pdf-links-read-link-action'.
+This function displays characters around the links in the current
+page and starts reading characters (ignoring case).  After a
+sufficient number of characters have been read, the corresponding
+link's link is invoked.  Additionally, SPC may be used to
+scroll the current page.
+
+(fn LINK)" t) (register-definition-prefixes "pdf-links" '("pdf-links-")) (autoload 'pdf-loader-install "pdf-loader" "Prepare Emacs for using PDF Tools.
+
+This function acts as a replacement for `pdf-tools-install' and
+makes Emacs load and use PDF Tools as soon as a PDF file is
+opened, but not sooner.
+
+The arguments are passed verbatim to `pdf-tools-install', which
+see.
+
+(fn &optional NO-QUERY-P SKIP-DEPENDENCIES-P NO-ERROR-P FORCE-DEPENDENCIES-P)") (register-definition-prefixes "pdf-loader" '("pdf-loader--")) (register-definition-prefixes "pdf-macs" '("pdf-view-")) (autoload 'pdf-misc-minor-mode "pdf-misc" "FIXME:  Not documented.
+
+This is a minor mode.  If called interactively, toggle the
+`Pdf-Misc minor mode' mode.  If the prefix argument is positive,
+enable the mode, and if it is zero or negative, disable the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable
+the mode if ARG is nil, omitted, or is a positive number.
+Disable the mode if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate `pdf-misc-minor-mode'.
+
+The mode's hook is called both when the mode is enabled and when
+it is disabled.
+
+(fn &optional ARG)" t) (autoload 'pdf-misc-size-indication-minor-mode "pdf-misc" "Provide a working size indication in the mode-line.
+
+This is a minor mode.  If called interactively, toggle the
+`Pdf-Misc-Size-Indication minor mode' mode.  If the prefix
+argument is positive, enable the mode, and if it is zero or
+negative, disable the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable
+the mode if ARG is nil, omitted, or is a positive number.
+Disable the mode if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate `pdf-misc-size-indication-minor-mode'.
+
+The mode's hook is called both when the mode is enabled and when
+it is disabled.
+
+(fn &optional ARG)" t) (autoload 'pdf-misc-menu-bar-minor-mode "pdf-misc" "Display a PDF Tools menu in the menu-bar.
+
+This is a minor mode.  If called interactively, toggle the
+`Pdf-Misc-Menu-Bar minor mode' mode.  If the prefix argument is
+positive, enable the mode, and if it is zero or negative, disable
+the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable
+the mode if ARG is nil, omitted, or is a positive number.
+Disable the mode if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate `pdf-misc-menu-bar-minor-mode'.
+
+The mode's hook is called both when the mode is enabled and when
+it is disabled.
+
+(fn &optional ARG)" t) (autoload 'pdf-misc-context-menu-minor-mode "pdf-misc" "Provide a right-click context menu in PDF buffers.
+
+\\{pdf-misc-context-menu-minor-mode-map}
+
+This is a minor mode.  If called interactively, toggle the
+`Pdf-Misc-Context-Menu minor mode' mode.  If the prefix argument
+is positive, enable the mode, and if it is zero or negative,
+disable the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable
+the mode if ARG is nil, omitted, or is a positive number.
+Disable the mode if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate `pdf-misc-context-menu-minor-mode'.
+
+The mode's hook is called both when the mode is enabled and when
+it is disabled.
+
+(fn &optional ARG)" t) (register-definition-prefixes "pdf-misc" '("pdf-misc-")) (autoload 'pdf-occur "pdf-occur" "List lines matching STRING or PCRE.
+
+Interactively search for a regexp. Unless a prefix arg was given,
+in which case this functions performs a string search.
+
+If `pdf-occur-prefer-string-search' is non-nil, the meaning of
+the prefix-arg is inverted.
+
+(fn STRING &optional REGEXP-P)" t) (autoload 'pdf-occur-multi-command "pdf-occur" "Perform `pdf-occur' on multiple buffer.
+
+For a programmatic search of multiple documents see
+`pdf-occur-search'." t) (defvar pdf-occur-global-minor-mode nil "Non-nil if Pdf-Occur-Global minor mode is enabled.
+See the `pdf-occur-global-minor-mode' command
+for a description of this minor mode.
+Setting this variable directly does not take effect;
+either customize it (see the info node `Easy Customization')
+or call the function `pdf-occur-global-minor-mode'.") (custom-autoload 'pdf-occur-global-minor-mode "pdf-occur" nil) (autoload 'pdf-occur-global-minor-mode "pdf-occur" "Enable integration of Pdf Occur with other modes.
+
+This global minor mode enables (or disables)
+`pdf-occur-ibuffer-minor-mode' and `pdf-occur-dired-minor-mode'
+in all current and future ibuffer/dired buffer.
+
+This is a global minor mode.  If called interactively, toggle the
+`Pdf-Occur-Global minor mode' mode.  If the prefix argument is
+positive, enable the mode, and if it is zero or negative, disable
+the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable
+the mode if ARG is nil, omitted, or is a positive number.
+Disable the mode if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate `(default-value \\='pdf-occur-global-minor-mode)'.
+
+The mode's hook is called both when the mode is enabled and when
+it is disabled.
+
+(fn &optional ARG)" t) (autoload 'pdf-occur-ibuffer-minor-mode "pdf-occur" "Hack into ibuffer's do-occur binding.
+
+This mode remaps `ibuffer-do-occur' to
+`pdf-occur-ibuffer-do-occur', which will start the PDF Tools
+version of `occur', if all marked buffer's are in `pdf-view-mode'
+and otherwise fallback to `ibuffer-do-occur'.
+
+This is a minor mode.  If called interactively, toggle the
+`Pdf-Occur-Ibuffer minor mode' mode.  If the prefix argument is
+positive, enable the mode, and if it is zero or negative, disable
+the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable
+the mode if ARG is nil, omitted, or is a positive number.
+Disable the mode if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate `pdf-occur-ibuffer-minor-mode'.
+
+The mode's hook is called both when the mode is enabled and when
+it is disabled.
+
+(fn &optional ARG)" t) (autoload 'pdf-occur-dired-minor-mode "pdf-occur" "Hack into dired's `dired-do-search' binding.
+
+This mode remaps `dired-do-search' to
+`pdf-occur-dired-do-search', which will start the PDF Tools
+version of `occur', if all marked buffer's are in `pdf-view-mode'
+and otherwise fallback to `dired-do-search'.
+
+This is a minor mode.  If called interactively, toggle the
+`Pdf-Occur-Dired minor mode' mode.  If the prefix argument is
+positive, enable the mode, and if it is zero or negative, disable
+the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable
+the mode if ARG is nil, omitted, or is a positive number.
+Disable the mode if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate `pdf-occur-dired-minor-mode'.
+
+The mode's hook is called both when the mode is enabled and when
+it is disabled.
+
+(fn &optional ARG)" t) (register-definition-prefixes "pdf-occur" '("pdf-occur-")) (autoload 'pdf-outline-minor-mode "pdf-outline" "Display an outline of a PDF document.
+
+This provides a PDF's outline on the menu bar via imenu.
+Additionally the same outline may be viewed in a designated
+buffer.
+
+\\{pdf-outline-minor-mode-map}
+
+This is a minor mode.  If called interactively, toggle the
+`Pdf-Outline minor mode' mode.  If the prefix argument is
+positive, enable the mode, and if it is zero or negative, disable
+the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable
+the mode if ARG is nil, omitted, or is a positive number.
+Disable the mode if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate `pdf-outline-minor-mode'.
+
+The mode's hook is called both when the mode is enabled and when
+it is disabled.
+
+(fn &optional ARG)" t) (autoload 'pdf-outline "pdf-outline" "Display an PDF outline of BUFFER.
+
+BUFFER defaults to the current buffer.  Select the outline
+buffer, unless NO-SELECT-WINDOW-P is non-nil.
+
+(fn &optional BUFFER NO-SELECT-WINDOW-P)" t) (autoload 'pdf-outline-imenu-enable "pdf-outline" "Enable imenu in the current PDF buffer." t) (register-definition-prefixes "pdf-outline" '("pdf-outline")) (autoload 'pdf-sync-minor-mode "pdf-sync" "Correlate a PDF position with the TeX file.
+
+\\<pdf-sync-minor-mode-map>
+This works via SyncTeX, which means the TeX sources need to have
+been compiled with `--synctex=1'.  In AUCTeX this can be done by
+setting `TeX-source-correlate-method' to `synctex' (before AUCTeX
+is loaded) and enabling `TeX-source-correlate-mode'.
+
+Then \\[pdf-sync-backward-search-mouse] in the PDF buffer will
+open the corresponding TeX location.
+
+If AUCTeX is your preferred tex-mode, this library arranges to
+bind `pdf-sync-forward-display-pdf-key' (the default is `C-c C-g')
+to `pdf-sync-forward-search' in `TeX-source-correlate-map'.  This
+function displays the PDF page corresponding to the current
+position in the TeX buffer.  This function only works together
+with AUCTeX.
+
+This is a minor mode.  If called interactively, toggle the
+`Pdf-Sync minor mode' mode.  If the prefix argument is positive,
+enable the mode, and if it is zero or negative, disable the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable
+the mode if ARG is nil, omitted, or is a positive number.
+Disable the mode if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate `pdf-sync-minor-mode'.
+
+The mode's hook is called both when the mode is enabled and when
+it is disabled.
+
+(fn &optional ARG)" t) (register-definition-prefixes "pdf-sync" '("pdf-sync-")) (defvar pdf-tools-handle-upgrades t "Whether PDF Tools should handle upgrading itself.") (custom-autoload 'pdf-tools-handle-upgrades "pdf-tools" t) (autoload 'pdf-tools-install "pdf-tools" "Install PDF-Tools in all current and future PDF buffers.
+
+If the `pdf-info-epdfinfo-program' is not running or does not
+appear to be working, attempt to rebuild it.  If this build
+succeeded, continue with the activation of the package.
+Otherwise fail silently, i.e. no error is signaled.
+
+Build the program (if necessary) without asking first, if
+NO-QUERY-P is non-nil.
+
+Don't attempt to install system packages, if SKIP-DEPENDENCIES-P
+is non-nil.
+
+Do not signal an error in case the build failed, if NO-ERROR-P is
+non-nil.
+
+Attempt to install system packages (even if it is deemed
+unnecessary), if FORCE-DEPENDENCIES-P is non-nil.
+
+Note that SKIP-DEPENDENCIES-P and FORCE-DEPENDENCIES-P are
+mutually exclusive.
+
+Note further, that you can influence the installation directory
+by setting `pdf-info-epdfinfo-program' to an appropriate
+value (e.g. ~/bin/epdfinfo) before calling this function.
+
+See `pdf-view-mode' and `pdf-tools-enabled-modes'.
+
+(fn &optional NO-QUERY-P SKIP-DEPENDENCIES-P NO-ERROR-P FORCE-DEPENDENCIES-P)" t) (autoload 'pdf-tools-enable-minor-modes "pdf-tools" "Enable MODES in the current buffer.
+
+MODES defaults to `pdf-tools-enabled-modes'.
+
+(fn &optional MODES)" t) (autoload 'pdf-tools-help "pdf-tools" "Show a Help buffer for `pdf-tools'." t) (register-definition-prefixes "pdf-tools" '("pdf-tools-")) (register-definition-prefixes "pdf-util" '("display-buffer-split-below-and-attach" "pdf-util-")) (autoload 'pdf-view-bookmark-jump-handler "pdf-view" "The bookmark handler-function interface for bookmark BMK.
+
+See also `pdf-view-bookmark-make-record'.
+
+(fn BMK)") (register-definition-prefixes "pdf-view" '("cua-copy-region--pdf-view-advice" "pdf-view-")) (autoload 'pdf-virtual-edit-mode "pdf-virtual" "Major mode when editing a virtual PDF buffer.
+
+(fn)" t) (autoload 'pdf-virtual-view-mode "pdf-virtual" "Major mode in virtual PDF buffers.
+
+(fn)" t) (defvar pdf-virtual-global-minor-mode nil "Non-nil if Pdf-Virtual-Global minor mode is enabled.
+See the `pdf-virtual-global-minor-mode' command
+for a description of this minor mode.
+Setting this variable directly does not take effect;
+either customize it (see the info node `Easy Customization')
+or call the function `pdf-virtual-global-minor-mode'.") (custom-autoload 'pdf-virtual-global-minor-mode "pdf-virtual" nil) (autoload 'pdf-virtual-global-minor-mode "pdf-virtual" "Enable recognition and handling of VPDF files.
+
+This is a global minor mode.  If called interactively, toggle the
+`Pdf-Virtual-Global minor mode' mode.  If the prefix argument is
+positive, enable the mode, and if it is zero or negative, disable
+the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable
+the mode if ARG is nil, omitted, or is a positive number.
+Disable the mode if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate `(default-value \\='pdf-virtual-global-minor-mode)'.
+
+The mode's hook is called both when the mode is enabled and when
+it is disabled.
+
+(fn &optional ARG)" t) (autoload 'pdf-virtual-buffer-create "pdf-virtual" "
+
+(fn &optional FILENAMES BUFFER-NAME DISPLAY-P)" t) (register-definition-prefixes "pdf-virtual" '("pdf-virtual-")) (provide 'pdf-tools-autoloads)) "general" ((general-autoloads general) (autoload 'general-define-key "general" "The primary key definition function provided by general.el.
+
+Define MAPS, optionally using DEFINER, in the keymap(s) corresponding to STATES
+and KEYMAPS.
+
+MAPS consists of paired keys (vectors or strings; also see
+`general-implicit-kbd') and definitions (those mentioned in `define-key''s
+docstring and general.el's \"extended\" definitions). All pairs (when not
+ignored) will be recorded and can be later displayed with
+`general-describe-keybindings'.
+
+If DEFINER is specified, a custom key definer will be used to bind MAPS. See
+general.el's documentation/README for more information.
+
+Unlike with normal key definitions functions, the keymaps in KEYMAPS should be
+quoted (this allows using the keymap name for other purposes, e.g. deferring
+keybindings if the keymap symbol is not bound, optionally inferring the
+corresponding major mode for a symbol by removing \"-map\" for :which-key,
+easily storing the keymap name for use with `general-describe-keybindings',
+etc.). Note that general.el provides other key definer macros that do not
+require quoting keymaps.
+
+STATES corresponds to the evil state(s) to bind the keys in. Non-evil users
+should not set STATES. When STATES is non-nil, `evil-define-key*' will be
+used (the evil auxiliary keymaps corresponding STATES and KEYMAPS will be used);
+otherwise `define-key' will be used (unless DEFINER is specified). KEYMAPS
+defaults to 'global. There is also 'local, which create buffer-local
+keybindings for both evil and non-evil keybindings. There are other special,
+user-alterable \"shorthand\" symbols for keymaps and states (see
+`general-keymap-aliases' and `general-state-aliases').
+
+Note that STATES and KEYMAPS can either be lists or single symbols. If any
+keymap does not exist, those keybindings will be deferred until the keymap does
+exist, so using `eval-after-load' is not necessary with this function.
+
+PREFIX corresponds to a key to prefix keys in MAPS with and defaults to none. To
+bind/unbind a key specified with PREFIX, \"\" can be specified as a key in
+MAPS (e.g. ...:prefix \"SPC\" \"\" nil... will unbind space).
+
+The keywords in this paragraph are only useful for evil users. If
+NON-NORMAL-PREFIX is specified, this prefix will be used instead of PREFIX for
+states in `general-non-normal-states' (e.g. the emacs and insert states). This
+argument will only have an effect if one of these states is in STATES or if
+corresponding global keymap (e.g. `evil-insert-state-map') is in KEYMAPS.
+Alternatively, GLOBAL-PREFIX can be used with PREFIX and/or NON-NORMAL-PREFIX to
+bind keys in all states under the specified prefix. Like with NON-NORMAL-PREFIX,
+GLOBAL-PREFIX will prevent PREFIX from applying to `general-non-normal-states'.
+INFIX can be used to append a string to all of the specified prefixes. This is
+potentially useful when you are using GLOBAL-PREFIX and/or NON-NORMAL-PREFIX so
+that you can sandwich keys in between all the prefixes and the specified keys in
+MAPS. This may be particularly useful if you are using default prefixes in a
+wrapper function/macro so that you can add to them without needing to re-specify
+all of them. If none of the other prefix keyword arguments are specified, INFIX
+will have no effect.
+
+If PREFIX-COMMAND or PREFIX-MAP is specified, a prefix command and/or keymap
+will be created. PREFIX-NAME can be additionally specified to set the keymap
+menu name/prompt. If PREFIX-COMMAND is specified, `define-prefix-command' will
+be used. Otherwise, only a prefix keymap will be created. Previously created
+prefix commands/keymaps will never be redefined/cleared. All prefixes (including
+the INFIX key, if specified) will then be bound to PREFIX-COMMAND or PREFIX-MAP.
+If the user did not specify any PREFIX or manually specify any KEYMAPS, general
+will bind all MAPS in the prefix keymap corresponding to either PREFIX-MAP or
+PREFIX-COMMAND instead of in the default keymap.
+
+PREDICATE corresponds to a predicate to check to determine whether a definition
+should be active (e.g. \":predicate '(eobp)\"). Definitions created with a
+predicate will only be active when the predicate is true. When the predicate is
+false, key lookup will continue to search for a match in lower-precedence
+keymaps.
+
+In addition to the normal definitions supported by `define-key', general.el also
+provides \"extended\" definitions, which are plists containing the normal
+definition as well as other keywords. For example, PREDICATE can be specified
+globally or locally in an extended definition. New global (~general-define-key~)
+and local (extended definition) keywords can be added by the user. See
+`general-extended-def-keywords' and general.el's documentation/README for more
+information.
+
+PACKAGE is the global version of the extended definition keyword that specifies
+the package a keymap is defined in (used for \"autoloading\" keymaps)
+
+PROPERTIES, REPEAT, and JUMP are the global versions of the extended definition
+keywords used for adding evil command properties to commands.
+
+MAJOR-MODES, WK-MATCH-KEYS, WK-MATCH-BINDINGS, and WK-FULL-KEYS are the
+corresponding global versions of which-key extended definition keywords. They
+will only have an effect for extended definitions that specify :which-key or
+:wk. See the section on extended definitions in the general.el
+documentation/README for more information.
+
+LISPY-PLIST and WORF-PLIST are the global versions of extended definition
+keywords that are used for each corresponding custom DEFINER.
+
+(fn &rest MAPS &key DEFINER (STATES general-default-states) (KEYMAPS general-default-keymaps KEYMAPS-SPECIFIED-P) (PREFIX general-default-prefix) (NON-NORMAL-PREFIX general-default-non-normal-prefix) (GLOBAL-PREFIX general-default-global-prefix) INFIX PREFIX-COMMAND PREFIX-MAP PREFIX-NAME PREDICATE PACKAGE PROPERTIES REPEAT JUMP MAJOR-MODES (WK-MATCH-KEYS t) (WK-MATCH-BINDING t) (WK-FULL-KEYS t) LISPY-PLIST WORF-PLIST &allow-other-keys)") (autoload 'general-emacs-define-key "general" "A wrapper for `general-define-key' that is similar to `define-key'.
+It has a positional argument for KEYMAPS (that will not be overridden by a later
+:keymaps argument). Besides this, it acts the same as `general-define-key', and
+ARGS can contain keyword arguments in addition to keybindings. This can
+basically act as a drop-in replacement for `define-key', and unlike with
+`general-define-key', KEYMAPS does not need to be quoted.
+
+(fn KEYMAPS &rest ARGS)" nil t) (function-put 'general-emacs-define-key 'lisp-indent-function 1) (autoload 'general-evil-define-key "general" "A wrapper for `general-define-key' that is similar to `evil-define-key'.
+It has positional arguments for STATES and KEYMAPS (that will not be overridden
+by a later :keymaps or :states argument). Besides this, it acts the same as
+`general-define-key', and ARGS can contain keyword arguments in addition to
+keybindings. This can basically act as a drop-in replacement for
+`evil-define-key', and unlike with `general-define-key', KEYMAPS does not need
+to be quoted.
+
+(fn STATES KEYMAPS &rest ARGS)" nil t) (function-put 'general-evil-define-key 'lisp-indent-function 2) (autoload 'general-def "general" "General definer that takes a variable number of positional arguments in ARGS.
+This macro will act as `general-define-key', `general-emacs-define-key', or
+`general-evil-define-key' based on how many of the initial arguments do not
+correspond to keybindings. All quoted and non-quoted lists and symbols before
+the first string, vector, or keyword are considered to be positional arguments.
+This means that you cannot use a function or variable for a key that starts
+immediately after the positional arguments. If you need to do this, you should
+use one of the definers that `general-def' dispatches to or explicitly separate
+the positional arguments from the maps with a bogus keyword pair like
+\":start-maps t\"
+
+(fn &rest ARGS)" nil t) (function-put 'general-def 'lisp-indent-function 'defun) (autoload 'general-create-definer "general" "A helper macro to create wrappers for `general-def'.
+This can be used to create key definers that will use a certain keymap, evil
+state, prefix key, etc. by default. NAME is the wrapper name and DEFAULTS are
+the default arguments. WRAPPING can also be optionally specified to use a
+different definer than `general-def'. It should not be quoted.
+
+(fn NAME &rest DEFAULTS &key WRAPPING &allow-other-keys)" nil t) (function-put 'general-create-definer 'lisp-indent-function 'defun) (autoload 'general-defs "general" "A wrapper that splits into multiple `general-def's.
+Each consecutive grouping of positional argument followed by keyword/argument
+pairs (having only one or the other is fine) marks the start of a new section.
+Each section corresponds to one use of `general-def'. This means that settings
+only apply to the keybindings that directly follow.
+
+Since positional arguments can appear at any point, unqouted symbols are always
+considered to be positional arguments (e.g. a keymap). This means that variables
+can never be used for keys with `general-defs'. Variables can still be used for
+definitions or as arguments to keywords.
+
+(fn &rest ARGS)" nil t) (function-put 'general-defs 'lisp-indent-function 'defun) (autoload 'general-unbind "general" "A wrapper for `general-def' to unbind multiple keys simultaneously.
+Insert after all keys in ARGS before passing ARGS to `general-def.' \":with
+ #'func\" can optionally specified to use a custom function instead (e.g.
+ `ignore').
+
+(fn &rest ARGS)" nil t) (function-put 'general-unbind 'lisp-indent-function 'defun) (autoload 'general-describe-keybindings "general" "Show all keys that have been bound with general in an org buffer.
+Any local keybindings will be shown first followed by global keybindings.
+With a non-nil prefix ARG only show bindings in active maps.
+
+(fn &optional ARG)" t) (autoload 'general-key "general" "Act as KEY's definition in the current context.
+This uses an extended menu item's capability of dynamically computing a
+definition. It is recommended over `general-simulate-key' wherever possible. See
+the docstring of `general-simulate-key' and the readme for information about the
+benefits and downsides of `general-key'.
+
+KEY should be a string given in `kbd' notation and should correspond to a single
+definition (as opposed to a sequence of commands). When STATE is specified, look
+up KEY with STATE as the current evil state. When specified, DOCSTRING will be
+the menu item's name/description.
+
+Let can be used to bind variables around key lookup. For example:
+(general-key \"some key\"
+  :let ((some-var some-val)))
+
+SETUP and TEARDOWN can be used to run certain functions before and after key
+lookup. For example, something similar to using :state 'emacs would be:
+(general-key \"some key\"
+  :setup (evil-local-mode -1)
+  :teardown (evil-local-mode))
+
+ACCEPT-DEFAULT, NO-REMAP, and POSITION are passed to `key-binding'.
+
+(fn KEY &key STATE DOCSTRING LET SETUP TEARDOWN ACCEPT-DEFAULT NO-REMAP POSITION)" nil t) (function-put 'general-key 'lisp-indent-function 1) (autoload 'general-simulate-keys "general" "Deprecated. Please use `general-simulate-key' instead.
+
+(fn KEYS &optional STATE KEYMAP (LOOKUP t) DOCSTRING NAME)" nil t) (autoload 'general-simulate-key "general" "Create and return a command that simulates KEYS in STATE and KEYMAP.
+
+`general-key' should be prefered over this whenever possible as it is simpler
+and has saner functionality in many cases because it does not rely on
+`unread-command-events' (e.g. \"C-h k\" will show the docstring of the command
+to be simulated ; see the readme for more information). The main downsides of
+`general-key' are that it cannot simulate a command followed by keys or
+subsequent commands, and which-key does not currently work well with it when
+simulating a prefix key/incomplete key sequence.
+
+KEYS should be a string given in `kbd' notation. It can also be a list of a
+single command followed by a string of the key(s) to simulate after calling that
+command. STATE should only be specified by evil users and should be a quoted
+evil state. KEYMAP should not be quoted. Both STATE and KEYMAP aliases are
+supported (but they have to be set when the macro is expanded). When neither
+STATE or KEYMAP are specified, the key(s) will be simulated in the current
+context.
+
+If NAME is specified, it will replace the automatically generated function name.
+NAME should not be quoted. If DOCSTRING is specified, it will replace the
+automatically generated docstring.
+
+Normally the generated function will look up KEY in the correct context to try
+to match a command. To prevent this lookup, LOOKUP can be specified as nil.
+Generally, you will want to keep LOOKUP non-nil because this will allow checking
+the evil repeat property of matched commands to determine whether or not they
+should be recorded. See the docstring for `general--simulate-keys' for more
+information about LOOKUP.
+
+When a WHICH-KEY description is specified, it will replace the command name in
+the which-key popup.
+
+When a command name is specified and that command has been remapped (i.e. [remap
+command] is currently bound), the remapped version will be used instead of the
+original command unless REMAP is specified as nil (it is true by default).
+
+The advantages of this over a keyboard macro are as follows:
+- Prefix arguments are supported
+- The user can control the context in which the keys are simulated
+- The user can simulate both a named command and keys
+- The user can simulate an incomplete key sequence (e.g. for a keymap)
+
+(fn KEYS &key STATE KEYMAP NAME DOCSTRING (LOOKUP t) WHICH-KEY (REMAP t))" nil t) (function-put 'general-simulate-key 'lisp-indent-function 'defun) (autoload 'general-key-dispatch "general" "Create and return a command that runs FALLBACK-COMMAND or a command in MAPS.
+MAPS consists of <key> <command> pairs. If a key in MAPS is matched, the
+corresponding command will be run. Otherwise FALLBACK-COMMAND will be run with
+the unmatched keys. So, for example, if \"ab\" was pressed, and \"ab\" is not
+one of the key sequences from MAPS, the FALLBACK-COMMAND will be run followed by
+the simulated keypresses of \"ab\". Prefix arguments will still work regardless
+of which command is run. This is useful for binding under non-prefix keys. For
+example, this can be used to redefine a sequence like \"cw\" or \"cow\" in evil
+but still have \"c\" work as `evil-change'. If TIMEOUT is specified,
+FALLBACK-COMMAND will also be run in the case that the user does not press the
+next key within the TIMEOUT (e.g. 0.5).
+
+NAME and DOCSTRING are optional keyword arguments. They can be used to replace
+the automatically generated name and docstring for the created function. By
+default, `cl-gensym' is used to prevent name clashes (e.g. allows the user to
+create multiple different commands using `self-insert-command' as the
+FALLBACK-COMMAND without explicitly specifying NAME to manually prevent
+clashes).
+
+When INHERIT-KEYMAP is specified, all the keybindings from that keymap will be
+inherited in MAPS.
+
+When a WHICH-KEY description is specified, it will replace the command name in
+the which-key popup.
+
+When command to be executed has been remapped (i.e. [remap command] is currently
+bound), the remapped version will be used instead of the original command unless
+REMAP is specified as nil (it is true by default).
+
+(fn FALLBACK-COMMAND &rest MAPS &key TIMEOUT INHERIT-KEYMAP NAME DOCSTRING WHICH-KEY (REMAP t) &allow-other-keys)" nil t) (function-put 'general-key-dispatch 'lisp-indent-function 1) (autoload 'general-predicate-dispatch "general" "
+
+(fn FALLBACK-DEF &rest DEFS &key DOCSTRING &allow-other-keys)" nil t) (function-put 'general-predicate-dispatch 'lisp-indent-function 1) (autoload 'general-translate-key "general" "Translate keys in the keymap(s) corresponding to STATES and KEYMAPS.
+STATES should be the name of an evil state, a list of states, or nil. KEYMAPS
+should be a symbol corresponding to the keymap to make the translations in or a
+list of keymap names. Keymap and state aliases are supported (as well as 'local
+and 'global for KEYMAPS).
+
+MAPS corresponds to a list of translations (key replacement pairs). For example,
+specifying \"a\" \"b\" will bind \"a\" to \"b\"'s definition in the keymap.
+Specifying nil as a replacement will unbind a key.
+
+If DESTRUCTIVE is non-nil, the keymap will be destructively altered without
+creating a backup. If DESTRUCTIVE is nil, store a backup of the keymap on the
+initial invocation, and for future invocations always look up keys in the
+original/backup keymap. On the other hand, if DESTRUCTIVE is non-nil, calling
+this function multiple times with \"a\" \"b\" \"b\" \"a\", for example, would
+continue to swap and unswap the definitions of these keys. This means that when
+DESTRUCTIVE is non-nil, all related swaps/cycles should be done in the same
+invocation.
+
+If both MAPS and DESCTRUCTIVE are nil, only create the backup keymap.
+
+(fn STATES KEYMAPS &rest MAPS &key DESTRUCTIVE &allow-other-keys)") (function-put 'general-translate-key 'lisp-indent-function 'defun) (autoload 'general-swap-key "general" "Wrapper around `general-translate-key' for swapping keys.
+STATES, KEYMAPS, and ARGS are passed to `general-translate-key'. ARGS should
+consist of key swaps (e.g. \"a\" \"b\" is equivalent to \"a\" \"b\" \"b\" \"a\"
+with `general-translate-key') and optionally keyword arguments for
+`general-translate-key'.
+
+(fn STATES KEYMAPS &rest ARGS)" nil t) (function-put 'general-swap-key 'lisp-indent-function 'defun) (autoload 'general-auto-unbind-keys "general" "Advise `define-key' to automatically unbind keys when necessary.
+This will prevent errors when a sub-sequence of a key is already bound (e.g. the
+user attempts to bind \"SPC a\" when \"SPC\" is bound, resulting in a \"Key
+sequnce starts with non-prefix key\" error). When UNDO is non-nil, remove
+advice.
+
+(fn &optional UNDO)") (autoload 'general-add-hook "general" "A drop-in replacement for `add-hook'.
+Unlike `add-hook', HOOKS and FUNCTIONS can be single items or lists. APPEND and
+LOCAL are passed directly to `add-hook'. When TRANSIENT is non-nil, each
+function will remove itself from the hook it is in after it is run once. If
+TRANSIENT is a function, call it on the return value in order to determine
+whether to remove a function from the hook. For example, if TRANSIENT is
+#'identity, remove each function only if it returns non-nil. TRANSIENT could
+alternatively check something external and ignore the function's return value.
+
+(fn HOOKS FUNCTIONS &optional APPEND LOCAL TRANSIENT)") (autoload 'general-remove-hook "general" "A drop-in replacement for `remove-hook'.
+Unlike `remove-hook', HOOKS and FUNCTIONS can be single items or lists. LOCAL is
+passed directly to `remove-hook'.
+
+(fn HOOKS FUNCTIONS &optional LOCAL)") (autoload 'general-advice-add "general" "A drop-in replacement for `advice-add'.
+SYMBOLS, WHERE, FUNCTIONS, and PROPS correspond to the arguments for
+`advice-add'. Unlike `advice-add', SYMBOLS and FUNCTIONS can be single items or
+lists. When TRANSIENT is non-nil, each function will remove itself as advice
+after it is run once. If TRANSIENT is a function, call it on the return value in
+order to determine whether to remove a function as advice. For example, if
+TRANSIENT is #'identity, remove each function only if it returns non-nil.
+TRANSIENT could alternatively check something external and ignore the function's
+return value.
+
+(fn SYMBOLS WHERE FUNCTIONS &optional PROPS TRANSIENT)") (autoload 'general-add-advice "general") (autoload 'general-advice-remove "general" "A drop-in replacement for `advice-remove'.
+Unlike `advice-remove', SYMBOLS and FUNCTIONS can be single items or lists.
+
+(fn SYMBOLS FUNCTIONS)") (autoload 'general-remove-advice "general") (autoload 'general-evil-setup "general" "Set up some basic equivalents for vim mapping functions.
+This creates global key definition functions for the evil states.
+Specifying SHORT-NAMES as non-nil will create non-prefixed function
+aliases such as `nmap' for `general-nmap'.
+
+(fn &optional SHORT-NAMES _)") (register-definition-prefixes "general" '("general-")) (provide 'general-autoloads)) "org-bullets" ((org-bullets-autoloads org-bullets) (autoload 'org-bullets-mode "org-bullets" "Use UTF8 bullets in Org mode headings.
+
+This is a minor mode.  If called interactively, toggle the
+`Org-Bullets mode' mode.  If the prefix argument is positive,
+enable the mode, and if it is zero or negative, disable the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable
+the mode if ARG is nil, omitted, or is a positive number.
+Disable the mode if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate `org-bullets-mode'.
+
+The mode's hook is called both when the mode is enabled and when
+it is disabled.
+
+(fn &optional ARG)" t) (register-definition-prefixes "org-bullets" '("org-bullets-")) (provide 'org-bullets-autoloads)) "citar" ((citar citar-capf citar-file citar-org citar-citeproc citar-latex citar-cache citar-format citar-autoloads citar-markdown) (defvar cl-struct-citar-indicator-tags) (cl-defsubst citar-indicator-p (cl-x) (declare (side-effect-free error-free) (pure t)) (and (memq (type-of cl-x) cl-struct-citar-indicator-tags) t)) (eval-and-compile (define-symbol-prop 'citar-indicator 'cl-deftype-satisfies 'citar-indicator-p)) (cl-defsubst citar-indicator-tag (cl-x) "Access slot \"tag\" of `citar-indicator' struct CL-X.
+The string to include as hidden candidate text, and to then determine whether a
+candidate predicate function will return non-nil." (declare (side-effect-free t)) (progn (or (citar-indicator-p cl-x) (signal 'wrong-type-argument (list 'citar-indicator cl-x))) (aref cl-x 1))) (cl-defsubst citar-indicator-symbol (cl-x) "Access slot \"symbol\" of `citar-indicator' struct CL-X.
+The symbol string to use in the UI when predicate function returns non-nil." (declare (side-effect-free t)) (progn (or (citar-indicator-p cl-x) (signal 'wrong-type-argument (list 'citar-indicator cl-x))) (aref cl-x 2))) (cl-defsubst citar-indicator-padding (cl-x) "Access slot \"padding\" of `citar-indicator' struct CL-X.
+String to add to the right side of the indicator, for proper padding and such." (declare (side-effect-free t)) (progn (or (citar-indicator-p cl-x) (signal 'wrong-type-argument (list 'citar-indicator cl-x))) (aref cl-x 3))) (cl-defsubst citar-indicator-emptysymbol (cl-x) "Access slot \"emptysymbol\" of `citar-indicator' struct CL-X.
+The symbol to use in the UI when predicate function returns nil. Can be useful
+in some cases when using icons." (declare (side-effect-free t)) (progn (or (citar-indicator-p cl-x) (signal 'wrong-type-argument (list 'citar-indicator cl-x))) (aref cl-x 4))) (cl-defsubst citar-indicator-function (cl-x) "Access slot \"function\" of `citar-indicator' struct CL-X.
+A predicate function that takes a single CITEKEY argument." (declare (side-effect-free t)) (progn (or (citar-indicator-p cl-x) (signal 'wrong-type-argument (list 'citar-indicator cl-x))) (aref cl-x 5))) (cl-defsubst citar-indicator-compiledfunction (cl-x) "Access slot \"compiledfunction\" of `citar-indicator' struct CL-X.
+A compiled version of `function' used during processing." (declare (side-effect-free t)) (progn (or (citar-indicator-p cl-x) (signal 'wrong-type-argument (list 'citar-indicator cl-x))) (aref cl-x 6))) (cl-defsubst citar-indicator-create (&cl-defs (nil (cl-tag-slot) (tag nil :documentation "The string to include as hidden candidate text, and to then determine whether a
+candidate predicate function will return non-nil.") (symbol nil :type string :documentation "The symbol string to use in the UI when predicate function returns non-nil.") (padding " " :type string :documentation "String to add to the right side of the indicator, for proper padding and such.") (emptysymbol " " :documentation "The symbol to use in the UI when predicate function returns nil. Can be useful
+in some cases when using icons.") (function nil :type function :documentation "A predicate function that takes a single CITEKEY argument.") (compiledfunction nil :type compiled-function :documentation "A compiled version of `function' used during processing.")) &key tag symbol padding emptysymbol function compiledfunction) "Constructor for objects of type `citar-indicator'." (declare (side-effect-free t)) (record 'citar-indicator tag symbol padding emptysymbol function compiledfunction)) (autoload 'citar-insert-preset "citar" "Prompt for and insert a predefined search." t) (autoload 'citar-open "citar" "Open related resources (links, files, or notes) for CITEKEYS.
+
+(fn CITEKEYS)" t) (autoload 'citar-open-files "citar" "Open library file associated with CITEKEY-OR-CITEKEYS.
+
+(fn CITEKEY-OR-CITEKEYS)" t) (autoload 'citar-attach-files "citar" "Attach library file associated with CITEKEY-OR-CITEKEYS to outgoing MIME message.
+
+(fn CITEKEY-OR-CITEKEYS)" t) (autoload 'citar-open-note "citar" "Open a single NOTE directly.
+The note should be represented as a string returned by
+`citar-get-notes'. When called interactively, prompt for a note
+to open from a list of all notes.
+
+(fn NOTE)" t) (autoload 'citar-open-notes "citar" "Open notes associated with the CITEKEYS.
+
+(fn CITEKEYS)" t) (autoload 'citar-open-links "citar" "Open URL or DOI link associated with CITEKEY-OR-CITEKEYS in a browser.
+
+(fn CITEKEY-OR-CITEKEYS)" t) (autoload 'citar-open-entry "citar" "Open bibliographic entry associated with the CITEKEY.
+
+(fn CITEKEY)" t) (autoload 'citar-insert-bibtex "citar" "Insert bibliographic entry associated with the CITEKEYS.
+
+(fn CITEKEYS)" t) (autoload 'citar-export-local-bib-file "citar" "Create a new bibliography file from citations in current buffer.
+
+The file is titled \"local-bib\", given the same extension as
+the first entry in `citar-bibliography', and created in the same
+directory as current buffer." t) (autoload 'citar-insert-citation "citar" "Insert citation for the CITEKEYS.
+
+Prefix ARG is passed to the mode-specific insertion function. It
+should invert the default behaviour for that mode with respect to
+citation styles. See specific functions for more detail.
+
+(fn CITEKEYS &optional ARG)" t) (autoload 'citar-insert-reference "citar" "Insert formatted reference(s) associated with the CITEKEYS.
+
+(fn CITEKEYS)" t) (autoload 'citar-copy-reference "citar" "Copy formatted reference(s) associated with the CITEKEYS.
+
+(fn CITEKEYS)" t) (autoload 'citar-insert-keys "citar" "Insert CITEKEYS.
+
+(fn CITEKEYS)" t) (autoload 'citar-add-file-to-library "citar" "Add a file to the library for CITEKEY.
+The FILE can be added from an open buffer, a file path, or a
+URL.
+
+(fn CITEKEY)" t) (autoload 'citar-run-default-action "citar" "Run the default action `citar-default-action' on CITEKEYS.
+
+(fn CITEKEYS)") (autoload 'citar-dwim "citar" "Run the default action on citation keys found at point." t) (register-definition-prefixes "citar" '("citar-")) (register-definition-prefixes "citar-cache" '("citar-cache--")) (autoload 'citar-capf "citar-capf" "Complete citation key at point for org, markdown, or latex.") (autoload 'citar-capf-setup "citar-capf" "Add `citar-capf' to `completion-at-point-functions'.") (register-definition-prefixes "citar-capf" '("citar-capf-annotate")) (autoload 'citar-citeproc-select-csl-style "citar-citeproc" "Select CSL style to be used with `citar-citeproc-format-reference'." t) (autoload 'citar-citeproc-format-reference "citar-citeproc" "Return formatted reference(s) for KEYS via `citeproc-el'.
+Formatting follows CSL style set in `citar-citeproc-csl-style'.
+With prefix-argument, select CSL style.
+STYLE is a CSL style as a path or a string.
+
+(fn KEYS &optional STYLE)") (register-definition-prefixes "citar-citeproc" '("citar-citeproc-")) (register-definition-prefixes "citar-file" '("citar-file-")) (register-definition-prefixes "citar-format" '("citar-format--")) (autoload 'citar-latex-local-bib-files "citar-latex" "Local bibliographic for latex retrieved using reftex.") (autoload 'citar-latex-key-at-point "citar-latex" "Return citation key at point with its bounds.
+
+The return value is (KEY . BOUNDS), where KEY is the citation key
+at point and BOUNDS is a pair of buffer positions.
+
+Return nil if there is no key at point.") (autoload 'citar-latex-citation-at-point "citar-latex" "Find citation macro at point and extract keys.
+
+Find brace-delimited strings inside the bounds of the macro,
+splits them at comma characters, and trims whitespace.
+
+Return (KEYS . BOUNDS), where KEYS is a list of the found
+citation keys and BOUNDS is a pair of buffer positions indicating
+the start and end of the citation macro.") (autoload 'citar-latex-insert-citation "citar-latex" "Insert a citation consisting of KEYS.
+
+If the command is inside a citation command keys are added to it. Otherwise
+a new command is started.
+
+If the optional COMMAND is provided use it (ignoring INVERT-PROMPT).
+Otherwise prompt for a citation command, depending on the value of
+`citar-latex-prompt-for-cite-style'. If INVERT-PROMPT is non-nil, invert
+whether or not to prompt.
+
+The availiable commands and how to provide them arguments are configured
+by `citar-latex-cite-commands'.
+
+If `citar-latex-prompt-for-extra-arguments' is nil, every
+command is assumed to have a single argument into which keys are
+inserted.
+
+(fn KEYS &optional INVERT-PROMPT COMMAND)") (autoload 'citar-latex-insert-edit "citar-latex" "Prompt for keys and call `citar-latex-insert-citation.
+With ARG non-nil, rebuild the cache before offering candidates.
+
+(fn &optional ARG)") (defalias 'citar-latex-list-keys #'reftex-all-used-citation-keys) (register-definition-prefixes "citar-latex" '("citar-latex-")) (autoload 'citar-markdown-insert-keys "citar-markdown" "Insert semicolon-separated and @-prefixed KEYS in a markdown buffer.
+
+(fn KEYS)") (autoload 'citar-markdown-insert-citation "citar-markdown" "Insert a pandoc-style citation consisting of KEYS.
+
+If the point is inside a citation, add new keys after the current
+key.
+
+If point is immediately after the opening [, add new keys
+to the beginning of the citation.
+
+If INVERT-PROMPT is non-nil, invert the meaning of
+`citar-markdown-prompt-for-extra-arguments'.
+
+(fn KEYS &optional INVERT-PROMPT)") (autoload 'citar-markdown-insert-edit "citar-markdown" "Prompt for keys and call `citar-markdown-insert-citation.
+With ARG non-nil, rebuild the cache before offering candidates.
+
+(fn &optional ARG)") (autoload 'citar-markdown-key-at-point "citar-markdown" "Return citation key at point (with its bounds) for pandoc markdown citations.
+Returns (KEY . BOUNDS), where KEY is the citation key at point
+and BOUNDS is a pair of buffer positions.  Citation keys are
+found using `citar-markdown-citation-key-regexp'.  Returns nil if
+there is no key at point." t) (autoload 'citar-markdown-citation-at-point "citar-markdown" "Return keys of citation at point.
+Find balanced expressions starting and ending with square
+brackets and containing at least one citation key (matching
+`citar-markdown-citation-key-regexp').  Return (KEYS . BOUNDS),
+where KEYS is a list of the found citation keys and BOUNDS is a
+pair of buffer positions indicating the start and end of the
+citation.") (autoload 'citar-markdown-list-keys "citar-markdown" "Return a list of all keys from markdown citations in buffer.") (register-definition-prefixes "citar-markdown" '("citar-markdown-")) (autoload 'citar-org-select-key "citar-org" "Return a list of keys when MULTIPLE, or else a key string.
+
+(fn &optional MULTIPLE)") (autoload 'citar-org-insert-citation "citar-org" "Insert KEYS in org-cite format, with STYLE.
+
+(fn KEYS &optional STYLE)") (autoload 'citar-org-insert-edit "citar-org" "Run `org-cite-insert' with citar insert processor.
+ARG is used as the prefix argument.
+
+(fn &optional ARG)") (autoload 'citar-org-follow "citar-org" "Follow processor for org-cite.
+
+(fn DATUM ARG)") (autoload 'citar-org-select-style "citar-org" "Complete a citation style for org-cite with preview.
+
+(fn &optional ARG)") (autoload 'citar-org-local-bib-files "citar-org" "Return local bib file paths for org buffer.
+
+(fn &rest ARGS)") (autoload 'citar-org-roam-make-preamble "citar-org" "Add a preamble to org-roam note, with KEY.
+
+(fn KEY)") (autoload 'citar-org-format-note-default "citar-org" "Format a note from KEY and ENTRY.
+
+(fn KEY ENTRY)") (autoload 'citar-org-key-at-point "citar-org" "Return key at point for org-cite citation-reference or property.") (autoload 'citar-org-citation-at-point "citar-org" "Return org-cite citation keys at point as a list for `embark'.") (autoload 'citar-org-activate "citar-org" "Run all the activation functions in `citar-org-activation-functions'.
+Argument CITATION is an org-element holding the references.
+
+(fn CITATION)") (with-eval-after-load 'oc (org-cite-register-processor 'citar :insert (org-cite-make-insert-processor #'citar-org-select-key #'citar-org-select-style) :follow #'citar-org-follow :activate #'citar-org-activate)) (register-definition-prefixes "citar-org" '("citar-org-")) (provide 'citar-autoloads)) "citar-embark" ((citar-embark citar-embark-autoloads) (defvar citar-embark-mode nil "Non-nil if citar-embark mode is enabled.
+See the `citar-embark-mode' command
+for a description of this minor mode.
+Setting this variable directly does not take effect;
+either customize it (see the info node `Easy Customization')
+or call the function `citar-embark-mode'.") (custom-autoload 'citar-embark-mode "citar-embark" nil) (autoload 'citar-embark-mode "citar-embark" "Toggle integration between Citar and Embark.
+
+This is a global minor mode.  If called interactively, toggle the
+`citar-embark mode' mode.  If the prefix argument is positive,
+enable the mode, and if it is zero or negative, disable the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable
+the mode if ARG is nil, omitted, or is a positive number.
+Disable the mode if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate `(default-value \\='citar-embark-mode)'.
+
+The mode's hook is called both when the mode is enabled and when
+it is disabled.
+
+(fn &optional ARG)" t) (register-definition-prefixes "citar-embark" '("citar-embark-")) (provide 'citar-embark-autoloads)) "citar-org-roam" ((citar-org-roam-autoloads citar-org-roam) (defvar citar-org-roam-mode nil "Non-nil if citar-org-roam mode is enabled.
+See the `citar-org-roam-mode' command
+for a description of this minor mode.
+Setting this variable directly does not take effect;
+either customize it (see the info node `Easy Customization')
+or call the function `citar-org-roam-mode'.") (custom-autoload 'citar-org-roam-mode "citar-org-roam" nil) (autoload 'citar-org-roam-mode "citar-org-roam" "Toggle `citar-org-roam-mode'.
+
+This is a global minor mode.  If called interactively, toggle the
+`citar-org-roam mode' mode.  If the prefix argument is positive,
+enable the mode, and if it is zero or negative, disable the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable
+the mode if ARG is nil, omitted, or is a positive number.
+Disable the mode if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate `(default-value \\='citar-org-roam-mode)'.
+
+The mode's hook is called both when the mode is enabled and when
+it is disabled.
+
+(fn &optional ARG)" t) (register-definition-prefixes "citar-org-roam" '("citar-org-roam-")) (provide 'citar-org-roam-autoloads)) "org-download" ((org-download-autoloads org-download) (autoload 'org-download-enable "org-download" "Enable org-download.") (register-definition-prefixes "org-download" '("org-download-")) (provide 'org-download-autoloads)) "dired+" ((dired+-autoloads dired+) (defvar diff-switches "-c" "*A string or list of strings specifying switches to be passed to diff.") (custom-autoload 'diff-switches "dired+" t) (defvar diredp-auto-focus-frame-for-thumbnail-tooltip-flag nil "*Non-nil means automatically focus the frame for a thumbnail tooltip.
+If nil then you will not see a thumbnail image tooltip when you
+mouseover an image-file name in Dired, unless you first give the frame
+the input focus (e.g., by clicking its title bar).
+
+This option has no effect if `diredp-image-preview-in-tooltip' is nil.
+It also has no effect for Emacs versions prior to Emacs 22.") (custom-autoload 'diredp-auto-focus-frame-for-thumbnail-tooltip-flag "dired+" t) (defvar diredp-bind-problematic-terminal-keys t "*Non-nil means bind some keys that might not work in a text-only terminal.
+This applies to keys that use modifiers Meta and Shift together.
+If you use Emacs in text-only terminal and your terminal does not
+support the use of such keys then customize this option to nil.") (custom-autoload 'diredp-bind-problematic-terminal-keys "dired+" t) (defvar diredp-case-fold-search (if (boundp 'recentf-case-fold-search) recentf-case-fold-search (memq system-type '(windows-nt cygwin))) "Non-nil means some Dired+ functions ignore case.
+The doc of such functions calls out the use of this option.") (custom-autoload 'diredp-case-fold-search "dired+" t) (defvar diredp-compressed-extensions '(".tar" ".taz" ".tgz" ".arj" ".lzh" ".lzma" ".xz" ".zip" ".z" ".Z" ".gz" ".bz2" ".rar" ".rev") "*List of compressed-file extensions, for highlighting.
+
+Note: If you change the value of this option then you need to restart
+Emacs to see the effect of the new value on font-locking.") (custom-autoload 'diredp-compressed-extensions "dired+" t) (defvar diredp-default-sort-arbitrary-function nil "Sorting used by default for sorting recent-files or dirs
+You can re-sort the buffer using \\<dired-mode-map>`\\[diredp-sort-arbitrary-command]'.") (custom-autoload 'diredp-default-sort-arbitrary-function "dired+" t) (defvar diredp-do-report-echo-limit 5 "Echo result for each file, for fewer than this many files.
+If more than this many files are acted on then there is no echoing.
+
+Used by some commands, such as `diredp-do-apply-to-marked'.  Results
+that are not echoed are anyway reported by `dired-log', so you can
+show them with `?' in the Dired buffer.") (custom-autoload 'diredp-do-report-echo-limit "dired+" t) (defvar diredp-dwim-any-frame-flag pop-up-frames "*Non-nil means the target directory can be in a window in another frame.
+Only visible frames are considered.
+This is used by `dired-dwim-target-directory'.
+This option has no effect for Emacs versions before Emacs 22.") (custom-autoload 'diredp-dwim-any-frame-flag "dired+" t) (unless (fboundp 'define-minor-mode) (defcustom diredp-highlight-autofiles-mode t "*Non-nil means highlight names of files that are autofile bookmarks.
+Autofiles that have tags are highlighted using face
+`diredp-tagged-autofile-name'.  Those with no tags are highlighted
+using face `diredp-autofile-name'.
+
+Setting this option directly does not take effect; use either
+\\[customize] or command `diredp-highlight-autofiles-mode'.
+
+NOTE: When `dired+.el' is loaded (for the first time per Emacs
+session), the highlighting is turned ON, regardless of the option
+value.  To prevent this and have the highlighting OFF by default, you
+must do one of the following:
+
+ * Put (diredp-highlight-autofiles-mode -1) in your init file, AFTER
+   it loads `dired+.el'.
+
+ * Customize the option to `nil', AND ensure that your `custom-file'
+   (or the `custom-saved-variables' part of your init file) is
+   evaluated before `dired+.el' is loaded.
+
+This option has no effect unless you use libraries `Bookmark and
+`highlight.el'." :set (lambda (_symbol value) (diredp-highlight-autofiles-mode (if value 1 -1))) :initialize 'custom-initialize-default :type 'boolean :group 'Dired-Plus :require 'dired+)) (defvar diredp-ignore-compressed-flag t "*Non-nil means to font-lock names of compressed files as ignored files.
+This applies to filenames whose extensions are in
+`diredp-compressed-extensions'.  If nil they are highlighted using
+face `diredp-compressed-file-name'.
+
+Note: If you change the value of this option then you need to restart
+Emacs to see the effect of the new value on font-locking.") (custom-autoload 'diredp-ignore-compressed-flag "dired+" t) (defvar diredp-image-preview-in-tooltip (or (and (boundp 'image-dired-thumb-size) image-dired-thumb-size) 100) "*Whether and what kind of image preview to show in a tooltip.
+The possible values are:
+
+ `nil'       : do not show a tooltip preview
+ integer N>0 : show a thumbnail preview of that size
+ `full'      : show a full-size preview of the image
+
+To enable tooltip image preview you must turn on `tooltip-mode' and
+load library `image-dired.el'.  See also option
+`diredp-auto-focus-frame-for-thumbnail-tooltip-flag'.
+
+This option has no effect for Emacs versions prior to Emacs 22.") (custom-autoload 'diredp-image-preview-in-tooltip "dired+" t) (defvar diredp-image-show-this-file-use-frame-flag t "Non-nil means `diredp-image-show-this-file' uses another frame.
+If nil then it uses another window.  Using another frame means you
+have more control over the image size when you use a prefix arg.
+
+If it uses another window then the prefix arg controls only the
+minimum window height, not necessarily the image scale (height).
+
+(If the buffer displaying the image is already considered a
+special-display buffer by your Emacs setup, then a nil value of this
+option has no effect.)") (custom-autoload 'diredp-image-show-this-file-use-frame-flag "dired+" t) (defvar diredp-list-file-attributes (list 5 8) "Which file attributes `diredp-list-file' uses, and when.
+A list of file attribute numbers means use only the values of those
+attributes.
+A non-list means use all attribute values.") (custom-autoload 'diredp-list-file-attributes "dired+" t) (defvar diredp-max-frames 200 "*Max number of frames, for commands that find files in separate frames.
+These commands are `dired-do-find-marked-files' and
+`diredp-do-find-marked-files-recursive'.  See their descriptions for
+the circumstances in which they show the files in separate frames.") (custom-autoload 'diredp-max-frames "dired+" t) (defvar diredp-omit-files-font-lock-regexp "\\.?#.*#\\|\\.\\|\\.\\." "Regexp for font-locking file names to be omitted by `dired-omit-mode'.
+The regexp is matched only against the file name, but the entire line
+is highlighted (with face `diredp-omit-file-name').
+
+The default value corresponds to the default value of option
+`dired-omit-files': auto-save files, `.', and `..'.
+
+The option value is wrapped with `^.*' and `[*]?$', to match the full
+line, including a possible executable tag, `*', at the end.  The
+option value should not, therefore, itself contain ^, $, \\`, or \\'.
+
+This option is for font-locking, whereas `dired-omit-files' is used
+only for recognizing a file name, to act on the file.  The latter does
+not need to match the whole (nondirectory) file name, so its default
+value includes, for example, just \\.?#, not \\.?#.*#.  Also, the
+latter wraps ^ and $ around the regexp.
+
+Note: If you change the value of this option then you need to restart
+Emacs to see the effect of the new value on font-locking.") (custom-autoload 'diredp-omit-files-font-lock-regexp "dired+" t) (defvar diredp-omit-lines-regexp nil "Regexp matching lines to be omitted by `dired-omit-mode'.
+The value can also be a variable whose value is such a regexp.
+The value can also be nil, which means do no line matching.
+
+See command `dired-omit-mode' (\\[dired-omit-mode]).
+
+Some predefined regexp variables for Dired, which you can use as the
+option value:
+
+* `dired-re-inode-size'
+* `dired-re-mark'
+* `dired-re-maybe-mark'
+* `dired-re-dir'
+* `dired-re-sym'
+* `dired-re-exe'
+* `dired-re-perms'
+* `dired-re-dot'
+* `dired-re-no-dot'
+* `diredp-re-no-dot'") (custom-autoload 'diredp-omit-lines-regexp "dired+" t) (defvar diredp-prompt-for-bookmark-prefix-flag nil "*Non-nil means prompt for a prefix string for bookmark names.") (custom-autoload 'diredp-prompt-for-bookmark-prefix-flag "dired+" t) (defvar diredp-visit-ignore-regexps nil "Regexps matching file names for `diredp-visit-(next|previous)' to skip.
+A file or directory name matching one of these regexps is skipped,
+along with those with an extension in `diredp-visit-ignore-extensions'.") (custom-autoload 'diredp-visit-ignore-regexps "dired+" t) (defvar diredp-switches-in-mode-line nil "How to indicate `dired-actual-switches' in mode-line.
+Possible values:
+ * `nil':    Indicate name-or-date sort order, if possible.
+             Else show full switches.
+ * `as-is':  Show full switches.
+ * Integer:  Show only the first N chars of full switches.
+ * Function: Pass `dired-actual-switches' as arg and show result.") (custom-autoload 'diredp-switches-in-mode-line "dired+" t) (defvar diredp-toggle-dot+dot-dot-flag t "Non-nil means `dired-toggle-marks' acts also on `.' and `..'.") (custom-autoload 'diredp-toggle-dot+dot-dot-flag "dired+" t) (defvar diredp-visit-ignore-extensions '("elc") "Extensions of file names for `diredp-visit-(next|previous)' to skip.
+A file name with one of these extensions is skipped, along with those
+matching a regexp in `diredp-visit-ignore-regexps'.") (custom-autoload 'diredp-visit-ignore-extensions "dired+" t) (defvar diredp-w32-local-drives '(("C:" "Local disk")) "*Local MS Windows drives that you want to use for `diredp-w32-drives'.
+Each entry is a list (DRIVE DESCRIPTION), where DRIVE is the drive
+name and DESCRIPTION describes DRIVE.") (custom-autoload 'diredp-w32-local-drives "dired+" t) (defvar diredp-wrap-around-flag t "*Non-nil means Dired \"next\" commands wrap around to buffer beginning.") (custom-autoload 'diredp-wrap-around-flag "dired+" t) (autoload 'dired-do-touch "dired+" "Change the timestamp of the marked (or next ARG) files.
+As an exception, if ARG is zero then create a single new (empty) file
+instead.  You are prompted for the file name.
+
+This invokes system program `touch'.
+
+Use `M-n' to pull the file attributes of the file at point
+into the minibuffer.
+
+(fn &optional ARG)" t) (autoload 'dired-read-dir-and-switches "dired+" "Read arguments for `dired' commands.
+Add STRING to the prompt after \"Dired \".  If it is not \"\" then it
+should end with a space.
+
+Return a list of arguments for `dired': (DIRNAME SWITCHES).  DIRNAME
+here has the same form as `dired-directory'.
+
+With a non-negative prefix arg, read the `ls' switches.
+
+With a non-positive prefix arg:
+
+ * DIRNAME is a cons of the Dired buffer name (see below) and the list
+   of file names.
+
+ * With non-nil READ-EXTRA-FILES-P, read any number of directory or
+   file names, to make up the Dired arbitrary-files listing (the cdr
+   of DIRNAME).  Use `C-g' when done entering the files and
+   directories to list.  You can use file-name wildcards (i.e., `*'
+   for globbing), to include the matching files and directories.
+
+Optional arg DIRED-BUFFER:
+
+ * If non-nil then it should be a string.  Use it as the Dired buffer
+   name.  Because `dired-readin' tries to use it as a directory name,
+   all `/' chars in arg DIRED-BUFFER are replaced with the value of
+   `diredp-dir-sep-replacement'.
+
+ * If nil, read the buffer name (it is not necessarily a directory
+   name).  If in Dired now, the current buffer name is the default.
+   With a positive prefix arg, read the buffer name as a directory
+   name, defaulting to the `default-directory'.
+
+If you use Icicles then reading uses Icicles completion, with
+additional multi-command keys.  See `dired' (defadvice doc).
+
+(fn STRING &optional READ-EXTRA-FILES-P DIRED-BUFFER)") (autoload 'diredp-image-dired-create-thumb "dired+" "Create thumbnail image file for FILE (default: file on current line).
+With a prefix arg, replace any existing thumbnail for FILE.
+With a numeric prefix arg (not a cons), use it as the thumbnail size.
+Return the name of the thumbnail image file, or nil if none.
+
+(fn FILE &optional ARG)" t) (autoload 'image-dired-dired-insert-marked-thumbs "dired+" "Insert thumbnails before file names of marked files in the Dired buffer." t) (autoload 'image-dired-dired-toggle-marked-thumbs "dired+" "Toggle thumbnails in front of file names in Dired.
+If no files are marked, insert or hide thumbnails on the current line.
+With a numeric prefix arg N, ignore marked files and act on the next N
+files (previous -N files, if N < 0).
+
+(fn &optional ARG)" t) (autoload 'diredp-image-dired-comment-file "dired+" "Add comment to this image file." t) (autoload 'diredp-image-dired-tag-file "dired+" "Tag this image file with an `image-dired' tag." t) (autoload 'diredp-image-dired-delete-tag "dired+" "Remove an `image-dired' tag from  this image file." t) (autoload 'diredp-image-dired-display-thumb "dired+" "Pop to thumbnail of this image file, in `image-dired-thumbnail-buffer'.
+If a thumbnail image does not yet exist for this file, create it.
+With a prefix arg, append the thumbnail to the thumbnails buffer,
+instead of clearing the buffer first.
+
+(fn &optional APPEND)" t) (autoload 'diredp-image-dired-copy-with-exif-name "dired+" "Copy this image file to your main image directory.
+Uses `image-dired-get-exif-file-name' to name the new file." t) (autoload 'diredp-image-dired-edit-comment-and-tags "dired+" "Edit comment and tags for this image file." t) (autoload 'diredp-do-display-images "dired+" "Display the marked image files.
+A prefix argument ARG specifies files to use instead of those marked.
+ An integer means use the next ARG files (previous -ARG, if < 0).
+ `C-u': Use the current file (whether or not any files are marked).
+ More than one `C-u' means use all files in the Dired buffer, as if
+ they were all marked.
+
+(fn &optional ARG)" t) (autoload 'diredp-image-show-this-file "dired+" "Show the image file named on this line in another frame or window.
+Option `diredp-image-show-this-file-use-frame-flag' which is used.
+
+With a prefix arg, shrink the image to fit a frame that many lines
+high or a window at least that many lines high.
+Otherwise, show the image full size.
+Note:
+ * To show the image full size, you can also use `\\<dired-mode-map>\\[dired-find-file]'.
+ * To show the image in another window, at whatever scale fits there,
+   you can use `\\[image-dired-dired-display-image]'.
+
+(fn &optional ARG)" t) (autoload 'diredp-dired-for-files "dired+" "Dired the file names that you enter, in a Dired buffer that you name.
+The listing is a snapshot of these explicit file names.
+
+You are prompted for the name of the Dired buffer to use.
+You are then prompted for names of files and directories to list,
+ which can be located anywhere.
+Use `C-g' when you are done.
+
+With a prefix arg you are first prompted for the `ls' switches to use.
+
+See also `dired' (including the advice).
+
+(fn ARG &optional SWITCHES)" t) (autoload 'diredp-dired-for-files-other-window "dired+" "Same as `diredp-dired-for-files', except uses another window.
+
+(fn ARG &optional SWITCHES)" t) (defvar diredp--snapshot-cmd-same-win nil "Definition of snapshot listing Dired command for same window.") (defvar diredp-recent-files-quit-kills-flag t "Non-nil means `q' in Dired recently visited files buffer kills buffer.
+Non-nil is convenient if you repeat a command that creates such a
+buffer, as it won't add yet another one.  But nil is convenient if you
+frequently use `C-x b' to revisit an existing such buffer.
+
+Do not set this option using `setq' or similar.  Use
+`customize-option' or `customize-set-variable'.") (custom-autoload 'diredp-recent-files-quit-kills-flag "dired+" nil) (autoload 'diredp-dired-recent-files "dired+" "Open Dired in BUFFER, showing recently visited files and directories.
+You are prompted for BUFFER (default: `Recently Visited Files').
+
+With a numeric prefix arg you can enter names of recent files to
+include or exclude.
+
+No prefix arg or a plain prefix arg (`C-u', `C-u C-u', etc.) means
+list all of the recently used files.
+
+With a prefix arg:
+* If 0, `-', or plain (`C-u') then you are prompted for the `ls'
+  switches to use.
+* If not plain (`C-u') then:
+  * If >= 0 then the files to include are read, one by one.
+  * If  < 0 then the files to exclude are read, one by one.
+
+When entering files to include or exclude, use `C-g' to end.
+
+The file listing is sorted by option
+`diredp-default-sort-arbitrary-function', if non-nil.  If nil (the
+default) then the listing is in reverse chronological order of opening
+or writing files you access.
+
+Use \\<dired-mode-map>`\\[revert-buffer]' to revert the buffer, as usual.  If you use it without a
+prefix arg then the same files are relisted.  A prefix arg is handled
+as for `\\[diredp-dired-recent-files] itself.
+
+When called from Lisp, ARG corresponds to the raw prefix arg.
+
+(fn BUFFER &optional ARG)" t) (autoload 'diredp-dired-recent-files-other-window "dired+" "Same as `diredp-dired-recent-files', but use other window.
+
+(fn BUFFER &optional ARG)" t) (autoload 'diredp-dired-recent-dirs "dired+" "Open Dired in BUFFER, showing recently visited directories.
+Like `diredp-dired-recent-files', but limited to recent directories.
+A directory is recent if any of its files is recent.
+
+(fn BUFFER &optional ARG)" t) (autoload 'diredp-dired-recent-dirs-other-window "dired+" "Same as `diredp-dired-recent-dirs', but use other window.
+
+(fn BUFFER &optional ARG)" t) (defvar diredp-recent-dirs-source 'dired-and-file-visits "Which directories `diredp-dired-recent-dirs' includes.
+Choices: dirs visited by Dired, dirs of visited files, both.") (custom-autoload 'diredp-recent-dirs-source "dired+" nil) (autoload 'diredp-do-add-to-recentf "dired+" "Add all marked (or next ARG) files to list of recently used files.
+That is, add them from variable `recentf-list'.
+
+(This does not refresh any Dired buffer listing the recently visited
+files.  You can refresh it manually using `\\[revert-buffer]'.
+
+(fn &optional ARG)" t) (autoload 'diredp-do-remove-from-recentf "dired+" "Remove all marked (or next ARG) files from list of recently used files.
+That is, remove them from variable `recentf-list'.
+
+(This does not refresh any Dired buffer listing the recently visited
+files.  You can refresh it manually using `\\[revert-buffer]'.
+
+(fn &optional ARG)" t) (autoload 'diredp-add-this-to-recentf "dired+" "In Dired, add this file to the list of recently used files." t) (autoload 'diredp-remove-this-from-recentf "dired+" "In Dired, remove this file from the list of recently used files." t) (autoload 'diredp-add-file-to-recentf "dired+" "Add FILE to the front of `recentf-list'.
+If FILE is already present, move it to the front of the list.
+In Dired, FILE defaults to the file of the current Dired line.
+
+(fn &optional FILE INTERACTIVEP)" t) (autoload 'diredp-remove-file-from-recentf "dired+" "Remove FILE from `recentf-list'.
+In Dired, FILE defaults to the file of the current Dired line.
+
+Interactively: After removing, revert any displayed buffers showing
+`recentf-list' (or part of it).
+
+(fn &optional FILE INTERACTIVEP)" t) (autoload 'diredp-sort-arbitrary-command "dired+" "Sort the current Dired listing of arbitary file or directory names.
+NOTE:
+ This is intended for sorting a list of arbitrary file or directory
+ names, not an ordinary Dired listing such as produced by `ls'.
+
+ If the current Dired buffer is *not* a list of arbitrary names then
+ you are prompted to confirm converting it to such a list.  If you do
+ so, it will no longer use `ls' or `dired-listing-switches'.
+ Do not confirm, if you don't want this conversion.
+
+(fn SORT-FUNCTION)" t) (autoload 'diredp-dired-union "dired+" "Create a Dired buffer that is the union of some existing Dired buffers.
+With a non-negative prefix arg, you are prompted for `ls' switches.
+With a non-positive prefix arg, you are prompted for file and dir
+names to add to the listing - see below.
+
+You are prompted for the name of the Dired union buffer.  Completion
+against names of existing Dired buffers is available, but you can
+enter any other name to create a new Dired buffer of that name.
+
+If the union buffer name you choose names an existing Dired buffer,
+then what happens depends on whether that buffer is an ordinary Dired
+directory listing or a list of arbitrary file names.  That is, it
+depends on whether `dired-directory' is a directory name or a cons of
+a Dired buffer name plus file names.
+
+* If the buffer is an ordinary Dired listing, then it is converted to
+  an explicit list of absolute file names, just as if these had been
+  chosen individually.  The existing buffer and window are replaced by
+  new ones that show the explicit listing.  (This replacement is
+  necessary because the list of files contained in an ordinary Dired
+  listing cannot be modified.)
+
+* If the buffer lists arbitrary file names explicitly, then it is
+  updated to include also the files from any Dired buffers and any
+  additional files that you specify.
+
+If the union buffer name you choose does not name an existing Dired
+buffer, then its `default-directory' is the same as the
+`default-directory' before invoking the command.
+
+If you use a non-positive prefix arg, then you can next choose
+additional file and directory names to add to the listing.  Use `C-g'
+when done choosing them.
+
+Any directory names you choose this way are included as single entries
+in the listing - the directory contents are not included (these
+directories are not unioned).  To instead include the contents of a
+directory chosen this way, use a glob pattern: `/*' after the
+directory name.
+
+You are then prompted for the Dired buffers to union.  Use `C-g' when
+done choosing them.  These Dired listings to union are included in the
+order that you chose them, and each entry is listed only once in the
+new Dired buffer.
+
+The new Dired listing respects the markings, subdirectory insertions,
+and hidden subdirectories of the selected Dired listings.  However, in
+case of conflict between marked or unmarked status for the same entry,
+the entry is marked.  Similarly, in case of conflict over an included
+subdirectory between it being hidden or shown, it is hidden, but its
+contained files are also listed.
+
+See also command `diredp-add-to-dired-buffer'.
+
+From Lisp:
+ DIRED-NAME is the name of the resulting Dired union buffer.
+ DIRBUFS is a list of the names of Dired buffers to union.
+ SWITCHES is a string of `ls' switches.
+ EXTRA is a list of files & directories to be included in the listing.
+
+(fn DIRED-NAME DIRBUFS &optional SWITCHES EXTRA)" t) (autoload 'diredp-dired-union-other-window "dired+" "Same as `diredp-dired-union', except use other window.
+
+(fn DIRED-NAME DIRBUFS &optional SWITCHES EXTRA)" t) (autoload 'diredp-add-to-dired-buffer "dired+" "Add individual file and directory names to a Dired buffer.
+You are prompted for the buffer name.
+With a prefix arg, you are also prompted for the `ls' switches.
+
+The buffer must either not exist yet or must list arbitrary file and
+directory names.  That is, it cannot be an ordinary Dired directory
+listing - those cannot be modified.
+
+Any directory names you choose this way are included as single entries
+in the listing - the directory contents are not included (these
+directories are not unioned).  To instead include the contents of a
+directory chosen this way, use a glob pattern: `/*' after the
+directory name.
+
+See also command `diredp-dired-union'.
+
+From Lisp:
+ DIRED-NAME is the name of the Dired buffer to modify.
+ TO-ADD is the list of files and dirs to add to it.
+ SWITCHES is the string of `ls' switches.
+
+(fn DIRED-NAME TO-ADD &optional SWITCHES)" t) (autoload 'diredp-add-to-dired-buffer-other-window "dired+" "Same as `diredp-add-to-dired-buffer', except use other window.
+
+(fn DIRED-NAME TO-ADD &optional SWITCHES)" t) (autoload 'diredp-add-to-this-dired-buffer "dired+" "Same as `diredp-add-to-dired-buffer' for this Dired buffer.
+
+(fn DIRED-NAME TO-ADD &optional SWITCHES)" t) (autoload 'diredp-fileset "dired+" "Open Dired on the files in fileset FLSET-NAME.
+
+(fn FLSET-NAME)" t) (autoload 'diredp-fileset-other-window "dired+" "Open Dired in another window on the files in fileset FLSET-NAME.
+
+(fn FLSET-NAME)" t) (autoload 'diredp-dired-this-subdir "dired+" "Open Dired for the subdir at or above point.
+If point is not on a subdir line, but is in an inserted subdir
+listing, then use that subdir.
+
+With a prefix arg:
+ If the subdir is inserted and point is in the inserted listing then
+ remove that listing and move to the ordinary subdir line.  In other
+ words, when in an inserted listing, a prefix arg tears off the
+ inserted subdir to its own Dired buffer.
+
+(fn &optional TEAR-OFF-P)" t) (autoload 'diredp-dired-inserted-subdirs "dired+" "Open Dired for each of the subdirs inserted in this Dired buffer.
+A separate Dired buffer is used for each of them.
+With a prefix arg, create the Dired buffers but do not display them.
+Markings and current Dired switches are preserved.
+
+(fn &optional NO-SHOW-P MSGP)" t) (autoload 'diredp-find-line-file-other-window "dired+" "Visit file named by current line, in another window.
+The full text of the line is used as the file name." t) (autoload 'diredp-mouse-find-line-file-other-window "dired+" "Visit file named by clicked line, in another window.
+The full text of the line is used as the file name.
+
+(fn E)" t) (autoload 'diredp-list-marked "dired+" "List the marked files in this Dired buffer.
+A prefix arg specifies files to use instead of the marked files:
+
+ * Numeric prefix arg N: The next N files (previous -N, if < 0).
+ * C-u C-u: All files, but no directories.
+ * C-u C-u C-u: All files and directories, except `.' and `..'
+ * C-u C-u C-u C-u: All files and directories, including `.' and `..'
+ * Any other prefix arg: The current line's file only.
+
+You can use `RET' or `mouse-2' to visit any of the files.
+If `tooltip-mode' is on then moving the mouse over image-file names
+shows image previews.
+
+When called from Lisp:
+ Non-nil optional arg PREDICATE is a file-name predicate.  List only
+  the files for which it returns non-nil.
+ Non-nil optional arg DETAILS is passed to `diredp-list-files'.
+
+(fn &optional ARG PREDICATE INTERACTIVEP DETAILS)" t) (defalias 'diredp-paste-files 'diredp-yank-files) (autoload 'diredp-yank-files "dired+" "Yank (paste) files to the current directory.
+With a non-negative prefix arg you are instead prompted for the target
+ directory.
+With a non-positive prefix arg you can see details about the files if
+ you hit `l' when prompted to confirm pasting.  Otherwise you see only
+ the file names.  The details you see are defined by option
+ `diredp-list-file-attributes'.
+
+The absolute names of the files to be yanked are taken from the
+clipboard or, if that's empty, from names you've copied to the kill
+ring using \\<dired-mode-map>`M-0 \\[dired-copy-filename-as-kill]' or \\[diredp-copy-abs-filenames-as-kill].
+
+Those copy-filename commands also:
+ * Use the value of option `diredp-filename-separator' to separate the
+   copied file names.
+ * Set variable `diredp-last-copied-filenames' to the same string.
+   `diredp-yank-files' uses the value of that variable, not whatever
+   is currently at the head of the kill ring.
+
+(To copy file names to the clipboard on MS Windows, you can use Windows
+Explorer: Select the file names, then hold `Shift', right-click, and
+choose `Copy as Path' from the menu.)
+
+When called from Lisp:
+
+Optional arg NO-CONFIRM-P means do not ask for confirmation to copy.
+Optional arg DETAILS is passed to `diredp-y-or-n-files-p'.
+
+(fn &optional DIR NO-CONFIRM-P DETAILS)" t) (autoload 'diredp-move-files-named-in-kill-ring "dired+" "Move files, whose absolute names you copied, to the current directory.
+With a non-negative prefix arg you are instead prompted for the target
+ directory.
+With a non-positive prefix arg you can see details about the files if
+ you hit `l' when prompted to confirm pasting.  Otherwise you see only
+ the file names.  The details you see are defined by option
+ `diredp-list-file-attributes'.
+
+You should have copied the list of file names as a string to the kill
+ring using \\<dired-mode-map>`M-0 \\[dired-copy-filename-as-kill]' or \\[diredp-copy-abs-filenames-as-kill].
+Those commands also set variable `diredp-last-copied-filenames' to the
+same string.  `diredp-move-files-named-in-kill-ring' uses the value of
+that variable, not whatever is currently at the head of the kill ring.
+
+When called from Lisp:
+
+Optional arg NO-CONFIRM-P means do not ask for confirmation to move.
+Optional arg DETAILS is passed to `diredp-y-or-n-files-p'.
+
+(fn &optional DIR NO-CONFIRM-P DETAILS)" t) (when (> emacs-major-version 21) (defun diredp-kill-this-tree nil "Remove this subdir listing and lower listings." (interactive) (dired-kill-tree (dired-current-directory) nil 'KILL-ROOT))) (autoload 'diredp-insert-subdirs "dired+" "Insert the marked subdirectories.
+Like using \\<dired-mode-map>`\\[dired-maybe-insert-subdir]' at each marked directory line.
+
+(fn &optional SWITCHES INTERACTIVEP)" t) (autoload 'diredp-insert-subdirs-recursive "dired+" "Insert the marked subdirs, including those in marked subdirs.
+Like `diredp-insert-subdirs', but act recursively on subdirs.
+The subdirs inserted are those that are marked in the current Dired
+buffer, or ALL subdirs in the directory if none are marked.  Marked
+subdirectories are handled recursively in the same way (their marked
+subdirs are inserted...).
+
+With a prefix argument, ignore all marks - include all files in this
+Dired buffer and all subdirs, recursively.
+
+When called from Lisp, optional arg DETAILS is passed to
+`diredp-get-files'.
+
+(fn &optional IGNORE-MARKS-P DETAILS)" t) (autoload 'diredp-do-shell-command-recursive "dired+" "Run shell COMMAND on the marked files, including those in marked subdirs.
+Like `dired-do-shell-command', but act recursively on subdirs.
+The files included are those that are marked in the current Dired
+buffer, or all files in the directory if none are marked.  Marked
+subdirectories are handled recursively in the same way.
+
+With a prefix argument, ignore all marks - include all files in this
+Dired buffer and all subdirs, recursively.
+
+When called from Lisp, optional arg DETAILS is passed to
+`diredp-get-files'.
+
+(fn COMMAND &optional IGNORE-MARKS-P DETAILS)" t) (autoload 'diredp-do-symlink-recursive "dired+" "Make symbolic links to marked files, including those in marked subdirs.
+Like `dired-do-symlink', but act recursively on subdirs to pick up the
+files to link.
+
+The files included are those that are marked in the current Dired
+buffer, or all files in the directory if none are marked.  Marked
+subdirectories are handled recursively in the same way.
+
+With a prefix argument, ignore all marks - include all files in this
+Dired buffer and all subdirs, recursively.
+
+When called from Lisp, optional arg DETAILS is passed to
+`diredp-do-create-files-recursive'.
+
+(fn &optional IGNORE-MARKS-P DETAILS)" t) (autoload 'diredp-do-hardlink-recursive "dired+" "Add hard links for marked files, including those in marked subdirs.
+Like `dired-do-hardlink', but act recursively on subdirs to pick up the
+files to link.
+
+The files included are those that are marked in the current Dired
+buffer, or all files in the directory if none are marked.  Marked
+subdirectories are handled recursively in the same way.
+
+With a prefix argument, ignore all marks - include all files in this
+Dired buffer and all subdirs, recursively.
+
+When called from Lisp, optional arg DETAILS is passed to
+`diredp-do-create-files-recursive'.
+
+(fn &optional IGNORE-MARKS-P DETAILS)" t) (autoload 'diredp-do-print-recursive "dired+" "Print the marked files, including those in marked subdirs.
+Like `dired-do-print', but act recursively on subdirs to pick up the
+files to print.
+
+The files included are those that are marked in the current Dired
+buffer, or all files in the directory if none are marked.  Marked
+subdirectories are handled recursively in the same way.
+
+With a prefix argument, ignore all marks - include all files in this
+Dired buffer and all subdirs, recursively.
+
+When called from Lisp, optional arg DETAILS is passed to
+`diredp-get-files'.
+
+(fn &optional IGNORE-MARKS-P DETAILS)" t) (autoload 'diredp-image-dired-display-thumbs-recursive "dired+" "Display thumbnails of marked files, including those in marked subdirs.
+Like `image-dired-display-thumbs', but act recursively on subdirs.
+Optional arguments APPEND and DO-NOT-POP are as for
+`image-dired-display-thumbs'.
+
+The files included are those that are marked in the current Dired
+buffer, or all files in the directory if none are marked.  Marked
+subdirectories are handled recursively in the same way.
+
+With a prefix argument, ignore all marks - include all files in this
+Dired buffer and all subdirs, recursively.
+
+When called from Lisp, optional arg DETAILS is passed to
+`diredp-get-files'.
+
+(fn &optional IGNORE-MARKS-P APPEND DO-NOT-POP DETAILS)" t) (autoload 'diredp-image-dired-tag-files-recursive "dired+" "Tag marked files with an `image-dired' tag, including in marked subdirs.
+Like `image-dired-tag-files', but act recursively on subdirs.
+The files included are those that are marked in the current Dired
+buffer, or all files in the directory if none are marked.  Marked
+subdirectories are handled recursively in the same way.
+
+With a prefix argument, ignore all marks - include all files in this
+Dired buffer and all subdirs, recursively.
+
+When called from Lisp, optional arg DETAILS is passed to
+`diredp-get-files'.
+
+(fn &optional IGNORE-MARKS-P DETAILS)" t) (autoload 'diredp-image-dired-delete-tag-recursive "dired+" "Remove `image-dired' tag for marked files, including in marked subdirs.
+Like `image-dired-delete-tag', but act recursively on subdirs.
+The files included are those that are marked in the current Dired
+buffer, or all files in the directory if none are marked.  Marked
+subdirectories are handled recursively in the same way.
+
+With a prefix argument, ignore all marks - include all files in this
+Dired buffer and all subdirs, recursively.
+
+When called from Lisp, optional arg DETAILS is passed to
+`diredp-get-files'.
+
+(fn &optional IGNORE-MARKS-P DETAILS)" t) (autoload 'diredp-image-dired-comment-files-recursive "dired+" "Add comment to marked files in dired, including those in marked subdirs.
+Like `image-dired-dired-comment-files' but act recursively on subdirs.
+The files included are those that are marked in the current Dired
+buffer, or all files in the directory if none are marked.  Marked
+subdirectories are handled recursively in the same way.
+
+With a prefix argument, ignore all marks - include all files in this
+Dired buffer and all subdirs, recursively.
+
+When called from Lisp, optional arg DETAILS is passed to
+`diredp-get-files'.
+
+(fn &optional IGNORE-MARKS-P DETAILS)" t) (autoload 'diredp-do-bookmark-recursive "dired+" "Bookmark the marked files, including those in marked subdirs.
+Like `diredp-do-bookmark', but act recursively on subdirs.
+The files included are those that are marked in the current Dired
+buffer, or all files in the directory if none are marked.  Marked
+subdirectories are handled recursively in the same way.
+
+With a prefix argument, ignore all marks - include all files in this
+Dired buffer and all subdirs, recursively.
+
+When called from Lisp, optional arg DETAILS is passed to
+`diredp-get-files'.
+
+(fn &optional IGNORE-MARKS-P PREFIX DETAILS)" t) (autoload 'diredp-do-bookmark-dirs-recursive "dired+" "Bookmark this Dired buffer and marked subdirectory Dired buffers, recursively.
+Create a Dired bookmark for this directory and for each of its marked
+subdirectories.  Handle each of the marked subdirectories similarly:
+bookmark it and its marked subdirectories, and so on, recursively.
+Name each of these Dired bookmarks with the Dired buffer name.
+
+After creating the Dired bookmarks, create a sequence bookmark, named
+`DIRBUF and subdirs', where DIRBUF is the name of the original buffer.
+This bookmark represents the whole Dired tree rooted in the directory
+where you invoked the command.  Jumping to this sequence bookmark
+restores all of the Dired buffers making up the tree, by jumping to
+each of their bookmarks.
+
+With a prefix arg, bookmark the marked and unmarked subdirectory Dired
+buffers, recursively, that is, ignore markings.
+
+Note:
+
+* If there is more than one Dired buffer for a given subdirectory then
+  only the first such is used.
+
+* This command creates new bookmarks.  It never updates or overwrites
+  an existing bookmark.
+
+You need library `Bookmark+' for this command.
+
+When called from Lisp, optional arg DETAILS is passed to
+`diredp-get-subdirs'.
+
+(fn IGNORE-MARKS-P &optional DETAILS MSGP)" t) (autoload 'diredp-do-bookmark-in-bookmark-file-recursive "dired+" "Bookmark files here and below in bookmark-file BFILE and save it.
+Like `diredp-do-bookmark-in-bookmark-file', but act recursively on
+subdirs.  The files included are those that are marked in the current
+Dired buffer, or all files in the directory if none are marked.
+Marked subdirectories are handled recursively in the same way.
+
+With a prefix argument, ignore all marks - include all files in this
+Dired buffer and all subdirs, recursively.
+
+When called from Lisp:
+ * Optional arg CREATE-BOOKMARKP non-nil means create a bookmark-file
+   bookmark for BFILE.
+ * Optional arg DETAILS is passed to `diredp-get-files'.
+
+(fn BFILE &optional PREFIX IGNORE-MARKS-P CREATE-BOOKMARKP DETAILS)" t) (autoload 'diredp-set-bookmark-file-bookmark-for-marked-recursive "dired+" "Bookmark the marked files and create a bookmark-file bookmark for them.
+Like `diredp-set-bookmark-file-bookmark-for-marked', but act
+recursively on subdirs.
+
+The files included are those that are marked in the current Dired
+buffer, or all files in the directory if none are marked.  Marked
+subdirectories are handled recursively in the same way.
+
+With a prefix argument, ignore all marks - include all files in this
+Dired buffer and all subdirs, recursively.
+
+When called from Lisp, optional arg DETAILS is passed to
+`diredp-do-bookmark-in-bookmark-file-recursive'.
+
+(fn BFILE &optional PREFIX IGNORE-MARKS-P DETAILS)" t) (autoload 'diredp-do-find-marked-files-recursive "dired+" "Find marked files simultaneously, including those in marked subdirs.
+Like `dired-do-find-marked-files', but act recursively on subdirs.
+The files included are those that are marked in the current Dired
+buffer, or all files in the directory if none are marked.  Marked
+subdirectories are handled recursively in the same way.
+
+With (explicit) numeric prefix ARG >= 0, find the files but do not
+display them.
+
+With numeric prefix ARG <= 0, ignore all marks - include all files in
+this Dired buffer and all subdirs, recursively.
+
+Note that prefix-argument behavior is different for this command than
+for `dired-do-find-marked-files'.  In particular, a negative numeric
+prefix arg does not cause the files to be shown in separate frames.
+Only non-nil `pop-up-frames' (or equivalent configuration) causes
+the files to be shown in separate frames.
+
+When called from Lisp, optional arg DETAILS is passed to
+`diredp-get-files'.
+
+(fn &optional ARG DETAILS)" t) (autoload 'diredp-do-query-replace-regexp-recursive "dired+" "Do `query-replace-regexp' on marked files, including in marked subdirs.
+Query-replace FROM with TO.
+
+Like `dired-do-query-replace-regexp', but act recursively on subdirs.
+The files included are those that are marked in the current Dired
+buffer, or all files in the directory if none are marked.  Marked
+subdirectories are handled recursively in the same way.
+
+With an (explicit) numeric prefix argument:
+
+* >= 0 means ignore all marks - include ALL files in this Dired buffer
+  and all subdirs, recursively.
+
+* <= 0 means replace only word-delimited matches.
+
+If you exit (`\\[keyboard-quit]', `RET' or `q'), you can resume the query replacement
+using `\\[tags-loop-continue]'.
+
+When called from Lisp, optional arg DETAILS is passed to
+`diredp-get-files'.
+
+(fn FROM TO &optional ARG DETAILS)" t) (autoload 'diredp-do-grep-recursive "dired+" "Run `grep' on marked files, including those in marked subdirs.
+Like `diredp-do-grep', but act recursively on subdirs.
+The files included are those that are marked in the current Dired
+buffer, or all files in the directory if none are marked.  Marked
+subdirectories are handled recursively in the same way.
+
+With a prefix argument, ignore all marks - include all files in this
+Dired buffer and all subdirs, recursively.
+
+(fn COMMAND-ARGS)" t) (autoload 'diredp-marked-recursive "dired+" "Open Dired on marked files, including those in marked subdirs.
+Like `diredp-marked', but act recursively on subdirs.
+The listing is a snapshot of explicit file names.
+
+See `diredp-do-find-marked-files-recursive' for a description of the
+files included.  In particular, if no files are marked here or in a
+marked subdir, then all files in the directory are included.
+
+With a prefix argument, ignore all marks - include all files in this
+Dired buffer and all subdirs, recursively.
+
+When called from Lisp, DIRNAME here must be a string, not a cons.  It
+is used as the name of the new Dired buffer.
+
+When called from Lisp, optional arg DETAILS is passed to
+`diredp-get-files'.
+
+(fn DIRNAME &optional IGNORE-MARKS-P DETAILS)" t) (autoload 'diredp-marked-recursive-other-window "dired+" "Same as `diredp-marked-recursive', but uses a different window.
+
+When called from Lisp, optional arg DETAILS is passed to
+`diredp-get-files'.
+
+(fn DIRNAME &optional IGNORE-MARKS-P DETAILS)" t) (autoload 'diredp-list-marked-recursive "dired+" "List the files marked here and in marked subdirs, recursively.
+The files included are those that are marked in the current Dired
+buffer, or all files in the directory if none are marked.  Marked
+subdirectories are handled recursively in the same way.
+
+With a prefix argument, all marks are ignored: all files in this Dired
+buffer and all descendant directories are included.
+
+You can use `RET' or `mouse-2' to visit any of the files.
+If `tooltip-mode' is on then moving the mouse over image-file names
+shows image previews.
+
+When called from Lisp:
+ Non-nil optional arg IGNORE-MARKS-P means ignore marks.
+ Non-nil optional arg PREDICATE is a file-name predicate.  List only
+  the files for which it returns non-nil.
+ Non-nil optional arg DETAILS is passed to `diredp-list-files'.
+
+(fn &optional IGNORE-MARKS-P PREDICATE DETAILS)" t) (autoload 'diredp-flag-auto-save-files-recursive "dired+" "Flag all auto-save files for deletion, including in marked subdirs.
+A non-negative prefix arg means to unmark (unflag) them instead.
+
+A non-positive prefix arg means to ignore subdir markings and act
+instead on ALL subdirs.  That is, flag all in this directory and all
+descendant directories.
+
+When called from Lisp, optional arg DETAILS is passed to
+`diredp-mark-recursive-1'.
+
+(fn &optional ARG DETAILS)" t) (autoload 'diredp-copy-filename-as-kill-recursive "dired+" "Copy names of marked files here and in marked subdirs, to `kill-ring'.
+The names are separated by a space.
+
+Like `dired-copy-filename-as-kill', but act recursively on subdirs.
+(Do not copy subdir names themselves.)
+
+With no prefix arg, use relative file names.
+With a zero prefix arg, use absolute file names.
+With a plain prefix arg (`C-u'), use names relative to the current
+Dired directory.  (This might contain slashes if in a subdirectory.)
+
+If on a subdir headerline, use absolute subdir name instead - prefix
+arg and marked files are ignored in this case.
+
+The files included are those that are marked in the current Dired
+buffer, or all files in the directory if none are marked.  Marked
+subdirectories are handled recursively in the same way.
+
+The names are copied to the kill ring and to variable
+`diredp-last-copied-filenames'.
+
+When called from Lisp:
+* ARG is a raw prefix arg
+* DETAILS is passed to `diredp-get-files'.
+
+(fn &optional ARG DETAILS)" t) (autoload 'diredp-copy-abs-filenames-as-kill-recursive "dired+" "Copy absolute names of files marked here and in marked subdirs, recursively.
+The names are copied to the kill ring and to variable
+`diredp-last-copied-filenames'.
+
+The files whose names are copied are those that are marked in the
+current Dired buffer, or all files in the directory if none are
+marked.  Marked subdirectories are handled recursively in the same
+way.
+
+When called from Lisp, optional arg DETAILS is passed to
+`diredp-copy-filename-as-kill-recursive'.
+
+(fn &optional DETAILS)" t) (autoload 'diredp-mark-files-regexp-recursive "dired+" "Mark all files matching REGEXP, including those in marked subdirs.
+Like `dired-mark-files-regexp' but act recursively on marked subdirs.
+
+The file names to be matched by this command are always absolute -
+they include the full directory.  Note that this does NOT correspond
+to the default behavior for `dired-mark-files-regexp'.  The other
+matching possibilities offered by `dired-mark-files-regexp' are not
+available for this command.
+
+Directories `.' and `..' are never marked.
+
+A non-negative prefix arg means to UNmark the files instead.
+
+A non-positive prefix arg means to ignore subdir markings and act
+instead on ALL subdirs.  That is, mark all matching files in this
+directory and all descendant directories.
+
+REGEXP is an Emacs regexp, not a shell wildcard.  Thus, use `\\.o$' for
+object files--just `.o' will mark more than you might think.
+
+REGEXP is added to `regexp-search-ring', for regexp search.
+
+Note: If there is more than one Dired buffer for a given subdirectory
+then only the first such is used.
+
+When called from Lisp, DETAILS is passed to `diredp-get-subdirs'.
+
+(fn REGEXP &optional MARKER-CHAR IGNORE-MARKS-P DETAILS)" t) (autoload 'diredp-mark-files-containing-regexp-recursive "dired+" "Mark files with contents containing a REGEXP match, including in marked subdirs.
+Like `dired-mark-files-containing-regexp' but act recursively on
+marked subdirs.
+
+A non-negative prefix arg means to UNmark the files instead.
+
+A non-positive prefix arg means to ignore subdir markings and act
+instead on ALL subdirs.  That is, mark all matching files in this
+directory and all descendant directories.
+
+REGEXP is added to `regexp-search-ring', for regexp search.
+
+Note: If there is more than one Dired buffer for a given subdirectory
+then only the first such is used.
+
+If a file is visited in a buffer and `dired-always-read-filesystem' is
+nil, this looks in the buffer without revisiting the file, so the
+results might be inconsistent with the file on disk if its contents
+have changed since it was last visited.
+
+When called from Lisp, DETAILS is passed to `diredp-get-subdirs'.
+
+(fn REGEXP &optional MARKER-CHAR IGNORE-MARKS-P DETAILS)" t) (autoload 'diredp-mark-autofiles-recursive "dired+" "Mark all autofiles, including in marked subdirs.
+Autofiles are files that have an autofile bookmark.
+A non-negative prefix arg means to unmark them instead.
+
+A non-positive prefix arg means to ignore subdir markings and act
+instead on ALL subdirs.  That is, mark all in this directory and all
+descendant directories.
+
+When called from Lisp, optional arg DETAILS is passed to
+`diredp-mark-recursive-1'.
+
+(fn &optional ARG DETAILS)" t) (autoload 'diredp-mark-executables-recursive "dired+" "Mark all executable files, including in marked subdirs.
+The files included are those that are marked in the current Dired
+buffer, or all files in the directory if none are marked.  Marked
+subdirectories are handled recursively in the same way.
+
+A non-negative prefix arg means to unmark them instead.
+
+A non-positive prefix arg means to ignore subdir markings and act
+instead on ALL subdirs.  That is, mark all in this directory and all
+descendant directories.
+
+When called from Lisp, optional arg DETAILS is passed to
+`diredp-mark-recursive-1'.
+
+(fn &optional ARG DETAILS)" t) (autoload 'diredp-mark-directories-recursive "dired+" "Mark all directories except `.' and `..', including in marked subdirs.
+The directories included are those that are marked in the current
+Dired buffer, or all subdirs in the directory if none are marked.
+Marked subdirectories are handled recursively in the same way.
+
+A non-negative prefix arg means to unmark them instead.
+
+A non-positive prefix arg means to ignore subdir markings and act
+instead on ALL subdirs.  That is, mark all in this directory and all
+descendant directories.
+
+When called from Lisp, optional arg DETAILS is passed to
+`diredp-mark-recursive-1'.
+
+(fn &optional ARG DETAILS)" t) (autoload 'diredp-mark-symlinks-recursive "dired+" "Mark all symbolic links, including in marked subdirs.
+The symlinks included are those that are marked in the current Dired
+buffer, or all symlinks in the directory if none are marked.  Marked
+subdirectories are handled recursively in the same way.
+
+A non-negative prefix arg means to unmark them instead.
+
+A non-positive prefix arg means to ignore subdir markings and act
+instead on ALL subdirs.  That is, mark all in this directory and all
+descendant directories.
+
+When called from Lisp, optional arg DETAILS is passed to
+`diredp-get-subdirs'.
+
+(fn &optional ARG DETAILS)" t) (autoload 'diredp-capitalize-recursive "dired+" "Rename marked files, including in marked subdirs, by capitalizing them.
+Like `diredp-capitalize', but act recursively on subdirs.
+
+The files included are those that are marked in the current Dired
+buffer, or all files in the directory if none are marked.  Marked
+subdirectories are handled recursively in the same way.
+
+With a prefix argument, ignore all marks - include all files in this
+Dired buffer and all subdirs, recursively.
+
+When called from Lisp, optional arg DETAILS is passed to
+`diredp-create-files-non-directory-recursive'.
+
+(fn &optional IGNORE-MARKS-P DETAILS)" t) (autoload 'diredp-upcase-recursive "dired+" "Rename marked files, including in marked subdirs, making them uppercase.
+Like `dired-upcase', but act recursively on subdirs.
+
+The files included are those that are marked in the current Dired
+buffer, or all files in the directory if none are marked.  Marked
+subdirectories are handled recursively in the same way.
+
+With a prefix argument, ignore all marks - include all files in this
+Dired buffer and all subdirs, recursively.
+
+When called from Lisp, optional arg DETAILS is passed to
+`diredp-create-files-non-directory-recursive'.
+
+(fn &optional IGNORE-MARKS-P DETAILS)" t) (autoload 'diredp-downcase-recursive "dired+" "Rename marked files, including in marked subdirs, making them lowercase.
+Like `dired-downcase', but act recursively on subdirs.
+
+The files included are those that are marked in the current Dired
+buffer, or all files in the directory if none are marked.  Marked
+subdirectories are handled recursively in the same way.
+
+With a prefix argument, ignore all marks - include all files in this
+Dired buffer and all subdirs, recursively.
+
+When called from Lisp, optional arg DETAILS is passed to
+`diredp-create-files-non-directory-recursive'.
+
+(fn &optional IGNORE-MARKS-P DETAILS)" t) (autoload 'diredp-do-aggregate-apply-to-marked-recursive "dired+" "Aggregate function applications to marked files, including in marked subdirs.
+This command prompts you for the aggregate function, AGGREGATE-FUN,
+and for the function to apply to each file, APPLY-FUN.
+
+Then it calls `diredp-do-apply-to-marked-recursive', which applies
+FILE-FUN to the name of each marked file or dir.
+
+The files included are those that are marked in the current Dired
+buffer, or all files in the directory if none are marked.  Marked
+subdirectories are handled recursively in the same way.
+
+With a prefix argument, ignore all marks - include all files in this
+Dired buffer and all subdirs, recursively.
+
+When called from Lisp, optional arg DETAILS is passed to
+`diredp-get-files'.
+
+(fn AGGREGATE-FUN APPLY-FUN &optional IGNORE-MARKS-P DETAILS MSGP)" t) (autoload 'diredp-do-aggregate-eval-in-marked-recursive "dired+" "Aggregate results of invoking a function in the marked files and dirs.
+This command prompts you for the aggregate function, AGGREGATE-FUN,
+and for the sexp to evaluate in each marked file or dir, INVOKE-FUN.
+
+Then it calls `diredp-do-eval-in-marked-recursive', which evaluates
+SEXP at the start of the file.
+
+The files included are those that are marked in the current Dired
+buffer, or all files in the directory if none are marked.  Marked
+subdirectories are handled recursively in the same way.
+
+With a prefix argument, ignore all marks - include all files in this
+Dired buffer and all subdirs, recursively.
+
+When called from Lisp, optional arg DETAILS is passed to
+`diredp-get-files'.
+
+(fn AGGREGATE-FUN SEXP &optional IGNORE-MARKS-P DETAILS MSGP)" t) (autoload 'diredp-do-apply-to-marked-recursive "dired+" "Apply FUNCTION to names of marked files, including in marked subdirs.
+The absolute file name is passed to FUNCTION.
+
+Like `diredp-do-apply-to-marked' but act recursively on subdirs, and
+do no result-logging, error-logging, or echoing.
+
+The files included are those that are marked in the current Dired
+buffer, or all files in the directory if none are marked.  Marked
+subdirectories are handled recursively in the same way.
+
+With a prefix argument, ignore all marks - include all files in this
+Dired buffer and all subdirs, recursively.
+
+When called from Lisp, optional arg DETAILS is passed to
+`diredp-get-files'.
+
+(fn FUNCTION &optional IGNORE-MARKS-P DETAILS)" t) (autoload 'diredp-do-command-in-marked-recursive "dired+" "Invoke Emacs COMMAND in each marked file, including in marked subdirs.
+Like ‘diredp-do-command-in-marked’ but act recursively on subdirs.
+Errors invoking COMMAND are reported.
+
+The files included are those that are marked in the current Dired
+buffer, or all files in the directory if none are marked.  Marked
+subdirectories are handled recursively in the same way.
+
+A plain prefix arg (`C-u') means ignore all marks - include all files
+in this Dired buffer and all subdirs, recursively.
+
+Any other prefix arg is passed to COMMAND as its prefix arg.  For
+example, if COMMAND uses a numeric prefix arg N for repetition then
+the effect of COMMAND is repeated N times.
+
+Other than the prefix arg, no arguments are passed to COMMAND.
+
+When called from Lisp, optional arg DETAILS is passed to
+‘diredp-get-files’.
+
+Be aware that COMMAND could be invoked in a directory (Dired) buffer.
+You may not want to do this if COMMAND modifies the buffer text.
+(But generally this will have little lasting effect - you can just
+use `g' in that buffer to revert the listing.)
+
+(fn COMMAND &optional ARG DETAILS)" t) (autoload 'diredp-do-eval-in-marked-recursive "dired+" "Evaluate SEXP in each of the marked files, including in marked subdirs.
+Like `diredp-do-eval-in-marked' but act recursively on subdirs, and do
+no result-logging, error-logging, or echoing.
+
+The files included are those that are marked in the current Dired
+buffer, or all files in the directory if none are marked.  Marked
+subdirectories are handled recursively in the same way.
+
+With a prefix argument, ignore all marks - include all files in this
+Dired buffer and all subdirs, recursively.
+
+When called from Lisp, optional arg DETAILS is passed to
+`diredp-get-files'.
+
+(fn SEXP &optional IGNORE-MARKS-P DETAILS)" t) (autoload 'diredp-do-apply/eval-marked-recursive "dired+" "Apply a function to marked files, or evaluate a sexp in them.
+Like `diredp-do-apply/eval-marked' but act recursively on subdirs, and do no
+result--logging, error-logging or echoing.
+
+The files acted on are those that are marked in the current Dired
+buffer, or all files in the directory if none are marked.  Marked
+subdirectories are handled recursively in the same way.
+
+With a plain prefix ARG (`C-u'), visit each file and eval the sexp or
+ invoke the function there.  (The function is passed no arguments.)
+Otherwise, apply the function to each file name.
+
+With any other prefix arg, ignore all marks - apply the function to
+each file in this Dired buffer and all subdirs, recursively.
+
+When called from Lisp:
+ * If ARG is `(4)' then invoke the function, or eval the sexp, while
+   visiting each file.
+ * Optional arg DETAILS is passed to `diredp-get-files'.
+
+(fn FUN/SEXP &optional ARG DETAILS)" t) (autoload 'diredp-do-delete-recursive "dired+" "Delete marked (not flagged) files, including in marked subdirs.
+Like `dired-do-delete' but act recursively on subdirs.
+
+The files to be deleted are those that are marked in the current Dired
+buffer, or all files in the directory if none are marked.  Marked
+subdirectories are handled recursively in the same way.
+
+When called from Lisp, optional arg DETAILS is passed to
+`diredp-get-files' and `diredp-get-subdirs'.
+
+(fn ARG &optional DETAILS)" t) (autoload 'diredp-do-move-recursive "dired+" "Move marked files, including in marked subdirs, to a given directory.
+Like `dired-do-rename', but act recursively on subdirs to pick up the
+files to move.
+
+The files included are those that are marked in the current Dired
+buffer, or all files in the directory if none are marked.  Marked
+subdirectories are handled recursively in the same way.
+
+This means move the marked files of marked subdirs and their marked
+subdirs, etc.  It does not mean move or rename the subdirs themselves
+recursively.
+
+With a prefix argument, ignore all marks - include all files in this
+Dired buffer and all subdirs, recursively.
+
+Renames any buffers that are visiting the files.
+
+The default suggested for the target directory depends on the value of
+`dired-dwim-target', which see.
+
+(fn &optional IGNORE-MARKS-P DETAILS)" t) (autoload 'diredp-do-copy-recursive "dired+" "Copy marked files, including in marked subdirs, to a given directory.
+Like `dired-do-copy', but act recursively on subdirs to pick up the
+files to copy.
+
+The files included are those that are marked in the current Dired
+buffer, or all files in the directory if none are marked.  Marked
+subdirectories are handled recursively in the same way.
+
+This means copy the marked files of marked subdirs and their marked
+subdirs, etc.  It does not mean copy the subdirs themselves
+recursively.
+
+With a prefix argument, ignore all marks - include all files in this
+Dired buffer and all subdirs, recursively.
+
+Preserves the last-modified date when copying, unless
+`dired-copy-preserve-time' is nil.
+
+The default suggested for the target directory depends on the value of
+`dired-dwim-target', which see.
+
+This command copies symbolic links by creating new ones, like UNIX
+command `cp -d'.
+
+When called from Lisp, optional arg DETAILS is passed to
+`diredp-do-create-files-recursive'.
+
+(fn &optional IGNORE-MARKS-P DETAILS)" t) (autoload 'diredp-do-chmod-recursive "dired+" "Change the mode of the marked files, including those in marked subdirs.
+Symbolic modes like `g+w' are allowed.
+
+Note that marked subdirs are not changed.  Their markings are used only
+to indicate that some of their files are to be changed.
+
+With a prefix argument, ignore all marks - include all files in this
+Dired buffer and all subdirs, recursively.
+
+When called from Lisp, optional arg DETAILS is passed to
+`diredp-get-files' and `diredp-do-redisplay-recursive'.
+
+(fn &optional IGNORE-MARKS-P DETAILS)" t) (autoload 'diredp-do-touch-recursive "dired+" "Change the timestamp of marked files, including those in marked subdirs.
+This calls `touch'.  Like `dired-do-touch', but act recursively on
+subdirs.  The subdirs inserted are those that are marked in the
+current Dired buffer, or all subdirs in the directory if none are
+marked.  Marked subdirectories are handled recursively in the same
+way.
+
+With a prefix argument, ignore all marks - include all files in this
+Dired buffer and all subdirs, recursively.
+
+When called from Lisp, optional arg DETAILS is passed to
+`diredp-do-chxxx-recursive'.
+
+(fn &optional IGNORE-MARKS-P DETAILS)" t) (autoload 'diredp-do-redisplay-recursive "dired+" "Redisplay marked file lines, including those in marked subdirs.
+Non-nil MSGP means show status messages.
+Like `dired-do-redisplay' with no args, but act recursively on
+subdirs.
+
+When called from Lisp, optional arg DETAILS is passed to
+`diredp-get-files'.
+
+(fn &optional DETAILS MSGP)" t) (autoload 'diredp-change-ls-switches "dired+" "Change `ls' switches for the current Dired buffer.
+The prompt for the new switches shows the current switches, for info.
+Possible default values (`M-n') are, in order:
+ 1. `dired-listing-switches' - your default switches for Dired
+ 2. `dired-subdir-switches' - your switches for subdir listings
+ 3. Current switches for this buffer (just reverts the listing)
+
+(fn SWITCHES)" t) (autoload 'diredp-marked "dired+" "Open Dired on the marked files and directories.
+The listing is a snapshot of explicit file names.
+
+A prefix ARG that is non-positive or a single `C-u' means prompt for
+  `ls' listing switches, as in command `dired'.
+
+A prefix ARG also specifies the files to use instead of the marked
+  files (any markings are ignored), as follows:
+
+ If ARG is positive or negative, use the files named on the next ARG
+  lines.  E.g., 1 or -1: use the file on the current line; 3 or -3:
+  use the file on the current line and those on the following 2 lines.
+
+ If ARG is `C-u C-u', `C-u C-u C-u', or `C-u C-u C-u C-u', use _all_
+  files in the Dired buffer, where:
+
+    `C-u C-u' includes only files - NO directories
+    `C-u C-u C-u' includes directories EXCEPT `.' and `..'
+    `C-u C-u C-u C-u' includes ALL directories (even `.' and `..')
+
+ If ARG is otherwise non-nil (e.g. 0, `M--' or a single `C-u'), use
+  the file or dir of the current line (same as ARG = -1).
+
+Use library Bookmark+ to bookmark the resulting Dired buffer, for
+persistent access.
+
+This command is particularly useful to dired a set of files and dirs
+that results from some possibly long-lasting command, such as
+`find-dired'.  This can be quicker than recalculating the set of files
+to Dired, but the set of files used is not necessarily up-to-date with
+respect to what a new calculation would produce.
+___
+
+See also command `diredp-define-snapshot-dired-commands'.  It defines
+Dired commands (same-window and other-window) that, like
+`diredp-marked', create a snapshot Dired buffer.  Put the command
+defuns in your init file, for persistent access.
+
+(fn DIRNAME &optional ARG SWITCHES)" t) (autoload 'diredp-marked-other-window "dired+" "Same as `diredp-marked', but uses a different window.
+
+(fn DIRNAME &optional ARG SWITCHES)" t) (autoload 'diredp-mark/unmark-extension "dired+" "Mark all files with a certain EXTENSION for use in later commands.
+A `.' is not automatically prepended to the string entered.
+Non-nil prefix argument UNMARK-P means unmark instead of mark.
+
+Non-interactively, EXTENSION is the extension (a string).  It can also
+  be a list of extension strings.
+Optional argument UNMARK-P is the prefix arg.
+
+(fn EXTENSION &optional UNMARK-P)" t) (autoload 'diredp-mark-files-tagged-all "dired+" "Mark all files that are tagged with *each* tag in TAGS.
+As a special case, if TAGS is empty, then mark the files that have
+ any tags at all (i.e., at least one tag).
+With a prefix arg, mark all that are *not* tagged with *any* TAGS.
+You need library `bookmark+.el' to use this command.
+
+(fn TAGS &optional NONE-P PREFIX)" t) (autoload 'diredp-mark-files-tagged-none "dired+" "Mark all files that are not tagged with *any* tag in TAGS.
+As a special case, if TAGS is empty, then mark the files that have
+ no tags at all.
+With a prefix arg, mark all that are tagged with *each* tag in TAGS.
+You need library `bookmark+.el' to use this command.
+
+(fn TAGS &optional ALLP PREFIX)" t) (autoload 'diredp-mark-files-tagged-some "dired+" "Mark all files that are tagged with *some* tag in TAGS.
+As a special case, if TAGS is empty, then mark the files that have
+ any tags at all (i.e., at least one tag).
+With a prefix arg, mark all that are *not* tagged with *all* TAGS.
+You need library `bookmark+.el' to use this command.
+
+(fn TAGS &optional SOMENOTP PREFIX)" t) (autoload 'diredp-mark-files-tagged-not-all "dired+" "Mark all files that are not tagged with *all* TAGS.
+As a special case, if TAGS is empty, then mark the files that have
+ no tags at all.
+With a prefix arg, mark all that are tagged with *some* TAGS.
+You need library `bookmark+.el' to use this command.
+
+(fn TAGS &optional SOMEP PREFIX)" t) (autoload 'diredp-mark-files-tagged-regexp "dired+" "Mark files that have at least one tag that matches REGEXP.
+With a prefix arg, mark all that are tagged but have no matching tags.
+You need library `bookmark+.el' to use this command.
+
+(fn REGEXP &optional NOTP PREFIX)" t) (autoload 'diredp-unmark-files-tagged-regexp "dired+" "Unmark files that have at least one tag that matches REGEXP.
+With a prefix arg, unmark all that are tagged but have no matching tags.
+You need library `bookmark+.el' to use this command.
+
+(fn REGEXP &optional NOTP PREFIX)" t) (autoload 'diredp-unmark-files-tagged-all "dired+" "Unmark all files that are tagged with *each* tag in TAGS.
+As a special case, if TAGS is empty, then unmark the files that have
+ any tags at all (i.e., at least one tag).
+With a prefix arg, unmark all that are *not* tagged with *any* TAGS.
+You need library `bookmark+.el' to use this command.
+
+(fn TAGS &optional NONE-P PREFIX)" t) (autoload 'diredp-unmark-files-tagged-none "dired+" "Unmark all files that are *not* tagged with *any* tag in TAGS.
+As a special case, if TAGS is empty, then unmark the files that have
+ no tags at all.
+With a prefix arg, unmark all that are tagged with *each* tag in TAGS.
+You need library `bookmark+.el' to use this command.
+
+(fn TAGS &optional ALLP PREFIX)" t) (autoload 'diredp-unmark-files-tagged-some "dired+" "Unmark all files that are tagged with *some* tag in TAGS.
+As a special case, if TAGS is empty, then unmark the files that have
+ any tags at all.
+With a prefix arg, unmark all that are *not* tagged with *all* TAGS.
+You need library `bookmark+.el' to use this command.
+
+(fn TAGS &optional SOMENOTP PREFIX)" t) (autoload 'diredp-unmark-files-tagged-not-all "dired+" "Unmark all files that are *not* tagged with *all* TAGS.
+As a special case, if TAGS is empty, then unmark the files that have
+ no tags at all.
+With a prefix arg, unmark all that are tagged with *some* TAGS.
+You need library `bookmark+.el' to use this command.
+
+(fn TAGS &optional SOMEP PREFIX)" t) (autoload 'diredp-do-tag "dired+" "Tag the marked (or the next prefix argument) files.
+You need library `bookmark+.el' to use this command.
+
+Hit `RET' to enter each tag, then hit `RET' again after the last tag.
+You can use completion to enter each tag.  Completion is lax: you are
+not limited to existing tags.
+
+TAGS is a list of strings.  PREFIX is as for `diredp-do-bookmark'.
+
+A prefix argument ARG specifies files to use instead of those marked.
+ An integer means use the next ARG files (previous -ARG, if < 0).
+ `C-u': Use the current file (whether or not any are marked).
+ `C-u C-u': Use all files in Dired, except directories.
+ `C-u C-u C-u': Use all files and directories, except `.' and `..'.
+ `C-u C-u C-u C-u': Use all files and all directories.
+
+(fn TAGS &optional PREFIX ARG)" t) (autoload 'diredp-mouse-do-tag "dired+" "In Dired, add some tags to this file.
+Like `diredp-do-tag', but invoked using the mouse.
+You need library `bookmark+.el' to use this command.
+
+(fn EVENT)" t) (autoload 'diredp-do-untag "dired+" "Remove some tags from the marked (or the next prefix arg) files.
+You need library `bookmark+.el' to use this command.
+
+Hit `RET' to enter each tag, then hit `RET' again after the last tag.
+You can use completion to enter each tag.  Completion is lax: you are
+not limited to existing tags.
+
+TAGS is a list of strings.  PREFIX is as for `diredp-do-bookmark'.
+
+A prefix argument ARG specifies files to use instead of those marked.
+ An integer means use the next ARG files (previous -ARG, if < 0).
+ `C-u': Use the current file (whether or not any are marked).
+ `C-u C-u': Use all files in Dired, except directories.
+ `C-u C-u C-u': Use all files and directories, except `.' and `..'.
+ `C-u C-u C-u C-u': Use all files and all directories.
+
+(fn TAGS &optional PREFIX ARG)" t) (autoload 'diredp-mouse-do-untag "dired+" "In Dired, remove some tags from this file.
+Like `diredp-do-untag', but invoked using the mouse.
+You need library `bookmark+.el' to use this command.
+
+(fn EVENT)" t) (autoload 'diredp-do-remove-all-tags "dired+" "Remove all tags from the marked (or the next prefix arg) files.
+You need library `bookmark+.el' to use this command.
+
+PREFIX is as for `diredp-do-bookmark'.
+
+A prefix argument ARG specifies files to use instead of those marked.
+ An integer means use the next ARG files (previous -ARG, if < 0).
+ `C-u': Use the current file (whether or not any are marked).
+ `C-u C-u': Use all files in Dired, except directories.
+ `C-u C-u C-u': Use all files and directories, except `.' and `..'.
+ `C-u C-u C-u C-u': Use all files and all directories.
+
+(fn &optional PREFIX ARG)" t) (autoload 'diredp-mouse-do-remove-all-tags "dired+" "In Dired, remove all tags from the marked (or next prefix arg) files.
+Like `diredp-do-remove-all-tags', but invoked using the mouse.
+You need library `bookmark+.el' to use this command.
+
+(fn EVENT)" t) (autoload 'diredp-do-paste-add-tags "dired+" "Add previously copied tags to the marked (or next prefix arg) files.
+The tags were previously copied from a file to `bmkp-copied-tags'.
+You need library `bookmark+.el' to use this command.
+
+A prefix argument ARG specifies files to use instead of those marked.
+ An integer means use the next ARG files (previous -ARG, if < 0).
+ `C-u': Use the current file (whether or not any are marked).
+ `C-u C-u': Use all files in Dired, except directories.
+ `C-u C-u C-u': Use all files and directories, except `.' and `..'.
+ `C-u C-u C-u C-u': Use all files and all directories.
+
+(fn &optional PREFIX ARG)" t) (autoload 'diredp-mouse-do-paste-add-tags "dired+" "In Dired, add previously copied tags to this file.
+The tags were previously copied from a file to `bmkp-copied-tags'.
+Like `diredp-do-paste-add-tags', but invoked using the mouse.
+You need library `bookmark+.el' to use this command.
+
+(fn EVENT)" t) (autoload 'diredp-do-paste-replace-tags "dired+" "Replace tags for marked (or next prefix arg) files with copied tags.
+The tags were previously copied from a file to `bmkp-copied-tags'.
+You need library `bookmark+.el' to use this command.
+
+A prefix argument ARG specifies files to use instead of those marked.
+ An integer means use the next ARG files (previous -ARG, if < 0).
+ `C-u': Use the current file (whether or not any are marked).
+ `C-u C-u': Use all files in Dired, except directories.
+ `C-u C-u C-u': Use all files and directories, except `.' and `..'.
+ `C-u C-u C-u C-u': Use all files and all directories.
+
+(fn &optional PREFIX ARG)" t) (autoload 'diredp-mouse-do-paste-replace-tags "dired+" "In Dired, replace tags for this file with tags copied previously.
+The tags were previously copied from a file to `bmkp-copied-tags'.
+Like `diredp-do-paste-replace-tags', but invoked using the mouse.
+You need library `bookmark+.el' to use this command.
+
+(fn EVENT)" t) (autoload 'diredp-do-set-tag-value "dired+" "Set TAG value to VALUE, for the marked (or next prefix arg) files.
+This does not change the TAG name.
+You need library `bookmark+.el' to use this command.
+
+PREFIX is as for `diredp-do-bookmark'.
+
+A prefix argument ARG specifies files to use instead of those marked.
+ An integer means use the next ARG files (previous -ARG, if < 0).
+ `C-u': Use the current file (whether or not any are marked).
+ `C-u C-u': Use all files in Dired, except directories.
+ `C-u C-u C-u': Use all files and directories, except `.' and `..'.
+ `C-u C-u C-u C-u': Use all files and all directories.
+
+(fn TAG VALUE &optional PREFIX ARG)" t) (autoload 'diredp-mouse-do-set-tag-value "dired+" "In Dired, set the value of a tag for this file.
+This does not change the tag name.
+Like `diredp-do-set-tag-value', but invoked using the mouse.
+You need library `bookmark+.el' to use this command.
+
+(fn EVENT)" t) (autoload 'diredp-mark-autofiles "dired+" "Mark all autofiles, that is, files that have an autofile bookmark." t) (autoload 'diredp-unmark-autofiles "dired+" "Unmark all autofiles, that is, files that have an autofile bookmark." t) (autoload 'diredp-mark/unmark-autofiles "dired+" "Mark all autofiles, or unmark if UNMARKP is non-nil.
+
+(fn &optional UNMARKP)") (autoload 'diredp-do-bookmark "dired+" "Bookmark the marked (or the next prefix argument) files.
+Each bookmark name is the non-directory portion of the file name,
+ prefixed by PREFIX if it is non-nil.
+Interactively, you are prompted for the PREFIX if
+ `diredp-prompt-for-bookmark-prefix-flag' is non-nil.
+The bookmarked position is the beginning of the file.
+If you use library `bookmark+.el' then the bookmark is an autofile.
+
+A prefix argument ARG specifies files to use instead of those marked.
+ An integer means use the next ARG files (previous -ARG, if < 0).
+ `C-u': Use the current file (whether or not any are marked).
+ `C-u C-u': Use all files in Dired, except directories.
+ `C-u C-u C-u': Use all files and directories, except `.' and `..'.
+ `C-u C-u C-u C-u': Use all files and all directories.
+
+(fn &optional PREFIX ARG)" t) (autoload 'diredp-mouse-do-bookmark "dired+" "In Dired, bookmark this file.  See `diredp-do-bookmark'.
+Like `diredp-do-bookmark', but invoked using the mouse.
+
+(fn EVENT)" t) (autoload 'diredp-set-bookmark-file-bookmark-for-marked "dired+" "Bookmark the marked files and create a bookmark-file bookmark for them.
+The bookmarked position is the beginning of the file.
+Jumping to the bookmark-file bookmark loads the set of file bookmarks.
+You need library `bookmark+.el' to use this command.
+
+Each bookmark name is the non-directory portion of the file name,
+ prefixed by PREFIX if it is non-nil.
+Interactively, you are prompted for PREFIX if
+ `diredp-prompt-for-bookmark-prefix-flag' is non-nil.
+
+A prefix argument ARG specifies files to use instead of those marked.
+ An integer means use the next ARG files (previous -ARG, if < 0).
+ `C-u': Use the current file (whether or not any are marked).
+ `C-u C-u': Use all files in Dired, except directories.
+ `C-u C-u C-u': Use all files and directories, except `.' and `..'.
+ `C-u C-u C-u C-u': Use all files and all directories.
+
+You are also prompted for the bookmark file, BFILE.  The default is
+`.emacs.bmk' in the current directory, but you can enter any file
+name, anywhere.
+
+The marked-file bookmarks are added to file BFILE, but this command
+does not make BFILE the current bookmark file.  To make it current,
+just jump to the bookmark-file bookmark created by this command.  That
+bookmark (which bookmarks BFILE) is defined in that current bookmark
+file.
+
+Example:
+
+ Bookmark file `~/.emacs.bmk' is current before invoking this command.
+ The current (Dired) directory is `/foo/bar'.
+ The marked files are bookmarked in the (possibly new) bookmark file
+   `/foo/bar/.emacs.bmk'.
+ The bookmarks for the marked files have names prefixed by `FOOBAR '.
+ The name of the bookmark-file bookmark is `Foobar Files'.
+ Bookmark `Foobar Files' is itself in bookmark file `~/.emacs.bmk'.
+ Bookmark file `~/.emacs.bmk' is current after invoking this command.
+
+You are prompted for the name of the bookmark-file bookmark, the
+BOOKMARK-FILE for the marked-file bookmarks, and a PREFIX string for
+each of the marked-file bookmarks.
+
+See also command `diredp-do-bookmark-in-bookmark-file'.
+
+(fn BFILE &optional PREFIX ARG)" t) (autoload 'diredp-do-bookmark-in-bookmark-file "dired+" "Bookmark marked files in bookmark-file BFILE and save BFILE.
+The files bookmarked are the marked files, by default.
+The bookmarked position is the beginning of the file.
+
+You are prompted for BFILE.  The default is `.emacs.bmk' in the
+current directory, but you can enter any file name, anywhere.  You
+need library `bookmark+.el' to use this command.
+
+The marked files are bookmarked in file BFILE, but this command does
+not make BFILE the current bookmark file.  To make it current, use
+`\\[bmkp-switch-bookmark-file]' (`bmkp-switch-bookmark-file').
+
+Each bookmark name is the non-directory portion of the file name,
+ prefixed by PREFIX if it is non-nil.
+Interactively, you are prompted for PREFIX if
+ `diredp-prompt-for-bookmark-prefix-flag' is non-nil.
+
+Interactively, a prefix argument ARG specifies the files to use
+instead of those marked.
+
+ An integer means use the next ARG files (previous -ARG, if < 0).
+ `C-u': Use the current file (whether or not any are marked).
+ `C-u C-u': Use all files in Dired, except directories.
+ `C-u C-u C-u': Use all files and directories, except `.' and `..'.
+ `C-u C-u C-u C-u': Use all files and all directories.
+
+See also command `diredp-set-bookmark-file-bookmark-for-marked'.
+
+Non-interactively:
+
+ * Non-nil CREATE-BOOKMARKP means create a bookmark-file bookmark for
+   BFILE.
+ * Non-nil FILES is the list of files to bookmark.
+
+(fn BFILE &optional PREFIX ARG CREATE-BOOKMARKP FILES)" t) (autoload 'diredp-find-a-file "dired+" "`find-file', but use file on current line as default (`M-n').
+
+(fn FILENAME &optional WILDCARDS)" t) (autoload 'diredp-find-a-file-other-frame "dired+" "`find-file-other-frame', but use file under cursor as default (`M-n').
+
+(fn FILENAME &optional WILDCARDS)" t) (autoload 'diredp-find-a-file-other-window "dired+" "`find-file-other-window', but use file under cursor as default (`M-n').
+
+(fn FILENAME &optional WILDCARDS)" t) (autoload 'diredp-find-a-file-read-args "dired+" "
+
+(fn PROMPT MUSTMATCH)") (autoload 'diredp-find-file-reuse-dir-buffer "dired+" "Like `dired-find-file', but reuse Dired buffers.
+Unlike `dired-find-alternate-file' this does not use
+`find-alternate-file' unless (1) the target is a directory that is not
+yet visited as a Dired buffer, and (2) the current (Dired) buffer is
+not visited also in some other window (possibly in an iconified
+frame)." t) (autoload 'diredp-mouse-find-file-reuse-dir-buffer "dired+" "Like `dired-mouse-find-file', but reuse Dired buffers.
+Unlike `dired-find-alternate-file' this does not use
+`find-alternate-file' unless (1) the target is a directory that is not
+yet visited as a Dired buffer, and (2) the current (Dired) buffer is
+not visited also in some other window (possibly in an iconified
+frame).
+
+Non-nil optional args FIND-FILE-FUNC and FIND-DIR-FUNC specify
+functions to visit the file and directory, respectively.
+Defaults: `find-file' and `dired', respectively.
+
+(fn EVENT &optional FIND-FILE-FUNC FIND-DIR-FUNC)" t) (defalias 'toggle-diredp-find-file-reuse-dir 'diredp-toggle-find-file-reuse-dir) (autoload 'diredp-toggle-find-file-reuse-dir "dired+" "Toggle whether Dired `find-file' commands reuse directories.
+This applies also to `dired-w32-browser' commands and
+`diredp-up-directory'.
+
+A prefix arg specifies directly whether or not to reuse.
+ If its numeric value is non-negative then reuse; else do not reuse.
+
+To set the behavior as a preference (default behavior), put this in
+your ~/.emacs, where VALUE is 1 to reuse or -1 to not reuse:
+
+ (diredp-toggle-find-file-reuse-dir VALUE)
+
+Note: This affects only these commands:
+
+  `dired-find-file'
+  `dired-mouse-find-file'
+
+It does not affect the corresponding `-other-window' commands.  Note
+too that, by default, mouse clicks to open files or directories open
+in another window: command `diredp-mouse-find-file-other-window', not
+`dired-mouse-find-file'.  If you want a mouse click to reuse a
+directory then bind `mouse-2' to `dired-mouse-find-file' instead.
+
+(fn FORCE-P)" t) (autoload 'diredp-create-file-here "dired+" "Create new FILE in the directory of this Dired listing.
+You are prompted for the (relative) file name, which is relative to
+the directory of the current listing.
+
+If called from Lisp, the buffer must be in Dired (or a derived) mode,
+and FILE is expanded in `default-directory'.
+
+(fn FILE)" t) (autoload 'diredp-omit-marked "dired+" "Remove lines of marked (or next prefix argument) files.
+Return the number of lines omitted.
+
+(fn &optional ARG MSGP)" t) (autoload 'diredp-omit-unmarked "dired+" "Remove lines of unmarked (or next prefix argument) files.
+Return the number of lines omitted.
+
+(fn &optional ARG MSGP)" t) (autoload 'diredp-ediff "dired+" "Compare file at cursor with file FILE2 using `ediff'.
+FILE2 defaults to the file at the cursor as well.  If you enter just a
+directory name for FILE2, then the file at the cursor is compared with
+a file of the same name in that directory.  FILE2 is the second file
+given to `ediff'; the file at the cursor is the first.
+
+Try to guess a useful default value for FILE2, as follows:
+
+* If the mark is active, use the file at mark.
+* Else if the file at cursor is a autosave file or a backup file, use
+  the corresponding base file.
+* Else if there is any backup file for the file at point, use the
+  newest backup file for it.
+* Else use the file at point.
+
+(fn FILE2)" t) (autoload 'diredp-do-aggregate-apply-to-marked "dired+" "Aggregate results of applying a function to the marked files and dirs.
+This command prompts you for the aggregate function, AGGREGATE-FUN.
+
+Then it calls `diredp-do-apply-to-marked', which prompts you for a
+function to apply to the name of each marked file or dir.
+
+A prefix arg acts like the ARG argument of `dired-get-marked-files'.
+In particular, `C-u C-u' operates on all files in the Dired buffer.
+
+(fn AGGREGATE-FUN &optional MARK-ARG MSGP)" t) (autoload 'diredp-do-aggregate-eval-in-marked "dired+" "Aggregate results of evaluating a sexp in the marked files and dirs.
+This command prompts you for the aggregate function, AGGREGATE-FUN.
+
+Then it calls `diredp-do-eval-in-marked', which prompts you for a Lisp
+sexp to evaluate in each marked file or dir.
+
+A prefix arg acts like the ARG argument of `dired-get-marked-files'.
+In particular, `C-u C-u' operates on all files in the Dired buffer.
+
+(fn AGGREGATE-FUN &optional MARK-ARG MSGP)" t) (autoload 'diredp-do-apply-to-marked "dired+" "Apply FUNCTION to the absolute name of each marked file.
+Return a list of the results.
+
+You are prompted for FUNCTION.
+
+A prefix arg behaves according to the ARG argument of
+`dired-get-marked-files'.  In particular, `C-u C-u' operates on all
+files in the Dired buffer.
+
+If you use multiple `C-u' as prefix arg then many files might be acted
+on, and some of them might already be visited in modified buffers.  If
+the function you apply modifies file content, and you want to save any
+such buffers before using this command, then use \\[save-some-buffers]
+first.
+
+The result returned for each file is logged by `dired-log'.  Use `?'
+to see all such results and any error messages.  If there are fewer
+marked files than `diredp-do-report-echo-limit' then each result is
+also echoed momentarily.
+
+(fn FUNCTION &optional ARG)" t) (autoload 'diredp-do-command-in-marked "dired+" "Invoke Emacs COMMAND in each marked file.
+Visit each marked file at its beginning, then invoke COMMAND.
+You are prompted for the COMMAND.
+COMMAND can be the name of a command or a keyboard macro.
+
+Only explicitly marked files are used.  A prefix arg has no effect on
+which files are used.
+
+A prefix arg is passed to COMMAND as its prefix arg.  For example, if
+COMMAND uses a numeric prefix arg N for repetition then the effect of
+COMMAND is repeated N times.
+
+Other than the prefix arg, no arguments are passed to COMMAND.
+
+If any of the marked files are already visited in modified buffers
+then you are prompted to save them first.
+
+If after invoking COMMAND in all of the marked files new buffers have
+been created to visit some of them then you are prompted to kill those
+buffers.
+
+Any errors are logged by `dired-log'.  Use `?'  to see the error
+messages.
+
+Be aware that COMMAND could be invoked in a directory (Dired) buffer.
+You may not want to do this if COMMAND modifies the buffer text.
+(But generally this will have little lasting effect - you can just
+use `g' in that buffer to revert the listing.)
+
+(fn COMMAND &optional ARG)" t) (autoload 'diredp-do-eval-in-marked "dired+" "Evaluate an Emacs-Lisp SEXP in each marked file.
+Visit each marked file at its beginning, then evaluate SEXP.
+Return a list of the results.
+
+You are prompted for the SEXP.
+
+The result returned for each file is logged by `dired-log'.  Use `?'
+to see all such results and any error messages.  If there are fewer
+marked files than `diredp-do-report-echo-limit' then each result is
+also echoed momentarily.
+
+A prefix argument behaves according to the ARG argument of
+`dired-get-marked-files'.  In particular, `C-u C-u' operates on all
+files in the Dired buffer.
+
+(fn SEXP &optional ARG)" t) (autoload 'diredp-do-apply/eval-marked "dired+" "Apply a function to the marked files, or evaluate a sexp in them.
+Return a list of the results.
+
+You are prompted for the function or sexp.
+
+With a plain prefix ARG (`C-u'), visit each marked file and eval the
+ sexp or invoke the function there.  (The function is passed no
+ arguments.)
+Otherwise, apply the function to each file name.
+
+Any prefix arg other than a single `C-u' behaves according to the ARG
+argument of `dired-get-marked-files'.  In particular:
+ * `C-u C-u' operates on all files in the Dired buffer.
+ * To apply a function to just the file of the current line, ignoring
+   ally marks, use a numeric prefix arg of 1 (e.g. `M-1`).
+
+If you use multiple `C-u' as prefix arg then many files might be acted
+on, and some of them might already be visited in modified buffers.  If
+the function you apply modifies file content, and you want to save any
+such buffers before using this command, then use \\[save-some-buffers]
+first.
+
+The result returned for each file is logged by `dired-log'.  Use `?'
+to see all such results and any error messages.  If there are fewer
+marked files than `diredp-do-report-echo-limit' then each result is
+also echoed momentarily.
+
+When called from Lisp, if ARG is `(4)' then eval the sexp or invoke
+the function while visiting each file.
+
+(fn FUN/SEXP &optional ARG)" t) (autoload 'dired-do-compress "dired+" "Compress or uncompress marked (or next prefix argument) files.
+A prefix argument ARG specifies files to use instead of marked.
+ An integer means use the next ARG files (previous -ARG, if < 0).
+ `C-u': Use the current file (whether or not any are marked).
+ `C-u C-u': Use all files in Dired, except directories.
+ `C-u C-u C-u': Use all files and directories, except `.' and `..'.
+ `C-u C-u C-u C-u': Use all files and all directories.
+
+(fn &optional ARG)" t) (autoload 'dired-do-byte-compile "dired+" "Byte compile marked Emacs Lisp files.
+A prefix argument ARG specifies files to use instead of marked.
+ An integer means use the next ARG files (previous -ARG, if < 0).
+ `C-u': Use the current file (whether or not any are marked).
+ `C-u C-u': Use all files in Dired, except directories.
+ `C-u C-u C-u': Use all files and directories, except `.' and `..'.
+ `C-u C-u C-u C-u': Use all files and all directories.
+
+(fn &optional ARG)" t) (autoload 'dired-do-load "dired+" "Load the marked Emacs Lisp files.
+A prefix argument ARG specifies files to use instead of marked.
+ An integer means use the next ARG files (previous -ARG, if < 0).
+ `C-u': Use the current file (whether or not any are marked).
+ `C-u C-u': Use all files in Dired, except directories.
+ `C-u C-u C-u': Use all files and directories, except `.' and `..'.
+ `C-u C-u C-u C-u': Use all files and all directories.
+
+(fn &optional ARG)" t) (autoload 'dired-do-search "dired+" "Search through all marked files for a match for REGEXP.
+Stops when a match is found.
+To continue searching for next match, use:
+ * `\\[fileloop-continue]'  (Emacs 27+) or
+ * `\\[tags-loop-continue]' (older Emacs versions)
+
+A prefix arg behaves as follows:
+ * An integer means use the next ARG files (previous -ARG, if < 0).
+ * Two or more `C-u' (e.g. `C-u C-u') means ignore any marks and use
+   all files in the Dired buffer.
+ * Any other prefix arg means use the current file.
+
+When invoked interactively, raise an error if no files are marked.
+
+(fn REGEXP &optional ARG INTERACTIVEP)" t) (autoload 'dired-do-query-replace-regexp "dired+" "Do `query-replace-regexp' of FROM with TO, on all marked files.
+NOTE: A prefix arg for this command acts differently than for other
+commands, so that you can use it to request word-delimited matches.
+
+With a prefix argument:
+ * An odd number of plain `C-u': act on the marked files, but replace
+   only word-delimited matches.
+ * More than one plain `C-u': act on all files, ignoring whether any
+   are marked.
+ * Any other prefix arg: Act on the next numeric-prefix files.
+
+So for example:
+ * `C-u C-u C-u': act on all files, replacing word-delimited matches.
+ * `C-u 4': act on the next 4 files.  `C-4' means the same thing.
+ * `C-u': act on the marked files, replacing word-delimited matches.
+
+When invoked interactively, raise an error if no files are marked.
+
+If you exit (\\[keyboard-quit], RET or q), you can resume the query replace
+with the command \\[fileloop-continue] (\\[tags-loop-continue] for
+Emacs 26 or prior).
+
+(fn FROM TO &optional ARG INTERACTIVEP)" t) (autoload 'dired-do-find-regexp-and-replace "dired+" "Replace matches of FROM with TO, in all marked files.
+As each match is found, the user must type a character saying
+what to do with it.  Type SPC or `y' to replace the match,
+DEL or `n' to skip and go to the next match.  For more directions,
+type \\[help-command] at that time.
+
+With no files marked and no prefix arg, use the file under point.
+
+For any marked directory, matches in all of its files are replaced,
+recursively.  However, files matching `grep-find-ignored-files'
+and subdirectories matching `grep-find-ignored-directories' are skipped
+in the marked directories.
+
+A prefix arg behaves as follows:
+ * An integer means use the next ARG files (previous -ARG, if < 0).
+ * Two or more `C-u' (e.g. `C-u C-u') means ignore any marks and use
+   all files in the Dired buffer.
+ * Any other prefix arg means use the current file.
+
+When invoked interactively, raise an error if no files are marked.
+
+REGEXP should use constructs supported by your local `grep' command.
+
+Also see `query-replace' for user options that affect how this
+function works.
+
+(fn FROM TO &optional ARG INTERACTIVEP)" t) (autoload 'diredp-do-grep "dired+" "Run `grep' on marked (or next prefix arg) files.
+A prefix argument behaves according to the ARG argument of
+`dired-get-marked-files'.  In particular, `C-u C-u' operates on all
+files in the Dired buffer.
+
+(fn COMMAND-ARGS)" t) (autoload 'dired-maybe-insert-subdir "dired+" "Insert a subdirectory listing or move to a subdir line or listing.
+Inserted subdirs are listed in the same positions as with `ls -lR'.
+
+This bounces you back and forth between a subdir line and its inserted
+listing header line.  Using it on a non-directory line in a subdir
+listing acts the same as using it on the subdir header line.
+
+* If on a subdir line, then go to the subdir's listing, creating it if
+  not yet present.
+
+* If on a subdir listing header line or a non-directory file in a
+  subdir listing, then go to the line for the subdir in the parent
+  directory listing.
+
+* If on a non-directory file in the top Dired directory listing, do
+  nothing.
+
+A prefix arg changes the behavior, as follows:
+
+* A non-negative numeric prefix prefix arg prompts you for the `ls'
+  switches to use for the subdir listing.  `R' as a switch expands the
+  directory tree.
+
+* A non-positive numeric prefix prefix arg prompts you for the subdir
+  to insert.  Candidates are the directories within (below) the
+  listing surrounding point.
+
+* `C-u C-u' just removes all inserted subdir listings.
+
+Dired remembers switches specified with a prefix arg, so reverting the
+buffer does not reset them.
+
+However, you might sometimes need to reset some switches for a subdir
+after using undo (\\<dired-mode-map>`\\[dired-undo]').  You can reset all subdir switches to the
+default value using `\\[dired-reset-subdir-switches]'.  See Info node
+`(emacs) Subdir Switches' for more details.
+
+If called from Lisp, pass symbol `REMOVE' as ARG to remove inserted
+subdirs.  Otherwise, the args are as for `dired-insert-subdir'.
+
+(fn DIRNAME &optional ARG NO-ERROR-IF-NOT-DIR-P)" t) (autoload 'diredp-hide-subdir-nomove "dired+" "Hide or unhide the current directory.
+Unlike `dired-hide-subdir', this does not advance the cursor to the
+next directory header line.
+
+With a plain prefix arg (`C-u'), invoke `dired-hide-all' to hide or
+ show everything.
+With a numeric prefix arg N, hide this subdirectory and the next N-1
+ subdirectories.
+
+(fn ARG &optional NEXT)" t) (autoload 'dired-do-find-marked-files "dired+" "Find marked files, displaying all of them simultaneously.
+With no prefix argument:
+
+* If `pop-up-frames' is nil then split the current window across all
+  marked files, as evenly as possible.  Remaining lines go to the
+  bottom-most window.  The number of files that can be displayed this
+  way is restricted by the height of the current window and
+  `window-min-height'.
+
+* If `pop-up-frames' is non-nil then show each marked file in a
+  separate frame (not window).
+
+With a prefix argument:
+
+* One or more plain `C-u' behaves as for `dired-get-marked-files'.
+  In particular, `C-u C-u' means ignore any markings and operate on
+  ALL files and directories (except `.' and `..') in the Dired buffer.
+
+* A numeric prefix arg >= 0 means just find (visit) the marked files -
+  do not show them.
+
+* A numeric prefix arg < 0 means show each marked file in a separate
+  frame (not window).  (This is the same behavior as no prefix arg
+  with non-nil `pop-up-frames'.)
+
+Note that a numeric prefix argument acts differently with this command
+than it does with other `dired-do-*' commands: it does NOT act on the
+next or previous (abs ARG) files, ignoring markings.
+
+To keep the Dired buffer displayed, split the window (e.g., `C-x 2')
+first.  To show only the marked files, type `\\[delete-other-windows]' first.
+
+When invoked interactively, raise an error if no files are marked.
+
+(fn &optional ARG INTERACTIVEP)" t) (autoload 'diredp-up-directory "dired+" "Run Dired on parent directory of current directory.
+Find the parent directory either in this buffer or another buffer.
+Creates a buffer if necessary.
+
+With a prefix arg, Dired the parent directory in another window.
+
+On MS Windows, if you are already at the root directory, invoke
+`diredp-w32-drives' to visit a navigable list of Windows drives.
+
+(fn &optional OTHER-WINDOW)" t) (autoload 'diredp-up-directory-reuse-dir-buffer "dired+" "Like `diredp-up-directory', but reuse Dired buffers.
+With a prefix arg, Dired the parent directory in another window.
+
+On MS Windows, moving up from a root Dired buffer does not kill that
+buffer (the Windows drives buffer is not really a Dired buffer).
+
+(fn &optional OTHER-WINDOW)" t) (autoload 'diredp-next-line "dired+" "Move down lines then position cursor at filename.
+If `goal-column' is non-nil then put the cursor at that column.
+Optional prefix ARG says how many lines to move; default is one line.
+
+If `diredp-wrap-around-flag' is non-nil then wrap around if none is
+found before the buffer end (buffer beginning, if ARG is negative).
+Otherwise, just move to the buffer limit.
+
+(fn ARG)" t) (autoload 'diredp-previous-line "dired+" "Move up lines then position cursor at filename.
+If `goal-column' is non-nil then put the cursor at that column.
+Optional prefix ARG says how many lines to move; default is one line.
+
+If `diredp-wrap-around-flag' is non-nil then wrap around if none is
+found before the buffer beginning (buffer end, if ARG is negative).
+Otherwise, just move to the buffer limit.
+
+(fn ARG)" t) (autoload 'diredp-next-dirline "dired+" "Goto ARGth next directory file line.
+If `diredp-wrap-around-flag' is non-nil then wrap around if none is
+found before the buffer beginning (buffer end, if ARG is negative).
+Otherwise, raise an error or, if NO-ERROR-IF-NOT-FOUND is nil, return
+nil.
+
+(fn ARG &optional OPOINT)" t) (autoload 'diredp-prev-dirline "dired+" "Goto ARGth previous directory file line.
+
+(fn ARG)" t) (autoload 'diredp-next-subdir "dired+" "Go to the Nth next subdirectory, regardless of level.
+N is the numeric prefix arg (defaults to 1).
+If N = 0 then go to this directory's header line.
+
+If `diredp-wrap-around-flag' is non-nil then wrap around if none is
+found before the buffer end (buffer beginning, if ARG is negative).
+Otherwise, raise an error or, if NO-ERROR-IF-NOT-FOUND is nil, return
+nil.
+
+Non-nil NO-SKIP means do not move to end of header line, and return
+the position moved to so far.
+
+(fn ARG &optional NO-ERROR-IF-NOT-FOUND NO-SKIP)" t) (autoload 'diredp-prev-subdir "dired+" "Go to the Nth previous subdirectory, regardless of level.
+When called interactively and not on a subdir line, go to this subdir's line.
+Otherwise, this is a mirror image of `diredp-next-subdir'.
+
+(fn ARG &optional NO-ERROR-IF-NOT-FOUND NO-SKIP)" t) (autoload 'dired-do-flagged-delete "dired+" "In Dired, delete the files flagged for deletion.
+NOTE: This deletes flagged, not marked, files.
+If arg NO-MSG is non-nil, no message is displayed.
+
+User option `dired-recursive-deletes' controls whether deletion of
+non-empty directories is allowed.
+
+(fn &optional NO-MSG)" t) (autoload 'dired-do-delete "dired+" "Delete all marked (or next ARG) files.
+NOTE: This deletes the marked (`*'), not the flagged (`D'), files.
+
+User option `dired-recursive-deletes' controls whether deletion of
+non-empty directories is allowed.
+
+ARG is the prefix argument.
+
+As an exception, if ARG is zero then delete the marked files, but with
+the behavior specified by option `delete-by-moving-to-trash' flipped.
+
+(fn &optional ARG)" t) (autoload 'dired-repeat-over-lines "dired+" "Repeat FUNCTION over this line and the next ARG lines.
+(Negative ARG means previous, not next.)
+Non-file lines are skipped.
+
+(fn ARG FUNCTION)") (autoload 'dired-mark-files-regexp "dired+" "Mark all file names matching REGEXP for use in later commands.
+`.' and `..' are never marked or unmarked by this command.
+
+Whether to mark or unmark, and what form of file name to match, are
+governed by the prefix argument.  For this, a plain (`C-u') or a
+double-plain (`C-u C-u') prefix arg is considered only as such - it is
+not considered numerically.
+
+Whether to mark or unmark:
+
+ - No prefix arg, a positive arg, or a negative arg means MARK.
+
+ - Plain (`C-u'), double-plain (`C-u C-u'), or zero (e.g. `M-0' means
+   UNMARK.
+
+The form of the file names used for matching:
+
+ - No prefix arg (to mark) or a plain prefix arg (`C-u', to unmark)
+   means use the relative file name (no directory part).
+
+ - A positive arg (e.g. `M-9', to mark) or a double plain arg (`C-u
+   C-u', to unmark) means construct the file name relative to
+   `default-directory'.
+
+   For an entry in an inserted subdir listing, this means prefix the
+   relative file name (no directory part) with the subdir name
+   relative to `default-directory'.
+
+ - A negative arg (e.g. `M--', to mark) or a zero arg (e.g. `M-0'), to
+   unmark) means use the absolute file name, that is, including all
+   directory components.
+
+Note that the default matching behavior of this command is different
+for Dired+ than it is for vanilla Emacs.  Using a positive prefix arg
+or a double plain prefix arg (`C-u C-u') gives you the same behavior
+as vanilla Emacs (marking or unmarking, respectively): matching
+against names that are relative to the `default-directory'.
+
+What Dired+ offers in addition is the possibility to match against
+names that are relative (have no directory part - e.g. no prefix arg
+or a single `C-u', to mark & unmark, respectively), or absolute (`M--'
+or `M-0', respectively).
+
+The default behavior uses relative names because this
+is likely to be the more common use case.  But matching against
+absolute names gives you more flexibility.
+
+REGEXP is an Emacs regexp, not a shell wildcard.  Thus, use `\\.o$'
+for object files--just `.o' might mark more than you might expect.
+REGEXP is added to `regexp-search-ring', for subsequent regexp search.
+
+When called from Lisp:
+
+ MARKER-CHAR is the marker character - used for `dired-marker-char'.
+
+ NAME-FORM determines the form of file name matched against REGEXP:
+
+   * nil:           names that are relative to `default-directory'
+   * `no-dir':      relative names (no directory part)
+   * Other non-nil: absolute names
+
+   (NAME-FORM differs from the LOCALP arg of `dired-get-filename' in
+   that the nil and other non-nil cases are swapped.  This is
+   unfortunate, but it is to keep nil NAME-FORM compatible with the
+   vanilla Emacs behavior, where this arg does not exist.)
+
+(fn REGEXP &optional MARKER-CHAR NAME-FORM)" t) (autoload 'dired-mark-files-containing-regexp "dired+" "Mark files with contents containing a REGEXP match.
+A prefix argument means unmark them instead.
+`.' and `..' are never marked.
+
+If a file is visited in a buffer and `dired-always-read-filesystem' is
+nil, this looks in the buffer without revisiting the file, so the
+results might be inconsistent with the file on disk if its contents
+have changed since it was last visited.
+
+(fn REGEXP &optional MARKER-CHAR)" t) (autoload 'dired-mark-symlinks "dired+" "Mark all symbolic links.
+With prefix argument, unmark or unflag all those files.
+
+(fn UNFLAG-P)" t) (autoload 'dired-mark-directories "dired+" "Mark all directory file lines except `.' and `..'.
+With prefix argument, unmark or unflag the files instead.
+
+(fn UNFLAG-P)" t) (autoload 'dired-mark-executables "dired+" "Mark all executable files.
+With prefix argument, unmark or unflag the files instead.
+
+(fn UNFLAG-P)" t) (autoload 'dired-flag-auto-save-files "dired+" "Flag for deletion files whose names suggest they are auto save files.
+A prefix argument says to unmark or unflag the files instead.
+
+(fn &optional UNFLAG-P)" t) (autoload 'diredp-capitalize "dired+" "Rename all marked (or next ARG) files by capitalizing them.
+Makes the first char of the name uppercase and the others lowercase.
+
+(fn &optional ARG)" t) (autoload 'diredp-delete-this-file "dired+" "In Dired, delete this file, upon confirmation.
+This uses `delete-file'.
+If the file is a symlink, remove the symlink.  If the file has
+multiple names, it continues to exist with the other names.
+
+For Emacs 24 and later, a prefix arg means that if
+`delete-by-moving-to-trash' is non-nil then trash the file instead of
+deleting it.
+
+(fn &optional USE-TRASH-CAN)" t) (autoload 'diredp-capitalize-this-file "dired+" "In Dired, rename this file by capitalizing it.
+Makes the first char of the name uppercase and the others lowercase." t) (autoload 'diredp-downcase-this-file "dired+" "In Dired, rename this file to lower case." t) (autoload 'diredp-upcase-this-file "dired+" "In Dired, rename this file to upper case." t) (defalias 'diredp-move-this-file 'diredp-rename-this-file) (autoload 'diredp-rename-this-file "dired+" "In Dired, rename this file or move it to a different directory.
+To move it, rename the directory part of its absolute name." t) (autoload 'diredp-copy-this-file "dired+" "In Dired, copy this file." t) (autoload 'diredp-relsymlink-this-file "dired+" "In Dired, make a relative symbolic link to file on cursor line." t) (autoload 'diredp-symlink-this-file "dired+" "In Dired, make a symbolic link to this file." t) (autoload 'diredp-hardlink-this-file "dired+" "In Dired, add a name (hard link) to this file." t) (autoload 'diredp-print-this-file "dired+" "In Dired, print this file." t) (autoload 'diredp-grep-this-file "dired+" "In Dired, grep this file." t) (autoload 'diredp-compress-this-file "dired+" "In Dired, compress or uncompress this file." t) (autoload 'diredp-async-shell-command-this-file "dired+" "Run a shell COMMAND asynchronously on the file on the Dired cursor line.
+Like `diredp-shell-command-this-file', but adds `&' at the end of
+COMMAND to execute it asynchronously.  The command output appears in
+buffer `*Async Shell Command*'.
+
+(fn COMMAND FILELIST)" t) (autoload 'diredp-shell-command-this-file "dired+" "In Dired, run a shell COMMAND on this file.
+This uses `dired-do-shell-command' (which see).
+
+(fn COMMAND FILELIST)" t) (autoload 'diredp-bookmark-this-file "dired+" "In Dired, bookmark this file.
+See `diredp-do-bookmark'.
+
+(fn &optional PREFIX)" t) (autoload 'diredp-tag-this-file "dired+" "In Dired, add some tags to this file.
+You need library `bookmark+.el' to use this command.
+
+(fn TAGS &optional PREFIX)" t) (autoload 'diredp-untag-this-file "dired+" "In Dired, remove some tags from this file.
+With a prefix arg, remove all tags from the file.
+You need library `bookmark+.el' to use this command.
+
+(fn TAGS &optional PREFIX)" t) (autoload 'diredp-remove-all-tags-this-file "dired+" "In Dired, remove all tags from this file.
+You need library `bookmark+.el' to use this command.
+
+(fn &optional PREFIX)" t) (autoload 'diredp-paste-add-tags-this-file "dired+" "In Dired, add previously copied tags to this file.
+See `diredp-paste-add-tags'.
+You need library `bookmark+.el' to use this command.
+
+(fn &optional PREFIX)" t) (autoload 'diredp-paste-replace-tags-this-file "dired+" "In Dired, replace tags for this file with previously copied tags.
+See `diredp-paste-replace-tags'.
+You need library `bookmark+.el' to use this command.
+
+(fn &optional PREFIX)" t) (autoload 'diredp-set-tag-value-this-file "dired+" "In Dired, Set value of TAG to VALUE for this file.
+See `diredp-set-tag-value'.
+You need library `bookmark+.el' to use this command.
+
+(fn TAG VALUE &optional PREFIX)" t) (autoload 'diredp-copy-tags-this-file "dired+" "In Dired, copy the tags from this file, so you can paste them to another.
+See `diredp-copy-tags'.
+You need library `bookmark+.el' to use this command.
+
+(fn &optional PREFIX MSGP)" t) (autoload 'diredp-mouse-copy-tags "dired+" "In Dired, copy the tags from this file, so you can paste them to another.
+You need library `bookmark+.el' to use this command.
+
+(fn EVENT)" t) (defalias 'diredp-show-metadata 'diredp-describe-autofile) (autoload 'diredp-describe-autofile "dired+" "Show the metadata for the file of the current line.
+The file must name an autofile bookmark.  The metadata is the bookmark
+information.
+
+With a prefix argument, show the internal definition of the bookmark.
+
+You need library `bookmark+.el' for this command.
+
+(fn &optional INTERNAL-FORM-P)" t) (defalias 'diredp-show-metadata-for-marked 'diredp-describe-marked-autofiles) (autoload 'diredp-describe-marked-autofiles "dired+" "Show metadata for the marked files.
+If no file is marked, describe ALL autofiles in this directory.
+With a prefix argument, show the internal (Lisp) form of the metadata.
+When invoked interactively, raise an error if no files are marked.
+You need library `bookmark+.el' for this command.
+
+When called from Lisp, optional arg DETAILS is passed to
+`diredp-get-files'.
+
+(fn &optional INTERNAL-FORM-P INTERACTIVEP DETAILS)" t) (autoload 'diredp-byte-compile-this-file "dired+" "In Dired, byte compile the (Lisp source) file on the cursor line." t) (autoload 'diredp-load-this-file "dired+" "In Dired, load this file." t) (autoload 'diredp-chmod-this-file "dired+" "In Dired, change the mode of this file." t) (defalias 'diredp-mark-if-sexp 'dired-mark-sexp) (autoload 'dired-mark-sexp "dired+" "Mark files for which PREDICATE returns non-nil.
+With a prefix arg, unmark or unflag those files instead.
+
+PREDICATE is a lisp sexp that can refer to the following symbols as
+variables:
+
+    `mode'   [string]  file permission bits, e.g. \"-rw-r--r--\"
+    `nlink'  [integer] number of links to file
+    `size'   [integer] file size in bytes
+    `uid'    [string]  owner
+    `gid'    [string]  group (If the gid is not displayed by `ls',
+                       this will still be set (to the same as uid))
+    `time'   [string]  the time that `ls' displays, e.g. \"Feb 12 14:17\"
+    `name'   [string]  the name of the file
+    `sym'    [string]  if file is a symbolic link, the linked-to name,
+                       else \"\"
+    `inode'  [integer] the inode of the file (only for `ls -i' output)
+    `blks'   [integer] the size of the file for `ls -s' output
+                       (ususally in blocks or, with `-k', in Kbytes)
+Examples:
+  Mark zero-length files: `(equal 0 size)'
+  Mark files last modified on Feb 2: `(string-match \"Feb  2\" time)'
+  Mark uncompiled Emacs Lisp files (`.el' file without a `.elc' file):
+     First, Dired just the source files: `dired *.el'.
+     Then, use \\[dired-mark-sexp] with this sexp:
+          (not (file-exists-p (concat name \"c\")))
+
+There's an ambiguity when a single integer not followed by a unit
+prefix precedes the file mode: It is then parsed as inode number
+and not as block size (this always works for GNU coreutils ls).
+
+Another limitation is that the uid field is needed for the
+function to work correctly.  In particular, the field is not
+present for some values of `ls-lisp-emulation'.
+
+This function operates only on the Dired buffer content.  It does not
+refer at all to the underlying file system.  Contrast this with
+`find-dired', which might be preferable for the task at hand.
+
+(fn PREDICATE &optional UNMARK-P)" t) (autoload 'diredp-mark "dired+" "Mark current line, lines in active region, or lines in a listing.
+If the region is active and nonempty:
+ * Mark the lines in the region.
+ * With a prefix arg, you are prompted for the character to mark with.
+
+If cursor is on a listing header line (main dir or a subdir):
+ * Mark all lines in that listing except dirs `.' and `..'.
+ * With a prefix arg, you are prompted for the CHAR to mark with.
+
+Otherwise, with numeric prefix arg N, mark the next N lines.
+
+Use \\<dired-mode-map>`\\[dired-unmark-all-files]' to remove marks everywhere, or `\\[dired-unmark]' on a listing header
+line to remove marks in the listing.
+
+(fn ARG)" t) (autoload 'diredp-mark-with-char "dired+" "Mark this line with CHAR.
+With numeric prefix arg N, mark the next N lines.
+
+(fn CHAR &optional ARG)" t) (autoload 'diredp-mark-region-files-with-char "dired+" "Mark lines in active region with CHAR.
+With non-nil prefix arg, unmark CHAR instead.
+
+(fn CHAR &optional UNMARK-P)" t) (autoload 'diredp-mark-region-files "dired+" "Mark all of the files in the current region (if it is active).
+With non-nil prefix arg, unmark them instead.
+
+(fn &optional UNMARK-P)" t) (autoload 'diredp-unmark-region-files "dired+" "Unmark all of the files in the current region (if it is active).
+With non-nil prefix arg, mark them instead.
+
+(fn &optional MARK-P)" t) (autoload 'diredp-flag-region-files-for-deletion "dired+" "Flag all of the files in the current region (if it is active) for deletion." t) (autoload 'diredp-toggle-marks-in-region "dired+" "Toggle marks in the region.
+
+(fn BEG END)" t) (autoload 'diredp-mouse-3-menu "dired+" "Dired pop-up `mouse-3' menu, for files in selection or current line.
+
+(fn EVENT)" t) (autoload 'diredp-find-file-other-frame "dired+" "In Dired, visit this file or directory in another frame." t) (autoload 'diredp-mouse-find-file-other-frame "dired+" "In Dired, visit file or directory clicked on in another frame.
+
+(fn EVENT)" t) (autoload 'dired-mouse-find-file-other-window "dired+" "In Dired, visit the file or directory name you click on.
+
+(fn EVENT)" t) (autoload 'diredp-mouse-view-file "dired+" "Examine this file in view mode, returning to Dired when done.
+When file is a directory, show it in this buffer if it is inserted;
+otherwise, display it in another buffer.
+
+(fn EVENT)" t) (autoload 'diredp-mouse-ediff "dired+" "Compare this file (pointed by mouse) with file FILE2 using `ediff'.
+FILE2 defaults to this file as well.  If you enter just a directory
+name for FILE2, then this file is compared with a file of the same
+name in that directory.  FILE2 is the second file given to `ediff';
+this file is the first given to it.
+
+(fn EVENT)" t) (autoload 'diredp-mouse-diff "dired+" "Compare this file (pointed by mouse) with file FILE2 using `diff'.
+FILE2 defaults to the file at the mark.  This file is the first file
+given to `diff'.  With prefix arg, prompt for second arg SWITCHES,
+which are options for `diff'.
+
+(fn EVENT &optional SWITCHES)" t) (autoload 'diredp-mouse-backup-diff "dired+" "Diff this file with its backup file or vice versa.
+Use the latest backup, if there are several numerical backups.
+If this file is a backup, diff it with its original.
+The backup file is the first file given to `diff'.
+With prefix arg, prompt for SWITCHES which are the options for `diff'.
+
+(fn EVENT)" t) (autoload 'diredp-mouse-mark "dired+" "In Dired, mark this file.
+If on a subdir headerline, mark all its files except `.' and `..'.
+
+Use \\[dired-unmark-all-files] to remove all marks,
+and \\[dired-unmark] on a subdir to remove the marks in this subdir.
+
+(fn EVENT)" t) (autoload 'diredp-mouse-unmark "dired+" "In Dired, unmark this file.
+If looking at a subdir, unmark all its files except `.' and `..'.
+
+(fn EVENT)" t) (autoload 'diredp-mouse-mark/unmark "dired+" "Mark/unmark file or directory at mouse EVENT.
+
+(fn EVENT)" t) (autoload 'diredp-mouse-mark-region-files "dired+" "Mark files between point and the mouse.
+
+(fn EVENT)" t) (autoload 'diredp-mouse-mark/unmark-mark-region-files "dired+" "Mark/unmark file or mark files in region.
+If the file the cursor is on is marked, then mark all files between it
+ and the line clicked (included).
+Otherwise (cursor's file is unmarked):
+ If the file clicked is marked, then unmark it.
+ If it is unmarked, then mark it.
+
+(fn EVENT)" t) (autoload 'diredp-mouse-flag-file-deletion "dired+" "In Dired, flag this file for deletion.
+If on a subdir headerline, mark all its files except `.' and `..'.
+
+(fn EVENT)" t) (autoload 'diredp-mouse-do-copy "dired+" "In Dired, copy this file.
+This normally preserves the last-modified date when copying.
+
+(fn EVENT)" t) (autoload 'diredp-mouse-do-rename "dired+" "In Dired, rename this file.
+
+(fn EVENT)" t) (autoload 'diredp-mouse-upcase "dired+" "In Dired, rename this file to upper case.
+
+(fn EVENT)" t) (autoload 'diredp-mouse-downcase "dired+" "In Dired, rename this file to lower case.
+
+(fn EVENT)" t) (autoload 'diredp-mouse-do-delete "dired+" "In Dired, delete this file, upon confirmation.
+
+(fn EVENT)" t) (autoload 'diredp-mouse-do-shell-command "dired+" "Run a shell COMMAND on this file.
+If there is output, it goes to a separate buffer.
+This does what `diredp-shell-command-this-file' does (which see).
+
+No automatic redisplay of Dired buffers is attempted, as there's no
+telling what files the command may have changed.  Type
+\\[dired-do-redisplay] to redisplay.
+
+The shell command has the top level directory as working directory, so
+output files usually are created there instead of in a subdir.
+
+(fn EVENT)" t) (autoload 'diredp-mouse-do-symlink "dired+" "Make symbolic link to this file.
+
+(fn EVENT)" t) (autoload 'diredp-mouse-do-hardlink "dired+" "Make hard link (alias) to this file.
+
+(fn EVENT)" t) (autoload 'diredp-mouse-do-print "dired+" "Print this file.
+Uses the shell command coming from variables `lpr-command' and
+`lpr-switches' as default.
+
+(fn EVENT)" t) (autoload 'diredp-mouse-do-grep "dired+" "Run grep against this file.
+
+(fn EVENT)" t) (autoload 'diredp-mouse-do-compress "dired+" "Compress or uncompress this file.
+
+(fn EVENT)" t) (autoload 'diredp-mouse-do-byte-compile "dired+" "Byte compile this file.
+
+(fn EVENT)" t) (autoload 'diredp-mouse-do-load "dired+" "Load this Emacs Lisp file.
+
+(fn EVENT)" t) (autoload 'diredp-mouse-do-chmod "dired+" "Change the mode of this file.
+This calls chmod, so symbolic modes like `g+w' are allowed.
+
+(fn EVENT)" t) (autoload 'dired-sort-toggle-or-edit "dired+" "Toggle sorting by date, and refresh the Dired buffer.
+With a prefix argument, edit the current listing switches instead.
+
+(fn &optional ARG)" t) (autoload 'diredp-describe-mode "dired+" "Describe Dired mode, including Dired+ features.
+This is `describe-mode' plus a description of Dired+ features.
+For just the latter, use \\<dired-mode-map>`\\[diredp-dired-plus-help]'.
+
+(fn &optional BUFFER)" t) (autoload 'diredp-dired-plus-help "dired+" "Describe Dired+." t) (autoload 'diredp-send-bug-report "dired+" "Send a bug report about a Dired+ problem." t) (autoload 'diredp-visit-next-file "dired+" "Move down a line and visit its file in another window.
+With numeric prefix arg N, move down N-1 lines first.
+
+After moving N lines, skip any lines with file names that match either
+`diredp-visit-ignore-extensions' or `diredp-visit-ignore-regexps'.
+
+Kill the last buffer visited by a `diredp-visit-*' command.
+
+(fn &optional ARG)" t) (autoload 'diredp-visit-previous-file "dired+" "Move up a line and visit its file in another window.
+With numeric prefix arg N, move up N-1 lines first.
+
+After moving N lines, skip any lines with file names that match either
+`diredp-visit-ignore-extensions' or `diredp-visit-ignore-regexps'.
+
+Kill the last buffer visited by a `diredp-visit-*' command.
+
+(fn &optional ARG)" t) (autoload 'diredp-visit-this-file "dired+" "View the file on this line in another window in the same frame.
+If it was not already shown there then kill the previous buffer
+visited by a `diredp-visit-*' command.
+
+If it was already shown there, and if it and Dired are the only
+windows there, then delete its window (toggle : show/hide the file)." t) (register-definition-prefixes "dired+" '("dired")) (provide 'dired+-autoloads)) "dired-quick-sort" ((dired-quick-sort dired-quick-sort-autoloads) (autoload 'dired-quick-sort "dired-quick-sort" "Sort dired by the given criteria.
+
+The possible values of SORT-BY, REVERSE, GROUP-DIRECTORIES and TIME are
+explained in the variable `dired-quick-sort-reverse-last',
+`dired-quick-sort-reverse-last', `dired-quick-sort-group-directories-last' and
+`dired-quick-sort-time-last' respectively.  Besides, passing nil to any of these
+arguments to use the value used last time (that is, the values of the four
+variables mentioned before), even after restarting Emacs if `savehist-mode' is
+enabled.  When invoked interactively, nil's are passed to all arguments.
+
+(fn &optional SORT-BY REVERSE GROUP-DIRECTORIES TIME)" t) (autoload 'dired-quick-sort-setup "dired-quick-sort" "Run the default setup.
+
+This will bind the key S in `dired-mode' to run
+`hydra-dired-quick-sort/body', and automatically run the sorting
+criteria after entering `dired-mode'.  You can choose to not call
+this setup function and run a modified version of this function
+to use your own preferred setup:
+
+  ;; Replace \"S\" with other keys to invoke the dired-quick-sort hydra.
+  (define-key dired-mode-map \"S\" 'hydra-dired-quick-sort/body)
+  ;; Automatically use the sorting defined here to sort.
+  (add-hook 'dired-mode-hook 'dired-quick-sort)") (register-definition-prefixes "dired-quick-sort" '("dired-quick-sort-" "hydra-dired-quick-sort")) (provide 'dired-quick-sort-autoloads))))
+
+#s(hash-table size 65 test eq rehash-size 1.5 rehash-threshold 0.8125 data (org-elpa #s(hash-table size 145 test equal rehash-size 1.5 rehash-threshold 0.8125 data (version 15 "melpa" nil "gnu-elpa-mirror" nil "nongnu-elpa" nil "el-get" nil "emacsmirror-mirror" nil "straight" nil "use-package" nil "bind-key" nil "evil" nil "cl-lib" nil "goto-chg" nil "undo-tree" nil "queue" nil "s" nil "f" nil "dash" nil "hydra" nil "lv" nil "major-mode-hydra" nil "pretty-hydra" nil "compat" nil "seq" nil "which-key" nil "vertico" nil "embark" nil "embark-consult" nil "consult" nil "marginalia" nil "move-text" nil "fcitx" nil "evil-escape" nil "evil-leader" nil "orderless" nil "battery" nil "projectile" nil "doom-themes" nil "smooth-scrolling" nil "all-the-icons" nil "all-the-icons-completion" nil "magit" nil "magit-section" nil "transient" nil "with-editor" nil "unidecode" nil "diredx" nil "ispell" nil "flyspell" nil "smart-quotes" nil "writeroom-mode" nil "visual-fill-column" nil "yaml-mode" nil "markdown-mode" nil "lsp-mode" nil "ht" nil "spinner" nil "eldoc" nil "lua-mode" nil "yasnippet" nil "consult-bibtex" nil "bibtex-completion" nil "parsebib" nil "biblio" nil "biblio-core" nil "let-alist" nil "smartparens" nil "flycheck" nil "lsp-ui" nil "dap-mode" nil "bui" nil "lsp-treemacs" nil "treemacs" nil "ace-window" nil "avy" nil "pfuture" nil "cfrs" nil "posframe" nil "lsp-docker" nil "yaml" nil "doi-utils" nil "org-ref" nil "org" (org :type git :repo "https://git.savannah.gnu.org/git/emacs/org-mode.git" :local-repo "org" :depth full :pre-build (straight-recipes-org-elpa--build) :build (:not autoloads) :files (:defaults "lisp/*.el" ("etc/styles/" "etc/styles/*"))) "htmlize" nil "citeproc" nil "string-inflection" nil "ox-pandoc" nil "request" nil "pyenv" nil "elpy" nil "company" nil "highlight-indentation" nil "pyvenv" nil "obsidian" nil "elgrep" nil "async" nil "company-lsp" nil "company-box" nil "frame-local" nil "auto-virtualenv" nil "exec-path-from-shell" nil "orgalists" nil "orgalist" nil "org-pomodoro" nil "alert" nil "gntp" nil "log4e" nil "workgroups2" nil "focus" nil "org-roam" nil "emacsql" nil "md-roam" nil "pdf-tools" nil "tablist" nil "general" nil "org-bullets" nil "citar" nil "citar-embark" nil "citar-org-roam" nil "org-download" nil "dired+" nil "dired-quick-sort" nil "org-plus-contrib" nil)) melpa #s(hash-table size 145 test equal rehash-size 1.5 rehash-threshold 0.8125 data (version 2 "gnu-elpa-mirror" nil "nongnu-elpa" nil "el-get" (el-get :type git :files (:defaults "methods" ("recipes" "recipes/el-get.rcp") "el-get-pkg.el") :host github :repo "dimitri/el-get") "emacsmirror-mirror" nil "straight" nil "use-package" nil "bind-key" nil "evil" (evil :type git :files (:defaults "doc/build/texinfo/evil.texi" (:exclude "evil-test-helpers.el") "evil-pkg.el") :host github :repo "emacs-evil/evil") "cl-lib" nil "goto-chg" (goto-chg :type git :host github :repo "emacs-evil/goto-chg") "undo-tree" nil "queue" nil "s" (s :type git :host github :repo "magnars/s.el") "f" (f :type git :host github :repo "rejeep/f.el") "dash" (dash :type git :files ("dash.el" "dash.texi" "dash-pkg.el") :host github :repo "magnars/dash.el") "hydra" (hydra :type git :files (:defaults (:exclude "lv.el") "hydra-pkg.el") :host github :repo "abo-abo/hydra") "lv" (lv :type git :files ("lv.el" "lv-pkg.el") :host github :repo "abo-abo/hydra") "major-mode-hydra" (major-mode-hydra :type git :files ("major-mode-hydra.el" "major-mode-hydra-pkg.el") :host github :repo "jerrypnz/major-mode-hydra.el") "pretty-hydra" (pretty-hydra :type git :files ("pretty-hydra.el" "pretty-hydra-pkg.el") :host github :repo "jerrypnz/major-mode-hydra.el") "compat" nil "seq" nil "which-key" (which-key :type git :host github :repo "justbur/emacs-which-key") "vertico" (vertico :type git :files (:defaults "extensions/vertico-*.el" "vertico-pkg.el") :host github :repo "minad/vertico") "embark" (embark :type git :files ("embark.el" "embark-org.el" "embark.texi" "embark-pkg.el") :host github :repo "oantolin/embark") "embark-consult" (embark-consult :type git :files ("embark-consult.el" "embark-consult-pkg.el") :host github :repo "oantolin/embark") "consult" (consult :type git :host github :repo "minad/consult") "marginalia" (marginalia :type git :host github :repo "minad/marginalia") "move-text" (move-text :type git :host github :repo "emacsfodder/move-text") "fcitx" (fcitx :type git :host github :repo "cute-jumper/fcitx.el") "evil-escape" (evil-escape :type git :host github :repo "emacsorphanage/evil-escape") "evil-leader" (evil-leader :type git :host github :repo "cofi/evil-leader") "orderless" (orderless :type git :host github :repo "oantolin/orderless") "battery" nil "projectile" (projectile :type git :host github :repo "bbatsov/projectile") "doom-themes" (doom-themes :type git :files (:defaults "themes/*.el" "themes/*/*.el" "extensions/*.el" "doom-themes-pkg.el") :host github :repo "doomemacs/themes") "smooth-scrolling" (smooth-scrolling :type git :host github :repo "aspiers/smooth-scrolling") "all-the-icons" (all-the-icons :type git :files (:defaults "data" "all-the-icons-pkg.el") :host github :repo "domtronn/all-the-icons.el") "all-the-icons-completion" (all-the-icons-completion :type git :host github :repo "iyefrat/all-the-icons-completion") "magit" (magit :type git :files ("lisp/magit*.el" "lisp/git-*.el" "docs/magit.texi" "docs/AUTHORS.md" "LICENSE" "magit-pkg.el" (:exclude "lisp/magit-section.el") "magit-pkg.el") :host github :repo "magit/magit") "magit-section" (magit-section :type git :files ("lisp/magit-section.el" "docs/magit-section.texi" "magit-section-pkg.el" "magit-section-pkg.el") :host github :repo "magit/magit") "transient" (transient :type git :host github :repo "magit/transient") "with-editor" (with-editor :type git :host github :repo "magit/with-editor") "unidecode" (unidecode :type git :files (:defaults "data" "unidecode-pkg.el") :host github :repo "sindikat/unidecode") "diredx" nil "ispell" nil "flyspell" nil "smart-quotes" nil "writeroom-mode" (writeroom-mode :type git :host github :repo "joostkremers/writeroom-mode") "visual-fill-column" (visual-fill-column :type git :host codeberg :repo "joostkremers/visual-fill-column") "yaml-mode" (yaml-mode :type git :host github :repo "yoshiki/yaml-mode") "markdown-mode" (markdown-mode :type git :host github :repo "jrblevin/markdown-mode") "lsp-mode" (lsp-mode :type git :files (:defaults "clients/*.el" "lsp-mode-pkg.el") :host github :repo "emacs-lsp/lsp-mode") "ht" (ht :type git :host github :repo "Wilfred/ht.el") "spinner" nil "eldoc" nil "lua-mode" (lua-mode :type git :files (:defaults (:exclude "init-tryout.el") "lua-mode-pkg.el") :host github :repo "immerrr/lua-mode") "yasnippet" (yasnippet :type git :files ("yasnippet.el" "snippets" "yasnippet-pkg.el") :host github :repo "joaotavora/yasnippet") "consult-bibtex" nil "bibtex-completion" (bibtex-completion :type git :files ("bibtex-completion.el" "bibtex-completion-pkg.el") :host github :repo "tmalsburg/helm-bibtex") "parsebib" (parsebib :type git :host github :repo "joostkremers/parsebib") "biblio" (biblio :type git :files (:defaults (:exclude "biblio-core.el") "biblio-pkg.el") :host github :repo "cpitclaudel/biblio.el") "biblio-core" (biblio-core :type git :files ("biblio-core.el" "biblio-core-pkg.el") :host github :repo "cpitclaudel/biblio.el") "let-alist" nil "smartparens" (smartparens :type git :host github :repo "Fuco1/smartparens") "flycheck" (flycheck :type git :host github :repo "flycheck/flycheck") "lsp-ui" (lsp-ui :type git :files (:defaults "lsp-ui-doc.html" "resources" "lsp-ui-pkg.el") :host github :repo "emacs-lsp/lsp-ui") "dap-mode" (dap-mode :type git :files (:defaults "icons" "dap-mode-pkg.el") :host github :repo "emacs-lsp/dap-mode") "bui" (bui :type git :host github :repo "alezost/bui.el") "lsp-treemacs" (lsp-treemacs :type git :files (:defaults "icons" "lsp-treemacs-pkg.el") :host github :repo "emacs-lsp/lsp-treemacs") "treemacs" (treemacs :type git :files (:defaults "Changelog.org" "icons" "src/elisp/treemacs*.el" "src/scripts/treemacs*.py" (:exclude "src/extra/*") "treemacs-pkg.el") :host github :repo "Alexander-Miller/treemacs") "ace-window" (ace-window :type git :host github :repo "abo-abo/ace-window") "avy" (avy :type git :host github :repo "abo-abo/avy") "pfuture" (pfuture :type git :host github :repo "Alexander-Miller/pfuture") "cfrs" (cfrs :type git :host github :repo "Alexander-Miller/cfrs") "posframe" (posframe :type git :host github :repo "tumashu/posframe") "lsp-docker" (lsp-docker :type git :host github :repo "emacs-lsp/lsp-docker") "yaml" (yaml :type git :host github :repo "zkry/yaml.el") "doi-utils" nil "org-ref" (org-ref :type git :files (:defaults "org-ref.org" "org-ref.bib" "citeproc" "org-ref-pkg.el") :host github :repo "jkitchin/org-ref") "htmlize" (htmlize :type git :host github :repo "hniksic/emacs-htmlize") "citeproc" (citeproc :type git :host github :repo "andras-simonyi/citeproc-el") "string-inflection" (string-inflection :type git :host github :repo "akicho8/string-inflection") "ox-pandoc" (ox-pandoc :type git :host github :repo "emacsorphanage/ox-pandoc") "request" (request :type git :files ("request.el" "request-pkg.el") :host github :repo "tkf/emacs-request") "pyenv" nil "elpy" (elpy :type git :files ("*.el" "NEWS.rst" "snippets" "elpy" "elpy-pkg.el") :host github :repo "jorgenschaefer/elpy") "company" (company :type git :files (:defaults "icons" ("images/small" "doc/images/small/*.png") "company-pkg.el") :host github :repo "company-mode/company-mode") "highlight-indentation" (highlight-indentation :type git :host github :repo "antonj/Highlight-Indentation-for-Emacs") "pyvenv" (pyvenv :type git :host github :repo "jorgenschaefer/pyvenv") "obsidian" (obsidian :type git :host github :repo "licht1stein/obsidian.el") "elgrep" (elgrep :type git :host github :repo "TobiasZawada/elgrep") "async" (async :type git :host github :repo "jwiegley/emacs-async") "company-lsp" nil "company-box" (company-box :type git :files (:defaults "images" "company-box-pkg.el") :host github :repo "sebastiencs/company-box") "frame-local" (frame-local :type git :host github :repo "sebastiencs/frame-local") "auto-virtualenv" (auto-virtualenv :type git :host github :repo "marcwebbie/auto-virtualenv") "exec-path-from-shell" (exec-path-from-shell :type git :host github :repo "purcell/exec-path-from-shell") "orgalists" nil "orgalist" nil "org-pomodoro" (org-pomodoro :type git :files (:defaults "resources" "org-pomodoro-pkg.el") :host github :repo "marcinkoziej/org-pomodoro") "alert" (alert :type git :host github :repo "jwiegley/alert") "gntp" (gntp :type git :host github :repo "tekai/gntp.el") "log4e" (log4e :type git :host github :repo "aki2o/log4e") "workgroups2" (workgroups2 :type git :files ("src/*.el" "workgroups2-pkg.el") :host github :repo "pashinin/workgroups2") "focus" (focus :type git :host github :repo "larstvei/Focus") "org-roam" (org-roam :type git :files (:defaults "extensions/*" "org-roam-pkg.el") :host github :repo "org-roam/org-roam") "emacsql" (emacsql :type git :files (:defaults "README.md" "sqlite" "emacsql-pkg.el") :host github :repo "magit/emacsql") "md-roam" nil "pdf-tools" (pdf-tools :type git :files (:defaults "README" ("build" "Makefile") ("build" "server") "pdf-tools-pkg.el") :host github :repo "vedang/pdf-tools") "tablist" (tablist :type git :host github :repo "emacsorphanage/tablist") "general" (general :type git :host github :repo "noctuid/general.el") "org-bullets" (org-bullets :type git :host github :repo "integral-dw/org-bullets") "citar" (citar :type git :files (:defaults (:exclude "citar-embark.el") "citar-pkg.el") :host github :repo "emacs-citar/citar") "citar-embark" (citar-embark :type git :files ("citar-embark.el" "citar-embark-pkg.el") :host github :repo "emacs-citar/citar") "citar-org-roam" (citar-org-roam :type git :host github :repo "emacs-citar/citar-org-roam") "org-download" (org-download :type git :host github :repo "abo-abo/org-download") "dired+" nil "dired-quick-sort" (dired-quick-sort :type git :host gitlab :repo "xuhdev/dired-quick-sort") "org-plus-contrib" nil)) gnu-elpa-mirror #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8125 data (version 3 "nongnu-elpa" nil "emacsmirror-mirror" nil "straight" nil "use-package" (use-package :type git :host github :repo "emacs-straight/use-package" :files ("*" (:exclude ".git"))) "bind-key" (bind-key :type git :host github :repo "emacs-straight/bind-key" :files ("*" (:exclude ".git"))) "cl-lib" nil "undo-tree" (undo-tree :type git :host github :repo "emacs-straight/undo-tree" :files ("*" (:exclude ".git"))) "queue" (queue :type git :host github :repo "emacs-straight/queue" :files ("*" (:exclude ".git"))) "compat" (compat :type git :host github :repo "emacs-straight/compat" :files ("*" (:exclude ".git"))) "seq" (seq :type git :host github :repo "emacs-straight/seq" :files ("*" (:exclude ".git"))) "battery" nil "diredx" nil "ispell" nil "flyspell" nil "smart-quotes" nil "spinner" (spinner :type git :host github :repo "emacs-straight/spinner" :files ("*" (:exclude ".git"))) "eldoc" (eldoc :type git :host github :repo "emacs-straight/eldoc" :files ("*" (:exclude ".git"))) "consult-bibtex" nil "let-alist" (let-alist :type git :host github :repo "emacs-straight/let-alist" :files ("*" (:exclude ".git"))) "doi-utils" nil "pyenv" nil "company-lsp" nil "orgalists" nil "orgalist" (orgalist :type git :host github :repo "emacs-straight/orgalist" :files ("*" (:exclude ".git"))) "md-roam" nil "dired+" nil "org-plus-contrib" nil)) nongnu-elpa #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8125 data (version 4 "emacsmirror-mirror" nil "straight" nil "cl-lib" nil "battery" nil "diredx" nil "ispell" nil "flyspell" nil "smart-quotes" nil "consult-bibtex" nil "doi-utils" nil "pyenv" nil "company-lsp" nil "orgalists" nil "md-roam" nil "dired+" nil "org-plus-contrib" nil)) el-get #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8125 data (version 2 "emacsmirror-mirror" nil "straight" nil "cl-lib" nil "battery" nil "diredx" nil "ispell" nil "flyspell" nil "smart-quotes" `(smart-quotes :type git :host github :repo "gareth-rees/smart-quotes" :files (:defaults)) "consult-bibtex" nil "doi-utils" nil "pyenv" `(pyenv :type git :host github :repo "shellbj/pyenv.el" :files (:defaults)) "company-lsp" nil "orgalists" nil "md-roam" nil "dired+" nil "org-plus-contrib" nil)) emacsmirror-mirror #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8125 data (version 2 "straight" (straight :type git :host github :repo "emacsmirror/straight") "cl-lib" nil "battery" nil "diredx" nil "ispell" nil "flyspell" nil "consult-bibtex" nil "doi-utils" nil "company-lsp" (company-lsp :type git :host github :repo "emacsattic/company-lsp") "orgalists" nil "md-roam" nil "dired+" (dired+ :type git :host github :repo "emacsmirror/dired-plus") "org-plus-contrib" nil))))
+
+("evil-leader" "pretty-hydra" "major-mode-hydra" "general" "tablist" "pdf-tools" "lua-mode" "yasnippet" "highlight-indentation" "elpy" "auto-virtualenv" "pyvenv" "yaml" "lsp-docker" "posframe" "cfrs" "pfuture" "ace-window" "treemacs" "lsp-treemacs" "bui" "dap-mode" "lsp-ui" "flycheck" "smartparens" "exec-path-from-shell" "orgalist" "with-editor" "transient" "magit" "doom-themes" "all-the-icons-completion" "all-the-icons" "battery" "workgroups2" "writeroom-mode" "smart-quotes" "flyspell" "ispell" "visual-fill-column" "unidecode" "fcitx" "md-roam" "log4e" "gntp" "alert" "org-pomodoro" "async" "org-download" "org-bullets" "request" "ox-pandoc" "let-alist" "biblio-core" "biblio" "bibtex-completion" "avy" "htmlize" "org-ref" "citar-embark" "string-inflection" "citeproc" "parsebib" "citar" "magit-section" "emacsql" "org" "org-roam" "citar-org-roam" "frame-local" "company-box" "company" "eldoc" "markdown-mode" "spinner" "ht" "lsp-mode" "company-lsp" "marginalia" "orderless" "consult" "embark-consult" "embark" "seq" "compat" "vertico" "which-key" "lv" "hydra" "dired-quick-sort" "queue" "undo-tree" "dash" "f" "s" "smooth-scrolling" "yaml-mode" "move-text" "nadvice" "goto-chg" "cl-lib" "evil" "evil-escape" "bind-key" "use-package" "emacs" "straight" "emacsmirror-mirror" "el-get" "nongnu-elpa" "gnu-elpa-mirror" "melpa" "org-elpa")
 
 t

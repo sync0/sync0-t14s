@@ -38,7 +38,7 @@
   (interactive)
   (let* ((tex-file (buffer-file-name))
          (pdf-file (concat (file-name-sans-extension tex-file) ".pdf"))
-         (default-path sync0-goodreads-directory)
+         (default-path sync0-goodreads-dir)
          (path (sync0-validate-path (or in-path
                                         (read-directory-name "Où envoyer ce fichier ? " default-path))))
          (filename (file-name-nondirectory pdf-file))

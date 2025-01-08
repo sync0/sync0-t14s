@@ -1,0 +1,400 @@
+% Created 2024-12-27 Fri 19:52
+% Intended LaTeX compiler: lualatex
+\documentclass{article}
+   \input{/home/sync0/Gdrive/typography/latex_preamble.tex}
+\author{Carlos Alberto Rivera Carreño}
+\date{\today}
+\title{}
+\hypersetup{
+ pdfauthor={Carlos Alberto Rivera Carreño},
+ pdftitle={},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 29.4 (Org mode 9.8-pre)}, 
+ pdflang={English}}
+\begin{document}
+
+\tableofcontents
+
+;; To use KOMA-Script classes in \LaTeX{} documents created through Org mode
+;; export, it is necessary to explicitely add them to \texttt{org-latex-classes}.
+;; Moreover, this method can be used to create custom \LaTeX{} classes.
+(add-to-list 'org-latex-classes '("scrartcl"
+                                  "$\backslash$\documentclass{scrartcl}
+                                         {[}NO-DEFAULT-PACKAGES]
+   $\backslash$\input{/home/sync0/Gdrive/typography/latex_preamble.tex}
+                                         {[}EXTRA]"
+                                  ("$\backslash$\section{%s}" . "$\backslash$\section*{%s}")
+                                  ("$\backslash$\subsection{%s}" . "$\backslash$\subsection*{%s}")
+                                  ("$\backslash$\subsubsection{%s}" . "$\backslash$\subsubsection*{%s}")
+                                  ("$\backslash$\paragraph{%s}" . "$\backslash$\paragraph*{%s}")
+                                  ("$\backslash$\subparagraph{%s}" . "$\backslash$\subparagraph*{%s}")))
+
+\newpage
+
+(add-to-list 'org-latex-classes '("scrartcl-subsection"
+                                  "$\backslash$\documentclass{scrartcl}
+                                         {[}NO-DEFAULT-PACKAGES]
+   $\backslash$\input{/home/sync0/Gdrive/typography/latex_preamble.tex}
+                                         {[}EXTRA]"
+                                  ("$\backslash$\section{%s}" . "$\backslash$\section*{%s}")
+                                  ("$\backslash$\subsection{%s}" . "$\backslash$\subsection*{%s}")
+                                  ("$\backslash$\paragraph{%s}" . "$\backslash$\paragraph*{%s}")
+                                  ("$\backslash$\subparagraph{%s}" . "$\backslash$\subparagraph*{%s}")))
+
+\newpage
+
+(add-to-list 'org-latex-classes '("scrartcl-section"
+                                  "$\backslash$\documentclass{scrartcl}
+                                         {[}NO-DEFAULT-PACKAGES]
+   $\backslash$\input{/home/sync0/Gdrive/typography/latex_preamble.tex}
+                                         {[}EXTRA]"
+                                  ("$\backslash$\section{%s}" . "$\backslash$\section*{%s}")
+                                  ("$\backslash$\paragraph{%s}" . "$\backslash$\paragraph*{%s}")
+                                  ("$\backslash$\subparagraph{%s}" . "$\backslash$\subparagraph*{%s}")))
+
+\newpage
+
+(add-to-list 'org-latex-classes '("scrreprt"
+                                  "$\backslash$\documentclass{scrreprt}
+                                         {[}NO-DEFAULT-PACKAGES]
+   $\backslash$\input{/home/sync0/Gdrive/typography/latex_preamble.tex}
+                                         {[}EXTRA]"
+                                  ("$\backslash$\chapter{%s}" . "$\backslash$\chapter*{%s}")
+                                  ("$\backslash$\section{%s}" . "$\backslash$\section*{%s}")
+                                  ("$\backslash$\subsection{%s}" . "$\backslash$\subsection*{%s}")
+                                  ("$\backslash$\subsubsection{%s}" . "$\backslash$\subsubsection*{%s}")
+                                  ("$\backslash$\paragraph{%s}" . "$\backslash$\paragraph*{%s}")
+                                  ("$\backslash$\subparagraph{%s}" . "$\backslash$\subparagraph*{%s}")))
+
+\newpage
+
+(add-to-list 'org-latex-classes '("scrbook"
+                                  "$\backslash$\documentclass{scrbook}
+                                         {[}NO-DEFAULT-PACKAGES]
+   $\backslash$\input{/home/sync0/Gdrive/typography/latex_preamble.tex}
+                                         {[}EXTRA]"
+                                  ("$\backslash$\part{%s}" . "$\backslash$\part*{%s}")
+                                  ("$\backslash$\chapter{%s}" . "$\backslash$\chapter*{%s}")
+                                  ("$\backslash$\section{%s}" . "$\backslash$\section*{%s}")
+                                  ("$\backslash$\subsection{%s}" . "$\backslash$\subsection*{%s}")
+                                  ("$\backslash$\subsubsection{%s}" . "$\backslash$\subsubsection*{%s}")
+                                  ("$\backslash$\paragraph{%s}" . "$\backslash$\paragraph*{%s}")
+                                  ("$\backslash$\subparagraph{%s}" . "$\backslash$\subparagraph*{%s}")))
+
+\newpage
+
+(add-to-list 'org-latex-classes '("scrbook-chapter"
+                                  "$\backslash$\documentclass{scrbook}
+                                         {[}NO-DEFAULT-PACKAGES]
+   $\backslash$\input{/home/sync0/Gdrive/typography/latex_preamble.tex}
+                                         {[}EXTRA]"
+                                  ("$\backslash$\chapter{%s}" . "$\backslash$\chapter*{%s}")
+                                  ("$\backslash$\section{%s}" . "$\backslash$\section*{%s}")
+                                  ("$\backslash$\subsection{%s}" . "$\backslash$\subsection*{%s}")
+                                  ("$\backslash$\subsubsection{%s}" . "$\backslash$\subsubsection*{%s}")
+                                  ("$\backslash$\paragraph{%s}" . "$\backslash$\paragraph*{%s}")
+                                  ("$\backslash$\subparagraph{%s}" . "$\backslash$\subparagraph*{%s}")))
+
+\newpage
+
+(add-to-list 'org-latex-classes '("scrbook-section"
+                                  "$\backslash$\documentclass{scrbook}
+                                         {[}NO-DEFAULT-PACKAGES]
+   $\backslash$\input{/home/sync0/Gdrive/typography/latex_preamble.tex}
+                                         {[}EXTRA]"
+                                  ("$\backslash$\chapter{%s}" . "$\backslash$\chapter*{%s}")
+                                  ("$\backslash$\section{%s}" . "$\backslash$\section*{%s}")
+                                  ("$\backslash$\paragraph{%s}" . "$\backslash$\paragraph*{%s}")
+                                  ("$\backslash$\subparagraph{%s}" . "$\backslash$\subparagraph*{%s}")))
+
+\newpage
+
+(add-to-list 'org-latex-classes '("scrbook-subsection"
+                                  "$\backslash$\documentclass{scrbook}
+                                         {[}NO-DEFAULT-PACKAGES]
+   $\backslash$\input{/home/sync0/Gdrive/typography/latex_preamble.tex}
+                                         {[}EXTRA]"
+                                  ("$\backslash$\chapter{%s}" . "$\backslash$\chapter*{%s}")
+                                  ("$\backslash$\section{%s}" . "$\backslash$\section*{%s}")
+                                  ("$\backslash$\subsection{%s}" . "$\backslash$\subsection*{%s}")
+                                  ("$\backslash$\paragraph{%s}" . "$\backslash$\paragraph*{%s}")
+                                  ("$\backslash$\subparagraph{%s}" . "$\backslash$\subparagraph*{%s}")))
+
+\newpage
+
+(add-to-list 'org-latex-classes '("article"
+                                  "$\backslash$\documentclass{article}
+                                         {[}NO-DEFAULT-PACKAGES]
+   $\backslash$\input{/home/sync0/Gdrive/typography/latex_preamble.tex}
+                                         {[}EXTRA]"
+                                  ("$\backslash$\chapter{%s}" . "$\backslash$\chapter*{%s}")
+                                  ("$\backslash$\section{%s}" . "$\backslash$\section*{%s}")
+                                  ("$\backslash$\subsection{%s}" . "$\backslash$\subsection*{%s}")
+                                  ("$\backslash$\subsubsection{%s}" . "$\backslash$\subsubsection*{%s}")
+                                  ("$\backslash$\paragraph{%s}" . "$\backslash$\paragraph*{%s}")
+                                  ("$\backslash$\subparagraph{%s}" . "$\backslash$\subparagraph*{%s}")))
+
+\newpage
+
+(add-to-list 'org-latex-classes '("book"
+                                  "$\backslash$\documentclass{book}
+                                         {[}NO-DEFAULT-PACKAGES]
+   $\backslash$\input{/home/sync0/Gdrive/typography/latex_preamble.tex}
+                                         {[}EXTRA]"
+                                  ("$\backslash$\chapter{%s}" . "$\backslash$\chapter*{%s}")
+                                  ("$\backslash$\section{%s}" . "$\backslash$\section*{%s}")
+                                  ("$\backslash$\subsection{%s}" . "$\backslash$\subsection*{%s}")
+                                  ("$\backslash$\subsubsection{%s}" . "$\backslash$\subsubsection*{%s}")
+                                  ("$\backslash$\paragraph{%s}" . "$\backslash$\paragraph*{%s}")
+                                  ("$\backslash$\subparagraph{%s}" . "$\backslash$\subparagraph*{%s}")))
+
+\newpage
+
+(add-to-list 'org-latex-classes '("report"
+                                  "$\backslash$\documentclass{report}
+                                         {[}NO-DEFAULT-PACKAGES]
+   $\backslash$\input{/home/sync0/Gdrive/typography/latex_preamble.tex}
+                                         {[}EXTRA]"
+                                  ("$\backslash$\chapter{%s}" . "$\backslash$\chapter*{%s}")
+                                  ("$\backslash$\section{%s}" . "$\backslash$\section*{%s}")
+                                  ("$\backslash$\subsection{%s}" . "$\backslash$\subsection*{%s}")
+                                  ("$\backslash$\subsubsection{%s}" . "$\backslash$\subsubsection*{%s}")
+                                  ("$\backslash$\paragraph{%s}" . "$\backslash$\paragraph*{%s}")
+                                  ("$\backslash$\subparagraph{%s}" . "$\backslash$\subparagraph*{%s}")))
+
+\newpage
+
+(add-to-list 'org-latex-classes '("beamer"
+                                  "$\backslash$\documentclass{beamer}
+                                         {[}NO-DEFAULT-PACKAGES]
+   $\backslash$\input{/home/sync0/Gdrive/typography/latex_preamble-beamer.tex}
+                                         {[}EXTRA]"
+                                  ("$\backslash$\section{%s}" . "$\backslash$\section*{%s}")
+                                  ("$\backslash$\subsection{%s}" . "$\backslash$\subsection*{%s}")
+                                  ("$\backslash$\subsubsection{%s}" . "$\backslash$\subsubsection*{%s}")))
+
+\newpage
+
+
+(defun sync0-org-export-headline-replace (backend)
+  "Remove all headlines in the current buffer.
+BACKEND is the export back-end being used, as a symbol."
+  (org-map-entries
+   (lambda ()
+     (when-let ((new-title
+                 (org-element-property :EXPORT\textsubscript{TITLE} (org-element-at-point))))
+       (org-edit-headline new-title))))) 
+
+\newpage
+
+;;      (delete-region (point) (line-beginning-position 2)))))
+
+\newpage
+
+;; (org-element-map (org-element-parse-buffer)
+;;                        'headline
+;;                      (lambda (hl)
+;;                        (when (org-element-property :EXPORT\textsubscript{TITLE} hl)
+;;                          (goto-char (org-element-property :begin hl))
+;;                          (org-edit-headline (org-element-property :EXPORT\textsubscript{TITLE} hl)))))
+
+\newpage
+
+(add-hook 'org-export-before-parsing-hook 'sync0-org-export-headline-replace)
+
+\newpage
+
+;; Function to add \newpage before headlines
+;; (defun sync0-zettel-custom-latex-headline (headline contents info)
+;;   "Export HEADLINE to \LaTeX{} with a page break before and after."
+;;   (concat "$\backslash$\newpage\n"  ; Page break before the headline
+;;           (org-latex-headline headline contents info)
+;;           "\n$\backslash$\newpage"))  ; Page break after the headline
+
+\newpage
+
+(defun sync0-zettel-custom-latex-headline (headline contents info)
+  "Export HEADLINE to \LaTeX{} with a page break before and after."
+  (concat "$\backslash$\newpage\n"  ; Page break before the headline
+          (org-latex--headline-to-string headline contents info)
+          "$\backslash$\newpage\n"))  ; Page break after the headline
+
+\newpage
+
+;; ;; Function to add \newpage after each paragraph
+;; (defun sync0-zettel-custom-latex-paragraph (paragraph contents info)
+;;   "Export PARAGRAPH to \LaTeX{} with a page break."
+;;   (concat paragraph "\n$\backslash$\newpage\n"))
+
+\newpage
+
+(defun sync0-zettel-custom-latex-paragraph (paragraph contents info)
+  "Export PARAGRAPH to \LaTeX{} with a page break."
+  (concat contents "\n$\backslash$\newpage\n"))
+
+\newpage
+
+;; Define a custom export backend
+(org-export-define-derived-backend 'zettel-latex 'latex
+  :translate-alist '((headline . sync0-zettel-custom-latex-headline)
+                     (paragraph . sync0-zettel-custom-latex-paragraph)))
+
+\newpage
+
+;; Use the custom backend for exporting
+;; (defun sync0-org-export-to-zettel-latex ()
+;;   "Export the current Org buffer to \LaTeX{} with custom formatting."
+;;   (interactive)
+;;   (org-export-to-file 'zettel-latex "output.tex"))
+
+\newpage
+
+;; (defun sync0-org-export-to-zettel-latex ()
+;;   "Export the current Org buffer to PDF with custom formatting."
+;;   (interactive)
+;;   (let* ((org-file-name (file-name-base (buffer-file-name)))
+;;          (output-pdf (concat org-file-name ".pdf")))
+;;     (org-export-to-file 'zettel-latex "output.tex"
+;;       nil nil nil nil (lambda (\_) (org-latex-compile "output.tex")))))
+
+\newpage
+
+(defun sync0-org-export-to-zettel-latex ()
+  "Export the current Org buffer to \LaTeX{} and compile to PDF using LuaLaTeX."
+  (interactive)
+  (let* ((org-file-name (file-name-base (buffer-file-name)))
+         (output-tex (concat org-file-name ".tex"))
+         (output-pdf (concat org-file-name ".pdf")))
+    ;; Set the \LaTeX{} export process to use lualatex
+    (setq org-latex-pdf-process
+          (list "latexmk -lualatex -bibtex -output-directory=\%o -f \%f"))
+    ;; Export to \LaTeX{}
+    (org-export-to-file 'zettel-latex output-tex
+      nil nil nil nil
+      (lambda (\_)
+        ;; After export, compile the .tex file to .pdf
+        (shell-command (concat "latexmk -lualatex -bibtex -output-directory=" 
+                               (file-name-directory output-tex) " -f " output-tex)))))
+
+\newpage
+
+(defun sync0-org-export-latex-and-beamer ()
+  "Export current org file with beamer, custom \LaTeX{} backend, or default \LaTeX{} based on context."
+  (interactive)
+  (cond
+   ;; For Org mode files
+   ((derived-mode-p 'org-mode)
+    (let ((buffer-string (buffer-string)))
+      (cond
+       ;; Check for Beamer setup
+       ((string-match "\^{}$\backslash$\\#$\backslash$\+SETUPFILE: .*beamer$\backslash$\.org.*" buffer-string)
+        (setq org-latex-pdf-process '("latexmk -xelatex -bibtex -output-directory=\%o -f \%f"))
+        (org-beamer-export-to-pdf))
+       ;; Check for custom \LaTeX{} setup
+       ((string-match "\^{}$\backslash$\\#$\backslash$\+SETUPFILE: \textasciitilde{}/Gdrive/typography/settings\textsubscript{zettel.org}" buffer-string)
+        (sync0-org-export-to-zettel-latex))
+       ;; Default \LaTeX{} export
+       (t
+        (setq org-latex-pdf-process '("latexmk -lualatex -bibtex -output-directory=\%o -f \%f"))
+        (org-latex-export-to-pdf)))))
+   ;; For \TeX{} or \LaTeX{} files
+   ((derived-mode-p 'tex-mode 'latex-mode)
+    (tex-compile))
+   ;; Otherwise
+   (t (message "Impossible de produire un pdf à partir de ce fichier"))))
+
+\newpage
+
+;; (defun sync0-org-export-latex-and-beamer ()
+;;   "Export current org file with beamer if it has beamer as latex class."
+;;   (interactive)
+;;   (cond ((derived-mode-p 'org-mode) 
+;;            (if (string-match "\^{}$\backslash$\\#$\backslash$\+SETUPFILE: .*beamer$\backslash$\.org.*" (buffer-string))
+;;                (progn
+;;                  (setq org-latex-pdf-process '("latexmk -xelatex -bibtex -output-directory=\%o -f \%f"))
+;;                  (org-beamer-export-to-pdf))
+;;              (progn
+;;                (setq org-latex-pdf-process '("latexmk -lualatex -bibtex -output-directory=\%o -f \%f"))
+;;                (org-latex-export-to-pdf))))
+;;          ((or (derived-mode-p 'tex-mode) 
+;;               (derived-mode-p 'latex-mode)) 
+;;           (tex-compile))
+;;          (t  (message "Impossible de produire un pdf à partir de ce fichier"))))
+
+\newpage
+
+;; (defun sync0-org-export-latex-and-beamer ()
+;;   "Export current org file with beamer if it has beamer as latex class."
+;;   (interactive)
+;;   (cond ((equal major-mode 'org-mode) 
+;;          ;; Replace headlines by EXPORT\textsubscript{T}
+;;          ;; \url{https://emacs.stackexchange.com/questions/44497/org-latex-export-name-sections-according-to-custom-id-rather-than-headline-s}
+;;          (let ((org-export-before-parsing-hook
+;;                 '(lambda (\_)
+;;                    (org-element-map (org-element-parse-buffer)
+;;                        'headline
+;;                      (lambda (hl)
+;;                        (when (org-element-property :EXPORT\textsubscript{TITLE} hl)
+;;                          (goto-char (org-element-property :begin hl))
+;;                          (org-edit-headline (org-element-property :EXPORT\textsubscript{TITLE} hl))))))))
+;;            (if (string-match "\^{}$\backslash$\\#$\backslash$\+SETUPFILE: .*beamer$\backslash$\.org.*" (buffer-string))
+;;                (progn
+;;                  (setq org-latex-pdf-process '("latexmk -xelatex -bibtex -output-directory=\%o -f \%f"))
+;;                  (org-beamer-export-to-pdf))
+;;              (progn
+;;                (setq org-latex-pdf-process '("latexmk -lualatex -bibtex -output-directory=\%o -f \%f"))
+;;                (org-latex-export-to-pdf)))))
+;;          ((or (equal major-mode 'tex-mode) 
+;;               (equal major-mode 'latex-mode)) 
+;;           (tex-compile))
+;;          (t  (message "Impossible de produire un pdf à partir de ce fichier"))))
+
+\newpage
+
+;; export headlines to separate files
+;; \url{http://emacs.stackexchange.com/questions/2259/how-to-export-top-level-headings-of-org-mode-buffer-to-separate-files}
+
+\newpage
+
+(defun sync0-org-export-headlines-to-latex ()
+  "Export all subtrees that are \textbf{not} tagged with :noexport: to
+ separate files.
+
+\newpage
+
+Subtrees that do not have the :EXPORT\textsubscript{FILE}\textsubscript{NAME}: property set
+are exported to a filename derived from the headline text."
+ (interactive)
+ (save-buffer)
+ (let ((modifiedp (buffer-modified-p)))
+   (save-excursion
+     (goto-char (point-min))
+     (goto-char (re-search-forward "\textsuperscript{*}"))
+     (set-mark (line-beginning-position))
+     (goto-char (point-max))
+     (org-map-entries
+      (lambda ()
+	(let ((export-file (org-entry-get (point) "EXPORT\textsubscript{FILE}\textsubscript{NAME}")))
+	  (unless export-file
+	    (org-set-property
+	     "EXPORT\textsubscript{FILE}\textsubscript{NAME}"
+	     (replace-regexp-in-string " " "\_" (nth 4 (org-heading-components)))))
+	  (deactivate-mark)
+	  (org-latex-export-to-latex nil t)
+	  (unless export-file (org-delete-property "EXPORT\textsubscript{FILE}\textsubscript{NAME}"))
+	  (set-buffer-modified-p modifiedp)))
+      "-noexport" 'region-start-level))))
+
+\newpage
+
+;; ;; Set tags to excluce from export. 
+(add-to-list 'org-export-exclude-tags "消")
+(add-to-list 'org-export-exclude-tags "noexport")
+
+\newpage
+
+(provide 'sync0-ox-latex)
+
+\newpage
+\end{document}

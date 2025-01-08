@@ -3,8 +3,12 @@
 (defvar markdown-toc-buffer-name "*Markdown TOC*"
   "Name of the buffer used to display the table of contents.")
 
+;; (defface markdown-toc-header-face
+;;   '((t (:inherit markdown-header-face)))
+;;   "Face used for the headers in the table of contents.")
+
 (defface markdown-toc-header-face
-  '((t (:inherit markdown-header-face)))
+  '((t (:inherit markdown-header-face :height 1.2)))
   "Face used for the headers in the table of contents.")
 
 (defface markdown-toc-current-heading-face
@@ -22,14 +26,23 @@
 Each heading is represented as a cons cell of the form (LEVEL . TEXT),
 where LEVEL is the heading level (1 for `#`, 2 for `##`, etc.),
 and TEXT is the heading text (raw, unprocessed)."
-  (let (headings)
-    (save-excursion
-      (goto-char (point-min)) ;; Start from the beginning
-      (while (re-search-forward "^\\(#+\\) \\(.*\\)" nil t)
-        (let* ((heading-level (length (match-string 1)))    ;; Heading level
-               (heading-text (match-string 2))) ;; Raw text of heading
-          (push (cons heading-level heading-text) headings)))) ;; Collect (level . text)
-    (nreverse headings))) ;; Reverse to preserve the order
+  (if (derived-mode-p 'org-mode)
+      (let (headings)
+	(save-excursion
+	  (goto-char (point-min))
+	  (while (re-search-forward org-heading-regexp nil t)
+            (let* ((heading-level (length (match-string 1))) ;; Compute the heading level from group 1
+		   (heading-text (string-trim (or (match-string 2) "")))) ;; Extract clean heading text from group 2
+              (push (cons heading-level heading-text) headings)))) ;; Collect (level . text)
+	(nreverse headings))
+    (let (headings)
+      (save-excursion
+	(goto-char (point-min)) ;; Start from the beginning
+	(while (re-search-forward "^\\(#+\\) \\(.*\\)" nil t)
+          (let* ((heading-level (length (match-string 1)))    ;; Heading level
+		 (heading-text (match-string 2))) ;; Raw text of heading
+            (push (cons heading-level heading-text) headings)))) ;; Collect (level . text)
+      (nreverse headings)))) ;; Reverse to preserve the order
 
 (defun markdown-toc-cleanup-links (text)
   "Remove markdown links from TEXT, leaving only the link text."
@@ -42,25 +55,28 @@ and TEXT is the heading text (raw, unprocessed)."
   "Prettify the collected raw HEADINGS for insertion into the TOC buffer.
 Each heading is represented as a cons cell of the form (LEVEL . TEXT),
 where LEVEL is the heading level and TEXT is the prettified heading text
-with bullet points replacing hashes and any extra whitespace removed.
+with alternating symbols and any extra whitespace removed.
 Also removes markdown links from the heading text."
   (mapcar (lambda (heading)
             (let* ((level (car heading)) ;; Heading level
-                   (text (concat "● " (string-trim-left (cdr heading))))) ;; Prettify text (replace hash with bullet)
-              (setq text (markdown-toc-cleanup-links text)) ;; Remove links from text
-              (cons level text))) ;; Return the prettified heading
+                   (symbol (if (evenp level) "●" "○")) ;; Alternate symbols based on level
+                   (text (concat symbol " " (string-trim-left (cdr heading))))) ;; Prettify text
+              ;; Remove links from text
+              (setq text (markdown-toc-cleanup-links text))
+              ;; Return the prettified heading
+              (cons level text)))
           headings))
 
-;; (defun markdown-toc-prettify-single-heading (headings)
+;; (defun org-toc-prettify-headings (headings)
 ;;   "Prettify the collected raw HEADINGS for insertion into the TOC buffer.
 ;; Each heading is represented as a cons cell of the form (LEVEL . TEXT),
-;; where LEVEL is the heading level and TEXT is the prettified heading text
-;; with bullet points replacing hashes and any extra whitespace removed.
-;; Also removes markdown links from the heading text."
-;;   (let* ((level (car heading)) ;; Heading level
-;;          (text (concat "● " (string-trim-left (cdr heading))))) ;; Prettify text (replace hash with bullet)
-;;     (setq text (markdown-toc-cleanup-links text)) ;; Remove links from text
-;;     (cons level text)))
+;; where LEVEL is the heading level and TEXT is the prettified heading text."
+;;   (mapcar (lambda (heading)
+;;             (let* ((level (car heading)) ;; Heading level
+;;                    (symbol (if (evenp level) "●" "○")) ;; Alternate symbols based on level
+;;                    (text (concat symbol " " (cdr heading)))) ;; Prettify text
+;;               (cons level text)))
+;;           headings))
 
 (defun markdown-toc-prettify-text-heading (heading)
   "Prettify the Each heading is where LEVEL is with bullet p
@@ -71,16 +87,27 @@ Also removes markdown links from the heading text."
 (defun markdown-toc-find-current-heading ()
   "Find the nearest heading at or before the current point in the buffer.
 Returns a cons cell (POSITION . TEXT) where POSITION is the position of the heading and TEXT is the heading text."
-  (save-excursion
-    (let ((pos (point))) ;; Current position in buffer
-      (catch 'found
-        (goto-char pos)  ;; Start searching from the current position
-        (while (re-search-backward "^\\(#+\\) \\(.*\\)" nil t)
-          (let* ((heading-level (length (match-string 1)))    ;; Heading level
-                 (heading-text (match-string 2))               ;; Heading text
-                 (heading-pos (match-beginning 0)))             ;; Position of the heading
-            (when (<= heading-pos pos) ;; Ensure the heading is before or at the current position
-              (throw 'found (cons heading-pos heading-text))))))))) ;; Return cons cell (position . text)
+  (if (derived-mode-p 'org-mode)
+      (save-excursion
+	(let ((pos (point))) ;; Current position in buffer
+	  (catch 'found
+	    (goto-char pos)  ;; Start searching from the current position
+	    (while (re-search-backward org-heading-regexp nil t)
+	      (let* ((heading-level (length (match-string 1)))   ;; Heading level (number of stars)
+		     (heading-text (match-string 2))             ;; Heading text (group 2)
+		     (heading-pos (match-beginning 0)))          ;; Position of the heading
+		(when (and heading-text (<= heading-pos pos))   ;; Ensure the heading is before or at the current position
+		  (throw 'found (cons heading-pos heading-text))))))))
+    (save-excursion
+      (let ((pos (point))) ;; Current position in buffer
+	(catch 'found
+          (goto-char pos)  ;; Start searching from the current position
+          (while (re-search-backward "^\\(#+\\) \\(.*\\)" nil t)
+	    (let* ((heading-level (length (match-string 1)))    ;; Heading level
+		   (heading-text (match-string 2))               ;; Heading text
+		   (heading-pos (match-beginning 0)))             ;; Position of the heading
+	      (when (<= heading-pos pos) ;; Ensure the heading is before or at the current position
+		(throw 'found (cons heading-pos heading-text)))))))))) ;; Return cons cell (position . text)
 
 (defun markdown-toc-insert-headings (headings)
   "Insert a list of HEADINGS into the current buffer.
@@ -133,53 +160,6 @@ this function will recreate it, but only if the current buffer is a Markdown buf
                                                     '((side . right) (window-width . 0.33)))))
       (set-window-dedicated-p window t))) ;; Make the TOC window dedicated
 
-;; (defun markdown-toc-highlight-current-heading (current-heading toc-buffer)
-;;   "Highlight the current heading in the TOC buffer based on the current position in the main buffer."
-;;   (when (and current-heading (buffer-live-p toc-buffer)) ;; Ensure buffers are valid
-;;     (with-current-buffer toc-buffer
-;;       ;; Remove previous highlights
-;;       (remove-text-properties (point-min) (point-max) '(face markdown-toc-current-heading-face))
-;;       ;; Find the line corresponding to the current heading
-;;       (save-excursion
-;;         (goto-char (point-min))
-;;         (let ((heading-text (cdr current-heading))) ;; Only the text part, not the cons cell
-;;           (when (search-forward heading-text nil t)
-;;               (put-text-property (line-beginning-position) (line-end-position)
-;;                                  'face 'markdown-toc-current-heading-face)))))))
-;;             ;; If not found, log a message or skip
-
-;; (defun markdown-toc-highlight-current-heading (current-heading toc-buffer)
-;;   "Highlight the current heading in the TOC buffer based on the current position in the main buffer."
-;;   (when current-heading
-;;     (with-current-buffer toc-buffer
-;;       ;; Remove previous highlights
-;;       (remove-text-properties (point-min) (point-max) '(face markdown-toc-current-heading-face))
-;;       ;; Find the line corresponding to the current heading
-;;       (save-excursion
-;;         (goto-char (point-min))
-;;         (let ((heading-text (cdr current-heading))) ;; Only the text part, not the cons cell
-;;           (if (search-forward heading-text nil t)
-;;               (put-text-property (line-beginning-position) (line-end-position)
-;; 				 'face 'markdown-toc-current-heading-face)
-;; 	    (progn
-;; 	      (markdown-toc-redraw toc-buffer)
-;; 	      (markdown-toc-highlight-current-heading current-heading toc-buffer))))))))
-
-;; (defun markdown-toc-highlight-current-heading (current-heading toc-buffer)
-;;   "Highlight the current heading in the TOC buffer based on the current position in the main buffer."
-;;   (when (and current-heading (buffer-live-p toc-buffer)) ;; Ensure buffers are valid
-;;     (with-current-buffer toc-buffer
-;;       ;; Remove previous highlights
-;;       (remove-text-properties (point-min) (point-max) '(face markdown-toc-current-heading-face))
-;;       ;; Find the line corresponding to the current heading
-;;       (save-excursion
-;;         (goto-char (point-min))
-;;         (let ((heading-text (cdr current-heading))) ;; Only the text part, not the cons cell
-;;           (when (search-forward heading-text nil t)
-;;               (put-text-property (line-beginning-position) (line-end-position)
-;;                                  'face 'markdown-toc-current-heading-face)))))))
-;;             ;; If not found, log a message or skip
-
 (defun markdown-toc-highlight-current-heading (current-heading toc-buffer &optional retries)
   "Highlight the current heading in the TOC buffer.
 Optionally retry up to `markdown-toc-highlight-max-retries` times if the heading is not found."
@@ -200,23 +180,6 @@ Optionally retry up to `markdown-toc-highlight-max-retries` times if the heading
 ;;                   (markdown-toc-redraw toc-buffer)
                   (markdown-toc-highlight-current-heading current-heading toc-buffer (1+ retries))))))))))
 
-;; (defun markdown-toc-highlight-current-heading (current-heading toc-buffer)
-;;   "Highlight the current heading in the TOC buffer based on the current position in the main buffer."
-;;   (when current-heading
-;;     (with-current-buffer toc-buffer
-;;       ;; Remove previous highlights
-;;       (remove-text-properties (point-min) (point-max) '(face markdown-toc-current-heading-face))
-;;       ;; Find the line corresponding to the current heading
-;;       (save-excursion
-;;         (goto-char (point-min))
-;;         (let ((heading-text (cdr current-heading))) ;; Only the text part, not the cons cell
-;;           (if (search-forward heading-text nil t)
-;;               (put-text-property (line-beginning-position) (line-end-position)
-;; 				 'face 'markdown-toc-current-heading-face)
-;; 	    (progn
-;; 	      (markdown-toc-redraw toc-buffer)
-;; 	      (markdown-toc-highlight-current-heading current-heading toc-buffer))))))))
-
 (defun markdown-toc-scroll-to-heading (current-heading toc-buffer)
   "Scroll the TOC buffer to keep the current heading centered."
   (when current-heading
@@ -233,7 +196,8 @@ Optionally retry up to `markdown-toc-highlight-max-retries` times if the heading
 
 (defun markdown-toc-update-on-idle ()
   "Update the TOC highlight and scroll on idle to reflect the current heading."
-  (when (derived-mode-p 'markdown-mode) ;; Ensure we are in a Markdown buffer
+  (when (or (derived-mode-p 'org-mode) ;; Ensure we are in a Markdown buffer
+	    (derived-mode-p 'markdown-mode)) ;; Ensure we are in a Markdown buffer
     (let ((current-heading (markdown-toc-find-current-heading))
           (toc-buffer (get-buffer markdown-toc-buffer-name)))
       (markdown-toc-redraw toc-buffer)
@@ -242,12 +206,41 @@ Optionally retry up to `markdown-toc-highlight-max-retries` times if the heading
 
 (defun markdown-toc-update-on-save ()
   "Update the TOC buffer when the Markdown file is saved."
-  (when (derived-mode-p 'markdown-mode) ;; Ensure we are in a Markdown buffer
+  (when (or (derived-mode-p 'org-mode) ;; Ensure we are in a Markdown buffer
+	    (derived-mode-p 'markdown-mode)) ;; Ensure we are in a Markdown buffer
     (let ((current-heading (markdown-toc-find-current-heading))
           (toc-buffer (get-buffer markdown-toc-buffer-name)))
       (markdown-toc-redraw toc-buffer)
       (markdown-toc-highlight-current-heading current-heading toc-buffer)
       (markdown-toc-scroll-to-heading current-heading toc-buffer))))
+
+;; (defun sync0-toc-update-on-idle ()
+;;   "Update the TOC highlight and scroll on idle to reflect the current heading.
+;; Works for both Markdown and Org files."
+;;   (let ((current-heading (cond
+;;                           ((derived-mode-p 'markdown-mode)
+;;                            (markdown-toc-find-current-heading))
+;;                           ((derived-mode-p 'org-mode)
+;;                            (org-toc-find-current-heading))))
+;;         (toc-buffer (get-buffer markdown-toc-buffer-name)))
+;;     (when toc-buffer
+;;       (markdown-toc-redraw toc-buffer)
+;;       (markdown-toc-highlight-current-heading current-heading toc-buffer)
+;;       (markdown-toc-scroll-to-heading current-heading toc-buffer))))
+
+;; (defun sync0-toc-update-on-save ()
+;;   "Update the TOC buffer when the file is saved.
+;; Works for both Markdown and Org files."
+;;   (let ((current-heading (cond
+;;                           ((derived-mode-p 'markdown-mode)
+;;                            (markdown-toc-find-current-heading))
+;;                           ((derived-mode-p 'org-mode)
+;;                            (org-toc-find-current-heading))))
+;;         (toc-buffer (get-buffer markdown-toc-buffer-name)))
+;;     (when toc-buffer
+;;       (markdown-toc-redraw toc-buffer)
+;;       (markdown-toc-highlight-current-heading current-heading toc-buffer)
+;;       (markdown-toc-scroll-to-heading current-heading toc-buffer))))
 
 (define-minor-mode markdown-toc-minor-mode
   "Minor mode for generating a table of contents buffer for Markdown files."
@@ -269,5 +262,27 @@ Optionally retry up to `markdown-toc-highlight-max-retries` times if the heading
       (setq markdown-toc-timer nil)
       (when (get-buffer markdown-toc-buffer-name)
 	(kill-buffer markdown-toc-buffer-name)))))
+
+;; (define-minor-mode markdown-toc-minor-mode
+;;   "Minor mode for generating a table of contents buffer for Markdown and Org files."
+;;   :lighter " TOC"
+;;   (if markdown-toc-minor-mode
+;;       (progn
+;;         (add-hook 'after-save-hook #'markdown-toc-update-on-save nil t)
+
+;; ;; 	(setq markdown-toc-timer (run-with-idle-timer 1.5 t 'markdown-toc-update-on-idle))
+;;         (setq markdown-toc-timer (run-with-idle-timer 1.5 t
+;;                                                       (lambda ()
+;;                                                         (if (derived-mode-p 'org-mode)
+;;                                                             (org-toc-generate)
+;;                                                           (markdown-toc-generate)))))
+;;         (if (derived-mode-p 'org-mode)
+;;             (org-toc-generate)
+;;           (markdown-toc-generate)))
+;;     (remove-hook 'after-save-hook #'markdown-toc-update-on-save t)
+;;     (cancel-timer markdown-toc-timer)
+;;     (setq markdown-toc-timer nil)
+;;     (when (get-buffer markdown-toc-buffer-name)
+;;       (kill-buffer markdown-toc-buffer-name))))
 
 (provide 'markdown-toc)

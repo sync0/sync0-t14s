@@ -1,8 +1,8 @@
-(defun sync0-zettelkasten-set-property ()
+(defun sync0-zkn-set-property ()
   (interactive)
   (let  ((property
           (completing-read "What property to set?"
-                           sync0-zettelkasten-all-properties-list)))
+                           sync0-zkn-all-properties-list)))
     (cond ((equal property "ROAM_ALIASES")
            (let* ((x (read-string "Define aliases (comma separated): "
                                   nil nil nil t))
@@ -15,15 +15,15 @@
              (org-set-property "ROAM_ALIASES" alias-string)))
           ((equal property "FICHE_TYPE")
            (let ((x (completing-read "Quel type de fiche ?"
-                                     sync0-zettelkasten-fiche-types)))
+                                     sync0-zkn-fiche-types)))
              (org-set-property property x)))
           ((equal property "ZETTEL_TYPE")
            (let ((x (completing-read "Quel type de fiche ?"
-                                     sync0-zettelkasten-zettel-types)))
+                                     sync0-zkn-zettel-types)))
              (org-set-property property x)))
           ((equal property "ZETTEL_FUNCTION")
            (let* ((x (completing-read-multiple "Quel type de fiche ?"
-                                               sync0-zettelkasten-zettel-functions))
+                                               sync0-zkn-zettel-functions))
                   (y 
                    (if (> (length x) 1)
                        (string-trim
@@ -33,7 +33,7 @@
              (org-set-property property y)))
           ((equal property "PROJECT_TITLE")
            (let* ((x (completing-read-multiple "Quel project ?"
-                                               sync0-zettelkasten-projects))
+                                               sync0-zkn-projects))
                   (y 
                    (if (> (length x) 1)
                        (string-trim
@@ -77,7 +77,7 @@
                                    nil nil nil t)))
                (org-set-property property x))))))
 
-(defun sync0-zettelkasten-set-aliases ()
+(defun sync0-zkn-set-aliases ()
   (interactive)
   (org-with-point-at 1
     (let* ((x (read-string "Define aliases (comma separated): "
@@ -151,7 +151,7 @@
   (interactive)
   (with-current-buffer
       (find-file-noselect
-       (concat sync0-zettelkasten-directory 
+       (concat sync0-zkn-dir 
                (format-time-string "chart/%Y%m.org")))
     (goto-char (point-min))
     (let* ((date (format-time-string "%Y/%m/%d"))
@@ -194,19 +194,19 @@
 ;; _S_et property       _Q_uote (display)     _E_xtract field
 ;; _D_elete link        _F_oreign quote       Bibtex _e_ntry
 ;; _R_emove all links   ^ ^                   PDF _o_pen
-;; Open _d_eft          ^ ^                   PDF in _z_athura
+;; Open deft          ^ ^                   PDF in _z_athura
 ;; _V_isit corr. PDF    ^ ^                   _C_opy pdf 
 ;; _M_ove headline      ^ ^                   _B_ib files
 ;; ^ ^                  ^ ^                   Create _h_eadline
 ;; _q_uit
 ;; "
-;;   ("a" orb-note-actions)
+;; ;;   ("a" orb-note-actions)
 ;;   ("B" sync0-visit-bibliography-in-buffer)
 ;;   ("b" org-roam-buffer-toggle)
-;;   ("c" orb-insert)
+;; ;;   ("c" orb-insert)
 ;;   ("C" sync0-org-ref-copy-pdf-to-path)
 ;;   ("D" sync0-org-replace-link-by-description)
-;;   ("d" deft)
+;; ;;   ("d" deft)
 ;;   ("E" sync0-ivy-bibtex-extractor)
 ;;   ("e" org-ref-open-citation-at-point)
 ;;   ("F" (progn (yas-expand-snippet (yas-lookup-snippet "csquotes_foreign_displayquote"))))
@@ -224,7 +224,7 @@
 ;;   ("o" sync0-org-ref-open-pdf-at-point)
 ;;   ;; ("p" org-emms-insert-track-position)
 ;;   ("R" sync0-org-replace-all-links-by-descriptions)
-;;   ("S" sync0-zettelkasten-set-property)
+;;   ("S" sync0-zkn-set-property)
 ;;   ("s" org-insert-last-stored-link)
 ;;   ;; ("t" org-emms-insert-track)
 ;;   ("Q" (progn (yas-expand-snippet (yas-lookup-snippet "csquotes_displayquote"))))

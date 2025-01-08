@@ -1,7 +1,33 @@
+(use-package markdown-mode
+  :commands (markdown-mode gfm-mode)
+  :custom
+  (indent-tabs-mode t)
+  (markdown-enable-wiki-links t)
+  (markdown-enable-math t)
+  (markdown-coding-system 'utf-8)
+  (markdown-asymmetric-header t)
+  (markdown-hide-markup t)
+  ;; (markdown-hide-markup nil)
+  (markdown-header-scaling t)
+  ;; ? scale
+  ;;    (markdown-header-scaling-values '(1.953 1.563 1.25 1.0 0.8 0.64))
+  ;; major second scale
+  (markdown-header-scaling-values '(1.602 1.424 1.266 1.125 1.0 1.0))
+  ;; ?
+  ;; (markdown-header-scaling-values '(2.074 1.728 1.44 1.2 1.0 0.833))
+  :mode (("README\\.md\\'" . gfm-mode)
+         ("\\.md\\'" . markdown-mode)
+         ("\\.markdown\\'" . markdown-mode))
+
+  :config
+(require 'markdown-toc)
 (require 'sync0-pandoc)
 (require 'sync0-print)
+(require 'yaml)
 (require 'sync0-yaml)
-(require 'sync0-zettelkasten)
+
+(use-package orgalist
+  :hook (markdown-mode . orgalist-mode))
 
 (defun sync0-markdown-next-heading ()
   "Move to the next heading in the document."
@@ -25,11 +51,6 @@
       (setq found (not (bobp))))
     (beginning-of-line)))
 
-;; Bind the functions to keys
-(evil-define-key 'normal markdown-mode-map
-  "<" 'sync0-markdown-previous-heading
-  ">" 'sync0-markdown-next-heading)
-
 ;; (setq markdown-list-item-bullets '("●" "◎" "○" "◆" "◇" "►" "•"))
 (setq markdown-list-item-bullets '("•"))
 
@@ -48,7 +69,7 @@ created: " (format-time-string "%Y-%m-%d")
   (interactive)
   (let* ((filename (format-time-string "%Y%m%d%H%M%S"))
          (obsidian-file
-          (concat sync0-obsidian-directory filename ".md")))
+          (concat sync0-zkn-dir filename ".md")))
     (with-temp-buffer 
       (insert sync0-markdown-zettel-template)
       (write-file obsidian-file))
@@ -85,47 +106,47 @@ created: " (format-time-string "%Y-%m-%d")
   (let* ((full-path (buffer-file-name))
          (current-file (when (string-match "^.+/\\([[:alnum:]]+\\)\\.md$" full-path)
                          (match-string-no-properties 1 full-path)))
-         (old-path (concat sync0-zettelkasten-references-directory current-file ".pdf"))
-         (pdf-path (concat sync0-zettelkasten-attachments-directory current-file ".pdf")))
+         (old-path (concat sync0-zkn-references-dir current-file ".pdf"))
+         (pdf-path (concat sync0-zkn-attachments-dir current-file ".pdf")))
     (unless (null (file-exists-p old-path))
     (if (and (file-exists-p pdf-path)
              (yes-or-no-p "Keep current file in cabinet?"))
         (message "File already present in cabinet for %s" current-file)
       (copy-file old-path pdf-path t)))))
 
-(defun sync0-markdown-copy-pdf-to-goodreads ()
-  "Copy the pdf corresponding to current file and paste it to the goodreads directory."
-  (interactive)
-  (let* ((full-path (buffer-file-name))
-         (current-file (when (string-match "^.+/\\([[:alnum:]]+\\)\\.md$" full-path)
-                         (match-string-no-properties 1 full-path)))
-         (path-sans-file (when (string-match "\\(^.+\\)/[[:alnum:]]+\\.md$" full-path)
-                         (match-string-no-properties 1 full-path)))
-         (old-path (concat path-sans-file "/" current-file ".pdf"))
-         (pdf-path (concat sync0-goodreads-directory current-file ".pdf")))
-    (unless (null (file-exists-p old-path))
-    (if (and (file-exists-p pdf-path)
-             (yes-or-no-p "Keep current file in cabinet?"))
-        (message "File already present in cabinet for %s" current-file)
-      (copy-file old-path pdf-path t)))))
+;; (defun sync0-markdown-copy-pdf-to-goodreads ()
+;;   "Copy the pdf corresponding to current file and paste it to the goodreads directory."
+;;   (interactive)
+;;   (let* ((full-path (buffer-file-name))
+;;          (current-file (when (string-match "^.+/\\([[:alnum:]]+\\)\\.md$" full-path)
+;;                          (match-string-no-properties 1 full-path)))
+;;          (path-sans-file (when (string-match "\\(^.+\\)/[[:alnum:]]+\\.md$" full-path)
+;;                          (match-string-no-properties 1 full-path)))
+;;          (old-path (concat path-sans-file "/" current-file ".pdf"))
+;;          (pdf-path (concat sync0-goodreads-dir current-file ".pdf")))
+;;     (unless (null (file-exists-p old-path))
+;;     (if (and (file-exists-p pdf-path)
+;;              (yes-or-no-p "Keep current file in cabinet?"))
+;;         (message "File already present in cabinet for %s" current-file)
+;;       (copy-file old-path pdf-path t)))))
 
-(defun sync0-markdown-open-pdf-in-zathura ()
-  "Open the PDF for the current markdown file if it exists."
-  (interactive)
-  (let* ((current-file (file-name-sans-extension (buffer-file-name))) ;; Get file path without extension
-         (pdf-path (concat current-file ".pdf"))) ;; Add .pdf to the base file name
-    (if (file-exists-p pdf-path)
-        (call-process "zathura" nil 0 nil pdf-path) ;; Open PDF with Zathura
-      (message "No PDF found for %s" (buffer-file-name))))) ;; Message if PDF is not found
+;; (defun sync0-markdown-open-pdf-in-zathura ()
+;;   "Open the PDF for the current markdown file if it exists."
+;;   (interactive)
+;;   (let* ((current-file (file-name-sans-extension (buffer-file-name))) ;; Get file path without extension
+;;          (pdf-path (concat current-file ".pdf"))) ;; Add .pdf to the base file name
+;;     (if (file-exists-p pdf-path)
+;;         (call-process "zathura" nil 0 nil pdf-path) ;; Open PDF with Zathura
+;;       (message "No PDF found for %s" (buffer-file-name))))) ;; Message if PDF is not found
 
-(defun sync0-markdown-open-docx-in-libreoffice ()
-  "Open the DOCX for the current markdown file in LibreOffice if it exists."
-  (interactive)
-  (let* ((current-file (file-name-sans-extension (buffer-file-name))) ;; Get file path without extension
-         (docx-path (concat current-file ".docx"))) ;; Add .docx to the base file name
-    (if (file-exists-p docx-path)
-        (call-process "libreoffice" nil 0 nil docx-path) ;; Open DOCX with LibreOffice
-      (message "No DOCX file found for %s" (buffer-file-name))))) ;; Message if DOCX is not found
+;; (defun sync0-markdown-open-docx-in-libreoffice ()
+;;   "Open the DOCX for the current markdown file in LibreOffice if it exists."
+;;   (interactive)
+;;   (let* ((current-file (file-name-sans-extension (buffer-file-name))) ;; Get file path without extension
+;;          (docx-path (concat current-file ".docx"))) ;; Add .docx to the base file name
+;;     (if (file-exists-p docx-path)
+;;         (call-process "libreoffice" nil 0 nil docx-path) ;; Open DOCX with LibreOffice
+;;       (message "No DOCX file found for %s" (buffer-file-name))))) ;; Message if DOCX is not found
 
 (defun sync0-markdown-print-pdf ()
   "Print the pdf provided in the argument. Generalized for
@@ -153,7 +174,7 @@ readable."
                      (goto-char (point-min))
                      (when (re-search-forward regex-subtitle nil t 1)
                        (match-string 1))))
-         (target-path (read-directory-name "Où envoyer ce pdf ?" sync0-inbox-directory))
+         (target-path (read-directory-name "Où envoyer ce pdf ?" sync0-inbox-dir))
          (command (concat "cp "
                           pdf
                           " \""
@@ -174,12 +195,12 @@ readable."
 
 (defun sync0-markdown-save-exported-pdf-in-cabinet ()
   "Create a copy of pdf corresponding to current file in our
-cabinet (defined by sync0-zettelkasten-exported-pdfs-directory)."
+cabinet (defined by sync0-zkn-exported-pdfs-dir)."
   (interactive)
   (let* ((current-path (file-name-directory buffer-file-name))
          (current-file (sync0-yaml-get-property "key"))
          (current-pdf (concat current-path current-file ".pdf"))
-         (target-pdf (concat sync0-zettelkasten-exported-pdfs-directory current-file ".pdf"))
+         (target-pdf (concat sync0-zkn-exported-pdfs-dir current-file ".pdf"))
          (command (concat "cp " current-pdf " " target-pdf)))
     (cond ((and  (file-exists-p current-pdf)
                  (file-exists-p target-pdf)
@@ -465,18 +486,8 @@ If a footnote definition is found, navigate back to the reference."
      ;; Case 3: No footnote found, insert a new one
      (t
       (markdown-insert-footnote)))))
-
-(add-hook 'markdown-mode-hook
-          (lambda ()
-            (setq comment-start "%% ")
-            (setq comment-end " %%")
-            (setq comment-add 0)
-            (setq comment-style 'extra)
-            (setq comment-multi-line t)
-            (setq comment-use-syntax t)
-            (local-set-key (kbd "M-;") 'sync0-comment-or-uncomment)))
-
 ;; Custom comment/uncomment function
+
 (defun sync0-comment-or-uncomment ()
   "Comment or uncomment the current line or region using `%%` markers."
   (interactive)
@@ -504,6 +515,17 @@ If a footnote definition is found, navigate back to the reference."
           ;; Commenting
           (insert (concat comment-start (string-trim line) comment-end)))))))
 
+(add-hook 'markdown-mode-hook
+          (lambda ()
+            (setq comment-start "%% ")
+            (setq comment-end " %%")
+            (setq comment-add 0)
+            (setq comment-style 'extra)
+            (setq comment-multi-line t)
+            (setq comment-use-syntax t)
+            (local-set-key (kbd "M-;") 'sync0-comment-or-uncomment)))
+
+
 ;; Function to set up custom font-lock rules for Markdown mode
 (defun sync0-markdown-font-lock-setup ()
   "Set up custom font-lock rules for Markdown mode to recognize `%%` comments using the default comment face."
@@ -522,25 +544,23 @@ If a footnote definition is found, navigate back to the reference."
       (goto-char (point-min))
       (while (re-search-forward "^\\(#+\\)\\(.*\\)\n" nil t)
         (let* ((heading-level (length (match-string 1)))
-	       ;; Remove markdown link formatting to declutter visuals
-	       (sanitized-text (replace-regexp-in-string "\\[\\([^]]+\\)\\](.*)" "\\1" (match-string 2)))
-               (heading-text (concat "● " (string-trim-left sanitized-text))))
+               ;; Remove markdown link formatting to declutter visuals
+               (sanitized-text (replace-regexp-in-string "\\[\\([^]]+\\)\\](.*)" "\\1" (match-string 2)))
+               ;; Alternate symbols: ● for even levels, ○ for odd levels
+               (symbol (if (evenp heading-level) "●" "○"))
+               (heading-text (concat symbol " " (string-trim-left sanitized-text))))
           ;; Skip first-level headings (heading-level = 1)
           (unless (= heading-level 1)
-            (let* ((counter (string-to-number (cond ((equal heading-level 2) "0")
-						    ((equal heading-level 3) "1")
-						    ((equal heading-level 4) "2")
-						    ((equal heading-level 5) "3")
-						    ((equal heading-level 6) "4"))))
-                  (formatted-heading
-                   (if (= heading-level 2)
-                       heading-text  ;; Level 2 has no indentation
-                     (concat (make-string (* counter (- heading-level counter)) ?\s) heading-text))))
+            (let* ((indentation (if (<= heading-level 2) 0
+                                  (* 2 (- heading-level 2)))) ;; Compute indentation
+                   (formatted-heading
+                    (concat (make-string indentation ?\s) heading-text))) ;; Indent heading
               ;; Remove any font-lock properties (e.g., face, size)
               (set-text-properties 0 (length formatted-heading) nil formatted-heading)
               ;; Store the formatted heading and its position
               (push (cons formatted-heading (line-beginning-position)) headings))))))
     headings))
+
 
 (defun sync0--find-current-or-previous-heading (headings)
   "Find the nearest heading at or before the current point from the list of HEADINGS."
@@ -574,9 +594,6 @@ Preselects the nearest heading at or before point."
           (save-selected-window
             (goto-char position)                   ; Move to the position
             (recenter)))))))
-	      
-
-(evil-leader/set-key-for-mode 'markdown-mode "M" 'sync0-imenu-markdown-headings)
 
 (defun sync0-markdown-link-finder-with-search (url)
   "Find and open an Obsidian-style link URL in `sync0-obsidian-search-directories`.
@@ -584,7 +601,7 @@ If not found, fallback to an interactive search using `sync0-search-obsidian-not
   (when (and (string-suffix-p ".md" url)
              (not (file-name-absolute-p url)))
     (let* ((found-file (catch 'found
-                         (dolist (dir sync0-obsidian-search-directories)
+                         (dolist (dir sync0-zkn-search-directories)
                            (let ((file-path (expand-file-name url dir)))
                              (when (file-exists-p file-path)
                                (throw 'found file-path)))))))
@@ -595,6 +612,31 @@ If not found, fallback to an interactive search using `sync0-search-obsidian-not
         nil))))
 
 ;; Add our enhanced function to the markdown-follow-link hook
-(add-hook 'markdown-follow-link-functions 'sync0-markdown-link-finder-with-search)
+;; (remove-hook 'markdown-follow-link-functions 'sync0-markdown-link-finder-with-search)
+;; (add-hook 'markdown-follow-link-functions 'sync0-markdown-link-finder-with-search)
+
+(defun sync0-markdown-adjust-heading-level (adjustment)
+  "Adjust the level of the current heading and its subheadings by ADJUSTMENT.
+ADJUSTMENT can be a positive integer to upgrade or a negative integer to downgrade."
+  (interactive "nAdjustment (-1 to downgrade, 1 to upgrade):")
+  (save-excursion
+    ;; Ensure we're at a heading
+    (markdown-back-to-heading t)
+    (let ((heading-level (markdown-outline-level))
+          (region-start (point))
+          (region-end (progn
+                        (markdown-end-of-subtree)
+                        (point))))
+      ;; Adjust all headings in the subtree
+      (goto-char region-start)
+      (while (re-search-forward "^\\(#+\\)\\(\\s-.*\\)?$" region-end t)
+        (let* ((current-hashes (match-string 1)) ; Capture the # symbols
+               (current-level (length current-hashes)) ; Count current level
+               (new-level (+ current-level adjustment)))
+          (when (> new-level 0) ; Ensure the new level remains valid
+            (let ((new-hashes (make-string new-level ?#)))
+              (replace-match new-hashes nil nil nil 1)))))))) ; Replace only the # symbols
+
+  (require 'sync0-bibtex-completion))
 
 (provide 'sync0-markdown)

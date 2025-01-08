@@ -13,6 +13,42 @@
 
 (add-hook 'emacs-startup-hook #'window-divider-mode)
 
+(require 'display-line-numbers)
+
+(defcustom display-line-numbers-exempt-modes
+  '(vterm-mode eshell-mode shell-mode term-mode ansi-term-mode org-mode neotree-mode markdown-mode deft-mode help-mode nov-mode pdf-view-mode org-agenda-mode)
+  "Major modes on which to disable line numbers."
+  :group 'display-line-numbers
+  :type 'list
+  :version "green")
+
+(defun display-line-numbers--turn-on ()
+  "Turn on line numbers except for certain major modes.
+Exempt major modes are defined in `display-line-numbers-exempt-modes'."
+  (unless (or (minibufferp)
+              (member major-mode display-line-numbers-exempt-modes))
+    (display-line-numbers-mode)))
+
+(global-display-line-numbers-mode)
+
+(defun sync0-set-margins ()
+  "Set margins in current buffer."
+  (setq left-margin-width 0)
+  (setq right-margin-width 0))
+
+;; (defun sync0-set-neotree-margins ()
+;;   "Set margins in current buffer."
+;;   (setq left-margin-width 0)
+;;   (setq left-fringe-width 0)
+;;   (setq right-margin-width 0))
+
+(add-hook 'prog-mode-hook #'sync0-set-margins)
+(with-eval-after-load 'org-agenda
+  (add-hook 'org-agenda-mode-hook #'sync0-set-margins))
+
+;; (add-hook 'bibtex-mode-hook #'sync0-set-margins)
+;; (add-hook 'neotree-mode-hook #'sync0-set-neotree-margins)
+
 (defun sync0-no-fringes-in-minibuffer ()
    "Disable fringes in the minibuffer window."
    (set-window-fringes (minibuffer-window) 0 0 nil))
@@ -48,5 +84,9 @@
            indicate-buffer-boundaries nil
            indicate-empty-lines nil
            max-mini-window-height 0.3))
+
+(use-package workgroups2
+  :config
+  (workgroups-mode 1))
 
 (provide 'sync0-window)

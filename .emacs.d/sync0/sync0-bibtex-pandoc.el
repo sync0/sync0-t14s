@@ -4,7 +4,7 @@
   (interactive)
   (let* ((refkey (if bibkey
                      bibkey
-                   (sync0-bibtex-completion-choose-key t t)))
+                   (sync0-bibtex-choose-key)))
          (file (sync0-bibtex-choose-attachment refkey))
          (type (completing-read "Choose document type for export: " sync0-pandoc-export-epub-to-pdf-settings-alist))
          (lang (completing-read "Choose export language: " 
@@ -12,7 +12,7 @@
          (type-settings (funcall
                          (cadr (assoc type sync0-pandoc-export-epub-to-pdf-settings-alist))))
          (raw-command (concat "pandoc" type-settings))
-         (target-path (concat sync0-zettelkasten-attachments-directory refkey ".pdf"))
+         (target-path (concat sync0-zkn-attachments-dir refkey ".pdf"))
          (command (concat raw-command " " file " -o " target-path)))
     (if (and (file-exists-p file)
              (string= (file-name-extension file) "epub")) 

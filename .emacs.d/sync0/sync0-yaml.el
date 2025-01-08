@@ -1,5 +1,4 @@
 (require 'sync0-functions)
-(require 'yaml-mode)
 
 (defun sync0-parse-yaml-front-matter ()
   "Parse the YAML front matter in the current buffer into a hash-table.

@@ -1,9 +1,3 @@
-;; (require 'org-pdftools)
-;; (require 'org-journal)
-;; (require 'org-download)
-;; (require 'org-ref)
-(require 'cl-lib)
-
 (use-package org 
   :custom
   (tab-width 8) 
@@ -24,17 +18,20 @@
   ;; Better display of italics & bold.
   (org-hide-emphasis-markers t)
   ;; Define org-tags.
-  (org-tag-alist '(("urgent" . ?u)
+  (org-tag-alist '(
+		   ;; 		   ("urgent" . ?r)
                    ("current" . ?c)
                    ("next" . ?n)
+                   ("noexport" . ?x)
                    ("skim" . ?s)
                    ("exegesis" . ?e)
                    ("waiting" . ?w)
                    ;; ("postponed" . ?p)
+                   ("unnumbered" . ?u)
                    ("revise" . ?r)
                    ("someday" . ?a)
                    ("fetch" . ?f)
-                   ("@office" . ?o)
+		   ;;                    ("@office" . ?o)
                    ("@home" . ?h)
                    ("@deepwork" . ?p)
                    ("transcribe" . ?t)
@@ -49,8 +46,9 @@
   (org-ellipsis "  ⌄ ") ;; folding symbol
   ;; Do not show export buffer.
   (org-export-show-temporary-export-buffer nil)
-  ;; Set path for org default directory (necessary for refile and agenda).
-  (org-directory (concat (getenv "HOME") "/Gdrive/org"))
+  ;; Set path for org default dir (necessary for refile and agenda).
+  ;;   (org-directory (concat (getenv "HOME") "/Gdrive/org"))
+  (org-directory (concat sync0-zkn-dir "tasks/"))
   (org-refile-use-outline-path 'file)
   (org-outline-path-complete-in-steps nil)
   (org-startup-with-inline-images t)
@@ -69,279 +67,281 @@
   ;; Limit inheritance for certain tags. 
   (org-tags-exclude-from-inheritance (quote ("crypt" "ignore" "next" "current" "waiting" "someday" "delegated" "urgent")))
   (org-log-done 'time)
+  (org-todo-keywords '((sequence "未(1)" "中(2)" "延(3)" "|"  "完(4)" "消(5)")))
   :config 
   ;; This is necessary to avoid conflict with my motion bindings. 
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((python . t)))
 
-(setq org-todo-keywords '((sequence "未(1)" "|" "完(2)" "消(3)")))
+  ;; Free this keybinding for cycle-themes
+  (unbind-key "C-c C-t" org-mode-map)
+  (unbind-key "M-h" org-mode-map)
 
-;; Free this keybinding for cycle-themes
-(unbind-key "C-c C-t" org-mode-map)
-(unbind-key "M-h" org-mode-map)
-
-;; Predicate for org-mode titles in org files. 
-
-(defun org-keyword-title-p ()
-  "Check whether current buffer is an org-mode file with a non-null
+  ;; Predicate for org-mode titles in org files. 
+  (defun org-keyword-title-p ()
+    "Check whether current buffer is an org-mode file with a non-null
   TITLE keyword."
-  (and (equal major-mode 'org-mode)
-       (cadar (org-collect-keywords '("TITLE")))))
+    (and (equal major-mode 'org-mode)
+	 (cadar (org-collect-keywords '("TITLE")))))
 
-(defun sync0-org-tangle-initfile ()
-  (interactive)
-  "Tangle and then load the emacs init file."
-  (let* ((orgfile
-          (expand-file-name 
-           (concat user-emacs-directory "sync0_emacs.org")))
-         (initfile
-          (expand-file-name 
-           (concat user-emacs-directory "init.el")))
-         (tangled-file (car (org-babel-tangle-file orgfile))))
-    (with-temp-buffer 
-      (insert-file-contents tangled-file)
-      (write-file initfile))))
+(defcustom sync0-org-bullet-replacement t
+  "Replace hyphens in Org-mode lists with bullets visually."
+  :type 'boolean
+  :group 'sync0-org-settings)
 
-;; taken from https://stackoverflow.com/questions/8881649/how-to-force-org-mode-to-open-a-link-in-another-frame
-(defun sync0-org-open-other-frame ()
-  "Jump to bookmark in another frame. See `bookmark-jump' for more."
-  (interactive)
-  (let ((org-link-frame-setup (acons 'file 'find-file-other-window
-                                     org-link-frame-setup)))
-    (org-open-at-point)))
+(defun sync0-org-replace-hyphen-with-bullet ()
+  "Visually replace hyphens in Org lists with bullets."
+  (when sync0-org-bullet-replacement
+    (font-lock-add-keywords
+     'org-mode
+     '(("^ *\\([-]\\) " (0 (prog1 ()
+                             (compose-region (match-beginning 1)
+                                             (match-end 1)
+                                             "•"))))))))
 
-(defun sync0-org-format-export-keyword ()
-  "Open corresponding pdf file for current org file."
-  (interactive)
-  (let* ((file-path (buffer-file-name))
-         (file-name 
-          (progn
-            (string-match "\\([[:digit:]]+\\)\\.org$"   file-path)
-            (match-string 1 file-path))))
-    (concat sync0-zettelkasten-attachments-directory file-name ".pdf")))
+(add-hook 'org-mode-hook #'sync0-org-replace-hyphen-with-bullet)
 
-(defun sync0-overview-tree-window ()
-  "Open a clone of the current buffer to the left, resize it to 30 columns, and bind <mouse-1> to jump to the same position in the base buffer."
-  (interactive)
-  (let ((new-buffer-name (concat "<tree>" (buffer-name))))
-    ;; Create tree buffer
-    (split-window-right 30)
-    (if (get-buffer new-buffer-name)
-        (switch-to-buffer new-buffer-name)  ; Use existing tree buffer
-      ;; Make new tree buffer
-      (progn  (clone-indirect-buffer new-buffer-name nil t)
-              (switch-to-buffer new-buffer-name)
-              (read-only-mode)
-              (hide-body)
-              (toggle-truncate-lines)
+  (defun sync0-org-tangle-initfile ()
+    (interactive)
+    "Tangle and then load the emacs init file."
+    (let* ((orgfile
+            (expand-file-name 
+             (concat user-emacs-directory "sync0_emacs.org")))
+           (initfile
+            (expand-file-name 
+             (concat user-emacs-directory "init.el")))
+           (tangled-file (car (org-babel-tangle-file orgfile))))
+      (with-temp-buffer 
+	(insert-file-contents tangled-file)
+	(write-file initfile))))
 
-              ;; Do this twice in case the point is in a hidden line
-              (dotimes (_ 2 (forward-line 0)))
+  ;; taken from https://stackoverflow.com/questions/8881649/how-to-force-org-mode-to-open-a-link-in-another-frame
+  (defun sync0-org-open-other-frame ()
+    "Jump to bookmark in another frame. See `bookmark-jump' for more."
+    (interactive)
+    (let ((org-link-frame-setup (acons 'file 'find-file-other-window
+                                       org-link-frame-setup)))
+      (org-open-at-point)))
 
-              ;; Map keys
-              (use-local-map (copy-keymap outline-mode-map))
-              (local-set-key (kbd "q") 'delete-window)
-              (mapc (lambda (key) (local-set-key (kbd key) 'my/jump-to-point-and-show))
-                    '("<mouse-1>" "RET"))))))
+  (defun sync0-org-format-export-keyword ()
+    "Open corresponding pdf file for current org file."
+    (interactive)
+    (let* ((file-path (buffer-file-name))
+           (file-name 
+            (progn
+              (string-match "\\([[:digit:]]+\\)\\.org$"   file-path)
+              (match-string 1 file-path))))
+      (concat sync0-zkn-attachments-dir file-name ".pdf")))
 
-(defun sync0-overview-jump-to-overview ()
-  "Switch to a cloned buffer's base buffer and move point to the cursor position in the clone."
-  (interactive)
-  (let ((buf (buffer-base-buffer)))
-    (unless buf
-      (error "You need to be in a cloned buffer!"))
-    (let ((pos (point))
-          (win (car (get-buffer-window-list buf))))
-      (if win
-          (select-window win)
-        (other-window 1)
-        (switch-to-buffer buf))
-      (goto-char pos)
-      (when (invisible-p (point))
-        (show-branches)))))
+  (defun sync0-overview-tree-window ()
+    "Open a clone of the current buffer to the left, resize it to 30 columns, and bind <mouse-1> to jump to the same position in the base buffer."
+    (interactive)
+    (let ((new-buffer-name (concat "<tree>" (buffer-name))))
+      ;; Create tree buffer
+      (split-window-right 30)
+      (if (get-buffer new-buffer-name)
+          (switch-to-buffer new-buffer-name)  ; Use existing tree buffer
+	;; Make new tree buffer
+	(progn  (clone-indirect-buffer new-buffer-name nil t)
+		(switch-to-buffer new-buffer-name)
+		(read-only-mode)
+		(hide-body)
+		(toggle-truncate-lines)
 
-(defun sync0-org-tree-to-indirect-buffer ()
-  "Open headline in the next window as a separate tree."
-  (interactive)
-  (org-tree-to-indirect-buffer)
-  (windmove-right))
+		;; Do this twice in case the point is in a hidden line
+		(dotimes (_ 2 (forward-line 0)))
 
-(defun sync0-org-open-corresponding-pdf ()
-  "Open corresponding pdf file for current org file."
-  (interactive)
-  (let* ((file-path (buffer-file-name))
-         (file-name 
-          (progn
-            (string-match "\\([[:alnum:]]+\\)\\.org$" file-path)
-            (match-string 1 file-path)))
-         (pdf-path (concat sync0-zettelkasten-attachments-directory file-name ".pdf")))
-    (if (file-exists-p pdf-path)
-        (org-open-file pdf-path)
-      (message "No PDF found for %s.org" file-name))))
+		;; Map keys
+		(use-local-map (copy-keymap outline-mode-map))
+		(local-set-key (kbd "q") 'delete-window)
+		(mapc (lambda (key) (local-set-key (kbd key) 'my/jump-to-point-and-show))
+                      '("<mouse-1>" "RET"))))))
 
-(major-mode-hydra-define org-mode nil 
-  ("Links"
-   (("s" org-store-link "Link insert")
-    ("i" org-insert-link "Link store")
-    ("k" org-insert-last-stored-link "Last stored link"))
-   "Footnotes"
-   (("f" org-footnote-new "New footnote")
-    ("a" org-footnote-action "Footnote actions"))
-   "Trees"
-   (("I" sync0-org-tree-to-indirect-buffer "Indirect buffer")
-    ("j" sync0-overview-jump-to-overview "Open overview")
-    ("o" sync0-overview-tree-window "Overview jump")
-    ("t" org-sparse-tree "Show sparse tree"))
-   "Export"
-   (("e" sync0-org-export-latex-and-beamer "Latex export")
-    ("E" sync0-org-export-headlines-to-latex "Export headlines")
-    ("V" sync0-org-open-corresponding-pdf "Visit corresponding PDF"))
-   "Etc."
-   (("T" sync0-org-tangle-initfile "Tangle init file")
-    ("a" sync0-define-local-abbrev "Define local abbrev")
-    ("d" org-insert-drawer "Insert org drawer"))))
+  (defun sync0-overview-jump-to-overview ()
+    "Switch to a cloned buffer's base buffer and move point to the cursor position in the clone."
+    (interactive)
+    (let ((buf (buffer-base-buffer)))
+      (unless buf
+	(error "You need to be in a cloned buffer!"))
+      (let ((pos (point))
+            (win (car (get-buffer-window-list buf))))
+	(if win
+            (select-window win)
+          (other-window 1)
+          (switch-to-buffer buf))
+	(goto-char pos)
+	(when (invisible-p (point))
+          (show-branches)))))
 
-(evil-leader/set-key-for-mode 'org-mode "O" 'org-open-at-point)
-(evil-leader/set-key-for-mode 'org-mode "#" 'sync0-org-open-other-frame)
+  (defun sync0-org-tree-to-indirect-buffer ()
+    "Open headline in the next window as a separate tree."
+    (interactive)
+    (org-tree-to-indirect-buffer)
+    (windmove-right))
 
-(add-to-list 'font-lock-extra-managed-props 'display)
+  (add-to-list 'font-lock-extra-managed-props 'display)
 
-(font-lock-add-keywords 'org-mode
-                        '(("\\(\\[fn:\\)[[:digit:]]+\\]" 1 '(face nil display ""))))
+  (font-lock-add-keywords 'org-mode
+                          '(("\\(\\[fn:\\)[[:digit:]]+\\]" 1 '(face nil display ""))))
 
-(font-lock-add-keywords 'org-mode
-                        '(("\\[fn:[[:digit:]]+\\(\\]\\)" 1 '(face nil display ""))))
+  (font-lock-add-keywords 'org-mode
+                          '(("\\[fn:[[:digit:]]+\\(\\]\\)" 1 '(face nil display ""))))
 
-;; Taken from https://emacs.stackexchange.com/questions/13514/how-to-obtain-the-statistic-of-the-the-frequency-of-words-in-a-buffer
-(defvar sync0-punctuation-marks '(","
-                                  "."
-                                  "'"
-                                  "&"
-                                  "\"")
-  "List of Punctuation Marks that you want to count.")
+  ;; Taken from https://emacs.stackexchange.com/questions/13514/how-to-obtain-the-statistic-of-the-the-frequency-of-words-in-a-buffer
+  (defvar sync0-punctuation-marks '(","
+                                    "."
+                                    "'"
+                                    "&"
+                                    "\"")
+    "List of Punctuation Marks that you want to count.")
 
-(defun sync0-count-raw-word-list (raw-word-list)
-  (cl-loop with result = nil
-           for elt in raw-word-list
-           do (cl-incf (cdr (or (assoc elt result)
-                                (first (push (cons elt 0) result)))))
-           finally return (sort result
-                                (lambda (a b) (string< (car a) (car b))))))
+  (defun sync0-count-raw-word-list (raw-word-list)
+    (cl-loop with result = nil
+             for elt in raw-word-list
+             do (cl-incf (cdr (or (assoc elt result)
+                                  (first (push (cons elt 0) result)))))
+             finally return (sort result
+                                  (lambda (a b) (string< (car a) (car b))))))
 
-(defun sync0-word-stats ()
-  (interactive)
-  (let* ((words (split-string
-                 (downcase (buffer-string))
-                 (format "[ %s\f\t\n\r\v]+"
-                         (mapconcat #'identity sync0-punctuation-marks ""))
-                 t))
-         (punctuation-marks (cl-remove-if-not
-                             (lambda (elt) (member elt sync0-punctuation-marks))
-                             (split-string (buffer-string) "" t )))
-         (raw-word-list (append punctuation-marks words))
-         (word-list (sync0-count-raw-word-list raw-word-list)))
-    (with-current-buffer (get-buffer-create "*word-statistics*")
-      (erase-buffer)
-      (insert "| word | occurences |
+  (defun sync0-word-stats ()
+    (interactive)
+    (let* ((words (split-string
+                   (downcase (buffer-string))
+                   (format "[ %s\f\t\n\r\v]+"
+                           (mapconcat #'identity sync0-punctuation-marks ""))
+                   t))
+           (punctuation-marks (cl-remove-if-not
+                               (lambda (elt) (member elt sync0-punctuation-marks))
+                               (split-string (buffer-string) "" t )))
+           (raw-word-list (append punctuation-marks words))
+           (word-list (sync0-count-raw-word-list raw-word-list)))
+      (with-current-buffer (get-buffer-create "*word-statistics*")
+	(erase-buffer)
+	(insert "| word | occurences |
                     |-----------+------------|\n")
 
-      (dolist (elt word-list)
-        (insert (format "| '%s' | %d |\n" (car elt) (cdr elt))))
+	(dolist (elt word-list)
+          (insert (format "| '%s' | %d |\n" (car elt) (cdr elt))))
 
-      (org-mode)
-      (indent-region (point-min) (point-max))
-      (goto-char 100)
-      (org-cycle)
-      (goto-char 79)
-      (org-table-sort-lines nil ?N)))
-  (pop-to-buffer "*word-statistics*"))
+	(org-mode)
+	(indent-region (point-min) (point-max))
+	(goto-char 100)
+	(org-cycle)
+	(goto-char 79)
+	(org-table-sort-lines nil ?N)))
+    (pop-to-buffer "*word-statistics*"))
 
-(defun sync0-call-rebinding-org-blank-behaviour (fn)
-  (let ((org-blank-before-new-entry
-         (copy-tree org-blank-before-new-entry)))
-    (when (org-at-heading-p)
-      (rplacd (assoc 'heading org-blank-before-new-entry) nil))
-    (call-interactively fn)))
+  (defun sync0-call-rebinding-org-blank-behaviour (fn)
+    (let ((org-blank-before-new-entry
+           (copy-tree org-blank-before-new-entry)))
+      (when (org-at-heading-p)
+	(rplacd (assoc 'heading org-blank-before-new-entry) nil))
+      (call-interactively fn)))
 
-(defun sync0-org-meta-return-dwim ()
-  "Improved version of default org-meta-return"
-  (interactive)
-  (sync0-call-rebinding-org-blank-behaviour 'org-meta-return))
+  (defun sync0-org-meta-return-dwim ()
+    "Improved version of default org-meta-return"
+    (interactive)
+    (sync0-call-rebinding-org-blank-behaviour 'org-meta-return))
 
-(defun sync0-org-insert-todo-heading-dwim ()
-  "Improved version of org-insert-todo-heading"
-  (interactive)
-  (sync0-call-rebinding-org-blank-behaviour 'org-insert-todo-heading))
+  (defun sync0-org-insert-todo-heading-dwim ()
+    "Improved version of org-insert-todo-heading"
+    (interactive)
+    (sync0-call-rebinding-org-blank-behaviour 'org-insert-todo-heading))
 
-(defun sync0-clever-insert-item ()
-  "Clever insertion of org item."
-  (if (not (org-in-item-p))
-      (insert "\n")
-    (org-insert-item)))
+  (defun sync0-clever-insert-item ()
+    "Clever insertion of org item."
+    (if (not (org-in-item-p))
+	(insert "\n")
+      (org-insert-item)))
 
-(defun sync0-evil-org-eol-call (fun)
-  "Go to end of line and call provided function. FUN function callback"
-  (end-of-line)
-  (funcall fun)
-  (evil-append nil))
+  (defun sync0-evil-org-eol-call (fun)
+    "Go to end of line and call provided function. FUN function callback"
+    (end-of-line)
+    (funcall fun)
+    (evil-append nil))
 
-;; redefinition evils normal mode map
-(evil-define-key 'normal org-mode-map
-  "<" 'outline-previous-visible-heading
-  ">" 'outline-next-visible-heading
-  (kbd "C->") 'org-forward-heading-same-level
-  (kbd "C-<") 'org-backward-heading-same-level
-  (kbd "<S-tab>") 'sync0-org-tree-open-in-right-frame 
-  "H" 'org-metaleft
-  "L" 'org-metaright
-  "K" 'org-metaup
-  ;; "J" 'org-metadown
-  "k" 'previous-line
-  "j" 'next-line
-  "o" '(lambda () (interactive) (sync0-evil-org-eol-call 'sync0-clever-insert-item))
-  "O" '(lambda () (interactive) (sync0-evil-org-eol-call 'org-insert-heading))
-  "$" 'org-end-of-line
-  "^" 'org-beginning-of-line
-  "[" 'backward-sentence
-  "]" 'forward-sentence
-  "{" 'org-backward-paragraph
-  "}" 'org-forward-paragraph
-  "-" 'org-cycle-list-bullet
-  (kbd "<tab>") 'org-cycle)
+  (defun sync0-org-forward-and-preview ()
+    "Go to same level next heading and show preview in dedicated buffer"
+    (interactive)
+    (hide-subtree)
+    (org-speed-move-safe (quote outline-next-visible-heading))
+    (show-children)
+    (org-tree-to-indirect-buffer))
 
-(evil-define-key 'visual org-mode-map
-  ;; "q" 'highlight-changes-remove-highlight
-  "z" 'org-emphasize)
+  (defun sync0-org-back-and-preview ()
+    "Go to same level previous heading and show preview in dedicated buffer"
+    (interactive)
+    (hide-subtree)
+    (org-speed-move-safe (quote outline-previous-visible-heading))
+    (show-children)
+    (org-tree-to-indirect-buffer))
 
-;; List of files considered for org-refile.
-(setq org-refile-targets (quote ((nil :maxlevel . 4)                ;; Default value.
-                                 ;; set for all agenda files
-                                 ;; ("todo.org" :maxlevel . 2)
-                                 (org-agenda-files :maxlevel . 4))))
+  (defun sync0-org-up-back-and-preview ()
+    "Go to previous level heading and show preview in dedicated buffer"
+    (interactive)
+    (org-speed-move-safe (quote outline-up-heading))
+    (org-tree-to-indirect-buffer)
+    (hide-subtree))
 
-(setq org-file-apps
-      '((auto-mode . emacs)
-        (directory . emacs)
-        ("\\.mm\\'" . default)
-        ("\\.x?html?\\'" . default)
-        ;; ("\\.epub\\'" . emacs)
-        ("\\.jpeg\\'" . "gwenview %s")
-        ("\\.jpg\\'" . "gwenview %s")
-        ("\\.png\\'" . "gwenview %s")
-        ("\\.odt\\'" . "libreoffice --writer %s")
-        ("\\.rtf\\'" . "libreoffice --writer %s")
-        ("\\.doc\\'" . "libreoffice --writer %s")
-        ("\\.docx\\'" . "libreoffice --writer %s")
-        ("\\.ppt\\'" . "libreoffice --impress %s")
-        ("\\.pptx\\'" . "libreoffice --impress %s")
-        ("\\.pdf\\'" . emacs)))
+  (defun sync0-org-up-forward-and-preview ()
+    "Go to previous level next heading and show preview in dedicated buffer"
+    (interactive)
+    (org-speed-move-safe (quote outline-up-heading))
+    (hide-subtree)
+    (org-speed-move-safe (quote outline-next-visible-heading))
+    (org-tree-to-indirect-buffer))
 
-;; (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+  (defun sync0-org-inside-and-preview ()
+    "Go to next level heading and show preview in dedicated buffer"
+    (interactive)
+    (org-speed-move-safe (quote outline-next-visible-heading))
+    (show-children)
+    (org-tree-to-indirect-buffer))
 
-  :bind ((:map org-mode-map
-               ("M-<return>" . sync0-org-meta-return-dwim)
-               ("M-S-<return>" . sync0-org-insert-todo-heading-dwim))))
+;;   ;; List of files considered for org-refile.
+;;   (setq org-refile-targets (quote ((nil :maxlevel . 2)                ;; Default value.
+;;                                    ;; set for all agenda files
+;;                                    ;; ("todo.org" :maxlevel . 2)
+;;                                    (org-agenda-files :maxlevel . 2))))
 
+(defun sync0-org-refile-candidates-from-current-directory ()
+  "Return a list of .org files in the current buffer's directory for refile targets."
+  (when buffer-file-name
+    (directory-files (file-name-directory buffer-file-name) t ".*\\.org$")))
+
+(defun sync0-org-set-local-refile-targets ()
+  "Set `org-refile-targets` to files in the current buffer's directory."
+  (setq-local org-refile-targets
+              `((,(sync0-org-refile-candidates-from-current-directory) :maxlevel . 2))))
+
+;; Hook to adjust `org-refile-targets` dynamically
+(add-hook 'org-mode-hook #'sync0-org-set-local-refile-targets)
+
+
+  (setq org-goto-interface 'outline)
+
+  (setq org-file-apps
+	'((auto-mode . emacs)
+          (directory . emacs)
+          ("\\.mm\\'" . default)
+          ("\\.x?html?\\'" . default)
+          ;; ("\\.epub\\'" . emacs)
+          ("\\.jpeg\\'" . "gwenview %s")
+          ("\\.jpg\\'" . "gwenview %s")
+          ("\\.png\\'" . "gwenview %s")
+          ("\\.odt\\'" . "libreoffice --writer %s")
+          ("\\.rtf\\'" . "libreoffice --writer %s")
+          ("\\.doc\\'" . "libreoffice --writer %s")
+          ("\\.docx\\'" . "libreoffice --writer %s")
+          ("\\.ppt\\'" . "libreoffice --impress %s")
+          ("\\.pptx\\'" . "libreoffice --impress %s")
+          ("\\.pdf\\'" . emacs)))
+
+  (require 'org-num)
+  (require 'oc)
+  (require 'org-tempo)
+  (require 'sync0-pandoc)
+  )
 
 (provide 'sync0-org)

@@ -21,7 +21,7 @@
    extracted pdf must have been set correctly previously by 
    function."
   (unless (null crossref-file)
-    (when-let* ((file (concat sync0-zettelkasten-attachments-directory sync0-bibtex-entry-key ".pdf"))
+    (when-let* ((file (concat sync0-zkn-attachments-dir sync0-bibtex-entry-key ".pdf"))
                 (command-file (concat file " " crossref-file))
                 (message-function (lambda ()
                                     (message "Pdf for entry %s already present in default pdf folder." sync0-bibtex-entry-key)))
@@ -96,7 +96,7 @@
    undesired behavior)."
   (interactive)
   (let    ((bibkey (or refkey 
-                       (sync0-bibtex-completion-choose-key t t))))
+                       (sync0-bibtex-choose-key))))
     (sync0-bibtex-completion-load-entry bibkey)
     (let ((crossref-file (sync0-bibtex-choose-attachment sync0-bibtex-entry-crossref "pdf")))
       (if noconfirm

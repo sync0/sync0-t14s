@@ -24,15 +24,9 @@
   (require 'sync0-bibtex-fields)
   (require 'sync0-bibtex-var-functions)
   (require 'sync0-bibtex-key-functions)
-  (require 'sync0-zettelkasten)
   (require 'sync0-bibtex-corrections)
   (require 'sync0-bibtex-utils)
 
-  (unbind-key "TAB" bibtex-mode-map)
-
-  (evil-define-key 'normal bibtex-mode-map
-    "K" 'sync0-bibtex-previous-key
-    "zf" 'bibtex-fill-entry
-    "J" 'sync0-bibtex-next-key))
+  (unbind-key "TAB" bibtex-mode-map))
 
 (provide 'sync0-bibtex)

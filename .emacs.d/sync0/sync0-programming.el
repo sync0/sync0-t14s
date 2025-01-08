@@ -1,4 +1,3 @@
-
 (use-package exec-path-from-shell
   :config
   (when (memq window-system '(mac ns x))
@@ -49,63 +48,7 @@
   ;; Othwersie, the apostrophe in English becomes caotic.
   (sp-local-pair 'org-mode "'" "'"
                  ;; :trigger nil
-                 :unless '(sp-point-after-word-p))
-
-
-  (defhydra sync0-hydra-smart-parens (:hint nil)
-    "
- Sexps functions (_q_uit)
- ^Nav^            ^Barf/Slurp^                 ^Depth^
- ^---^------------^----------^-----------------^-----^-----------------
- _f_: forward     _→_:          slurp forward   _R_: splice
- _b_: backward    _←_:          barf forward    _r_: raise
- _u_: backward ↑  _C-<right>_:  slurp backward  _↑_: raise backward
- _d_: forward ↓   _C-<left>_:   barf backward   _↓_: raise forward
- _p_: backward ↓
- _n_: forward ↑
-
- ^Kill^           ^Misc^                       ^Wrap^
- ^----^-----------^----^-----------------------^----^------------------
- _w_: copy        _j_: join                    _(_: wrap with ( )
- _k_: kill        _s_: split                   _{_: wrap with { }
- ^^               _t_: transpose               _'_: wrap with ' '
- ^^               _c_: convolute               _\"_: wrap with \" \"
- ^^               _i_: indent defun"
-
-    ("q" nil)
-    ;; Wrapping
-    ("(" (lambda (_) (interactive "P") (sp-wrap-with-pair "(")))
-    ("{" (lambda (_) (interactive "P") (sp-wrap-with-pair "{")))
-    ("'" (lambda (_) (interactive "P") (sp-wrap-with-pair "'")))
-    ("\"" (lambda (_) (interactive "P") (sp-wrap-with-pair "\"")))
-    ;; Navigation
-    ("f" sp-forward-sexp )
-    ("b" sp-backward-sexp)
-    ("u" sp-backward-up-sexp)
-    ("d" sp-down-sexp)
-    ("p" sp-backward-down-sexp)
-    ("n" sp-up-sexp)
-    ;; Kill/copy
-    ("w" sp-copy-sexp)
-    ("k" sp-kill-sexp)
-    ;; Misc
-    ("t" sp-transpose-sexp)
-    ("j" sp-join-sexp)
-    ("s" sp-split-sexp)
-    ("c" sp-convolute-sexp)
-    ("i" sp-indent-defun)
-    ;; Depth changing
-    ("R" sp-splice-sexp)
-    ("r" sp-splice-sexp-killing-around)
-    ("<up>" sp-splice-sexp-killing-backward)
-    ("<down>" sp-splice-sexp-killing-forward)
-    ;; Barfing/slurping
-    ("<right>" sp-forward-slurp-sexp)
-    ("<left>" sp-forward-barf-sexp)
-    ("C-<left>" sp-backward-barf-sexp)
-    ("C-<right>" sp-backward-slurp-sexp)))
-
-  ;; (evil-leader/set-key "S" 'sync0-hydra-smart-parens/body))
+                 :unless '(sp-point-after-word-p)))
 
 (use-package flycheck
   :commands flycheck-mode
@@ -138,6 +81,5 @@
 ;; optionally if you want to use debugger
 (use-package dap-mode)
 ;; (use-package dap-LANGUAGE) to load the dap adapter for your language
-
 
 (provide 'sync0-programming)

@@ -1,4 +1,3 @@
-
 (defun sync0--org-agenda-goto-header (&optional backwards)
   "Find the next agenda series header forwards or BACKWARDS."
   (let ((pos (save-excursion
@@ -67,7 +66,6 @@
           ((equal 7 arg) "Sat.")
           (t "nil"))))
 
-
 (defun sync0-org-agenda-format-date-aligned (date)
   "Format a DATE string for display in the daily/weekly agenda, or timeline.
                              This function makes sure that dates are aligned for easy reading."
@@ -112,7 +110,6 @@
   (org-agenda nil "h")
   (when (not split)
     (delete-other-windows)))
-
 
 (defun sync0-org-agenda-tags-todo-timestamp ()
   "Get timestamp from current org-agenda item."
@@ -213,23 +210,23 @@
                              (not (string= time-start "")))
                         (concat " - " day-end-string " " month-end ", " time-start)) 
                        (t (concat " - " day-end " " month-end))))
-                 ;; ;; check: schedule date and dealine date equal, end time
-                 ;; (cond ((and (string= schedule-date deadline-date)
-                 ;;             (not (string= time-end "")))
-                 ;;        (concat "-" time-end))
-                 ;; ;; check: month start equal month end, end time
-                 ;;       ((and (string= month-start month-end)
-                 ;;             (not (string= time-end "")))
-                 ;;        (concat "-" day-end month-end ", " time-end))
-                 ;; ;; check: month start equal month end, no end time
-                 ;;       ((and (string= month-start month-end)
-                 ;;             (string= time-end ""))
-                 ;;        (concat "-" day-end month-end))
-                 ;; ;; check: month start different month end, end time
-                 ;;       ((and (not (string= month-start month-end))
-                 ;;             (string= time-end ""))
-                 ;;        (concat "-" day-end month-end ", " time-end))
-                 ;;       (t (concat " " month-start)))
+                ;; ;; check: schedule date and dealine date equal, end time
+                ;; (cond ((and (string= schedule-date deadline-date)
+                ;;             (not (string= time-end "")))
+                ;;        (concat "-" time-end))
+                ;; ;; check: month start equal month end, end time
+                ;;       ((and (string= month-start month-end)
+                ;;             (not (string= time-end "")))
+                ;;        (concat "-" day-end month-end ", " time-end))
+                ;; ;; check: month start equal month end, no end time
+                ;;       ((and (string= month-start month-end)
+                ;;             (string= time-end ""))
+                ;;        (concat "-" day-end month-end))
+                ;; ;; check: month start different month end, end time
+                ;;       ((and (not (string= month-start month-end))
+                ;;             (string= time-end ""))
+                ;;        (concat "-" day-end month-end ", " time-end))
+                ;;       (t (concat " " month-start)))
                 (year (cond ((not (string= year-start this-year))
                              (concat " " year-start))
                             ((not (string= year-end this-year))
@@ -373,16 +370,16 @@
                 (month-end (capitalize (format-time-string "%B" deadline)))
                 (day-end-raw (format-time-string "%d" deadline))
                 (day-end (cond
-                            ((string= today deadline-date)
-                             "Today")
-                            ((string= tomorrow deadline-date)
-                             "Tomorrow")
-                            (t (concat
-                                ;; day name
-                                (capitalize (format-time-string "%a." deadline))
-                                " "
-                                ;; number
-                                (format-time-string "%d" deadline)))))
+                          ((string= today deadline-date)
+                           "Today")
+                          ((string= tomorrow deadline-date)
+                           "Tomorrow")
+                          (t (concat
+                              ;; day name
+                              (capitalize (format-time-string "%a." deadline))
+                              " "
+                              ;; number
+                              (format-time-string "%d" deadline)))))
                 (time-end (cond
                            ((string= "00:00" (format-time-string "%H:%M" deadline))
                             " ")
@@ -424,6 +421,7 @@
       nil)))
 
 ;; necessary function 2
+
 (defun sync0-org-skip-subtree-if-habit ()
   "Skip an agenda entry if it has a STYLE property equal to \"habit\"."
   (let ((subtree-end (save-excursion (org-end-of-subtree t))))
@@ -467,17 +465,16 @@
 ;; New key assignment
 (define-key org-agenda-mode-map "N" 'sync0-org-agenda-new)
 
-
 (defun sync0-org-agenda-print-parent-node ()
   "Output parent node in agenda views"
   (let ((path (car (last (org-get-outline-path nil t)))))
     (cond ((> (length path) 43) 
-        (let ((start (substring path 0 25))
-              (end (substring path -15 nil)))
-          (concat "[ " start  "..." end " ]")))
-      ((or (null path)
-              (equal path ""))
-"")
-(t (concat "[ " path " ]")))))
+           (let ((start (substring path 0 25))
+		 (end (substring path -15 nil)))
+             (concat "[ " start  "..." end " ]")))
+	  ((or (null path)
+               (equal path ""))
+	   "")
+	  (t (concat "[ " path " ]")))))
 
 (provide 'sync0-org-agenda-functions)

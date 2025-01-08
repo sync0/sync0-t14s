@@ -17,18 +17,18 @@
       (cl-delete-if-not
        (lambda (x) (string-match-p (concat "^" (format-time-string "%y%-j"))  x)) sync0-bibtex-keys))
 
-(defun sync0-bibtex-populate-keys ()
-  "Load all bibtex keys on variable sync0-bibtex-keys."
-  (interactive)
-  ;; Load variable sync0-bibtex-keys extracting the keys from the
-  ;; bibtex-completion-candidates
-  (setq sync0-bibtex-keys (mapcar #'(lambda (x) (cdr (assoc "=key=" x)))
-                                  (bibtex-completion-candidates)))
-  ;; Write contents of sync0-bitex-keys to file
-  (with-temp-file sync0-bibtex-keys-file
-    (sync0-insert-elements-of-list sync0-bibtex-keys))
-  ;; Rewrite file in Gdrive to allow for manipulation in iOS
-  (copy-file sync0-bibtex-keys-file sync0-bibtex-keys-backup-file t))
+;; (defun sync0-bibtex-populate-keys ()
+;;   "Load all bibtex keys on variable sync0-bibtex-keys."
+;;   (interactive)
+;;   ;; Load variable sync0-bibtex-keys extracting the keys from the
+;;   ;; bibtex-completion-candidates
+;;   (setq sync0-bibtex-keys (mapcar #'(lambda (x) (cdr (assoc "=key=" x)))
+;;                                   (bibtex-completion-candidates)))
+;;   ;; Write contents of sync0-bitex-keys to file
+;;   (with-temp-file sync0-bibtex-keys-file
+;;     (sync0-insert-elements-of-list sync0-bibtex-keys))
+;;   ;; Rewrite file in Gdrive to allow for manipulation in iOS
+;;   (copy-file sync0-bibtex-keys-file sync0-bibtex-keys-backup-file t))
 
 (defun sync0-random-alnum ()
   "From a defined alphabet variable (sync0-alpha), take one

@@ -2,8 +2,6 @@
 (require 'sync0-bibtex-key-functions)
 (require 'sync0-bibtex-utils)
 (require 'sync0-bibtex-corrections)
-(require 'sync0-obsidian)
-(require 'sync0-bibtex-obsidian)
 (require 'sync0-yaml)
 
 (defun sync0-bibtex-define-entry (&optional quick)
@@ -23,7 +21,6 @@
   (setq sync0-bibtex-entry-status "fetch")
   ;; Insert entry in default bibliography file
   (sync0-bibtex-entry-append-to-bibliography sync0-bibtex-entry-key)
-  (sync0-bibtex-entry-create-obsidian-note-from-entry sync0-bibtex-entry-key)
   ;; the function below does not work; throws an error listp that I
   ;; have not been able to solve (sync0-bibtex-update-vars
   ;; sync0-bibtex-completion-variables-list)
@@ -42,8 +39,8 @@
             ;; Specify which fields to load
             (fields (append (cdr (assoc type sync0-bibtex-type-fields))
                             (remove "file" sync0-bibtex-base-fields)))
-            ;; (add-notes (yes-or-no-p "Create Obsidian notes for the newly created entries?"))
-            (bibfile (sync0-bibtex-entry-choose-bibliography-file))
+;;             (bibfile (sync0-bibtex-entry-choose-bibliography-file))
+            (bibfile sync0-bibtex-inbox-bibliography)
             (keylist (sync0-bibtex-entry-define-keys-list num)))
     ;; Before calculating any values, reset all values in my
     ;; master list of variable (set them to nil).
@@ -84,8 +81,7 @@
         (sync0-bibtex-entry-constitute-bibentry filename)
         ;; Second, append entry to default bibliography file.
         (sync0-bibtex-entry-append-to-bibliography filename bibfile)
-        ;; Third, create an obsidian markdown note for the entry.
-        (sync0-bibtex-entry-create-obsidian-note-from-entry filename)))))
+	))))
 
 (defun sync0-bibtex-derive-entries-from-collection (&optional glist)
   "Create new BibLaTeX entries from objects of the form (title
@@ -113,15 +109,17 @@ range of pages of the actual pdf file to be used for extraction."
                     (read-string "Page range? ")
                     (when (y-or-n-p "Add expages? ")
                       (read-string "Expage range? ")))))
-         (crossref (sync0-bibtex-completion-choose-key t t "Which crossref to derive entries from? "))
-         (crossref-entry (bibtex-completion-get-entry crossref))
+;;          (crossref (sync0-bibtex-completion-choose-key t t "Which crossref to derive entries from? "))
+         (crossref (sync0-bibtex-choose-key "Which crossref to derive entries from? "))
+;;          (crossref-entry (bibtex-completion-get-entry crossref))
+         (crossref-entry (citar-get-entry crossref))
          (created (sync0-bibtex-entry-calculate-bibfield "created"))
-         (date (sync0-bibtex-completion-get-value "date" crossref-entry))
-         (language (sync0-bibtex-completion-get-value "language" crossref-entry))
-         (crossref-title (sync0-bibtex-completion-get-value "title" crossref-entry))
-         (crossref-subtitle (sync0-bibtex-completion-get-value "subtitle" crossref-entry))
-         ;; (add-notes (yes-or-no-p "Create Obsidian notes for the newly created entries?"))
-         (bibfile (sync0-bibtex-entry-choose-bibliography-file))
+         (date (sync0-bibtex-get-value "date" crossref-entry))
+         (language (sync0-bibtex-get-value "language" crossref-entry))
+         (crossref-title (sync0-bibtex-get-value "title" crossref-entry))
+         (crossref-subtitle (sync0-bibtex-get-value "subtitle" crossref-entry))
+;;          (bibfile (sync0-bibtex-entry-choose-bibliography-file))
+         (bibfile sync0-bibtex-inbox-bibliography)
          (list-length (if glist
                           (length glist)
                         0))
@@ -161,7 +159,7 @@ range of pages of the actual pdf file to be used for extraction."
         (setq sync0-bibtex-entry-expages expages)
         (unless unique-author
           (setq sync0-bibtex-entry-author author))
-        (setq sync0-bibtex-entry-file (concat ":" sync0-zettelkasten-attachments-directory sync0-bibtex-entry-key ".pdf:PDF"))
+        (setq sync0-bibtex-entry-file (concat ":" sync0-zkn-attachments-dir sync0-bibtex-entry-key ".pdf:PDF"))
         ;; (dolist (element fields x)
         ;;   (let* ((var (concat "sync0-bibtex-entry-" element))
         ;;          (value (progn 
@@ -185,8 +183,6 @@ range of pages of the actual pdf file to be used for extraction."
         (sync0-bibtex-entry-constitute-bibentry filename)
         ;; Second, append entry to default bibliography file.
         (sync0-bibtex-entry-append-to-bibliography filename bibfile)
-        ;; Third, create an obsidian markdown note for the entry.
-        ;; (sync0-bibtex-entry-create-obsidian-note-from-entry filename)
         ;; Fourth, extract the pdf from the crossref
         (when extract-p
         (sync0-bibtex-extract-pdf-from-crossref crossref-file t))))))
@@ -205,9 +201,9 @@ values for certain user-defined entries"
             (fields-completion (cl-set-difference (append (cdr (assoc type sync0-bibtex-type-fields)) sync0-bibtex-fields)
                                                   sync0-bibtex-automatic-fields :test #'string=))
             (constant-fields (completing-read-multiple "Constant fields?" fields-completion nil t))
-            ;; (add-notes (yes-or-no-p "Create Obsidian notes for the newly created entries?"))
             (fields (cl-set-difference possible-fields constant-fields :test #'string=))
-            (bibfile (sync0-bibtex-entry-choose-bibliography-file))
+;;             (bibfile (sync0-bibtex-entry-choose-bibliography-file))
+            (bibfile sync0-bibtex-inbox-bibliography)
             (keylist (sync0-bibtex-entry-define-keys-list num)))
     ;; Before calculating any values, reset all values in my
     ;; master list of variable (set them to nil).
@@ -248,66 +244,16 @@ values for certain user-defined entries"
         (sync0-bibtex-entry-constitute-bibentry filename)
         ;; Second, append entry to default bibliography file.
         (sync0-bibtex-entry-append-to-bibliography filename bibfile)
-        ;; Third, create an obsidian markdown note for the entry.
-        (sync0-bibtex-entry-create-obsidian-note-from-entry filename)))))
-
-;;   (defun sync0-bibtex-define-entries-from-bibkey (&optional bibkey)
-;;     "Creates copies of target entry but with different keys. This
-;; function also creates markdown notes for the created entries."
-;;     (interactive)
-;;     (sync0-bibtex-completion-load-entry (or bibkey
-;;                                             (sync0-bibtex-completion-choose-key t t)))
-;;     (let* ((howmany (string-to-number (read-string "How many entries to create? ")))
-;;            (add-notes (yes-or-no-p "Create Obsidian notes for the newly created entries?"))
-;; 	   (has-attachment (sync0-bibtex-has-attachments-p sync0-bibtex-entry-key))
-;; 	   (to-duplicate (when has-attachment
-;; 			     (yes-or-no-p "Duplicate attachment for newly created entries?")))
-;; 	   (attachment (when has-attachment
-;; 			 (sync0-bibtex-choose-attachment sync0-bibtex-entry-key)))
-;; 	   (extension (if attachment
-;; 			  (file-name-extension attachment)
-;; 			(when (yes-or-no-p "Add file field?")
-;; 			  (completing-read "Choose-extension:" sync0-bibtex-completion-extension))))
-;; 	   (extension-coda (when extension
-;; 			     (concat "." extension ":" (upcase extension))))
-;;            (keylist (sync0-bibtex-entry-define-keys-list howmany))
-;;            (bibfile (sync0-bibtex-entry-choose-bibliography-file))
-;;            (keywords-list (when sync0-bibtex-entry-keywords
-;;                                  (split-string sync0-bibtex-entry-keywords ", "))))
-;;       (setq sync0-bibtex-entry-keywords (sync0-show-elements-of-list keywords-list ", "))
-;;       ;; Beginning of loop actions
-;;       (dolist (key keylist)
-;;         (setq sync0-bibtex-entry-key key)
-;; 	(when extension-coda
-;;           (setq sync0-bibtex-entry-file
-;;                 (concat ":" sync0-zettelkasten-attachments-directory sync0-bibtex-entry-key extension-coda)))
-;;         ;; Second, append entry to default bibliography file.
-;;         (sync0-bibtex-entry-append-to-bibliography sync0-bibtex-entry-key bibfile)
-;;         ;; Third, create an obsidian markdown note for the entry.
-;;         (unless (null add-notes)
-;;           (sync0-bibtex-entry-create-obsidian-note-from-entry sync0-bibtex-entry-key))
-;; 	  (when to-duplicate
-;;             (copy-file attachment (concat sync0-zettelkasten-attachments-directory sync0-bibtex-entry-key "." extension))))))
-
-      ;; Fourth, add a markdown link in the obsidian master note
-      ;; (ie., the note corresponding to the file used as the source
-      ;; for extraction).
-      ;; (append-to-file obsidian-reference nil obsidian-master-note)
-      ;; (unless (sync0-null-p sync0-bibtex-entry-crossref)
-      ;;   (bibtex-search-entry sync0-bibtex-entry-crossref)
-      ;;   ;; (bibtex-beginning-of-entry)
-      ;;   (bibtex-make-field (list "relatedtype" "Whatever string" "multivolume" nil) t)
-      ;;   (bibtex-make-field (list "related" "Whatever string" (sync0-show-elements-of-list keylist ", ") nil) t))
+	))))
 
 (defun sync0-bibtex-define-entries-from-bibkey (&optional bibkey)
   "Creates copies of target entry but with different keys. This
 function also creates markdown notes for the created entries."
   (interactive)
 
-  (sync0-bibtex-completion-load-entry (or bibkey (sync0-bibtex-completion-choose-key t t "Choose key for entry duplication")))
+  (sync0-bibtex-completion-load-entry (or bibkey (sync0-bibtex-choose-key "Choose key for entry duplication")))
   
   (let* ((howmany (string-to-number (read-string "How many entries to create? ")))
-         (add-notes (yes-or-no-p "Create Obsidian notes for the newly created entries?"))
          (has-attachment (sync0-bibtex-has-attachments-p sync0-bibtex-entry-key))
          (to-duplicate (when has-attachment
                          (yes-or-no-p "Duplicate attachment for newly created entries?")))
@@ -320,7 +266,8 @@ function also creates markdown notes for the created entries."
          (extension-coda (and extension
                               (concat "." extension ":" (upcase extension))))
          (keylist (sync0-bibtex-entry-define-keys-list howmany))
-         (bibfile (sync0-bibtex-entry-choose-bibliography-file))
+;;          (bibfile (sync0-bibtex-entry-choose-bibliography-file))
+         (bibfile sync0-bibtex-inbox-bibliography)
          (keywords-list (and sync0-bibtex-entry-keywords
                              (split-string sync0-bibtex-entry-keywords ", "))))
     
@@ -332,22 +279,18 @@ function also creates markdown notes for the created entries."
       (setq sync0-bibtex-entry-key key)
       (setq sync0-bibtex-entry-file
             (when extension-coda
-              (concat ":" sync0-zettelkasten-attachments-directory sync0-bibtex-entry-key extension-coda)))
+              (concat ":" sync0-zkn-attachments-dir sync0-bibtex-entry-key extension-coda)))
       
       ;; Append entry to default bibliography file
       (sync0-bibtex-entry-append-to-bibliography sync0-bibtex-entry-key bibfile)
       
-      ;; Create Obsidian note for the entry if requested
-      (when add-notes
-        (sync0-bibtex-entry-create-obsidian-note-from-entry sync0-bibtex-entry-key))
-      
       ;; Duplicate attachment if requested
       (when (and to-duplicate attachment)
-        (copy-file attachment (concat sync0-zettelkasten-attachments-directory sync0-bibtex-entry-key "." extension))))))
+        (copy-file attachment (concat sync0-zkn-attachments-dir sync0-bibtex-entry-key "." extension))))))
 
 
 (defun sync0-bibtex-match-matrix-and-fields (num completion-table)
-  (loop repeat num collect (completing-read "Which fields correspond to matrix columns? " completion-table nil t)))
+  (cl-loop repeat num collect (completing-read "Which fields correspond to matrix columns? " completion-table nil t)))
 
 (defun sync0-bibtex-define-entries-from-matrix (my-list)
   "Create new BibLaTeX entries from matrix which is a list of lists
@@ -373,7 +316,8 @@ defined or nil, but are defined programatically inside this function."
             (remove-fields (remove-duplicates
                             (append constant-fields define-fields excluded-fields) :test #'string=))
             (fields (cl-set-difference possible-fields remove-fields :test #'string=))
-            (bibfile (sync0-bibtex-entry-choose-bibliography-file))
+;;             (bibfile (sync0-bibtex-entry-choose-bibliography-file))
+            (bibfile sync0-bibtex-inbox-bibliography)
             (keylist (sync0-bibtex-entry-define-keys-list iterations)))
     ;; Before calculating any values, reset all values in my
     ;; master list of variable (set them to nil).
@@ -423,7 +367,6 @@ defined or nil, but are defined programatically inside this function."
         (sync0-bibtex-entry-constitute-bibentry filename)
         ;; Second, append entry to default bibliography file.
         (sync0-bibtex-entry-append-to-bibliography filename bibfile)
-        ;; Third, create an obsidian markdown note for the entry.
-        (sync0-bibtex-entry-create-obsidian-note-from-entry filename)))))
+	))))
 
 (provide 'sync0-bibtex-create-functions)

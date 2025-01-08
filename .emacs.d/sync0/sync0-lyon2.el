@@ -8,11 +8,11 @@ If a previous file was used, it proposes that file as the default choice."
 			      (file-name-nondirectory default-file)))
          (default-path (if default-file
 			   (file-name-directory default-file)
-			 sync0-directory-teaching))
+			 sync0-dir-teaching))
          (file-path
 	  (if default-file
 	      (read-file-name "Choose the CSV file: " default-path default-file-name)
-	    (read-file-name "Choose the CSV file: " sync0-directory-teaching))))
+	    (read-file-name "Choose the CSV file: " sync0-dir-teaching))))
     (if (file-exists-p file-path)
         (progn
           (setq sync0-last-file file-path) ;; Store the file path
@@ -25,10 +25,10 @@ If a previous directory was used, it proposes that directory as the default choi
 Assumes each CSV file represents a group, with the file name as the group name and each row (after the header) as a student.
 The report is also copied to the clipboard for easy handling."
   (interactive
-   (let* ((default-dir sync0-last-directory)
-          (default-path (or default-dir sync0-directory-teaching)))
+   (let* ((default-dir sync0-last-dir)
+          (default-path (or default-dir sync0-dir-teaching)))
      (list (read-directory-name "Select directory with CSV files: " default-path))))
-  (setq sync0-last-directory directory)  ;; Store the selected directory
+  (setq sync0-last-dir directory)  ;; Store the selected directory
   (let ((csv-files (directory-files directory t "\\.csv$"))
         (report ""))
     (dolist (file csv-files)
@@ -62,10 +62,10 @@ If a previous directory was used, it proposes that directory as the default choi
 The function assumes each CSV file represents a group and that the first row is a header,
 with each subsequent row representing a student."
   (interactive
-   (let* ((default-dir sync0-last-directory)
-          (default-path (or default-dir sync0-directory-teaching)))
+   (let* ((default-dir sync0-last-dir)
+          (default-path (or default-dir sync0-dir-teaching)))
      (list (read-directory-name "Select directory with CSV files: " default-path))))
-  (setq sync0-last-directory directory)  ;; Store the selected directory
+  (setq sync0-last-dir directory)  ;; Store the selected directory
   (let ((csv-files (directory-files directory t "\\.csv$"))
         (results ""))
     (dolist (file csv-files)
@@ -195,10 +195,10 @@ Exports the data to a CSV file 'consolidated_student_list.csv' in the selected d
 Extracts 'nom', 'prenom', 'numero', and 'email' columns from each CSV.
 Adds a 'Class' column based on the filename to distinguish each group."
   (interactive)
-  (let* ((default-dir sync0-last-directory)
+  (let* ((default-dir sync0-last-dir)
          (selected-dir (read-directory-name "Choose the directory: "
-                                            (or default-dir sync0-directory-teaching))))
-    (setq sync0-last-directory selected-dir)  ;; Store the selected directory
+                                            (or default-dir sync0-dir-teaching))))
+    (setq sync0-last-dir selected-dir)  ;; Store the selected directory
     (let ((csv-files (directory-files selected-dir t "\\.csv$"))
           (student-data '(("Class" "Nom" "Prenom" "Numero" "Email")))) ;; Column headers
       (dolist (file csv-files)

@@ -1,48 +1,87 @@
 (require 'sync0-functions)
+(require 'sync0-bibtex-vars)
 (require 'bibtex-utils)
-(require 'sync0-ivy-bibtex)
+(require 'sync0-citar)
 (require 'sync0-bibtex-extraction)
 (require 'sync0-bibtex-actions)
+(require 'sync0-bibtex-create-functions)
 (require 'sync0-bibtex-corrections)
 (require 'sync0-bibtex-python)
 (require 'sync0-bibtex-sql)
 
-(defun sync0-bibtex-completion-insert-markdown-citation ()
+(defun sync0-bibtex-format-citation ()
+  "Insert a cached or new markdown citation at point, querying the database."
+  (let ((cached-citation sync0-bibtex-cache-citation))
+    (if (and cached-citation
+             (y-or-n-p (format "Use cached citation: %s? " cached-citation)))
+        ;; Use the cached citation directly, with optional edit
+        (let ((insert-cit (read-string "Edit citation (if needed): " cached-citation)))
+          (setq sync0-bibtex-cache-citation insert-cit))
+      ;; Else, query the database and allow selection
+      (let ((key (sync0-bibtex-choose-key))
+      ;; (key (sync0-bibtex-db-query-entry))
+            (pages (read-string "Pages: " sync0-bibtex-cache-pages)))
+        (setq sync0-bibtex-cache-key key)
+        (setq sync0-bibtex-cache-pages pages)
+        (setq sync0-bibtex-cache-citation
+              (format "@%s, %s" key pages))))))
+
+(defun sync0-bibtex-insert-citation ()
   "Insert a cached or new markdown citation at point, querying the database."
   (interactive)
-  (let* ((cached-citation sync0-bibtex-completion-cache-citation)
-         (citation
-          (if (and cached-citation
-                   (y-or-n-p (format "Use cached citation: %s? " cached-citation)))
-              ;; Use the cached citation directly, with optional edit
-              (let ((insert-cit (read-string "Edit citation (if needed): " cached-citation)))
-                (setq sync0-bibtex-completion-cache-citation insert-cit)
-                (insert (concat " [" insert-cit "]")))
-            ;; Else, query the database and allow selection
-            (let ((key (sync0-bibtex-sql-query-entry))
-                  (pages (read-string "Pages: " sync0-bibtex-completion-cache-pages)))
-              (setq sync0-bibtex-completion-cache-key key)
-              (setq sync0-bibtex-completion-cache-pages pages)
-              (setq sync0-bibtex-completion-cache-citation
-                    (format "@%s, %s" key pages))
-              (insert (concat " [" sync0-bibtex-completion-cache-citation "]"))))))))
+  (let ((citation (sync0-bibtex-format-citation)))
+    (if (derived-mode-p 'org-mode)
+	(insert (concat " [cite:" citation "]"))
+      (insert (concat " [" citation "]")))))
 
-(evil-leader/set-key-for-mode 'markdown-mode "i" 'sync0-bibtex-completion-insert-markdown-citation)
-
-(define-key markdown-mode-map (kbd "C-c i") #'sync0-bibtex-completion-insert-markdown-citation)
-
-(defun sync0-bibtex-completion-insert-markdown-link ()
-  "Insert a markdown link with a citation at point."
+(defun sync0-bibtex-clipboard-to-org-quote-block ()
+  "Convert clipboard content into an Org-mode quote block with unified lines."
   (interactive)
-  (let* ((key (sync0-bibtex-sql-query-entry))
-	 (formatted-citation (sync0-bibtex-corrections-format-insert-citation key))
-         (link (format "[%s](%s.md)" formatted-citation key)))
+  (let* ((clipboard-content (current-kill 0))
+         (formatted-content (when clipboard-content
+			      (with-temp-buffer
+				(insert clipboard-content)
+				(let ((fill-column (point-max)))
+				  (fill-region (point-min) (point-max)))
+				(buffer-string))))
+	 (citation (sync0-bibtex-format-citation)))
+    (if (and clipboard-content
+	     (yes-or-no-p "Format clipboard contents as org quote block? "))
+	(insert (format "#+BEGIN_QUOTE\n%s [cite:%s].\n#+END_QUOTE\n" formatted-content citation))
+      (insert (concat " [cite:" citation "]")))))
+
+;; (defun sync0-bibtex-insert-bibnote-link ()
+;;   "Insert a link to the bibnotes of a given bibliographic entry."
+;;   (interactive)
+;;   (let* ((key (sync0-bibtex-choose-key))
+;; 	 (formatted-citation (sync0-bibtex-corrections-format-insert-citation key))
+;;          (link (if (derived-mode-p 'org-mode)
+;; 	  (format "[[id:%s][%s]]" key formatted-citation)
+;; 	  (format "[%s](%s.md)" formatted-citation key))))
+;;     (insert link)))
+
+(defun sync0-bibtex-insert-bibnote-link ()
+  "Insert a link to the bibnotes of a given bibliographic entry.
+By default, uses `sync0-bibtex-default-citation-style`. If the user
+opts out, allows selection of a different style."
+  (interactive)
+  (let* ((key (sync0-bibtex-choose-key))
+         (style (if (yes-or-no-p
+                     (format "Use default citation style '%s'? " sync0-bibtex-citation-style))
+                    sync0-bibtex-citation-style
+                  (completing-read "Choose citation style: "
+                                   '("author-title" "title-date" "date-title" "author-date-title")
+                                   nil t nil nil sync0-bibtex-citation-style)))
+         (formatted-citation (sync0-bibtex-corrections-format-insert-citation key style))
+         (link (if (derived-mode-p 'org-mode)
+                   (format "[[id:%s][%s]]" key formatted-citation)
+                 (format "[%s](%s.md)" formatted-citation key))))
     (insert link)))
 
 (defun sync0-bibtex-open-attachment ()
   "Insert a markdown link with a citation at point."
   (interactive)
-  (let* ((bibkey (sync0-bibtex-sql-query-entry))
+  (let* ((bibkey (sync0-bibtex-choose-key))
          (file (sync0-bibtex-choose-attachment bibkey))
 	 (extension (file-name-extension file))
 	 (program (if (assoc extension sync0-default-file-associations)
@@ -55,7 +94,14 @@
              (call-process program nil 0 nil file))
             (t (message "No attachment found for key %s" bibkey)))))
 
-(evil-leader/set-key-for-mode 'markdown-mode "I" 'sync0-bibtex-completion-insert-markdown-link)
+(defun sync0-bibtex-open-notes ()
+  "Insert a markdown link with a citation at point."
+  (interactive)
+  (let* ((bibkey (sync0-bibtex-choose-key))
+         (file (concat sync0-zkn-references-dir bibkey ".org")))
+    (if (file-exists-p file)
+	(find-file file)
+      (message "No bibnotes found for key %s" bibkey))))
 
 (defun sync0-bibtex-completion-journaltitle ()
   (completing-read "Journal title : "
@@ -90,7 +136,7 @@
 
 (defun bibtex-completion-crop-pdf-list (keys)
   "Print the PDFs of the entries with the given KEYS where available."
-  (when-let*    ((bibkey (sync0-bibtex-completion-choose-key))
+  (when-let*    ((bibkey (sync0-bibtex-choose-key))
                  (entry (bibtex-completion-get-entry bibkey))
                  (sample (bibtex-completion-get-value "file" entry))
                  (cropbox (sync0-pdf-define-cropbox sample)))
@@ -104,7 +150,7 @@
 (defun bibtex-completion-copy-pdf-to-path-list (keys)
   "Print the PDFs of the entries with the given KEYS where available."
   (let* ((processed-keys (sync0-process-bibkeys keys))
-	 (path (read-directory-name "Where should I send these PDFs? : " sync0-goodreads-directory))
+	 (path (read-directory-name "Where should I send these PDFs? : " sync0-goodreads-dir))
          (compress
 	  (when (listp processed-keys)
 	    (yes-or-no-p "Compress selected files as one ZIP? ")))
@@ -121,7 +167,7 @@
               (when compress
 		(let* ((zip-path path)
                        ;; (zip-path (sync0-correct-string-with-corrector
-                       ;;            (read-string "Where to save ZIP file? : " sync0-goodreads-directory) "/" t))
+                       ;;            (read-string "Where to save ZIP file? : " sync0-goodreads-dir) "/" t))
                        (zip-name (read-string "Name of ZIP file? : " (format-time-string "%Y-%m-%d-%H-%M")))
                        ;; junk paths (-j option) is necessary to prevent the creation of unecessary folders in the created Zip file
                        (command (concat "zip --junk-paths " zip-path zip-name ".zip -@ < " sync0-bibtex-helper-pdf-copy-filepath)))
@@ -180,20 +226,20 @@
   (let ((processed-keys (sync0-process-bibkeys keys)))
     (if (listp processed-keys)
 	(dolist (key processed-keys)
-	  (if (file-exists-p (concat sync0-zettelkasten-references-directory key ".md"))
+	  (if (file-exists-p (concat sync0-zkn-references-dir key ".org"))
 	      (sync0-bibtex-create-note-from-entry t key)
             (sync0-bibtex-create-note-from-entry nil key))) 
-      (if (file-exists-p (concat sync0-zettelkasten-references-directory processed-keys ".md"))
+      (if (file-exists-p (concat sync0-zkn-references-dir processed-keys ".org"))
           (sync0-bibtex-create-note-from-entry t processed-keys)
         (sync0-bibtex-create-note-from-entry nil processed-keys)))))
 
-(defun bibtex-completion-recalc-tags (keys)
-  "Recalculate tags for entries with given KEYS."
-  (let ((processed-keys (sync0-process-bibkeys keys)))
-    (if (listp processed-keys)
-        (dolist (key processed-keys)
-          (sync0-bibtex-recalc-tags-and-mdnote key))
-      (sync0-bibtex-recalc-tags-and-mdnote processed-keys))))
+;; (defun bibtex-completion-recalc-tags (keys)
+;;   "Recalculate tags for entries with given KEYS."
+;;   (let ((processed-keys (sync0-process-bibkeys keys)))
+;;     (if (listp processed-keys)
+;;         (dolist (key processed-keys)
+;;           (sync0-bibtex-recalc-tags-and-mdnote key))
+;;       (sync0-bibtex-recalc-tags-and-mdnote processed-keys))))
 
 (defun bibtex-completion-archive-entries-list (keys)
   "Print the PDFs of the entries with the given KEYS where available."
@@ -208,7 +254,7 @@
   "Print the PDFs of the entries with the given KEYS where available."
   (let ((processed-keys (sync0-process-bibkeys keys))
 	(bibfile (completing-read "Which bibliography file to send to ? "
-				  (directory-files sync0-bibtex-bibliobraphy-directory t ".+\\.bib") nil t)))
+				  (directory-files sync0-bibtex-bibliobraphy-dir t ".+\\.bib") nil t)))
     (if (listp processed-keys)
 	(dolist (key processed-keys)
 	  (sync0-bibtex-move-entry-to-bibfile key bibfile))
@@ -258,11 +304,11 @@
 
 (defun bibtex-completion-concatenate-pdf-list (keys)
   "Concatenate pdfs corresponding to keys"
-  (let* ((output (concat sync0-zettelkasten-attachments-directory "temp.pdf"))
+  (let* ((output (concat sync0-zkn-attachments-dir "temp.pdf"))
          (raw-command (concat "gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -sOutputFile=" output " "))
          (pdf (if (yes-or-no-p "Choose key from bibliographies?")
-                  (let ((bibref (sync0-bibtex-completion-choose-key t)))
-                    (concat sync0-zettelkasten-attachments-directory bibref ".pdf"))
+                  (let ((bibref (sync0-bibtex-choose-key)))
+                    (concat sync0-zkn-attachments-dir bibref ".pdf"))
                 (read-file-name "Input full path with name of output pdf: ")))
          x
          command)
@@ -321,30 +367,30 @@
           (sync0-bibtex-open-pdf key))
       (sync0-bibtex-open-pdf processed-keys))))
 
-(defun bibtex-completion-add-field-and-recalc-mdnote (keys)
-  "Add biblatex field to an entry and recalc both tags and corresponding Md note."
-  (let* ((processed-keys (sync0-process-bibkeys keys))
-	 (field (completing-read "Choose Bibtex field: " (remove "keywords" sync0-bibtex-fields)))
-         (separator (cond ((member field sync0-bibtex-people-fields)
-                           " and ")
-                          ((string= field "file")
-                           ";")
-                          (t ", ")))
-         (unique-p (member field sync0-bibtex-unique-fields))
-         (delay-calc (string= field "file"))
-         (assigned-value (unless delay-calc
-                           (progn (funcall (cadr (assoc field sync0-bibtex-entry-functions)))
-                                  (eval (intern (concat "sync0-bibtex-entry-" field))))))
-         (assigned-values (when (and assigned-value
-                                     (null unique-p))
-                            (split-string assigned-value separator)))
-         (multiple-new-p (when assigned-values
-                           (> (length assigned-values) 1))))
-    (if (listp processed-keys)
-	;; Loop
-	(dolist (key processed-keys)
-	  (sync0-bibtex-add-field-and-recalc-keywords-and-mdnote key field unique-p multiple-new-p separator assigned-value assigned-values))
-      (sync0-bibtex-add-field-and-recalc-keywords-and-mdnote processed-keys field unique-p multiple-new-p separator assigned-value assigned-values))))
+;; (defun bibtex-completion-add-field-and-recalc-mdnote (keys)
+;;   "Add biblatex field to an entry and recalc both tags and corresponding Md note."
+;;   (let* ((processed-keys (sync0-process-bibkeys keys))
+;; 	 (field (completing-read "Choose Bibtex field: " (remove "keywords" sync0-bibtex-fields)))
+;;          (separator (cond ((member field sync0-bibtex-people-fields)
+;;                            " and ")
+;;                           ((string= field "file")
+;;                            ";")
+;;                           (t ", ")))
+;;          (unique-p (member field sync0-bibtex-unique-fields))
+;;          (delay-calc (string= field "file"))
+;;          (assigned-value (unless delay-calc
+;;                            (progn (funcall (cadr (assoc field sync0-bibtex-entry-functions)))
+;;                                   (eval (intern (concat "sync0-bibtex-entry-" field))))))
+;;          (assigned-values (when (and assigned-value
+;;                                      (null unique-p))
+;;                             (split-string assigned-value separator)))
+;;          (multiple-new-p (when assigned-values
+;;                            (> (length assigned-values) 1))))
+;;     (if (listp processed-keys)
+;; 	;; Loop
+;; 	(dolist (key processed-keys)
+;; 	  (sync0-bibtex-add-field-and-recalc-keywords-and-mdnote key field unique-p multiple-new-p separator assigned-value assigned-values))
+;;       (sync0-bibtex-add-field-and-recalc-keywords-and-mdnote processed-keys field unique-p multiple-new-p separator assigned-value assigned-values))))
 
 (defun bibtex-convert-pdf-to-txt (&optional keys)
   "Summarize a PDF file based on the specified type and languages."
@@ -430,119 +476,88 @@ Optionally pass LANGUAGE to specify the OCR language(s)."
               (message "OCR produced for %s" bibkey))
           (message "No readable PDF found for key: %s" bibkey)))))))
 
-(defun sync0-consult-bibtex-with-local-bibliography (&optional arg)
-  "Search BibTeX entries with local bibliography using consult.
-With a prefix ARG the cache is invalidated and the bibliography reread."
-  (interactive "P")
-  (let* ((local-bib (bibtex-completion-find-local-bibliography))
-         (bibtex-completion-bibliography
-          (if local-bib
-              (list local-bib)
-            (let* ((files (f-files "/home/sync0/Gdrive/bibliographies/" (lambda (x) (string-match ".+\\.bib" x))))
-                   (selection (consult--read
-                              "Choose bibliography file: "
-                              files
-                              :require-match t)))
-              (find-file selection)
-              (list selection)))))
-    (consult-bibtex arg bibtex-completion-bibliography)))
+;; (defun sync0-consult-bibtex-with-local-bibliography (&optional arg)
+;;   "Search BibTeX entries with local bibliography using consult.
+;; With a prefix ARG the cache is invalidated and the bibliography reread."
+;;   (interactive "P")
+;;   (let* ((local-bib (bibtex-completion-find-local-bibliography))
+;;          (bibtex-completion-bibliography
+;;           (if local-bib
+;;               (list local-bib)
+;;             (let* ((files (f-files "/home/sync0/Gdrive/bibliographies/" (lambda (x) (string-match ".+\\.bib" x))))
+;;                    (selection (consult--read
+;;                               "Choose bibliography file: "
+;;                               files
+;;                               :require-match t)))
+;;               (find-file selection)
+;;               (list selection)))))
+;;     (consult-bibtex arg bibtex-completion-bibliography)))
 
-(evil-leader/set-key "V" 'sync0-consult-bibtex-with-local-bibliography)
+;; (defvar sync0-consult-bibtex-action-map
+;;   '(
+;;     ("Show entry" . bibtex-completion-show-entry)
+;;     ("Yank citations" . bibtex-completion-yank-citations-from-bibkeys)
+;;     ("Print PDF list" . bibtex-completion-print-pdf-list)
+;;     ("Crop PDF list" . bibtex-completion-crop-pdf-list)
+;;     ("Copy PDFs to path" . bibtex-completion-copy-pdf-to-path-list)
+;;     ("Rewrite notes" . bibtex-completion-rewrite-notes-from-biblatex-data-list)
+;;     ("Archive entries" . bibtex-completion-archive-entries-list)
+;;     ("Move entries to bibfile" . bibtex-completion-move-entries-to-bibfile-list)
+;;     ("Add key to PDFs" . bibtex-completion-add-key-to-pdf-list)
+;;     ("Concatenate PDFs" . bibtex-completion-concatenate-pdf-list)
+;;     ("Check file existence" . bibtex-completion-file-exists-p)
+;;     ("Download PDF from URL" . bibtex-completion-download-pdf-from-url)
+;;     ("Extract PDF from CrossRef" . bibtex-completion-extract-pdf-from-crossref)
+;;     ;; ("Add field and recalc mdnote" . bibtex-completion-add-field-and-recalc-mdnote)
+;;     ("Delete entry" . bibtex-completion-delete-entry)
+;;     ("Open URL" . bibtex-completion-open-url)
+;;     ("String keys with separator" . bibtex-completion-string-keys-with-sep)
+;;     ("Open PDF externally" . bibtex-completion-open-pdf-external)
+;;     ;; ("Recalculate tags" . bibtex-completion-recalc-tags)
+;;     ("Convert PDF to text" . bibtex-convert-pdf-to-txt)
+;;     ("Search PDF with Python" . bibtex-completion-search-pdf-with-python)
+;;     ("Download from YouTube" . bibtex-completion-download-from-youtube)
+;;     ("OCR PDF files" . bibtex-completion-ocr-pdf-files))
+;;   "Mapping of action names to BibTeX-related commands.")
 
-(defvar sync0-consult-bibtex-action-map
+
+(defvar sync0-citar-action-map
   '(
-    ("Show entry" . bibtex-completion-show-entry)
+;;     ("Show entry" . bibtex-completion-show-entry)
     ("Yank citations" . bibtex-completion-yank-citations-from-bibkeys)
     ("Print PDF list" . bibtex-completion-print-pdf-list)
     ("Crop PDF list" . bibtex-completion-crop-pdf-list)
     ("Copy PDFs to path" . bibtex-completion-copy-pdf-to-path-list)
-    ("Rewrite notes" . bibtex-completion-rewrite-notes-from-biblatex-data-list)
+;;     ("Rewrite notes" . bibtex-completion-rewrite-notes-from-biblatex-data-list)
     ("Archive entries" . bibtex-completion-archive-entries-list)
-    ("Move entries to bibfile" . bibtex-completion-move-entries-to-bibfile-list)
-    ("Add key to PDFs" . bibtex-completion-add-key-to-pdf-list)
-    ("Concatenate PDFs" . bibtex-completion-concatenate-pdf-list)
-    ("Check file existence" . bibtex-completion-file-exists-p)
+;;     ("Move entries to bibfile" . bibtex-completion-move-entries-to-bibfile-list)
+;;     ("Add key to PDFs" . bibtex-completion-add-key-to-pdf-list)
+;;     ("Concatenate PDFs" . bibtex-completion-concatenate-pdf-list)
+;;     ("Check file existence" . bibtex-completion-file-exists-p)
     ("Download PDF from URL" . bibtex-completion-download-pdf-from-url)
     ("Extract PDF from CrossRef" . bibtex-completion-extract-pdf-from-crossref)
-    ("Add field and recalc mdnote" . bibtex-completion-add-field-and-recalc-mdnote)
+    ;; ("Add field and recalc mdnote" . bibtex-completion-add-field-and-recalc-mdnote)
     ("Delete entry" . bibtex-completion-delete-entry)
     ("Open URL" . bibtex-completion-open-url)
-    ("String keys with separator" . bibtex-completion-string-keys-with-sep)
+;;     ("String keys with separator" . bibtex-completion-string-keys-with-sep)
     ("Open PDF externally" . bibtex-completion-open-pdf-external)
-    ("Recalculate tags" . bibtex-completion-recalc-tags)
-    ("Convert PDF to text" . bibtex-convert-pdf-to-txt)
+    ("Typeset bibnotes (no multiple)" . sync0-bibtex-typeset-bibnotes)
+    ;; ("Recalculate tags" . bibtex-completion-recalc-tags)
+;;     ("Convert PDF to text" . bibtex-convert-pdf-to-txt)
     ("Search PDF with Python" . bibtex-completion-search-pdf-with-python)
     ("Download from YouTube" . bibtex-completion-download-from-youtube)
     ("OCR PDF files" . bibtex-completion-ocr-pdf-files))
   "Mapping of action names to BibTeX-related commands.")
 
-
-(major-mode-hydra-define bibtex-mode nil 
-  ("Entries"
-   (("c" sync0-bibtex-clean-entry "Clean this entry")
-    ("E" sync0-bibtex-define-entry "New entry")
-    ("e" (sync0-bibtex-define-entry t) "Quick new entry")
-    ;; ("d" doi-utils-add-bibtex-entry-from-doi "Entry from DOI")
-    ;; ("m" sync0-bibtex-define-multiple-entries "Define entries")
-    ("d" sync0-bibtex-derive-entries-from-collection "Derive from collection")
-    ("t" sync0-bibtex-transplant-obsidian-ref-into-biblatex "Entry from mdnote")
-    ("u" sync0-bibtex-update-key "Update key")
-    ("n" sync0-bibtex-open-notes-at-point "Open notes")
-    ("M" sync0-bibtex-define-similar-type-entries "Define X similar entries")
-    ("f" sync0-bibtex-define-entries-from-bibkey "Define multiple from this entry")
-    ;; ("g" sync0-bibtex-python-bibentry-from-gallica "Define entry from Gallica")
-    ("W" sync0-bibtex-python-bibentry-from-webscrapper "Define from webscrapper")
-    ("Z" sync0-bibtex-bibentry-from-anystyle "Define from AnyStyle")
-    ("V" bibtex-completion-download-from-youtube "Download Youtube video")
-    ("2" sync0-bibtex-duplicate-attachment-from-bibkey "Duplicate attachment")
-    ("D" sync0-bibtex-python-bibentry-from-doi-or-isbn "Define from DOI or ISBN"))
-   ;; ("w" sync0-bibtex-open-url "Open url")
-   ;; ("M" sync0-bibtex-move-entry-to-bibfile "Move entry to bibfile")
-   ;; ("D" sync0-bibtex-delete-entry "Delete entry")
-   ;; ("A" sync0-bibtex-archive-entry "Archive entry")
-   ;; ("1" sync0-bibtex-file-exists-p "Check file exists")
-   "PDF editing & more"
-   (("X" sync0-bibtex-delete-attachments "Delete attachments")
-    ;; ("P" sync0-pandoc-export-epub-to-pdf "EPUB to PDF")
-    ("P" bibtex-completion-search-pdf-with-python "Search PDF (Python)")
-    ("C" sync0-bibtex-copy-attachment-at-point "Copy attachment")
-    ;; ("C" sync0-bibtex-crop-pdf "Crop attached PDF")
-    ("3" bibtex-completion-ocr-pdf-files "OCR pdf")
-    ("T" sync0-bibtex-recalc-tags-and-mdnote-at-point "Recalc keywords at point")
-    ("o" sync0-bibtex-open-pdf-at-point "Show PDF")
-    ("O" (sync0-bibtex-open-pdf-at-point t) "Show crossref PDF")
-    ;; ("x" sync0-bibtex-extract-from-crossref "Extract from crossref")
-    ;; ("P" sync0-bibtex-copy-pdf-to-path "Copy to path")
-    ("p" bibtex-completion-print-pdf-list "Print att. from entry"))
-   ;; This does note work for some reason
-   ;; ("x" sync0-bibtex-arrange-pdf "Arrange pdf")
-   ;; ("T" sync0-bibtex-add-toc-to-pdf "Add TOC to PDF")
-   ;; ("K" sync0-bibtex-add-key-to-pdf "Add key to PDF")
-   ;; ("s" sync0-bibtex-extract-subpdf "Extract subpdf")
-   ;; ("d" sync0-bibtex-download-pdf "Download pdf from url")
-   ;; "Visit"
-   ;; ("o" sync0-org-ref-open-pdf-at-point "Open in pdfview")
-   ;; ("n" sync0-bibtex-open-notes "Open annotations")
-   "Bibliographies"
-   (("U" sync0-ivy-bibtex-update-cache "Update BibTeX keys cache")
-    ("S" sync0-consult-bibtex-multi-select "Search entry")
-    ("s" sync0-consult-bibtex-with-local-bibliography "Search entry locally")
-    ("b" sync0-bibtex-recalc-bibliographies "Recalc bibliographies")
-    ("B" sync0-bibtex-recalc-master-bibliography "Recalc master bib file")
-    ("r" sync0-bibtex-populate-keys "Populate keys")
-    ("v" sync0-bibtex-visit-bibliography "Visit bibfile"))
-   "Etc"
-   ;; ("r" (sync0-bibtex-update-completion-files sync0-bibtex-completion-variables-list) "Refresh completion vars")
-   (("a" sync0-bibtex-add-field-at-point "Add field")
-    ("A" (sync0-bibtex-add-field-at-point t) "Add field and recalc")
-    ("I" sync0-bibtex-convert-jpg-to-pdf "Convert jpg to pdf")
-    ("i" bibtex-completion-open-url "Open URL")
-    ("k" sync0-add-field-theme "Add theme")
-    ("w" sync0-search-in-catalogs "Search in catalogs")
-    ("1" bibtex-convert-pdf-to-txt "Convert to TXT")
-    ;; ("2" sync0-bibtex-python-summarize-txt "Summarize TXT")
-    ("y" bibtex-completion-yank-citations-from-bibkeys "Yank citation.")
-    ("N" sync0-bibtex-create-note-at-point "Create mdnote")
-    ("R" (sync0-bibtex-create-note-at-point t) "Rewrite mdnote"))))
+(defun sync0-citar-perform-action (&optional keys)
+  "Prompt user to choose an action from `sync0-citar-action-map` and then apply the action to the selected keys."
+  (interactive)
+  (let* ((chosen-keys (or keys (sync0-bibtex-choose-key)))  ; Choose keys if not provided
+	 (action-names (mapcar 'car sync0-citar-action-map))
+	 (chosen-action (completing-read "Choose action: " action-names nil t))
+         (action-func (cdr (assoc chosen-action sync0-citar-action-map))))
+          (if action-func
+              (funcall action-func chosen-keys)  ; Call the selected action with the keys
+            (message "No action found for %s" chosen-action))))
 
 (provide 'sync0-ivy-bibtex-functions)

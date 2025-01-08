@@ -18,7 +18,7 @@
   "Summarize a PDF file based on the specified type and languages."
   (interactive
    (let* (
-          ;; (cabinet-path sync0-zettelkasten-attachments-directory)  ; Replace with the actual path to the "cabinet" folder
+          ;; (cabinet-path sync0-zkn-attachments-dirs)  ; Replace with the actual path to the "cabinet" folder
           (bibkey (sync0-bibtex-completion-choose-key t t))
           (entry (bibtex-completion-get-entry bibkey))
           (pdf-file (sync0-bibtex-choose-attachment bibkey))

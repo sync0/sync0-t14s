@@ -1,5 +1,4 @@
 ;;; taken from http://xahlee.info/emacs/emacs/elisp_straight_curly_quotes.html
-
 (require 'xah-replace-pairs)
 (require 'xah-get-thing)
 
@@ -269,5 +268,18 @@ Version: 2015-04-29 2021-08-17"
           (xah-ascii-to-math-symbol (point-min) (point-max))
           (xah-fix-double-quote-to-curly (point-min) (point-max))
           (xah-fix-curly-single-quote-to-apostrophe (point-min) (point-max)))))))
+
+(defun sync0-replace-quotes-with-french-guillemets ()
+  "Replace straight quotes \" with French guillemets \« and \» in the current buffer."
+  (interactive)
+  (save-excursion
+    ;; Go to the beginning of the buffer
+    (goto-char (point-min))
+    ;; Replace opening quotes
+    (while (search-forward "\"" nil t)
+      ;; Check if it's an opening or closing quote
+      (if (or (bobp) (looking-back "\s-\|[[:punct:]]" 1))
+          (replace-match "«" nil t)
+        (replace-match "»" nil t)))))
 
 (provide 'sync0-corrections)

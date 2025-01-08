@@ -5,9 +5,10 @@
 (defvar sync0-bibtex-bibliographies nil
   "Default bibliographies to be read by helm-bibtex and others")
 
-(setq sync0-bibtex-bibliobraphy-directory (concat (getenv "HOME") "/Gdrive/bibliographies/")
+(setq sync0-bibtex-bibliobraphy-dir (concat (getenv "HOME") "/Gdrive/bibliographies/")
       sync0-bibtex-default-bibliography (concat (getenv "HOME") "/Gdrive/bibliographies/bibliography.bib")
       sync0-bibtex-master-bibliography (concat (getenv "HOME") "/Gdrive/bibliographies/master.bib")
+      sync0-bibtex-inbox-bibliography (concat (getenv "HOME") "/Gdrive/bibliographies/inbox.bib")
       sync0-bibtex-sick-bibliography (concat (getenv "HOME") "/Gdrive/bibliographies/sick.bib"))
 
 (defvar sync0-bibtex-excluded-bibliographies '("/home/sync0/Gdrive/bibliographies/trash.bib"
@@ -16,6 +17,7 @@
 					       "/home/sync0/Gdrive/bibliographies/jabref.bib"
 					       "/home/sync0/Gdrive/bibliographies/jabref.bib.sav"
 					       "/home/sync0/Gdrive/bibliographies/exclude.bib"
+					       "/home/sync0/Gdrive/bibliographies/test.bib"
 					       "/home/sync0/Gdrive/bibliographies/sick.bib"
 					       "/home/sync0/Gdrive/bibliographies/backup.bib"
 					       "/home/sync0/Gdrive/bibliographies/bibliography.bib.bak")
@@ -24,7 +26,7 @@
 ;; Exclude backup files from undo-tree
 (setq sync0-bibtex-excluded-bibliographies
       (append sync0-bibtex-excluded-bibliographies
-	      (directory-files sync0-bibtex-bibliobraphy-directory t "\\.~undo-tree~$")))
+	      (directory-files sync0-bibtex-bibliobraphy-dir t "\\.~undo-tree~$")))
 
 (defun sync0-bibtex-recalc-bibliographies ()
   "Recalculate files in default bibliography directory
@@ -32,7 +34,7 @@
   (interactive)
   (setq sync0-bibtex-bibliographies 
         (cl-set-difference 
-         (directory-files sync0-bibtex-bibliobraphy-directory t ".+\\.bib")
+         (directory-files sync0-bibtex-bibliobraphy-dir t ".+\\.bib")
          sync0-bibtex-excluded-bibliographies :test #'equal))
   (when (bound-and-true-p reftex-default-bibliography)
     (setq reftex-default-bibliography sync0-bibtex-bibliographies))
@@ -146,24 +148,7 @@ because it requires a special treatment.")
 ;;   '("title" "subtitle" "date" "author" "editor" "note" "url" "urldate" "language" "langid" "library" "file" "keywords")
 ;;   "List of Bibtex entry fields")
 
-;; (setq sync0-bibtex-obsidian-reference-template-top
-;;       (concat  "\n## Description\n\n" 
-;;                "## Progrès de la lecture\n\n"
-;;                "## Notes\n\n"
-;;                "## Annotations\n\n"
-;;                "```dataview\n"
-;;                "TABLE WITHOUT ID\n"
-;;                "link(file.name, title) AS \"Title\", created AS \"Created\"\n"
-;;                ;; "title AS \"Titre\"\n"
-;;                "FROM #permanent AND #bibkey/"))
-
-;; (setq sync0-bibtex-obsidian-reference-template-bottom
-;;       (concat "\n"
-;;               "SORT created DESC\n"
-;;               "```\n\n"
-;;               "## Relations\n\n"))
-
-(setq sync0-bibtex-obsidian-reference-template-top
+(defvar sync0-bibtex-obsidian-reference-template-top
       (concat  "\n## Descriptio {.noexport}\n\n" 
                "\n### Motivatio\n\n" 
                "\n### Conspectus\n\n" 
@@ -174,7 +159,7 @@ because it requires a special treatment.")
                "link(file.name, title) AS \"Title\", created AS \"Created\"\n"
                "FROM #permanent AND #bibkey/"))
 
-(setq sync0-bibtex-obsidian-reference-template-bottom
+(defvar sync0-bibtex-obsidian-reference-template-bottom
       (concat "\n"
               "SORT created DESC\n"
               "```\n\n"
@@ -182,17 +167,28 @@ because it requires a special treatment.")
               "### Index\n\n"
               "## Notes\n\n"))
 
+(defvar sync0-bibtex-notes-template
+  (concat  "\n* Descriptio :noexport:\n\n" 
+           "** Motivatio\n\n" 
+           "** Conspectus\n\n" 
+           "** Itineris\n\n"
+           "** Excerpta\n\n"
+           "** Relationes\n\n"
+           "** Index\n\n"
+           "* Notes\n\n"))
+
 (setq sync0-bibtex-quick-fields
       '("title"
         "subtitle"
         "date"
-        "year"
-        "century"
+;;         "year"
+;;         "century"
         "created"
         "status"
         ;; "author"
         ;; "url"
-        "file"))
+        "file"
+	))
 
 (defvar sync0-bibtex-extract-fields
   '("title" "date" "author" "crossref" "pages" "language" "langid" "file" "keywords")
@@ -208,7 +204,7 @@ sync0-bibtex-string-multiple-fields.")
 (defvar sync0-bibtex-completion-fields
   (append sync0-bibtex-completion-single-fields
           sync0-bibtex-string-multiple-fields
-          (list "author"))
+          (list "author" "editortype"))
   "List of Bibtex entry completion fields. This variable does not
 hold all the bibtlatex fields that take completion, but rather
 those variables that should provide the template for other
@@ -234,7 +230,8 @@ used by my biblatex functions.")
   ;; (setq sync0-bibtex-completions-collection (nreverse x))
 
 (defvar sync0-bibtex-completion-variables-list nil
-  "List of variables used for updating completion files.")
+  "List of variables used for updating completion files. The
+structure of each entry is (BIBTEXFIELD dummy-var completion-var path-of-txt-file-for-completion)")
 
 ;; Configure people variables and add them to var
 ;; sync0-bibtex-completion-variables-list
@@ -391,10 +388,10 @@ a Bibtex entry.")
 ;; Call save-sync0-bibtex-today-keys when Emacs is about to exit
 (add-hook 'kill-emacs-hook #'sync0-bibtex-save-today-keys)
 
-(defvar sync0-bibtex-archived-bibliography (concat sync0-bibtex-bibliobraphy-directory "archived.bib")
+(defvar sync0-bibtex-archived-bibliography (concat sync0-bibtex-bibliobraphy-dir "archived.bib")
   "Bibliography to store entries that are not needed at the moment for whatever reason.")
 
-(defvar sync0-bibtex-archive-directory "/home/sync0/Pictures/archives/"
+(defvar sync0-bibtex-archive-dir "/home/sync0/Pictures/archives/"
   "Bibliography to store entries that are not needed at the moment for whatever reason.")
 
 (defvar sync0-bibtex-keys-file "/home/sync0/.emacs.d/sync0-vars/bibtex-completion-key.txt"
@@ -403,7 +400,7 @@ a Bibtex entry.")
 (defvar sync0-bibtex-keys-backup-file "/home/sync0/Gdrive/vars/bibtex-completion-key.txt"
   "Bibliography to store entries that are not needed at the moment for whatever reason.")
 
-(defvar sync0-bibtex-tocs-directory "/home/sync0/Documents/tocs/"
+(defvar sync0-bibtex-tocs-dir "/home/sync0/Documents/tocs/"
   "Bibliography to store entries that are not needed at the moment for whatever reason.")
 
 (defvar sync0-bibtex-author-separator "_"
@@ -417,6 +414,9 @@ a Bibtex entry.")
 to fill this bibtex field. This variable is used for calculating
 titles and the like.")
 
+(defvar sync0-bibtex-entry-author-or-editor-priority nil
+  "Variable to determine whether author or editor field should be given priority for the given bibliographic entry.")
+
 (defvar sync0-bibtex-entry-date-or-origdate-p nil
   "Variable to determine whether there is any person or institution
 to fill this bibtex field. This variable is used for calculating
@@ -428,6 +428,7 @@ titles and the like.")
   to non-alphabetic characters or any other character that could
   appear in last names to prevent unwanted results.")
 
+;; Very important!!!
 ;; use this to define all the dummy fields required for creating
 ;; bibtex entries
 (let ((prefix "sync0-bibtex-entry-")
@@ -448,7 +449,7 @@ titles and the like.")
       (push my-var x)))
   (setq sync0-bibtex-entry-crossref-definitions-list (nreverse x)))
 
-;; Define dummy variables for initial fields
+;; Define dummy variables for initial fields of the form sync0-bibtex-entry
 (let ((prefix "sync0-bibtex-entry-initial-")
       x)
   (dolist (element '("date" "origdate" "author" "language") x)
@@ -561,6 +562,7 @@ it.")
          (tag-prefix (concat element "/"))
          (my-list-elem (list element tag-prefix my-var)))  
     (push my-list-elem sync0-bibtex-tag-fields-list)))
+
 (dolist (element sync0-bibtex-date-fields)
   (let* ((my-var (intern (concat "sync0-bibtex-entry-" element "-tag")))
          (my-list-elem (list element "" my-var)))  
@@ -582,8 +584,8 @@ it.")
       '("title"
         "subtitle"
         "date"
-        "year"
-        "century"
+;;         "year"
+;;         "century"
         "created"
         ;; "author"
         ;; "url"
@@ -780,7 +782,11 @@ it.")
 
 (defvar sync0-bibtex-db-main-fields 
   '("citekey" "type" "title")
-  "Main fields used in entries TABLE in database")
+  "Main fields used in entries TABLE in database.")
+
+(defvar sync0-bibtex-db-entries-table-fields 
+  '("citekey" "type" "title" "subtitle" "date" "origdate")
+  "Fields used in entries TABLE in database.")
 
 (defvar sync0-bibtex-db-dirty t
   "Function to determine whether it is necessary to update cache in emacs from database.")
@@ -789,7 +795,7 @@ it.")
   "Function to hold cached data from database")
 
 (defvar sync0-bibtex-db-purged-extra-fields 
-  (let* ((extra-fields-remove-plus (append sync0-bibtex-people-fields '("theme" "keywords" "langid" "subtitle" "date" "origdate" "title" "year" "century" "editortype")))
+  (let* ((extra-fields-remove-plus (append sync0-bibtex-people-fields '("theme" "keywords" "langid" "subtitle" "date" "origdate" "title" "year" "century" "editortype" "editoratype" "editorbtype" "editorctype")))
          (extra-fields-raw (cl-set-difference sync0-bibtex-fields sync0-bibtex-db-main-fields :test #'string=)))
          (cl-set-difference extra-fields-raw extra-fields-remove-plus :test #'string=))
   "Purged extra fields to pass to the db extra TABLE to prevent
@@ -816,5 +822,24 @@ splicing it and breaking the schema.")
       (let ((bibvar (concat "sync0-bibtex-entry-" element)))
 	(push bibvar x)))
     x))
+
+(defvar sync0-bibtex-cache-key nil
+  "Cache variable to store the current BibTeX key for preselection.")
+
+(defvar sync0-bibtex-cache-pages nil
+  "Cache variable to store the current BibTeX pages for preselection.")
+
+(defvar sync0-bibtex-cache-citation nil
+  "Cache variable to store the last used BibTeX citation.")
+
+(defcustom sync0-bibtex-citation-style "author-title"
+  "Default citation style for formatting BibLaTeX entries.
+Available styles:
+- author-title: 'Lastname, Title'
+- title-date: 'Title (Year)'
+- date-title: '(Year) Title'
+- author-(date)-title: 'Lastname (Year), Title'"
+  :type 'string
+  :group 'sync0-bibtex)
 
 (provide 'sync0-bibtex-vars)

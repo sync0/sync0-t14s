@@ -1,4 +1,5 @@
 (require 'sync0-vars)
+(require 'sync0-bibtex-vars)
 
 (defun sync0-insert-elements-of-list (list)
   "Print each element of LIST on a line of its own."
@@ -300,6 +301,22 @@ COMMAND is the command to finish, one of the symbols
              until (not (member filename existing-files))
              finally return filename)))
 
+(defun sync0-zkn-generate-filename (existing-files)
+  "Generate a unique filename that does not exist in EXISTING-FILES."
+  (let ((current-date sync0-bibtex-timeday))
+    (cl-loop for i from 0
+             for filename = (concat current-date (sync0-generate-random-string 3))
+             until (not (member filename existing-files))
+             finally return filename)))
+
+(defun sync0-zkn-generate-ref-filename (existing-files)
+  "Generate a unique filename that does not exist in EXISTING-FILES."
+  (let ((current-date sync0-bibtex-timeday))
+    (cl-loop for i from 0
+             for filename = (concat current-date (sync0-generate-random-string 2))
+             until (not (member filename existing-files))
+             finally return filename)))
+
 ;; (defun sync0-obsidian-generate-unique-filename (directory)
 ;;   "Generate a unique filename for an Obsidian markdown note in DIRECTORY."
 ;;   (let* ((current-date (format-time-string "%y%j"))
@@ -462,6 +479,305 @@ end of the string.  Leaves all other whitespace untouched."
        (* whitespace) string-end)
    "\\1"
    string))
+
+;; (defun sync0-copy-pdf-to-goodreads ()
+;;   "Copy the pdf corresponding to the current file (Org or Markdown) and paste it to the Goodreads directory."
+;;   (interactive)
+;;   (let* ((full-path (buffer-file-name))
+;;          (current-file (cond
+;;                         ((string-match "^.+/\\([[:alnum:]]+\\)\\.org$" full-path)
+;;                          (match-string-no-properties 1 full-path))
+;;                         ((string-match "^.+/\\([[:alnum:]]+\\)\\.md$" full-path)
+;;                          (match-string-no-properties 1 full-path))
+;;                         (t nil)))
+;;          (path-sans-file (when current-file
+;;                            (string-match "\\(^.+\\)/[[:alnum:]]+\\.\\(org\\|md\\)$" full-path)
+;;                            (match-string-no-properties 1 full-path)))
+;;          (old-path (when current-file
+;;                      (concat path-sans-file "/" current-file ".pdf")))
+;;          (pdf-path (when current-file
+;;                      (concat sync0-goodreads-dir current-file ".pdf"))))
+;;     (if current-file
+;;         (if (and (file-exists-p old-path)
+;;                  (not (file-exists-p pdf-path))
+;;                  (yes-or-no-p "Copy the PDF to the Goodreads directory?"))
+;;             (copy-file old-path pdf-path t)
+;;           (message "No PDF found for %s or file already exists in Goodreads directory." current-file))
+;;       (message "Current file is neither an Org nor Markdown file."))))
+
+(defun sync0-copy-pdf-or-docx-to-goodreads ()
+  "Copy the PDF or DOCX corresponding to the current file (Org or Markdown) to the Goodreads directory.
+If both a PDF and DOCX are found, prompt the user to choose one."
+  (interactive)
+  (let* ((full-path (buffer-file-name))
+         (current-file (cond
+                        ((string-match "^.+/\\([[:alnum:]]+\\)\\.org$" full-path)
+                         (match-string-no-properties 1 full-path))
+                        ((string-match "^.+/\\([[:alnum:]]+\\)\\.md$" full-path)
+                         (match-string-no-properties 1 full-path))
+                        (t nil)))
+         (path-sans-file (when current-file
+                           (string-match "\\(^.+\\)/[[:alnum:]]+\\.\\(org\\|md\\)$" full-path)
+                           (match-string-no-properties 1 full-path)))
+         (pdf-path (when current-file
+                     (concat path-sans-file "/" current-file ".pdf")))
+         (docx-path (when current-file
+                      (concat path-sans-file "/" current-file ".docx")))
+         (goodreads-pdf-path (when current-file
+                              (concat sync0-goodreads-dir current-file ".pdf")))
+         (goodreads-docx-path (when current-file
+                               (concat sync0-goodreads-dir current-file ".docx"))))
+
+    (cond
+     ;; If both PDF and DOCX exist, ask the user to choose
+     ((and (file-exists-p pdf-path) (file-exists-p docx-path))
+      (let ((choice (completing-read "Choose which file to copy: " '("PDF" "DOCX"))))
+        (cond
+         ((string= choice "PDF")
+          (copy-file pdf-path goodreads-pdf-path t)
+          (message "Copied PDF to Goodreads directory"))
+         ((string= choice "DOCX")
+          (copy-file docx-path goodreads-docx-path t)
+          (message "Copied DOCX to Goodreads directory")))))
+
+     ;; If only PDF exists, copy it
+     ((file-exists-p pdf-path)
+      (if (not (file-exists-p goodreads-pdf-path))
+          (copy-file pdf-path goodreads-pdf-path t)
+        (message "PDF file already exists in Goodreads directory.")))
+
+     ;; If only DOCX exists, copy it
+     ((file-exists-p docx-path)
+      (if (not (file-exists-p goodreads-docx-path))
+          (copy-file docx-path goodreads-docx-path t)
+        (message "DOCX file already exists in Goodreads directory.")))
+
+     ;; If neither PDF nor DOCX file exists
+     (t
+      (message "No PDF or DOCX file found for %s." current-file)))))
+
+  (defun sync0-org-open-corresponding-pdf ()
+    "Open corresponding pdf file for current org file."
+    (interactive)
+    (let* ((file-path (buffer-file-name))
+           (file-name 
+            (progn
+              (string-match "\\([[:alnum:]]+\\)\\.org$" file-path)
+              (match-string 1 file-path)))
+           (pdf-path (concat sync0-zkn-attachments-dir file-name ".pdf")))
+      (if (file-exists-p pdf-path)
+          (org-open-file pdf-path)
+	(message "No PDF found for %s.org" file-name))))
+
+
+;; (defun sync0-open-exported-file ()
+;;   "Open the DOCX or PDF file generated from the current Org or Markdown file with LibreOffice.
+;; If both DOCX and PDF are found, prompt the user to choose which to open."
+;;   (interactive)
+;;   (let* ((base-file (file-name-sans-extension (buffer-file-name))) ; Get the base filename without extension
+;;          (pdf-file (concat base-file ".pdf"))
+;;          (docx-file (concat base-file ".docx")))
+
+
+    
+;; 	 (extension (file-name-extension file))
+;; 	 (program (if (assoc extension sync0-default-file-associations)
+;;                       (cdr (assoc extension sync0-default-file-associations))
+;; 		    (completing-read "Which software to open attachment with? " sync0-bibtex-attachment-programs))))
+;;     (cond ((and (sync0-null-p program)
+;;                 (file-exists-p file))
+;;              (org-open-file file))
+;;             ((file-exists-p file)
+;;              (call-process program nil 0 nil file))
+;;             (t (message "No attachment found for key %s" bibkey)))))
+;;     (cond
+;;      ;; If both PDF and DOCX exist, prompt the user to choose which one to open
+;;      ((and (file-exists-p pdf-file) (file-exists-p docx-file))
+;;       (let ((choice (completing-read "Choose which file to open: " '("PDF" "DOCX"))))
+;;         (cond
+;;          ((string= choice "PDF")
+;;           (call-process "evince" nil 0 nil pdf-file)
+;;           (message "Opened PDF file"))
+;;          ((string= choice "DOCX")
+;;           (call-process "libreoffice" nil 0 nil docx-file)
+;;           (message "Opened DOCX file")))))
+
+;;      ;; If only PDF exists, open it with a PDF viewer (e.g., evince)
+;;      ((file-exists-p pdf-file)
+;;       (call-process "evince" nil 0 nil pdf-file)
+;;       (message "Opened PDF file"))
+
+;;      ;; If only DOCX exists, open it with LibreOffice
+;;      ((file-exists-p docx-file)
+;;       (call-process "libreoffice" nil 0 nil docx-file)
+;;       (message "Opened DOCX file"))
+
+;;      ;; If neither PDF nor DOCX exists
+;;      (t
+;;       (message "No PDF or DOCX file found for %s." (file-name-nondirectory (buffer-file-name)))))))
+
+;; (defun sync0-open-exported-file ()
+;;   "Open the DOCX or PDF file generated from the current Org or Markdown file with LibreOffice.
+;; If both DOCX and PDF are found, prompt the user to choose which to open. If neither is found, 
+;; ask which program to use to open the file based on associations."
+;;   (interactive)
+;;   (let* ((base-file (file-name-sans-extension (buffer-file-name))) ; Get the base filename without extension
+;;          (pdf-file (concat base-file ".pdf"))
+;;          (docx-file (concat base-file ".docx")))
+
+;;     ;; Check for PDF and DOCX files, and prompt user if both exist
+;;     (cond
+;;      ((and (file-exists-p pdf-file) (file-exists-p docx-file))
+;;       (let* ((choice (completing-read "Choose which file to open: " '("pdf" "docx")))
+;;              (program (if (assoc choice sync0-default-file-associations)
+;; 			  (cdr (assoc choice sync0-default-file-associations))
+;; 			(completing-read "Which software to open attachment with? " sync0-bibtex-attachment-programs))))
+;;         (cond
+;;          ((string= choice "PDF")
+;; 	  (call-process program nil 0 nil pdf-file))
+;;          ((string= choice "DOCX")
+;; 	  (call-process program nil 0 nil docx-file)))))
+
+;;      ;; If only PDF exists, open it with a PDF viewer (e.g., evince)
+;;      ((file-exists-p pdf-file)
+;;       (let ((program (if (assoc "pdf" sync0-default-file-associations)
+;; 			  (cdr (assoc "pdf" sync0-default-file-associations))
+;; 			(completing-read "Which software to open attachment with? " sync0-bibtex-attachment-programs))))
+;;       (call-process program nil 0 nil pdf-file)
+;;       (message "Opened PDF file")))
+
+;;      ;; If only DOCX exists, open it with LibreOffice
+;;      ((file-exists-p docx-file)
+;;       (let ((program (if (assoc "docx" sync0-default-file-associations)
+;; 			  (cdr (assoc "docx" sync0-default-file-associations))
+;; 			(completing-read "Which software to open attachment with? " sync0-bibtex-attachment-programs))))
+;;       (call-process program nil 0 nil docx-file)
+;;       (message "Opened DOCX file")))
+;;      ;; If no file exists, show a message
+;;      (t
+;;       (message "No PDF or DOCX file found for %s." (file-name-nondirectory (buffer-file-name)))))))
+
+;; (defun sync0-select-program (file-extension)
+;;   "Prompt the user to choose a program based on file extension, checking default associations first."
+;;   (if (assoc file-extension sync0-default-file-associations)
+;;       (cdr (assoc file-extension sync0-default-file-associations))
+;;     (completing-read (format "Which software to open %s file with? " file-extension)
+;;                      sync0-bibtex-attachment-programs)))
+
+;; (defun sync0-open-exported-file ()
+;;   "Open the DOCX or PDF file generated from the current Org or Markdown file with LibreOffice.
+;; If both DOCX and PDF are found, prompt the user to choose which to open. If neither is found, 
+;; ask which program to use to open the file based on associations."
+;;   (interactive)
+;;   (let* ((base-file (file-name-sans-extension (buffer-file-name))) ; Get the base filename without extension
+;;          (pdf-file (concat base-file ".pdf"))
+;;          (docx-file (concat base-file ".docx")))
+
+;;     ;; Check for PDF and DOCX files, and prompt user if both exist
+;;     (cond
+;;      ((and (file-exists-p pdf-file) (file-exists-p docx-file))
+;;       (let* ((choice (completing-read "Choose which file to open: " '("pdf" "docx"))))
+;;         (let ((program (sync0-select-program choice)))
+;;           (cond
+;;            ((string= choice "pdf")
+;;             (call-process program nil 0 nil pdf-file)
+;;             (message "Opened PDF file with %s" program))
+;;            ((string= choice "docx")
+;;             (call-process program nil 0 nil docx-file)
+;;             (message "Opened DOCX file with %s" program)))))
+
+;;      ;; If only PDF exists, open it with selected program
+;;      ((file-exists-p pdf-file)
+;;       (let ((program (sync0-select-program "pdf")))
+;;         (call-process program nil 0 nil pdf-file)
+;;         (message "Opened PDF file with %s" program)))
+
+;;      ;; If only DOCX exists, open it with selected program
+;;      ((file-exists-p docx-file)
+;;       (let ((program (sync0-select-program "docx")))
+;;         (call-process program nil 0 nil docx-file)
+;;         (message "Opened DOCX file with %s" program)))
+
+;;      ;; If no file exists, show a message
+;;      (t
+;;       (message "No PDF or DOCX file found for %s." (file-name-nondirectory (buffer-file-name))))))))
+
+(defun sync0-select-program (file-extension)
+  "Prompt the user to choose a program based on file extension, checking default associations first."
+  (if (assoc file-extension sync0-default-file-associations)
+      (cdr (assoc file-extension sync0-default-file-associations))
+    (completing-read (format "Which software to open %s file with? " file-extension)
+                     sync0-bibtex-attachment-programs)))
+
+(defun sync0-open-exported-file (&optional extension)
+  "Open a file with the given EXTENSION generated from the current Org or Markdown file.
+If no EXTENSION is provided, attempts to open both PDF and DOCX files if present.
+If the file with EXTENSION exists, prompt the user to choose the program to open it.
+If the file is not found, display a message."
+  (interactive "sEnter file extension (pdf/docx): ") ; Allow the user to enter an extension interactively
+  (let* ((base-file (file-name-sans-extension (buffer-file-name))) ; Get the base filename without extension
+         (file (concat base-file "." extension)))
+
+    ;; Check if the file with the given extension exists
+    (if (file-exists-p file)
+        (let ((program (sync0-select-program extension)))
+          (call-process program nil 0 nil file)
+          (message "Opened %s file with %s" extension program))
+      
+      ;; If file with extension doesn't exist, show a message
+      (message "No file with %s extension found for %s." extension (file-name-nondirectory (buffer-file-name))))))
+
+(defun unfill-paragraph ()
+  "Takes a multi-line paragraph and makes it into a single line of text."
+  (interactive)
+  (let ((fill-column (point-max)))
+    (fill-paragraph nil)))
+
+(defun sync0-insert-line-below ()
+  "Insert an empty line below the current line."
+  (interactive)
+  (save-excursion
+    (end-of-line)
+    ;; To insert the line above
+    ;; (end-of-line 0)
+    (open-line 1)))
+
+;; insert whitespace
+(defun sync0-insert-whitespace ()
+  " Add a whitespace"
+  (interactive)
+  (insert " "))
+
+(defun sync0-delete-text-block ()
+  "Delete selection or current or next text block and also copy to `kill-ring'.
+               URL `http://ergoemacs.org/emacs/emacs_delete_block.html'
+               Version 2016-08-13"
+  (interactive)
+  (if (use-region-p)
+      (kill-region (region-beginning) (region-end))
+    (progn
+      (beginning-of-line)
+      (if (search-forward-regexp "[[:graph:]]" (line-end-position) 'NOERROR )
+          (sync0-delete-current-text-block)
+        (when (search-forward-regexp "[[:graph:]]")
+          (sync0-delete-current-text-block))))))
+
+(defun sync0-get-or-create-buffer-for-file (file-path)
+  "Get the buffer name of the buffer visiting FILE-PATH, creating one if necessary."
+  (let ((buffer (or (get-file-buffer file-path)  ;; Check if a buffer is already visiting the file
+                    (find-file-noselect file-path)))) ;; Open the file if no buffer exists
+    (buffer-name buffer))) ;; Return the buffer name
+
+(defun sync0-delete-file-and-kill-buffer ()
+  "Delete the file visited by the current buffer and kill the buffer."
+  (interactive)
+  (let ((file (buffer-file-name)))
+    (if (not file)
+        (message "This buffer is not visiting a file!")
+      (when (yes-or-no-p (format "Are you sure you want to delete the file '%s'? " file))
+        (delete-file file)
+        (kill-buffer)
+        (message "Deleted file '%s' and killed the buffer." file)))))
 
 (provide 'sync0-functions)
 
